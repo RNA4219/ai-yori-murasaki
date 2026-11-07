@@ -534,12 +534,10 @@ class AgentRSI:
             freeze_id, candidate_bundle, changed_rules, train_ref)
         # Experience cards: only from completed train runs (abstract).
         memory_refs = []
-        try:
-            from .rsi import RSI
-            rsi = RSI(self._store)
-            for item in results:
-                if item["outcome"].get("completion") == "incomplete":
-                    continue
+        for item in results:
+            if item["outcome"].get("completion") == "incomplete":
+                continue
+            try:
                 card = {
                     "split": "train",
                     "completion": "completed",
@@ -551,11 +549,11 @@ class AgentRSI:
                     "success" else "change_search",
                     "evidence_count": 1,
                 }
-                ref = rsi.add_experience(
-                    card, train_ref=train_ref)["memory_ref"]
+                ref = self._add_experience_agent(
+                    card, train_ref=train_ref)
                 memory_refs.append(ref)
-        except Exception:
-            memory_refs = []
+            except Exception:
+                continue
         return {
             "freeze_id": freeze_id,
             "candidate_id": candidate["candidate_id"],
@@ -567,6 +565,43 @@ class AgentRSI:
             "results": results,
             "memory_refs": memory_refs,
         }
+
+    def _add_experience_agent(self, card: dict, *,
+                              train_ref: str) -> str:
+        """Create and pin an experience card from an agent train run.
+
+        Unlike ``rsi.RSI.add_experience`` (which requires a
+        ``rsi_train``-format report), this validates the agent RSI train
+        report directly and writes to the same trusted-root memory
+        namespace.
+        """
+        if not _is_id(train_ref) or len(train_ref) != 64:
+            _fail("input_invalid", "train_ref must be sha256")
+        train_report = self._store.get_object(train_ref)
+        if not isinstance(train_report, dict):
+            _fail("input_invalid", "train report not found")
+        if train_report.get("kind") != "agent_rsi_train":
+            _fail("input_invalid", "not an agent train report")
+        normalized = {
+            "split": "train",
+            "completion": "completed",
+            "failure_class": card.get("failure_class") or "state",
+            "outcome": card.get("outcome") or "unverified",
+            "action": card.get("action") or "retain",
+            "evidence_count": card.get("evidence_count", 1),
+        }
+        ref = self._store.put_object(normalized)
+        pin_dir = self._trusted / "rsi" / "memory"
+        pin_dir.mkdir(parents=True, exist_ok=True)
+        pin_path = pin_dir / (ref + ".json")
+        if not pin_path.exists():
+            self._store.atomic_json(
+                pin_path, {"memory_ref": ref, "train_ref": train_ref})
+        state = self._load_state()
+        if ref not in state.get("memory", []):
+            state.setdefault("memory", []).append(ref)
+            self._save_state(state)
+        return ref
 
     # -- compare -----------------------------------------------------------
 

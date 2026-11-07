@@ -532,4 +532,50 @@ def query_snapshot(store: Any, ref: Dict[str, Any], cve: Optional[str] = None,
                 "score": s["epss"], "percentile": s["percentile"],
                 "expires_at": meta_expires_at}
 
+
+# --------------------------------------------------------------------------- #
+# ATT&CK technique mapping for finding categories
+# --------------------------------------------------------------------------- #
+
+# Static mapping from vulnerability categories to MITRE ATT&CK
+# techniques. Educational-level: maps the lab's finding categories to
+# the relevant initial-access/execution/persistence techniques.
+
+TECHNIQUE_MAP: Dict[str, List[str]] = {
+    "authz": ["T1190", "T1068"],           # Exploit Public-Facing App, Exploitation for Privilege Escalation
+    "sqli": ["T1190", "T1505"],           # Exploit Public-Facing App, Server Software Component
+    "xss": ["T1190", "T1189"],            # Exploit Public-Facing App, Drive-by Compromise
+    "path_traversal": ["T1083", "T1005"],  # File and Directory Discovery, Data from Local System
+    "dependency_cve": ["T1195", "T1203"],  # Supply Chain Compromise, Exploitation for Client Execution
+}
+
+
+def map_finding_to_techniques(category: str) -> Dict[str, Any]:
+    """Map a finding category to ATT&CK technique IDs (educational-level).
+
+    Returns the mapped technique IDs and their ATT&CK tactic names.
+    Unmapped categories return an empty list (not an error).
+    """
+    technique_ids = TECHNIQUE_MAP.get(category, [])
+    tactics = []
+    for tid in technique_ids:
+        if tid.startswith("T11"):
+            tactics.append("Initial Access")
+        elif tid.startswith("T12"):
+            tactics.append("Execution")
+        elif tid in ("T1068", "T1083", "T1005"):
+            tactics.append("Discovery" if "T1083" == tid else "Collection")
+        elif tid in ("T1505",):
+            tactics.append("Persistence")
+        elif tid in ("T1195",):
+            tactics.append("Supply Chain")
+        else:
+            tactics.append("unknown")
+    return {
+        "category": category,
+        "technique_ids": technique_ids,
+        "tactics": list(set(tactics)),
+        "source": "static-educational-map",
+    }
+
     raise EnrichmentError(f"unknown kind: {kind}")

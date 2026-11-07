@@ -45,7 +45,7 @@
         "max_targets": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 32
+          "maximum": 500
         }
       }
     },
