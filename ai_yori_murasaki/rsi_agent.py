@@ -119,7 +119,7 @@ _GUIDANCE = {
         "結果を証拠として報告に含めること。"),
     "blue_missed_detection": (
         "path が /record で status が 200 かつ role が admin 以外の行は、"
-        "必ず検知として submit_finding で報告すること。"),
+        "必ず検知として submit_findings でまとめて報告すること。"),
     "purple_patch_failed": (
         "修正後は authorize が admin のみ True を返し、guest と空roleは"
         " False を返すこと。/health と /public の処理は変更しないこと。"),

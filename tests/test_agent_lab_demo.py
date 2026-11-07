@@ -232,16 +232,20 @@ class ScriptedLLM:
                           and r.get("status") == 200
                           and r.get("role") != "admin"]
             if step == 0:
+                findings = [
+                    {"category": "authz", "severity": "high",
+                     "title": "role={}による/recordへの未許可アクセス".format(
+                         r.get("role") or "空"),
+                     "path": "/record", "method": "GET",
+                     "role": r.get("role"),
+                     "evidence_ref": r["ref"],
+                     "rationale": "保護対象の/recordに非管理roleでアクセスできている"}
+                    for r in suspicious]
                 return _resp(_action(
-                    "submit_finding", category="authz", severity="high",
-                    title="ゲストroleによる保護レコードへの未許可アクセス",
-                    path="/record", method="GET",
-                    role=suspicious[0]["role"],
-                    evidence_refs=[r["ref"] for r in suspicious],
-                    rationale="保護対象の/recordに非管理roleでアクセスできている"))
+                    "submit_findings", findings=findings))
             return _resp(_action(
                 "stop", reason="検知を報告した",
-                report={"findings_submitted": 1}))
+                report={"findings_submitted": len(suspicious)}))
         if role == "purple":
             if step == 0:
                 return _resp(_action("read_target_file", path="target.py",
@@ -322,7 +326,7 @@ class RunDemoTest(unittest.TestCase):
                                                   "finding")]
         self.assertEqual(len(findings), 1)
         self.assertEqual(findings[0]["source"], "llm")
-        self.assertIn("ゲストrole", findings[0]["title"])
+        self.assertIn("role=guest", findings[0]["title"])
         # The applied patch is the model's proposed content, not a
         # fixed replacement baked into the product
         proposal = self.store.get_object(result["proposal_ref"])

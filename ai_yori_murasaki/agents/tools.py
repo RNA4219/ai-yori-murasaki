@@ -57,7 +57,7 @@ def build_tool_schemas(grants: Optional[List[str]] = None,
                        "\"evidence_refs\": [<観測したプローブ結果のref>...]}")
     elif role == "blue":
         stop_report = ("報告オブジェクト。blueの報告はこの形式のみ: "
-                       "{\"findings_submitted\": <submit_findingで報告した件数(整数)>}")
+                       "{\"findings_submitted\": <submit_findingsで報告した件数(整数)>}")
     elif role == "purple":
         stop_report = ("報告オブジェクト。purpleの報告はこの形式のみ: "
                        "{\"proposal_ref\": <propose_patchの結果で受け取ったref>}")
@@ -74,17 +74,19 @@ def build_tool_schemas(grants: Optional[List[str]] = None,
             "description": "観測やツール結果で受け取ったevidence refの中身を読む。",
             "args": {"ref": "evidence ref (64桁hex)"},
         },
-        "submit_finding": {
-            "description": "不審なアクセス1行を検知として報告する。1回の報告は1つの行のみ。その行のroleとevidence refを正確に使うこと。別の行は別の報告として提出する。",
+        "submit_findings": {
+            "description": "不審なアクセス行をまとめて報告する。findings配列の各要素が1行の報告である。1回の呼び出しで、報告すべき全ての行をそれぞれの行のroleとevidence refで列挙すること。同じ行を2回含めないこと。",
             "args": {
-                "category": "authz|sqli|xss|path_traversal|dependency_cve",
-                "severity": "critical|high|medium|low|info",
-                "title": "標題(日本語、512文字まで)",
-                "path": "対象パス",
-                "method": "GET|POST",
-                "role": "この報告対象行のrole（その行のrole値をそのまま）",
-                "evidence_refs": ["この報告対象行のref（1報告につきその行のref）"],
-                "rationale": "根拠(日本語、2000文字まで)",
+                "findings": [
+                    {"category": "authz|sqli|xss|path_traversal|dependency_cve",
+                     "severity": "critical|high|medium|low|info",
+                     "title": "標題(日本語、512文字まで)",
+                     "path": "対象パス",
+                     "method": "GET|POST",
+                     "role": "この行のrole（行のrole値をそのまま）",
+                     "evidence_ref": "この行のevidence ref",
+                     "rationale": "根拠(日本語、2000文字まで)"}
+                ],
             },
         },
         "submit_hypothesis": {
@@ -275,80 +277,106 @@ class ToolBroker:
         return {"type": "tool_result", "tool": "probe_endpoint",
                 "result": {"ref": ref, "observation": obs}}
 
-    # submit_finding ---------------------------------------------------------
+    # submit_findings ---------------------------------------------------------
 
-    def _run_submit_finding(self, args: Any) -> Dict[str, Any]:
-        self._require_keys(args, {"category", "severity", "title", "path",
-                                  "method", "role", "evidence_refs",
-                                  "rationale"})
-        category = args["category"]
-        severity = args["severity"]
-        title = args["title"]
-        path = args["path"]
-        method = args["method"]
-        role = args["role"]
-        refs = args["evidence_refs"]
-        rationale = args["rationale"]
-        if category not in _CATEGORIES:
-            raise _ArgError("invalid_category")
-        if severity not in _SEVERITIES:
-            raise _ArgError("invalid_severity")
-        if not isinstance(title, str) or not (1 <= len(title) <= _TITLE_MAX):
-            raise _ArgError("invalid_title")
-        if not isinstance(path, str) or not (1 <= len(path) <= _PATH_MAX):
-            raise _ArgError("invalid_path")
-        if method not in _METHODS:
-            raise _ArgError("invalid_method")
-        if not isinstance(role, str) or not (1 <= len(role) <= 64):
-            raise _ArgError("invalid_role")
-        if not isinstance(rationale, str) or not (
-                1 <= len(rationale) <= _TEXT_MAX):
-            raise _ArgError("invalid_rationale")
-        if (not isinstance(refs, list) or not refs
-                or len(refs) > _EVIDENCE_REFS_MAX):
-            raise _ArgError("invalid_evidence_refs")
-        for ref in refs:
-            if not _is_hex_ref(ref) or ref not in self._issued_refs:
-                raise _ArgError("unknown_evidence_ref")
-        finding_id = "f-" + digest({
-            "campaign": self._campaign_id, "run": self._run_id,
-            "path": path, "role": role, "category": category})[:32]
-        for ref in self._runtime.list_records(self._campaign_id, "finding"):
-            try:
-                existing = self._runtime.store.get_object(ref)
-            except Exception:
+    _FINDING_KEYS = {"category", "severity", "title", "path", "method",
+                     "role", "evidence_ref", "rationale"}
+
+    def _validate_finding_entry(self, item: Any, index: int) -> None:
+        if not isinstance(item, dict):
+            raise _ArgError("findings[{}]: must be object".format(index))
+        if set(item.keys()) != self._FINDING_KEYS:
+            raise _ArgError("findings[{}]: keys invalid".format(index))
+        if item["category"] not in _CATEGORIES:
+            raise _ArgError("findings[{}]: invalid_category".format(index))
+        if item["severity"] not in _SEVERITIES:
+            raise _ArgError("findings[{}]: invalid_severity".format(index))
+        if not isinstance(item["title"], str) or not (
+                1 <= len(item["title"]) <= _TITLE_MAX):
+            raise _ArgError("findings[{}]: invalid_title".format(index))
+        if not isinstance(item["path"], str) or not (
+                1 <= len(item["path"]) <= _PATH_MAX):
+            raise _ArgError("findings[{}]: invalid_path".format(index))
+        if item["method"] not in _METHODS:
+            raise _ArgError("findings[{}]: invalid_method".format(index))
+        if not isinstance(item["role"], str) or not (
+                1 <= len(item["role"]) <= 64):
+            raise _ArgError("findings[{}]: invalid_role".format(index))
+        if not isinstance(item["rationale"], str) or not (
+                1 <= len(item["rationale"]) <= _TEXT_MAX):
+            raise _ArgError("findings[{}]: invalid_rationale".format(index))
+        ref = item["evidence_ref"]
+        if not _is_hex_ref(ref) or ref not in self._issued_refs:
+            raise _ArgError("findings[{}]: unknown_evidence_ref".format(
+                index))
+
+    def _run_submit_findings(self, args: Any) -> Dict[str, Any]:
+        self._require_keys(args, {"findings"})
+        findings = args["findings"]
+        if (not isinstance(findings, list) or not findings
+                or len(findings) > 64):
+            raise _ArgError("findings must be 1..64 items")
+        for index, item in enumerate(findings):
+            self._validate_finding_entry(item, index)
+        submitted = 0
+        duplicates = 0
+        finding_ids: List[str] = []
+        seen_keys: set = set()
+        for item in findings:
+            dedup_key = (item["path"], item["role"], item["category"])
+            if dedup_key in seen_keys:
+                duplicates += 1
                 continue
-            if isinstance(existing, dict) and existing.get(
-                    "finding_id") == finding_id:
-                return {"type": "tool_result", "tool": "submit_finding",
-                        "result": {"finding_id": finding_id,
-                                   "duplicate": True,
-                                   "message": "この内容はすでに報告済みです。"
-                                   "重複した再報告は不要です。別の行を報告する"
-                                   "場合は、その行のroleとevidence refに置き"
-                                   "換えて提出してください。"}}
-        finding = {
-            "schema_version": "1.0.0",
-            "finding_id": finding_id,
-            "campaign_id": self._campaign_id,
-            "run_id": self._run_id,
-            "source": "llm",
-            "severity": severity,
-            "title": title,
-            "location": {"path": path, "line": None, "column": None},
-            "references": list(refs),
-        }
-        contracts.validate("finding", finding)
-        self._runtime.register_record("finding", finding, run_id=self._run_id)
-        self._record("prioritized", {
-            "record_type": "agent_tool", "tool": "submit_finding",
-            "category": category, "path": path[:_PATH_MAX],
-            "role": role[:64], "rationale": rationale[:_TEXT_MAX],
-            "generated_by": "llm"}, evidence_refs=tuple(refs),
-            finding={"finding_id": finding_id, "severity": severity,
-                     "title": title[:_TITLE_MAX]})
-        return {"type": "tool_result", "tool": "submit_finding",
-                "result": {"finding_id": finding_id, "duplicate": False}}
+            seen_keys.add(dedup_key)
+            finding_id = "f-" + digest({
+                "campaign": self._campaign_id, "run": self._run_id,
+                "path": item["path"], "role": item["role"],
+                "category": item["category"]})[:32]
+            exists = False
+            for ref in self._runtime.list_records(self._campaign_id,
+                                                 "finding"):
+                try:
+                    existing = self._runtime.store.get_object(ref)
+                except Exception:
+                    continue
+                if (isinstance(existing, dict)
+                        and existing.get("finding_id") == finding_id):
+                    exists = True
+                    break
+            if exists:
+                duplicates += 1
+                continue
+            finding = {
+                "schema_version": "1.0.0",
+                "finding_id": finding_id,
+                "campaign_id": self._campaign_id,
+                "run_id": self._run_id,
+                "source": "llm",
+                "severity": item["severity"],
+                "title": item["title"],
+                "location": {"path": item["path"], "line": None,
+                             "column": None},
+                "references": [item["evidence_ref"]],
+            }
+            contracts.validate("finding", finding)
+            self._runtime.register_record("finding", finding,
+                                          run_id=self._run_id)
+            self._record("prioritized", {
+                "record_type": "agent_tool", "tool": "submit_findings",
+                "category": item["category"],
+                "path": item["path"][:_PATH_MAX],
+                "role": item["role"][:64],
+                "rationale": item["rationale"][:_TEXT_MAX],
+                "generated_by": "llm"},
+                evidence_refs=(item["evidence_ref"],),
+                finding={"finding_id": finding_id,
+                         "severity": item["severity"],
+                         "title": item["title"][:_TITLE_MAX]})
+            submitted += 1
+            finding_ids.append(finding_id)
+        return {"type": "tool_result", "tool": "submit_findings",
+                "result": {"submitted": submitted, "duplicates": duplicates,
+                           "finding_ids": finding_ids}}
 
     # submit_hypothesis --------------------------------------------------------
 

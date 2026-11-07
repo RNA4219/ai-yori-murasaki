@@ -211,23 +211,30 @@ class BlueBrokerTest(_Base):
     def _blue_broker(self, issued):
         broker = ToolBroker(runtime=self.rt, campaign_id=self.cid,
                             run_id=self.rid, role="blue",
-                            grants=["read_evidence", "submit_finding",
+                            grants=["read_evidence", "submit_findings",
                                     "stop"])
         broker.issue_refs(issued)
         return broker
 
-    def test_submit_finding_registers_llm_sourced_finding(self) -> None:
-        ref = self.store.put_object({"method": "GET", "path": "/record",
-                                     "status": 200, "role": "guest"})
-        broker = self._blue_broker([ref])
-        result = broker.execute("submit_finding", {
+    def _entry(self, ref, **kw):
+        entry = {
             "category": "authz", "severity": "high",
             "title": "ゲストroleによる保護レコードへの未許可アクセス",
             "path": "/record", "method": "GET", "role": "guest",
-            "evidence_refs": [ref],
-            "rationale": "保護対象への未許可アクセスが成功している"})
+            "evidence_ref": ref,
+            "rationale": "保護対象への未許可アクセスが成功している"}
+        entry.update(kw)
+        return entry
+
+    def test_submit_findings_registers_llm_sourced_finding(self) -> None:
+        ref = self.store.put_object({"method": "GET", "path": "/record",
+                                     "status": 200, "role": "guest"})
+        broker = self._blue_broker([ref])
+        result = broker.execute("submit_findings",
+                                 {"findings": [self._entry(ref)]})
         self.assertEqual(result["type"], "tool_result")
-        finding_id = result["result"]["finding_id"]
+        self.assertEqual(result["result"]["submitted"], 1)
+        finding_id = result["result"]["finding_ids"][0]
         records = self.rt.list_records(self.cid, "finding")
         found = [self.store.get_object(r) for r in records]
         self.assertEqual(len(found), 1)
@@ -236,32 +243,42 @@ class BlueBrokerTest(_Base):
         types = [e["event_type"] for e in self._events()]
         self.assertIn("prioritized", types)
         # duplicate submission is idempotent
-        again = broker.execute("submit_finding", {
-            "category": "authz", "severity": "high", "title": "再送",
-            "path": "/record", "method": "GET", "role": "guest",
-            "evidence_refs": [ref], "rationale": "重複"})
-        self.assertTrue(again["result"]["duplicate"])
+        again = broker.execute("submit_findings", {
+            "findings": [self._entry(ref, title="再送",
+                                    rationale="重複")]})
+        self.assertEqual(again["result"]["submitted"], 0)
+        self.assertEqual(again["result"]["duplicates"], 1)
         self.assertEqual(len(self.rt.list_records(self.cid, "finding")), 1)
 
-    def test_submit_finding_rejects_fabricated_ref(self) -> None:
-        broker = self._blue_broker([digest({"known": 1})])
-        result = broker.execute("submit_finding", {
-            "category": "authz", "severity": "high", "title": "捏造",
-            "path": "/record", "method": "GET", "role": "guest",
-            "evidence_refs": ["f" * 64],
-            "rationale": "根拠なし"})
-        self.assertEqual(result["type"], "tool_error")
-        self.assertEqual(result["error"], "unknown_evidence_ref")
+    def test_submit_findings_batch_registers_each_row(self) -> None:
+        ref1 = self.store.put_object({"path": "/record", "role": "user"})
+        ref2 = self.store.put_object({"path": "/record", "role": "guest"})
+        broker = self._blue_broker([ref1, ref2])
+        result = broker.execute("submit_findings", {"findings": [
+            self._entry(ref1, role="user", title="user行"),
+            self._entry(ref2, role="guest", title="guest行"),
+            self._entry(ref2, role="guest", title="guest行(同一行の重複)"),
+        ]})
+        self.assertEqual(result["result"]["submitted"], 2)
+        self.assertEqual(result["result"]["duplicates"], 1)
+        self.assertEqual(len(self.rt.list_records(self.cid, "finding")), 2)
 
-    def test_submit_finding_rejects_bad_category(self) -> None:
+    def test_submit_findings_rejects_fabricated_ref(self) -> None:
+        broker = self._blue_broker([digest({"known": 1})])
+        result = broker.execute("submit_findings", {
+            "findings": [self._entry("f" * 64)]})
+        self.assertEqual(result["type"], "tool_error")
+        self.assertIn("unknown_evidence_ref", result["error"])
+
+    def test_submit_findings_rejects_bad_category(self) -> None:
         ref = self.store.put_object({"row": 1})
         broker = self._blue_broker([ref])
-        result = broker.execute("submit_finding", {
-            "category": "crypto", "severity": "high", "title": "x",
-            "path": "/record", "method": "GET", "role": "guest",
-            "evidence_refs": [ref], "rationale": "x"})
+        result = broker.execute("submit_findings", {
+            "findings": [self._entry(ref, category="crypto")]})
         self.assertEqual(result["type"], "tool_error")
-        self.assertEqual(result["error"], "invalid_category")
+        self.assertIn("invalid_category", result["error"])
+        # the whole batch is rejected: no finding registered
+        self.assertEqual(self.rt.list_records(self.cid, "finding"), [])
 
 
 class PurplePatchTest(_Base):
@@ -378,8 +395,8 @@ class BundleValidationTest(_Base):
         self.assertEqual(sorted(catalog.keys()),
                          sorted(red_grants))
         full = build_tool_schemas()
-        self.assertIn("submit_finding", full)
-        self.assertNotIn("submit_finding", catalog)
+        self.assertIn("submit_findings", full)
+        self.assertNotIn("submit_findings", catalog)
 
 
 if __name__ == "__main__":

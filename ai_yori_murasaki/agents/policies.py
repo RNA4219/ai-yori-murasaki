@@ -30,7 +30,7 @@ ROLES = ("red", "blue", "purple")
 ALLOWED_TOOLS = (
     "probe_endpoint",
     "read_evidence",
-    "submit_finding",
+    "submit_findings",
     "submit_hypothesis",
     "list_target_files",
     "read_target_file",
@@ -97,8 +97,8 @@ def validate_bundle(bundle: Any) -> Dict[str, Any]:
             _fail("tools must include stop")
         if "probe_endpoint" in tools and role != "red":
             _fail("probe_endpoint is red-only")
-        if "submit_finding" in tools and role != "blue":
-            _fail("submit_finding is blue-only")
+        if "submit_findings" in tools and role != "blue":
+            _fail("submit_findings is blue-only")
         if "propose_patch" in tools and role != "purple":
             _fail("propose_patch is purple-only")
         budget = cfg["budget"]
