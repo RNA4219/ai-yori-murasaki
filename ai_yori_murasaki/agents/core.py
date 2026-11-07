@@ -52,8 +52,8 @@ class AgentLoop:
     # ------------------------------------------------------------------ #
 
     def _system_prompt(self) -> str:
-        schemas = json.dumps(build_tool_schemas(), ensure_ascii=False,
-                             sort_keys=True)
+        schemas = json.dumps(build_tool_schemas(self._role_cfg["tools"]),
+                             ensure_ascii=False, sort_keys=True)
         return "{}\n\n利用可能なツール(JSON Schema):\n{}".format(
             self._role_cfg["system_prompt"], schemas)
 

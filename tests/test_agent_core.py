@@ -365,6 +365,16 @@ class BundleValidationTest(_Base):
             from ai_yori_murasaki.agents.policies import validate_bundle
             validate_bundle(bad)
 
+    def test_tool_catalog_matches_grants(self) -> None:
+        from ai_yori_murasaki.agents.tools import build_tool_schemas
+        red_grants = ["probe_endpoint", "read_evidence", "stop"]
+        catalog = build_tool_schemas(red_grants)
+        self.assertEqual(sorted(catalog.keys()),
+                         sorted(red_grants))
+        full = build_tool_schemas()
+        self.assertIn("submit_finding", full)
+        self.assertNotIn("submit_finding", catalog)
+
 
 if __name__ == "__main__":
     unittest.main()

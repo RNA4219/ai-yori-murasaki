@@ -43,9 +43,9 @@ def _now() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def build_tool_schemas() -> Dict[str, Any]:
+def build_tool_schemas(grants: Optional[List[str]] = None) -> Dict[str, Any]:
     """Return the tool catalog serialized into agent system prompts."""
-    return {
+    catalog: Dict[str, Any] = {
         "probe_endpoint": {
             "description": "対象ホストの固定ポート8080へGETでプローブする。",
             "args": {"path": "URLパス。'/'で開始、512文字まで。例: /record?role=guest"},
@@ -92,10 +92,13 @@ def build_tool_schemas() -> Dict[str, Any]:
             "description": "調査を終了し、報告する。",
             "args": {
                 "reason": "理由(日本語、512文字まで)",
-                "report": "役割ごとの報告オブジェクト",
+                "report": "役割別の報告オブジェクト。red: {\"unauthorized_access\": <bool>, \"evidence_refs\": [<観測ref>...]} / blue: {\"findings_submitted\": <数> } / purple: {\"proposal_ref\": <propose_patchで受け取ったref>}",
             },
         },
     }
+    if grants is not None:
+        return {name: catalog[name] for name in catalog if name in grants}
+    return catalog
 
 
 def _is_hex_ref(value: Any) -> bool:

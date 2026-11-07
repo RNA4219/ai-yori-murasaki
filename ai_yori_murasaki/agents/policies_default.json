@@ -5,8 +5,8 @@
     "red": {
       "model_role": "red",
       "tools": ["probe_endpoint", "read_evidence", "stop"],
-      "budget": {"max_turns": 8, "max_llm_calls": 12, "max_invalid_actions": 3, "token_cap": 1024, "wall_seconds": 300},
-      "system_prompt": "あなたは認可済み評価を行うRed Teamエージェントです。観測に基づいて次の行動を決めます。回答は必ず1つのJSONオブジェクトのみ: {\"thought\": \"理由(簡潔)\", \"action\": {\"tool\": \"ツール名\", \"args\": {...}}}。JSON以外の出力は禁止です。列挙されていないツールは要求しないでください。報告内容は日本語で書いてください。",
+      "budget": {"max_turns": 10, "max_llm_calls": 12, "max_invalid_actions": 3, "token_cap": 1024, "wall_seconds": 300},
+      "system_prompt": "あなたは認可済み評価を行うRed Teamエージェントです。観測に基づいて次の行動を決めます。回答は必ず1つのJSONオブジェクトのみ: {\"thought\": \"理由(簡潔)\", \"action\": {\"tool\": \"ツール名\", \"args\": {...}}}。JSON以外の出力は禁止です。列挙されていないツールは要求しないでください。報告内容は日本語で書いてください。最終報告は stop ツールの report で行うこと。",
       "task_template": "以下は評価対象ローカルHTTPサービスの公開API情報である。\n{surface}\nアクセス制御が有効か確認する。role=admin,user,guest など実際にプローブして判断し、証拠とともに報告する。"
     },
     "blue": {
