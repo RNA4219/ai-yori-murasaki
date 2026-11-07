@@ -75,15 +75,15 @@ def build_tool_schemas(grants: Optional[List[str]] = None,
             "args": {"ref": "evidence ref (64桁hex)"},
         },
         "submit_finding": {
-            "description": "不審なアクセス1件を検知として報告する。",
+            "description": "不審なアクセス1行を検知として報告する。1回の報告は1つの行のみ。その行のroleとevidence refを正確に使うこと。別の行は別の報告として提出する。",
             "args": {
                 "category": "authz|sqli|xss|path_traversal|dependency_cve",
                 "severity": "critical|high|medium|low|info",
                 "title": "標題(日本語、512文字まで)",
                 "path": "対象パス",
                 "method": "GET|POST",
-                "role": "観測されたrole",
-                "evidence_refs": ["evidence ref ..."],
+                "role": "この報告対象行のrole（その行のrole値をそのまま）",
+                "evidence_refs": ["この報告対象行のref（1報告につきその行のref）"],
                 "rationale": "根拠(日本語、2000文字まで)",
             },
         },
@@ -324,8 +324,9 @@ class ToolBroker:
                         "result": {"finding_id": finding_id,
                                    "duplicate": True,
                                    "message": "この内容はすでに報告済みです。"
-                                   "重複した再報告は不要です。次の行動へ"
-                                   "進んでください。"}}
+                                   "重複した再報告は不要です。別の行を報告する"
+                                   "場合は、その行のroleとevidence refに置き"
+                                   "換えて提出してください。"}}
         finding = {
             "schema_version": "1.0.0",
             "finding_id": finding_id,
