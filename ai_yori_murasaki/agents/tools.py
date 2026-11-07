@@ -396,8 +396,8 @@ class ToolBroker:
         self._require_keys(args, {"path"}, optional={"start_line",
                                                     "end_line"})
         path = args["path"]
-        start_line = args["start_line"]
-        end_line = args["end_line"]
+        start_line = args.get("start_line")
+        end_line = args.get("end_line")
         if self._target_dir is None:
             raise _ArgError("target_unavailable")
         if not isinstance(path, str) or not path or "/" in path or "\\" in path:

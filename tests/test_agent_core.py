@@ -335,6 +335,12 @@ class PurplePatchTest(_Base):
         self.assertEqual(result["type"], "tool_result")
         self.assertEqual(result["result"]["content"], "2: b = 2")
         self.assertEqual(result["result"]["total_lines"], 3)
+        # optional line keys may be omitted entirely
+        omitted = broker.execute("read_target_file", {"path": "target.py"})
+        self.assertEqual(omitted["type"], "tool_result")
+        self.assertEqual(omitted["result"]["start_line"], 1)
+        self.assertEqual(omitted["result"]["end_line"], 3)
+        self.assertIn("3: c = 3", omitted["result"]["content"])
 
     def test_fix_attempts_exhausted(self) -> None:
         target_dir = self._target_dir(self.FLAWED)
