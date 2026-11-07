@@ -1,0 +1,6 @@
+{
+  "split": "validation",
+  "scenario_id": "path-traversal-read",
+  "surface": "GET /health -> 200; GET /public -> 200; scenario-specific endpoint -> see target.py",
+  "flaw_class": "path"
+}

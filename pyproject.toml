@@ -21,4 +21,4 @@ license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
 include = ["ai_yori_murasaki*"]
 
 [tool.setuptools.package-data]
-ai_yori_murasaki = ["schemas/v1/*.json", "web/*.html", "lab_assets/*.py", "lab_assets/Dockerfile", "default-policy.json", "adapters/contracts/*.json", "assessment_assets/*.py", "assessment_assets/Dockerfile", "agents/policies_default.json", "scenarios/*/target.py", "scenarios/*/scenario.json"]
+ai_yori_murasaki = ["schemas/v1/*.json", "web/*.html", "lab_assets/*.py", "lab_assets/Dockerfile", "default-policy.json", "adapters/contracts/*.json", "assessment_assets/*.py", "assessment_assets/Dockerfile", "agents/policies_default.json", "scenarios/*/target.py", "scenarios/*/scenario.json", "scenarios/*/files/*.txt"]

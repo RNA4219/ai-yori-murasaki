@@ -1,0 +1,6 @@
+{
+  "split": "train",
+  "scenario_id": "sqli-inject",
+  "surface": "GET /health -> 200; GET /public -> 200; scenario-specific endpoint -> see target.py",
+  "flaw_class": "sqli"
+}

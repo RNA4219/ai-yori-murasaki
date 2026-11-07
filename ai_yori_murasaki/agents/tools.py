@@ -19,7 +19,7 @@ from typing import Any, Callable, Dict, List, Optional, Set
 
 from .. import contracts
 from ..jsonio import DataError, canonical, digest
-from .policies import ALLOWED_TOOLS
+from .policies import ALLOWED_TOOLS, FINDING_CATEGORIES as _CATEGORIES
 
 _OBS_DATA_CAP = 64 * 1024
 _PATH_MAX = 512
@@ -31,7 +31,6 @@ _LINE_BYTES = 32 * 1024
 _EVIDENCE_REFS_MAX = 32
 _REPORT_CAP = 16 * 1024
 
-_CATEGORIES = ("authz", "sqli", "xss", "path_traversal", "dependency_cve")
 _SEVERITIES = ("critical", "high", "medium", "low", "info")
 _METHODS = ("GET", "POST")
 
@@ -110,6 +109,18 @@ def build_tool_schemas(grants: Optional[List[str]] = None,
                 "new_content": "修正後のファイル全文",
             },
         },
+        "draft_sigma_rule": {
+            "description": "検知ルール（Sigma形式）の草案を提出する。",
+            "args": {
+                "rule_id": "ルールID (英数字とハイフン)",
+                "title": "ルール標題(日本語、200文字まで)",
+                "detection": {"status": 200, "path": "検知対象パス(部分一致)"},
+            },
+        },
+        "search_advisory": {
+            "description": "外部の脆弱性情報を検索する（オフラインの場合は実行不可）。",
+            "args": {"query": "検索語(CVE番号や技術名)"},
+        },
         "stop": {
             "description": "調査を終了し、報告する。",
             "args": {
@@ -126,6 +137,22 @@ def build_tool_schemas(grants: Optional[List[str]] = None,
 def _is_hex_ref(value: Any) -> bool:
     return (isinstance(value, str) and len(value) == 64
             and all(c in "0123456789abcdef" for c in value))
+
+
+_REDACT_KEYS = {"token", "api_key", "apikey", "secret", "password",
+                "authorization"}
+
+
+def _redact_query(query: str) -> str:
+    parts = []
+    for seg in query.split("&"):
+        if "=" in seg:
+            k, v = seg.split("=", 1)
+            if k.lower() in _REDACT_KEYS:
+                parts.append(f"{k}=REDACTED")
+                continue
+        parts.append(seg)
+    return "&".join(parts)
 
 
 def _is_printable_path(path: str) -> bool:
@@ -528,6 +555,74 @@ class ToolBroker:
         return {"type": "tool_result", "tool": "propose_patch",
                 "result": {"proposal_ref": proposal_ref,
                            "validation": validation, "valid": passed}}
+
+    # draft_sigma_rule -----------------------------------------------------------
+
+    def _run_draft_sigma_rule(self, args: Any) -> Dict[str, Any]:
+        self._require_keys(args, {"rule_id", "title", "detection"})
+        rule_id = args["rule_id"]
+        title = args["title"]
+        detection = args["detection"]
+        if not isinstance(rule_id, str) or not (
+                1 <= len(rule_id) <= 64):
+            raise _ArgError("invalid_rule_id")
+        if not isinstance(title, str) or not (
+                1 <= len(title) <= 200):
+            raise _ArgError("invalid_title")
+        if not isinstance(detection, dict):
+            raise _ArgError("invalid_detection")
+        if set(detection.keys()) != {"status", "path"}:
+            raise _ArgError("detection must have status and path")
+        if not isinstance(detection["status"], int) or isinstance(
+                detection["status"], bool):
+            raise _ArgError("invalid_status")
+        if not isinstance(detection["path"], str) or not (
+                1 <= len(detection["path"]) <= 512):
+            raise _ArgError("invalid_path")
+        rule = {
+            "schema_version": "1.0.0",
+            "rule_id": rule_id,
+            "title": title,
+            "logsource": {"category": "webserver"},
+            "detection": {
+                "selection": {"status": detection["status"],
+                              "path": detection["path"]},
+                "condition": "selection",
+            },
+            "status": "experimental",
+        }
+        rule_ref = self._runtime.store.put_object(rule)
+        self._issued_refs.add(rule_ref)
+        self._record("sigma_drafted", {
+            "record_type": "agent_tool", "tool": "draft_sigma_rule",
+            "rule_id": rule_id, "generated_by": "llm"},
+            evidence_refs=(rule_ref,))
+        return {"type": "tool_result", "tool": "draft_sigma_rule",
+                "result": {"rule_ref": rule_ref, "rule_id": rule_id}}
+
+    # search_advisory ---------------------------------------------------------------
+
+    def _run_search_advisory(self, args: Any) -> Dict[str, Any]:
+        self._require_keys(args, {"query"})
+        query = args["query"]
+        if not isinstance(query, str) or not (1 <= len(query) <= 200):
+            raise _ArgError("invalid_query")
+        # Offline: record the query intent; live RustXNG would return results
+        record = {
+            "query": query,
+            "query_redacted": _redact_query(query),
+            "source": "offline-lab",
+            "created_at": _now(),
+        }
+        ref = self._runtime.store.put_object(record)
+        self._issued_refs.add(ref)
+        self._record("state_captured", {
+            "record_type": "advisory_search", "query": query[:128],
+            "offline": True}, evidence_refs=(ref,))
+        return {"type": "tool_result", "tool": "search_advisory",
+                "result": {"ref": ref, "offline": True,
+                           "message": "オフライン環境のため外部検索は"
+                           "実行せず、検索意図のみを記録しました。"}}
 
     # stop -------------------------------------------------------------------------
 

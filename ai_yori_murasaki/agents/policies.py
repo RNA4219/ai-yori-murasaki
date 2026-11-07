@@ -35,10 +35,15 @@ ALLOWED_TOOLS = (
     "list_target_files",
     "read_target_file",
     "propose_patch",
+    "draft_sigma_rule",
+    "search_advisory",
     "stop",
 )
 
 MODEL_ROLES = ("red", "blue", "purple", "reviewer")
+
+FINDING_CATEGORIES = ("authz", "sqli", "xss", "path_traversal",
+                      "dependency_cve")
 
 _BUDGET_INT_RANGES = {
     "max_turns": (1, 64),
@@ -54,6 +59,7 @@ _PLACEHOLDERS = {
     "blue": ("{telemetry}",),
     "purple": ("{surface}", "{findings}"),
 }
+
 
 
 def _fail(msg: str) -> None:
@@ -99,6 +105,10 @@ def validate_bundle(bundle: Any) -> Dict[str, Any]:
             _fail("probe_endpoint is red-only")
         if "submit_findings" in tools and role != "blue":
             _fail("submit_findings is blue-only")
+        if "draft_sigma_rule" in tools and role not in ("blue", "purple"):
+            _fail("draft_sigma_rule is blue/purple-only")
+        if "search_advisory" in tools and role != "purple":
+            _fail("search_advisory is purple-only")
         if "propose_patch" in tools and role != "purple":
             _fail("propose_patch is purple-only")
         budget = cfg["budget"]

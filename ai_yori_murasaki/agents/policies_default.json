@@ -25,6 +25,7 @@
         "read_evidence",
         "submit_findings",
         "submit_hypothesis",
+        "draft_sigma_rule",
         "stop"
       ],
       "budget": {
@@ -44,6 +45,8 @@
         "list_target_files",
         "read_target_file",
         "propose_patch",
+        "draft_sigma_rule",
+        "search_advisory",
         "stop"
       ],
       "budget": {

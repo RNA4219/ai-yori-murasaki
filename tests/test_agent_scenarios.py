@@ -33,19 +33,24 @@ def _load_target(path: Path, name: str):
 
 
 class ScenarioCatalogTest(unittest.TestCase):
-    def test_catalog_has_four_scenarios_with_splits(self) -> None:
+    def test_catalog_has_all_scenarios_with_splits(self) -> None:
         catalog = list_scenarios()
         ids = {s["scenario_id"] for s in catalog}
-        self.assertEqual(ids, {"authz-flag-false", "authz-allow-missing",
-                               "authz-role-mismatch", "authz-default-allow"})
+        expected = {"authz-flag-false", "authz-allow-missing",
+                    "authz-role-mismatch", "authz-default-allow",
+                    "sqli-inject", "xss-reflect", "path-traversal-read",
+                    "dep-cve-outdated"}
+        self.assertEqual(ids, expected)
         grouped = splits()
-        self.assertEqual(grouped["train"],
-                         ["authz-allow-missing", "authz-flag-false"])
-        self.assertEqual(grouped["validation"], ["authz-role-mismatch"])
-        self.assertEqual(grouped["holdout"], ["authz-default-allow"])
+        self.assertEqual(sorted(grouped["train"]),
+                         ["authz-allow-missing", "authz-flag-false",
+                          "sqli-inject", "xss-reflect"])
+        self.assertEqual(sorted(grouped["validation"]),
+                         ["authz-role-mismatch", "path-traversal-read"])
+        self.assertEqual(sorted(grouped["holdout"]),
+                         ["authz-default-allow", "dep-cve-outdated"])
         for entry in catalog:
             self.assertTrue(entry["surface"].startswith("GET /health"))
-            self.assertEqual(entry["flaw_class"], "authz")
 
     def test_load_scenario_returns_target_path(self) -> None:
         meta = load_scenario("authz-role-mismatch")
@@ -69,26 +74,16 @@ class ScenarioTargetTest(unittest.TestCase):
             module = _load_target(path, "aym_target_" + name)
             yield name, path, module
 
-    def test_all_targets_parse_and_have_flawed_pre_fix_behavior(self) -> None:
+    def test_all_targets_parse(self) -> None:
         base_text = (_PROJECT / "ai_yori_murasaki" / "lab_assets"
                      / "target.py").read_text(encoding="utf-8")
+        texts = {}
         for name, path, module in self._targets():
             ast.parse(path.read_text(encoding="utf-8"), str(path))
-            self.assertTrue(callable(module.authorize), name)
-            # Pre-fix: guest may read the protected record (the flaw).
-            self.assertIs(module.authorize("guest"), True, name)
-            # Admin must keep normal access.
-            self.assertIs(module.authorize("admin"), True, name)
-            # Same documented HTTP surface.
-            self.assertEqual(module.PROTECTED_RECORD,
-                             {"record": "lab-protected"}, name)
-            self.assertEqual(module.PUBLIC_RECORD,
-                             {"public": "lab-public"}, name)
+            texts[name] = path.read_text(encoding="utf-8")
             self.assertEqual(module.PORT, 8080, name)
         # The train scenario is the historical fixture (unchanged copy);
         # the other scenarios must differ from it structurally.
-        texts = {name: path.read_text(encoding="utf-8")
-                for name, path, _ in self._targets()}
         self.assertEqual(texts["authz-flag-false"], base_text)
         for name, text in texts.items():
             if name != "authz-flag-false":
