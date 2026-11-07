@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aym.local/schemas/v1/approval.schema.json",
+  "title": "Approval",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "approval_id", "remediation_id", "reviewer_id", "decision", "decided_at", "required_checks", "expires_at"],
+  "properties": {
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/schema_version"
+    },
+    "approval_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "remediation_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "reviewer_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "decision": {
+      "type": "string",
+      "enum": ["approved", "rejected", "pending"]
+    },
+    "decided_at": {
+      "type": ["string", "null"],
+      "format": "aym-timestamp"
+    },
+    "required_checks": {
+      "type": "array",
+      "maxItems": 32,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "passed", "ref"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "passed": {
+            "type": "boolean"
+          },
+          "ref": {
+            "$ref": "common.schema.json#/$defs/sha256"
+          }
+        }
+      }
+    },
+    "expires_at": {
+      "$ref": "common.schema.json#/$defs/timestamp"
+    },
+    "extensions": {
+      "$ref": "common.schema.json#/$defs/extensions"
+    }
+  }
+}

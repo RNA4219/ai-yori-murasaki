@@ -1,0 +1,22 @@
+{
+  "id": "codemap.config.json",
+  "role": "configuration",
+  "public_api": [],
+  "summary": "主要文書と導入元のsnapshot、診断スキルの入口・計画・実行条件を発見し、Birdseye自身のJSONを除く。",
+  "deps_out": [],
+  "deps_in": [
+    "HUB.codex.md",
+    "docs/BIRDSEYE.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "1b08339e12ca6456b91acf829036f10592b2120a59d6da3a00cf0b5379164221",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-07T18:30:00+09:00",
+    "reviewed_by": "GLM",
+    "source_sha256": "1b08339e12ca6456b91acf829036f10592b2120a59d6da3a00cf0b5379164221",
+    "summary_sha256": "a41899da671d976eeb90d7d4ed9987e3414450fb533908f12ec87feb3ff0c30e",
+    "scope": "原文全文と要約・リンクを照合した。GitHub Public公開前の最終確定（公開記録RA-20261107-01、非公開原資料のリンク注記、codemap exclude、配布物hash）を反映した。"
+  }
+}

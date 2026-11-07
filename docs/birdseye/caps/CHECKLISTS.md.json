@@ -1,0 +1,30 @@
+{
+  "id": "CHECKLISTS.md",
+  "role": "checklist",
+  "public_api": [],
+  "summary": "作業の開始・完了、RSI の事前固定・未見課題・経験 snapshot・採用理由と反映の分離を確認する。",
+  "deps_out": [
+    "AGENTS.md",
+    "GUARDRAILS.md",
+    "HUB.codex.md",
+    "RUNBOOK.md",
+    "docs/RSI.md",
+    "docs/releases/README.md"
+  ],
+  "deps_in": [
+    "EVALUATION.md",
+    "HUB.codex.md",
+    "RUNBOOK.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "42614219591b91cf61942528cddc009e2f933831ade552cfe96ebb6621de45f7",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T19:29:53.143795+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "42614219591b91cf61942528cddc009e2f933831ade552cfe96ebb6621de45f7",
+    "summary_sha256": "dfab43e08f90ac5d744caa3860f4d54681412ed6a629df9cae8ae72f59595a49",
+    "scope": "原文hashと既存の要約確認を維持し、変更文書からの逆参照だけを実リンクと照合。"
+  }
+}

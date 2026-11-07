@@ -1,0 +1,29 @@
+{
+  "id": "docs/PRODUCT-GUIDE.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "導入、分離ディレクトリ、ラボ、CLI、監視、RSI、異常時の回復、配布検証の操作ガイド。",
+  "deps_out": [
+    "README.md",
+    "docs/CONTRACTS.md",
+    "docs/acceptance/AC-20261106-06.md"
+  ],
+  "deps_in": [
+    "BLUEPRINT.md",
+    "HUB.codex.md",
+    "README.md",
+    "RUNBOOK.md",
+    "docs/RSI.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "faf39401dbe58a4b9e06ec8e017a6bf797cab5be803102c4933f0cebf39cfcb8",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T19:30:36.760596+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "faf39401dbe58a4b9e06ec8e017a6bf797cab5be803102c4933f0cebf39cfcb8",
+    "summary_sha256": "486133817c8ac8ece856ef5133dde5e6443b907c2381151ca94e40fd45e62af9",
+    "scope": "原文と要約・導線を照合。製品の実測範囲と未検証の区別を維持。"
+  }
+}

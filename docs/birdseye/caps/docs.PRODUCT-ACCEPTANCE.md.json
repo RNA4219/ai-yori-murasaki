@@ -1,0 +1,34 @@
+{
+  "id": "docs/PRODUCT-ACCEPTANCE.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "過去の個別実行と50要件の対応を保持する。R-046の不足と製品完成判定の撤回を明示し、全要件充足とは区別する。",
+  "deps_out": [
+    "docs/acceptance/AC-20261106-06.md",
+    "docs/requirements/ACCEPTANCE-PLAN.md",
+    "docs/reviews/REVIEW-INTAKE-20261107.md"
+  ],
+  "deps_in": [
+    "docs/acceptance/AC-20261106-06.md",
+    "docs/requirements/ACCEPTANCE-PLAN.md",
+    "docs/requirements/API-CONTRACTS.md",
+    "docs/requirements/DECISIONS.md",
+    "docs/requirements/FRONTEND-DESIGN.md",
+    "docs/requirements/IMPLEMENTATION-PLAN.md",
+    "docs/requirements/REQUIREMENTS.md",
+    "docs/requirements/SPEC-CORE.md",
+    "docs/requirements/SPEC-EVALUATION.md",
+    "docs/tasks/TASK.product-completion-11-06-2026.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "f92ba6aabecbbaa084a8d4b2db7fe5ef3a82bc24eec527516346ef63290c5be8",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T21:40:29.654233+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "f92ba6aabecbbaa084a8d4b2db7fe5ef3a82bc24eec527516346ef63290c5be8",
+    "summary_sha256": "080132490d46e602193a250d9eda1c5042e95d05521c38028b3aab95996e2890",
+    "scope": "原文・要約・実リンクを照合。外部レビュー整理と完成判定撤回を確認し、製品合格や追加要件の採用を代行しない。"
+  }
+}

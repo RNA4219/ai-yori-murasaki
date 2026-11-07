@@ -1,0 +1,19 @@
+{
+  "id": "docs/P0-CONTRACTS.md",
+  "role": "design",
+  "public_api": [],
+  "summary": "P0の8契約、証跡と秘匿化、OracleとBlind Blue情報抽出、真正性とOS隔離の限界、後続工程を説明する。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "345b06352845ca54a53cc16d0fd216b36b0e924869c94fad635709333f11e53b",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T07:54:28.763350+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "345b06352845ca54a53cc16d0fd216b36b0e924869c94fad635709333f11e53b",
+    "summary_sha256": "87be2992854155b7c9cbca1045e14a33d25d89fdf75b85181aa84f640bd17406",
+    "scope": "原文・要約・参照の整合。別Taskの状態・判定は変更せず、製品の動作・診断精度は評価していない。"
+  }
+}

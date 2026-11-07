@@ -1,0 +1,367 @@
+{
+  "campaign": {
+    "schema_version": "1.0.0",
+    "campaign_id": "camp-1",
+    "intent_id": "INT-AYM-PRODUCT-20261106",
+    "scope": {
+      "targets": [
+        {
+          "kind": "lab-target",
+          "identifier": "lab://target-1"
+        }
+      ],
+      "max_targets": 1
+    },
+    "authorization": {
+      "operator_id": "operator-1",
+      "granted_at": "2026-11-06T10:00:00Z",
+      "expires_at": "2026-12-06T10:00:00Z",
+      "scope_digest": "3fbf11312ad927b869b86aa2310bfe0764ac87174e23e3b05fe9646a0d9f287d"
+    },
+    "created_at": "2026-11-06T10:00:00Z",
+    "operator_id": "operator-1",
+    "status": "running"
+  },
+  "run": {
+    "schema_version": "1.0.0",
+    "campaign_id": "camp-1",
+    "run_id": "run-1",
+    "phase": "red",
+    "actor": {
+      "role": "worker-red",
+      "agent_id": "agent-1",
+      "model": "model-x"
+    },
+    "started_at": "2026-11-06T10:05:00Z",
+    "ended_at": "2026-11-06T10:30:00Z",
+    "status": "completed",
+    "completion": "completed",
+    "cause": "none",
+    "seed": 42,
+    "identity": {
+      "operator_id": "operator-1",
+      "worker_id": "worker-1"
+    },
+    "budget": {
+      "max_tool_calls": 100,
+      "max_wall_seconds": 3600,
+      "max_tokens": 100000
+    },
+    "manifest_ref": "e09eaa133814d766e075ccc40d591541a147fc75225fddac16b387f4c1bef6da"
+  },
+  "evidence_event": {
+    "schema_version": "1.0.0",
+    "campaign_id": "camp-1",
+    "run_id": "run-1",
+    "sequence": 1,
+    "actor": {
+      "role": "orchestrator",
+      "agent_id": "agent-1",
+      "model": null
+    },
+    "source": "orchestrator",
+    "event_type": "scope_validated",
+    "timestamp": "2026-11-06T10:06:00Z",
+    "target": {
+      "kind": "lab-target",
+      "identifier": "lab://target-1"
+    },
+    "finding": {
+      "finding_id": "finding-1",
+      "severity": "high",
+      "title": "Example finding"
+    },
+    "evidence_refs": [
+      "b7f246016f686ac730593c94e19e15416c12b2eef56e288fe400929ba2c172ff"
+    ],
+    "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "event_hash": "a80fa38e9ba21f0e5665d35ed571101ba46ac353ff280990038e4727d6ea8e92"
+  },
+  "oracle_predicate": {
+    "schema_version": "1.0.0",
+    "predicate_id": "pred-1",
+    "kind": "http_status",
+    "input_digest": "dd54830e0fa5c97bcae97479d67f537e26f595f48301c589b2048e66a530d586",
+    "expected": {
+      "method": "GET",
+      "path": "/record",
+      "status": 200
+    },
+    "actual": {
+      "method": "GET",
+      "path": "/record",
+      "status": 403
+    },
+    "outcome": false,
+    "verdict": "FAIL",
+    "reason_code": "exploit_not_succeeded",
+    "evaluated_at": "2026-11-06T10:07:00Z"
+  },
+  "finding": {
+    "schema_version": "1.0.0",
+    "finding_id": "finding-1",
+    "campaign_id": "camp-1",
+    "run_id": "run-1",
+    "source": "trivy",
+    "severity": "high",
+    "title": "Example finding",
+    "location": {
+      "path": "src/app.py",
+      "line": 10,
+      "column": 5
+    },
+    "references": [
+      "https://example.invalid/advisory"
+    ]
+  },
+  "remediation": {
+    "schema_version": "1.0.0",
+    "remediation_id": "rem-1",
+    "finding_id": "finding-1",
+    "campaign_id": "camp-1",
+    "run_id": "run-1",
+    "patch_bundle_ref": "b3670571c3e31b84825eaa953e2b1c192832ff3ea055bd7739f0aa28403af7e1",
+    "static_scan_result": {
+      "passed": true,
+      "ref": "f2b05cec9b5f6e46680d0db2e5a339749aa97f171a24bada9cdaed7376b3ba83"
+    },
+    "unit_result": {
+      "passed": true,
+      "ref": "160742aa7caa56761e9ba3005c99e0d42038fc26b6f1c0c7af73ab36ccc63f7b"
+    },
+    "integration_result": {
+      "passed": true,
+      "ref": "9311326f5d34dd8f653476460a5901056a5683a8ede615901c8c7a5e99f57785"
+    },
+    "oracle_replay_result": {
+      "verdict": "FAIL",
+      "reason_code": "exploit_not_succeeded",
+      "ref": "2d118f929f748a84db26fe3cf967057e87151f75f2146ff1cdedfd9adc8c95f3"
+    },
+    "benign_regression_result": {
+      "passed": true,
+      "ref": "302fcdd8c5dae502bd63c7490c34d95ca2ab72f03cc906bfc330107a7e0d2c31"
+    },
+    "status": "benign_regression_passed"
+  },
+  "approval": {
+    "schema_version": "1.0.0",
+    "approval_id": "appr-1",
+    "remediation_id": "rem-1",
+    "reviewer_id": "reviewer-1",
+    "decision": "approved",
+    "decided_at": "2026-11-06T11:00:00Z",
+    "required_checks": [
+      {
+        "name": "unit-tests",
+        "passed": true,
+        "ref": "160742aa7caa56761e9ba3005c99e0d42038fc26b6f1c0c7af73ab36ccc63f7b"
+      },
+      {
+        "name": "integration-tests",
+        "passed": true,
+        "ref": "9311326f5d34dd8f653476460a5901056a5683a8ede615901c8c7a5e99f57785"
+      },
+      {
+        "name": "trivy",
+        "passed": true,
+        "ref": "f2b05cec9b5f6e46680d0db2e5a339749aa97f171a24bada9cdaed7376b3ba83"
+      },
+      {
+        "name": "codeql",
+        "passed": true,
+        "ref": "f2b05cec9b5f6e46680d0db2e5a339749aa97f171a24bada9cdaed7376b3ba83"
+      },
+      {
+        "name": "evidence-verify",
+        "passed": true,
+        "ref": "b7f246016f686ac730593c94e19e15416c12b2eef56e288fe400929ba2c172ff"
+      },
+      {
+        "name": "oracle-regression",
+        "passed": true,
+        "ref": "2d118f929f748a84db26fe3cf967057e87151f75f2146ff1cdedfd9adc8c95f3"
+      },
+      {
+        "name": "red-replay",
+        "passed": true,
+        "ref": "2d118f929f748a84db26fe3cf967057e87151f75f2146ff1cdedfd9adc8c95f3"
+      },
+      {
+        "name": "human-review",
+        "passed": true,
+        "ref": "302fcdd8c5dae502bd63c7490c34d95ca2ab72f03cc906bfc330107a7e0d2c31"
+      }
+    ],
+    "expires_at": "2026-11-07T11:00:00Z"
+  },
+  "final_verdict": {
+    "schema_version": "1.0.0",
+    "campaign_id": "camp-1",
+    "run_id": "run-1",
+    "oracle_verdict": "FAIL",
+    "oracle_reason_code": "exploit_not_succeeded",
+    "run_completion": "completed",
+    "adapter_status": [
+      {
+        "name": "trivy",
+        "status": "ok"
+      },
+      {
+        "name": "codeql",
+        "status": "ok"
+      }
+    ],
+    "cancellation": null,
+    "remediation_success": true,
+    "benign_regression_passed": true,
+    "remediation_id": "rem-1",
+    "test_report_refs": [
+      "f3f13745392862d7705ba4a3cadf5bad7a3a85443b30b1cf403c9cd9335cd046"
+    ],
+    "decided_at": "2026-11-06T11:30:00Z"
+  },
+  "seal": {
+    "campaign_id": "camp-1",
+    "run_id": "run-1",
+    "last_sequence": 1,
+    "last_event_hash": "a80fa38e9ba21f0e5665d35ed571101ba46ac353ff280990038e4727d6ea8e92",
+    "sealed_at": "2026-11-06T10:31:00Z",
+    "operator_id": "operator-1"
+  },
+  "runs": [
+    {
+      "schema_version": "1.0.0",
+      "campaign_id": "camp-1",
+      "run_id": "run-1",
+      "phase": "red",
+      "actor": {
+        "role": "worker-red",
+        "agent_id": "agent-1",
+        "model": "model-x"
+      },
+      "started_at": "2026-11-06T10:05:00Z",
+      "ended_at": "2026-11-06T10:30:00Z",
+      "status": "completed",
+      "completion": "completed",
+      "cause": "none",
+      "seed": 42,
+      "identity": {
+        "operator_id": "operator-1",
+        "worker_id": "worker-1"
+      },
+      "budget": {
+        "max_tool_calls": 100,
+        "max_wall_seconds": 3600,
+        "max_tokens": 100000
+      },
+      "manifest_ref": "e09eaa133814d766e075ccc40d591541a147fc75225fddac16b387f4c1bef6da"
+    }
+  ],
+  "findings": [
+    {
+      "schema_version": "1.0.0",
+      "finding_id": "finding-1",
+      "campaign_id": "camp-1",
+      "run_id": "run-1",
+      "source": "trivy",
+      "severity": "high",
+      "title": "Example finding",
+      "location": {
+        "path": "src/app.py",
+        "line": 10,
+        "column": 5
+      },
+      "references": [
+        "https://example.invalid/advisory"
+      ]
+    }
+  ],
+  "remediations": [
+    {
+      "schema_version": "1.0.0",
+      "remediation_id": "rem-1",
+      "finding_id": "finding-1",
+      "campaign_id": "camp-1",
+      "run_id": "run-1",
+      "patch_bundle_ref": "b3670571c3e31b84825eaa953e2b1c192832ff3ea055bd7739f0aa28403af7e1",
+      "static_scan_result": {
+        "passed": true,
+        "ref": "f2b05cec9b5f6e46680d0db2e5a339749aa97f171a24bada9cdaed7376b3ba83"
+      },
+      "unit_result": {
+        "passed": true,
+        "ref": "160742aa7caa56761e9ba3005c99e0d42038fc26b6f1c0c7af73ab36ccc63f7b"
+      },
+      "integration_result": {
+        "passed": true,
+        "ref": "9311326f5d34dd8f653476460a5901056a5683a8ede615901c8c7a5e99f57785"
+      },
+      "oracle_replay_result": {
+        "verdict": "FAIL",
+        "reason_code": "exploit_not_succeeded",
+        "ref": "2d118f929f748a84db26fe3cf967057e87151f75f2146ff1cdedfd9adc8c95f3"
+      },
+      "benign_regression_result": {
+        "passed": true,
+        "ref": "302fcdd8c5dae502bd63c7490c34d95ca2ab72f03cc906bfc330107a7e0d2c31"
+      },
+      "status": "benign_regression_passed"
+    }
+  ],
+  "objects": {
+    "b3670571c3e31b84825eaa953e2b1c192832ff3ea055bd7739f0aa28403af7e1": {
+      "kind": "patch-bundle",
+      "content": "patch"
+    },
+    "f2b05cec9b5f6e46680d0db2e5a339749aa97f171a24bada9cdaed7376b3ba83": {
+      "kind": "static-scan",
+      "passed": true
+    },
+    "160742aa7caa56761e9ba3005c99e0d42038fc26b6f1c0c7af73ab36ccc63f7b": {
+      "kind": "unit",
+      "passed": true
+    },
+    "9311326f5d34dd8f653476460a5901056a5683a8ede615901c8c7a5e99f57785": {
+      "kind": "integration",
+      "passed": true
+    },
+    "2d118f929f748a84db26fe3cf967057e87151f75f2146ff1cdedfd9adc8c95f3": {
+      "kind": "oracle-replay",
+      "verdict": "FAIL"
+    },
+    "302fcdd8c5dae502bd63c7490c34d95ca2ab72f03cc906bfc330107a7e0d2c31": {
+      "kind": "benign-regression",
+      "passed": true
+    },
+    "b7f246016f686ac730593c94e19e15416c12b2eef56e288fe400929ba2c172ff": {
+      "kind": "evidence",
+      "content": "evidence"
+    },
+    "f3f13745392862d7705ba4a3cadf5bad7a3a85443b30b1cf403c9cd9335cd046": {
+      "campaign_id": "camp-1",
+      "run_id": "run-1",
+      "suite_id": "suite-1",
+      "passed": true,
+      "checks": [
+        {
+          "name": "unit-tests",
+          "passed": true
+        },
+        {
+          "name": "integration-tests",
+          "passed": true
+        }
+      ]
+    },
+    "e09eaa133814d766e075ccc40d591541a147fc75225fddac16b387f4c1bef6da": {
+      "kind": "manifest",
+      "run_id": "run-1"
+    },
+    "dd54830e0fa5c97bcae97479d67f537e26f595f48301c589b2048e66a530d586": {
+      "method": "GET",
+      "path": "/record",
+      "status": 403
+    }
+  }
+}

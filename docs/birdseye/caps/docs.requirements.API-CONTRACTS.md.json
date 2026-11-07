@@ -1,0 +1,26 @@
+{
+  "id": "docs/requirements/API-CONTRACTS.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "CLIのJSON/終了コード/コマンドとread-only HTTPの投影、非配信情報、追加監視APIの契約。",
+  "deps_out": [
+    "docs/PRODUCT-ACCEPTANCE.md"
+  ],
+  "deps_in": [
+    "BLUEPRINT.md",
+    "README.md",
+    "docs/CONTRACTS.md",
+    "docs/requirements/COMPACTION-02.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "58a1d3fa300a5ddd3dbfa62b3563ec2df06d9904ec6500592c54947f035b7351",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T19:30:36.760596+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "58a1d3fa300a5ddd3dbfa62b3563ec2df06d9904ec6500592c54947f035b7351",
+    "summary_sha256": "f8555c2602a3653730cd7beee2d5fbbfc0a7c89423eec3993d4654ea23b74ca8",
+    "scope": "原文と要約・導線を照合。製品の実測範囲と未検証の区別を維持。"
+  }
+}

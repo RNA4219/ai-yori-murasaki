@@ -1,0 +1,19 @@
+{
+  "id": ".github/PULL_REQUEST_TEMPLATE.md",
+  "role": "template",
+  "public_api": [],
+  "summary": "変更内容、Intent・Task・Acceptance、EVALUATION と影響・復旧を記載する PR 雛形。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "c36ebfe32b7e1efc1dff2684f7f12472a52e2a807f8f4228228492a907b28021",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T07:09:44.542881+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "c36ebfe32b7e1efc1dff2684f7f12472a52e2a807f8f4228228492a907b28021",
+    "summary_sha256": "76af3ed5df4863f1568d8e8bedcadcdd23b6b08952006ec815b030d804ba9363",
+    "scope": "原文の役割・要約・参照の整合。外部仕様や製品の効果は検証していない。"
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aym.local/schemas/v1/run.schema.json",
+  "title": "Run",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "campaign_id", "run_id", "phase", "actor", "started_at", "ended_at", "status", "completion", "cause", "seed", "identity", "budget", "manifest_ref"],
+  "properties": {
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/schema_version"
+    },
+    "campaign_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "run_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "phase": {
+      "type": "string",
+      "enum": ["red", "blue_blind", "purple", "remediation", "reevaluation", "verify"]
+    },
+    "actor": {
+      "$ref": "common.schema.json#/$defs/actor"
+    },
+    "started_at": {
+      "$ref": "common.schema.json#/$defs/timestamp"
+    },
+    "ended_at": {
+      "type": ["string", "null"],
+      "format": "aym-timestamp"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "running", "completed", "incomplete", "cancelled", "adapter_unavailable"]
+    },
+    "completion": {
+      "type": ["string", "null"],
+      "enum": ["completed", "incomplete", "cancelled", "adapter_unavailable", null]
+    },
+    "cause": {
+      "type": ["string", "null"],
+      "enum": ["none", "policy_denied", "adapter_unavailable", "crash", "timeout", "evidence_missing", "evidence_mismatch", "not_executed", null]
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9223372036854775807
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operator_id", "worker_id"],
+      "properties": {
+        "operator_id": {
+          "$ref": "common.schema.json#/$defs/id"
+        },
+        "worker_id": {
+          "type": ["string", "null"],
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        }
+      }
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_tool_calls", "max_wall_seconds", "max_tokens"],
+      "properties": {
+        "max_tool_calls": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000000
+        },
+        "max_wall_seconds": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000000
+        },
+        "max_tokens": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000000
+        }
+      }
+    },
+    "manifest_ref": {
+      "$ref": "common.schema.json#/$defs/sha256"
+    },
+    "extensions": {
+      "$ref": "common.schema.json#/$defs/extensions"
+    }
+  }
+}

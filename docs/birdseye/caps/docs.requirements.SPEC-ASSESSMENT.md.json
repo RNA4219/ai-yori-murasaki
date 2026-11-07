@@ -1,0 +1,19 @@
+{
+  "id": "docs/requirements/SPEC-ASSESSMENT.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "R-051〜R-056,R-060,R-062の評価系実装仕様。assessment report契約をassessment_contracts.pyとschemas/v1/assessment.schema.jsonで既存8契約と分離して新設し、Coverage/Claim/Classification/Remediation/Validation/CVSS/BusinessImpactの型、semantic検証規則、advisories.pyによる版適合判定、投影規則、診断producerの境界を固定する。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "1573d1d7c0262b7d4235039a253c6335a996ab662a13b03813736fafa1f054df",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T23:49:11.901048+00:00",
+    "reviewed_by": "GLM",
+    "source_sha256": "1573d1d7c0262b7d4235039a253c6335a996ab662a13b03813736fafa1f054df",
+    "summary_sha256": "e7a8a1b7a5b0a659a3328e96e26768b92826d77ade28be59637fd1fde0b6d977",
+    "scope": "GLMが原文全文と要約・依存を照合して確定。文書・要約・リンク整合の確認であり、製品実測や検収の実証ではない。"
+  }
+}

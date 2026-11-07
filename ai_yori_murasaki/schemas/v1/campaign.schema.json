@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aym.local/schemas/v1/campaign.schema.json",
+  "title": "Campaign",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "campaign_id", "intent_id", "scope", "authorization", "created_at", "operator_id", "status"],
+  "properties": {
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/schema_version"
+    },
+    "campaign_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "intent_id": {
+      "type": "string",
+      "pattern": "^INT-[A-Z0-9-]{1,64}$",
+      "maxLength": 80
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["targets", "max_targets"],
+      "properties": {
+        "targets": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kind", "identifier"],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": ["lab-target", "fixture"]
+              },
+              "identifier": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            }
+          }
+        },
+        "max_targets": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        }
+      }
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operator_id", "granted_at", "expires_at", "scope_digest"],
+      "properties": {
+        "operator_id": {
+          "$ref": "common.schema.json#/$defs/id"
+        },
+        "granted_at": {
+          "$ref": "common.schema.json#/$defs/timestamp"
+        },
+        "expires_at": {
+          "$ref": "common.schema.json#/$defs/timestamp"
+        },
+        "scope_digest": {
+          "$ref": "common.schema.json#/$defs/sha256"
+        }
+      }
+    },
+    "created_at": {
+      "$ref": "common.schema.json#/$defs/timestamp"
+    },
+    "operator_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["created", "running", "blind_completed", "purple_open", "remediation_in_progress", "review_pending", "completed", "cancelled", "incomplete"]
+    },
+    "extensions": {
+      "$ref": "common.schema.json#/$defs/extensions"
+    }
+  }
+}

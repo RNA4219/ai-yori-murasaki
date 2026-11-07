@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-06T07:06:28.557791+09:00",
+  "review_date_jst": "2026-11-06",
+  "upstream_root": "C:/Users/ryo-n/Codex_dev/Agent_tools/workflow-cookbook",
+  "upstream_base_head": "b53256c8ad9c44f32367795d8ac5be94af8c48bb",
+  "upstream_has_local_changes": true,
+  "relevant_git_status": [
+    " M HUB.codex.md",
+    " M README.md",
+    " M TASK.codex.md",
+    " M docs/adoption-guide.md",
+    " M docs/adoption-tiers.md",
+    " M templates/GUARDRAILS.md.template",
+    " M tools/ci/check_birdseye_freshness.py",
+    " M tools/codemap/update/capsule.py",
+    "?? AGENTS.md",
+    "?? docs/contracts/evaluation-identity-contract.md",
+    "?? templates/evaluation-measurement-manifest.template.json",
+    "?? tools/codemap/source_freshness.py"
+  ],
+  "files": {
+    "HUB.codex.md": "029541b39e66b0cc36724f8a791e65ac295b5ea9607b6c90d99489451302b3ac",
+    "README.md": "dc260859e87dd36a26f6080f01371d0436761e03739478bd166e1dbff6be9b70",
+    "AGENTS.md": "299fee9f3c53dc376921e0f073c086e2825217635a8e3e24332dd853116d6fa3",
+    "docs/adoption-tiers.md": "b75cf4d5c5611503039164d0625c9fffbe7c5400b27839961939e6985665d1d6",
+    "docs/adoption-guide.md": "a4b624b9f0b421c3e34d01842228c0bc1916b78814ec9086d56ddc835b19a9e3",
+    "TASK.codex.md": "c2bd028bfb8b4f88f5e8d28a7ea89f270d75426e2fe75b2c56b72a03289685a3",
+    "docs/acceptance/ACCEPTANCE_TEMPLATE.md": "d5380adec5645ae9bf0eb6d5c71ef7d891ca0529a7a2323b9a0e44affddfaee4",
+    "docs/contracts/evaluation-identity-contract.md": "e9be9ecbdfcae0cc0641cfd81ebe90ee4e0aa3ac162715b7ee5f3e3b81852ea1",
+    "templates/evaluation-measurement-manifest.template.json": "33a7ba85bc927e59d73917fc3108305e82183540b229a3f8be0abc9ec34948ee",
+    "tools/ci/check_adoption_tier.py": "e557ea339b8ae00423cdaeb3df2126548ded15bc455d38fb8708ee3714b19154",
+    "tools/ci/check_acceptance.py": "8aff01a414d530f241e283e73cddb182a42f4ca23410a71c699d26ac728e05ba",
+    "tools/ci/check_birdseye_freshness.py": "a1ba17f1b560d0037bebeb850d148f482101d5065a10075c55badd90ca3f8b27",
+    "tools/codemap/source_freshness.py": "0419b77f7567afc0d8b78b884705d0722866fe16a0131107858e3f0eadce9c3b",
+    "templates/BLUEPRINT.md.template": "d51ce97319da34469ae8a005be295bb5a4ffbf61d86df60695ebc61ffdfeb041",
+    "templates/EVALUATION.md.template": "aebfb15992e54b5d725d5c07f88a87da559ca8d2a6504c4435b2ea34bdd18ed1",
+    "templates/GUARDRAILS.md.template": "6663e0d135bd0d1e3afb63dbdf8b3b4b086f9ff6b3f02432fc2c1f7ded05a099",
+    "templates/HUB.codex.md.template": "eec47e2eb29f25b0f69573205368a09019e24822faa3d621564f42e60ee19f89",
+    "templates/RUNBOOK.md.template": "871d6e4ada5de35e51b3f77d73da54b31dfc7ae536fd4e68b30611387c82ce3f",
+    "tools/codemap/update/__init__.py": "0f08fc93b2b39577eb830df7008f918d3180aaf255cb795aca8810b3aab0ec3a",
+    "tools/codemap/update/__main__.py": "b39ca33ccb81b2ee42b84d08ce9c7c9bc25aaf13cd802c27f0f8997f60e4a866",
+    "tools/codemap/update/capsule.py": "be6d41dfe7ccc80378aad333d7ddd0610a11bb0012a8cb4ae422047aca1e545a",
+    "tools/codemap/update/cli.py": "e825047a80ecdd2f7135572db46c3061cee16c9b17d5727d30460fcfcc8204e4",
+    "tools/codemap/update/constants.py": "6baecfd0f5e1801dd9f6d3e7f604483b4b6b8c4906396316712cbe37fd930860",
+    "tools/codemap/update/diff.py": "a0884b72d5f6282c969bc359583d039a38b70368cdfeecff360dc632c51f7618",
+    "tools/codemap/update/graph.py": "920d66fd1f68bde8965de70f3c800da8298f0589932f8d08919ef1585be8c2f2",
+    "tools/codemap/update/serial.py": "c766aa5320caacc14ed0489acadeee17135ec98379ef3fc8b8bb21adbe6eb5fa",
+    "tools/codemap/update/session.py": "029bc2bded00485556effc6ebf6e6d7481176b19371e38584758b864b5951f1c",
+    "tools/codemap/update/types.py": "5e4c690a8a0e7cd07c58995af2a5814559da47c1940d9968a0b48992e2a942ae"
+  },
+  "skills": {
+    "imozuru": {
+      "path": "C:\\Users\\ryo-n\\.codex\\skills\\imozuru\\SKILL.md",
+      "sha256": "f71b79594e7552306d4e3121d1d8804d2359f42d1f2f279824aca5f4c8858ffb"
+    },
+    "yomiyasu": {
+      "path": "C:\\Users\\ryo-n\\.codex\\skills\\yomiyasu\\SKILL.md",
+      "sha256": "9b4b64f067894698be35287225b388b72368c40784fc091bd340202a2e35f471"
+    }
+  },
+  "preserved_source": {
+    "path": "docs/ADR/deep-research-report (16).md",
+    "sha256": "39debf151e7f333d1371c323a0f07eefca181c918a6a5d0bd7538caa95690625",
+    "initial_path": "deep-research-report (16).md",
+    "location_note": "初期確認時はルート、索引作成時には docs/ADR 配置を観測。今回の編集コマンドは原資料の移動・本文変更を行っていない。"
+  },
+  "scope": "文書様式の導入時記録。外部仕様・製品動作・調査効果は未検証。"
+}

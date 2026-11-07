@@ -1,0 +1,28 @@
+{
+  "id": "docs/acceptance/README.md",
+  "role": "guide",
+  "public_api": [],
+  "summary": "Acceptance の必須フィールド・見出し・状態と、技術検収、公開承認、リスク受容の区別を定める。",
+  "deps_out": [
+    "CHANGELOG.md",
+    "RUNBOOK.md",
+    "docs/acceptance/ACCEPTANCE_TEMPLATE.md",
+    "docs/acceptance/INDEX.md"
+  ],
+  "deps_in": [
+    "GUARDRAILS.md",
+    "HUB.codex.md",
+    "docs/tasks/README.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "73bb88fd8c670507bdc7d08eb9f38656c56ec20bd1d403148830e92bcaadc100",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T07:09:44.542881+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "73bb88fd8c670507bdc7d08eb9f38656c56ec20bd1d403148830e92bcaadc100",
+    "summary_sha256": "abbd1684ce35e506631b44ac5a8bebf2d8675cb9a46e1ff028c31112ba89a9b6",
+    "scope": "原文の役割・要約・参照の整合。外部仕様や製品の効果は検証していない。"
+  }
+}

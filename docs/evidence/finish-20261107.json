@@ -1,0 +1,68 @@
+{
+  "summary_date": "2026-11-07",
+  "task_id": "20261107-03",
+  "acceptance_id": "AC-20261107-03",
+  "requirements": "R-046〜R-063（R-061 withdrawn、実利用者試験は必須条件から撤回）",
+  "implementation": {
+    "benchmark_5_types": "実装済み。15run正式採点で全split pass、identity凍結",
+    "classification_remediation_validation": "実装済み。CLI/API/画面識別子一致 all_equal=true",
+    "cvss4_business_impact": "実装済み。実測合格（ui-essential-verdict.md）",
+    "kev_epss": "実装済み。TTL・H-1改竄対策含む",
+    "html_display": "実装済み。実campaignでB-01〜B-04全pass"
+  },
+  "remaining_items_closed": {
+    "ui_real_lab": {
+      "status": "pass",
+      "campaign": "cff103f23a71b4347",
+      "cases": "B-01〜B-04 all pass",
+      "evidence": ".ga/goal-20261106/finish-b-evidence.md"
+    },
+    "holdout_provenance": {
+      "status": "resolved",
+      "old_holdout_20261114": "来歴疑義により診断扱いで保持、再評価に使用しない",
+      "supplement": "未使用seed 20261115 holdout 3run、全pass TP9/TN6/FN0/FP0/invalid0",
+      "evidence": ".ga/goal-20261106/formal-acceptance-holdout-20261115-*"
+    },
+    "distribution_match": {
+      "status": "pass",
+      "note": "旧dist-outはREADME更新後に陳腐化していたため、dist-finished-20261107へ再ビルドして正式配布物とした。旧dist-outの旧比較・旧実行記録は改変せず保持。",
+      "rebuild": "実施（py -m build --sdist/--wheel、dist-finished-20261107）",
+      "source_code_assets": {
+        "worktree_package_files": 112,
+        "mismatches": 0,
+        "missing_in_archives": 0,
+        "evidence": ".ga/goal-20261106/finish-c-source-compare-finished-result.json"
+      },
+      "docs_metadata": {
+        "sdist_doc_mismatches": 0,
+        "wheel_metadata_mismatches": 0,
+        "readme_in_sdist": true,
+        "evidence": ".ga/goal-20261106/finish-c-package-compare-finished-result.json"
+      },
+      "identity_artifacts": 13,
+      "identity_mismatches": 0,
+      "docs_in_sdist": 0,
+      "evidence": ".ga/goal-20261106/finish-c-source-compare-finished-result.json"
+    },
+    "final_sync": {
+      "status": "done",
+      "note": "本バッチで文書確定・Birdseye再同期・ゲート実施"
+    }
+  },
+  "rsi": {
+    "status": "promotion-ready",
+    "applied": false,
+    "note": "実行器への反映は別操作。LLMの汎用性能向上の実証ではない",
+    "evidence": "docs/evidence/rsi-evaluation-20261107-02/"
+  },
+  "distribution": {
+    "sdist": ".ga/goal-20261106/dist-finished-20261107/ai_yori_murasaki-0.1.0.tar.gz",
+    "sdist_sha256": "fcf6bd1c2d4446654100cdd47007e5f8e28dde2de43c37016825cc527cac5482",
+    "wheel": ".ga/goal-20261106/dist-finished-20261107/ai_yori_murasaki-0.1.0-py3-none-any.whl",
+    "wheel_sha256": "e9b5ef77ef1c6b3e61f844ea04b8f485778b81f26424b6ac7d4ef9423c6bf6c2",
+    "secret_scan": "186 files, 0 findings",
+    "secret_scan_evidence": ".ga/goal-20261106/finish-c-secret-scan-finished.json"
+  },
+  "monitor_url": "http://127.0.0.1:8769/#/campaign/cff103f23a71b4347",
+  "out_of_scope": ["公開・本番操作", "人間の公開承認・リスク受容", "RSI候補の実行器反映", "第三者対象の診断実証", "LLM汎用性能向上の主張"]
+}

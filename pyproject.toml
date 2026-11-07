@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-yori-murasaki"
+version = "0.1.0"
+description = "Offline Blue/Purple contracts, evidence and deterministic Oracle"
+license = {file = "LICENSE"}
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["jsonschema==4.26.0", "referencing==0.37.0", "cvss==3.6", "packaging==26.0"]
+
+[project.scripts]
+aym = "ai_yori_murasaki.cli:main"
+
+[tool.setuptools]
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
+
+[tool.setuptools.packages.find]
+include = ["ai_yori_murasaki*"]
+
+[tool.setuptools.package-data]
+ai_yori_murasaki = ["schemas/v1/*.json", "web/*.html", "lab_assets/*.py", "lab_assets/Dockerfile", "default-policy.json", "adapters/contracts/*.json", "assessment_assets/*.py", "assessment_assets/Dockerfile"]

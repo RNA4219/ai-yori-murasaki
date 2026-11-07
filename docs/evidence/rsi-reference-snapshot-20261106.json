@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-06T07:19:11.156887+09:00",
+  "task_id": "20261106-02",
+  "intent_id": "INT-AYM-RSI-20261106",
+  "source": "User-provided non-verbatim nine-point RSI summary and three local reference documents",
+  "source_root_id": "RSI-REFERENCE-01",
+  "source_location_redacted": true,
+  "upstream_base_head": "1eda71cee15ebc085a6d3fd5cdc1960c2eac894e",
+  "relevant_git_status": [],
+  "files": {
+    "RSI-RUNBOOK.md": {
+      "source_id": "RSI-REF-01",
+      "relative_path": "RSI-RUNBOOK.md",
+      "sha256": "cf626341f01b454d1883530f04a43b175712b341122c3d6d4421806b90945a7d"
+    },
+    "docs/RSI-001-RECOVERY-AND-EVALUATION.md": {
+      "source_id": "RSI-REF-02",
+      "relative_path": "docs/RSI-001-RECOVERY-AND-EVALUATION.md",
+      "sha256": "ae4d7458fb0da509f6457ce692221458d21486de135013178e0d484bbfab828f"
+    },
+    "docs/EXPERIENCE-MEMORY.md": {
+      "source_id": "RSI-REF-03",
+      "relative_path": "docs/EXPERIENCE-MEMORY.md",
+      "sha256": "71c007e7032ff617d728d193e29f40181b04ef994316f3ac54e75da25e914882"
+    }
+  },
+  "adopted_scope": "Policy, runbook, evaluation and record contracts; no RSI runtime, memory or performance claim"
+}

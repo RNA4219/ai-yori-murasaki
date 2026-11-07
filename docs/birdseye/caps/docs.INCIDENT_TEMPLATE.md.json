@@ -1,0 +1,26 @@
+{
+  "id": "docs/INCIDENT_TEMPLATE.md",
+  "role": "template",
+  "public_api": [],
+  "summary": "検知・影響、原因と復旧、再発防止、時系列と後続 Task を残すインシデント記録の雛形。",
+  "deps_out": [
+    "EVALUATION.md",
+    "RUNBOOK.md"
+  ],
+  "deps_in": [
+    "HUB.codex.md",
+    "RUNBOOK.md",
+    "docs/workflow-adoption.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "d77eae2be798a2c14963d3cbd3fc595477454d122dd7f46488624cbf8cc998bc",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T07:09:44.542881+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "d77eae2be798a2c14963d3cbd3fc595477454d122dd7f46488624cbf8cc998bc",
+    "summary_sha256": "817dcb821ad4ea86773b2d219c6ecfa286a8f89ecad19f94e64ef651d256ee95",
+    "scope": "原文の役割・要約・参照の整合。外部仕様や製品の効果は検証していない。"
+  }
+}

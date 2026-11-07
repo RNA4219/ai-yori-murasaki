@@ -1,0 +1,71 @@
+{
+  "verdict": "revise",
+  "issues": [
+    {
+      "unit": "A1",
+      "issue": "義務/例外の変化。原文KPI表は自動パッチ直接本番適用を P0「0件」、P1/P2「原則 0件」と例外余地を含む2段構成だが、整理文は「自動パッチ直接本番適用0件」と平坦化し、P1/P2の「原則」による例外ニュアンスを消失させている。B4の「Production 原則禁止・human/deployment gate 必須」との整合も、A1側で無例外0件と読める表現になっている。",
+      "source_basis": "原文KPI表「自動パッチ直接本番適用 | 0 件 | 原則 0 件 | audit」",
+      "required_fix": "A1の指示本文を「P0は0件、P1/P2は原則0件」の2段表記に修正し、audit検証の対象も段階別に対応させる。"
+    },
+    {
+      "unit": "B1",
+      "issue": "義務の推奨への格下げ。原文は「DSH sandbox は Defense-in-Depth の一層として扱い、外側に VM/container/network namespace を配置する」と外側隔離の配置を指示しているが、溶解欄で「VM/container/namespaceは候補の列挙であり、保証が等価との説明ではない」と配置義務を候補列挙に読み替えている。原文は等価保証の否定ではなく配置を求めている。",
+      "source_basis": "原文「したがって DSH sandbox は Defense-in-Depth の一層として扱い、外側に VM/container/network namespace を配置する」",
+      "required_fix": "溶解欄の「候補の列挙」表現を撤回し、外側隔離の配置を維持必須条件として保持した上で、保証レベルの環境差は未確定事項としてのみ記載する。"
+    },
+    {
+      "unit": "C1",
+      "issue": "実質的な抜け。原文はRustXNGについて「provider の利用規約を個別に確認する必要があり、標準 profile と clean profile を Blue/Purple 基盤では優先する」と特定profileの優先を指示しているが、整理文は「provider profile固定」と別概念に置き換え、標準/clean profile優先の指示が消失している。「固定」と「標準/clean優先」は異なる要件である。",
+      "source_basis": "原文「標準 profile と clean profile を Blue/Purple 基盤では優先する」",
+      "required_fix": "C1の指示本文に標準profile/clean profile優先とprovider利用規約の個別確認を復帰し、「profile固定」と併記または置換して区別する。"
+    },
+    {
+      "unit": "全体（B2/C2担当範囲）",
+      "issue": "実質的な抜け。原文コンポーネント表のLLM群要件（temperature/seed等の記録、timeout、token cap、model version pin、shell/write/networkの直接付与禁止に加え prompt hash・model id・tool call・response metadata の証跡要件）が、どの単位の指示本文にも取り出されていない。B3のaudit項目「effective model」のみが残存し、推論再現性に必要な記録要件が脱落している。",
+      "source_basis": "原文コンポーネント表 LLM群行「temperature/seed 等を記録、timeout、token cap、model version pin」「prompt hash、model id、tool call、response metadata」",
+      "required_fix": "LLM群の記録・制御要件をB2またはC2の指示本文に追加し、B3のaudit項目との対応を明示する。"
+    },
+    {
+      "unit": "B4",
+      "issue": "義務の範囲変化。原文はmainのrequired checkについて「最低限以下を required とする」と下限指定だが、整理文は「main では … を required とする」と列挙を網羅的指定のように記載しており、「最低限」が消失している。追加checkを禁止する読み取り方の余地が生じている。",
+      "source_basis": "原文「main では最低限以下を required とする」",
+      "required_fix": "「最低限」を復帰し、列挙が下限であり追加required checkを排除しないことを明示する。"
+    },
+    {
+      "unit": "次の敵対的検証へ渡す問い（Q3）",
+      "issue": "根拠のない追加。Q3の「経験メモリは追加RSI方針との接続論点」という注記は、原文にも今回のユーザー要求（Sankai整理、Ollama Imozuru調査、要件・仕様、3回要約、実装、MIT公開、ARTEX型HTMLモジター、GLM5.3レビュー、DeepSeek実装登録）にも存在しない概念（経験メモリ、RSI方針）を無説明で導入している。",
+      "source_basis": "該当なし。原文のBlind評価分離要件は「LLM context、session store、tool-output cache」に限定される。",
+      "required_fix": "RSI/経験メモリの注記を削除するか、その出典と本整理における位置づけを明示した上で原文の分離対象（context/session store/tool-output cache）と区別して記載する。"
+    }
+  ],
+  "checked_scope": "Sankai整理の全12単位（A1–C4）の指示本文・適用条件・溶解・未確定事項と、原文要件定義書のエグゼクティブサマリ、前提/KPI、コンポーネント表、ワークフロー、セキュリティ要件、テスト、ロードマップ、CI/CD、次のアクションとの照合。ユーザー要求由来の追加（Sankai整理→Ollama Imozuru調査→要件仕様→3回要約→実装、MIT公開、ARTEX型HTMLモニター、GLM5.3レビュー、DeepSeek実装登録）は誤り対象から除外した。",
+  "model": "glm-5.3:cloud",
+  "thinking": "low",
+  "elapsed_seconds": 24.01,
+  "supervisor_disposition": [
+    {
+      "issue": 1,
+      "resolution": "accepted_and_corrected"
+    },
+    {
+      "issue": 2,
+      "resolution": "accepted_and_corrected"
+    },
+    {
+      "issue": 3,
+      "resolution": "accepted_and_corrected"
+    },
+    {
+      "issue": 4,
+      "resolution": "accepted_and_corrected"
+    },
+    {
+      "issue": 5,
+      "resolution": "accepted_and_corrected"
+    },
+    {
+      "issue": 6,
+      "resolution": "prior_user_RSI_requirement_exists_reference_added"
+    }
+  ]
+}

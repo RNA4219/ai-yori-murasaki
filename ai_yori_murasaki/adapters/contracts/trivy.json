@@ -1,0 +1,1 @@
+{"input_ref":"d45ee46ae8ef98b096f49db63c8d9275bae6fbea292b35a4b5fe2f38b60db54c","name":"trivy","output_ref":"59070393bf1b709437fac2d5738757ba7dc578911c6946df3dd068eb2b40a71e","response_cap":52428800,"retry_cap":1,"timeout_ms":120000,"version":"1.0.0"}

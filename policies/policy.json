@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0.0",
+  "scope": "lab",
+  "authorized_targets": [
+    "lab-target",
+    "fixture"
+  ],
+  "role_permissions": {
+    "operator": ["campaign:create", "run:seal", "checkpoint:seal", "rsi:freeze", "rsi:apply"],
+    "orchestrator": ["run:start", "event:append", "broker:request", "adapter:run"],
+    "oracle": ["oracle:evaluate"],
+    "worker-red": ["observation:submit"],
+    "worker-blue": ["observation:submit"],
+    "monitor": ["monitor:serve"],
+    "auditor": ["verify:chain", "verify:checkpoint"]
+  },
+  "credential_namespaces": [
+    "broker"
+  ],
+  "auto_apply": {
+    "dev": "deny",
+    "lab": "allow_verified_patch_in_ephemeral_workspace",
+    "production": "deny",
+    "staging": "approval_required"
+  },
+  "broker_allowlist": [
+    {
+      "host": "localhost",
+      "ip": "127.0.0.1",
+      "port": 11434,
+      "path_prefix": "/api",
+      "verbs": ["GET", "POST"]
+    }
+  ]
+}

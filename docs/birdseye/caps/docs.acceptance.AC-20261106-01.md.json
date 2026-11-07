@@ -1,0 +1,35 @@
+{
+  "id": "docs/acceptance/AC-20261106-01.md",
+  "role": "acceptance",
+  "public_api": [],
+  "summary": "AC-20261106-01。文書導入の受入条件、検証コマンド・実結果、適用外と公開なしを記録する。",
+  "deps_out": [
+    "CHANGELOG.md",
+    "RUNBOOK.md",
+    "docs/tasks/TASK.workflow-adoption-11-06-2026.md",
+    "docs/upstream-snapshot.json"
+  ],
+  "deps_in": [
+    "CHANGELOG.md",
+    "EVALUATION.md",
+    "docs/ADR/0001-workflow-cookbook-tier3.md",
+    "docs/UPSTREAM_WEEKLY_LOG.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.workflow-adoption-11-06-2026.md",
+    "docs/workflow-adoption.md"
+  ],
+  "risks": [],
+  "tests": [
+    "RUNBOOK の Tier / Acceptance / Birdseye 検査と、ID・リンク・原資料 hash の照合。"
+  ],
+  "source_sha256": "87615389b859dba948876e95182610e4c7218121c834c1c7afcd042eb7a20788",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-07T18:30:00+09:00",
+    "reviewed_by": "GLM",
+    "source_sha256": "87615389b859dba948876e95182610e4c7218121c834c1c7afcd042eb7a20788",
+    "summary_sha256": "2a61fafae333fc6e5667c7cf327621d6e8933b54cfeb0e40cb45672846ad3deb",
+    "scope": "原文全文と要約・リンクを照合した。GitHub Public公開前の最終確定（公開記録RA-20261107-01、非公開原資料のリンク注記、codemap exclude、配布物hash）を反映した。"
+  }
+}

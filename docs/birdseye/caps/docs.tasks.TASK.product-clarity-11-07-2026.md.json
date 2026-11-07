@@ -1,0 +1,19 @@
+{
+  "id": "docs/tasks/TASK.product-clarity-11-07-2026.md",
+  "role": "task",
+  "public_api": [],
+  "summary": "既存要求の不足是正と承認済み追加2項目（CVSS・業務影響、最低5類型評価）を要件・仕様・実装・受入条件へ接続するTask（in_progress）。実利用者試験はAuthorizationのユーザー訂正で必須要件から外した。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "385f51de541c1c1168437f684c81e8a2a29e161f3a905b7c53f6c4c8c6b0aee2",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-07T11:20:00+09:00",
+    "reviewed_by": "GLM",
+    "source_sha256": "385f51de541c1c1168437f684c81e8a2a29e161f3a905b7c53f6c4c8c6b0aee2",
+    "summary_sha256": "a322cc13a22da0c9f84d778728a458ce375f45bf16101d159af9e079686534fc",
+    "scope": "原文全文と要約・リンクを照合した。実測証跡に基づきAC-20261107-03技術検収合格と残件4項目完了を反映した。"
+  }
+}

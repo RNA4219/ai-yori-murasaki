@@ -1,0 +1,25 @@
+{
+  "id": "docs/upstream-snapshot.json",
+  "role": "provenance",
+  "public_api": [],
+  "summary": "導入時の上流28ファイルと2スキルの SHA-256、base HEAD とローカル差分、原資料 hash と配置を保持する。",
+  "deps_out": [],
+  "deps_in": [
+    "EVALUATION.md",
+    "docs/UPSTREAM.md",
+    "docs/UPSTREAM_WEEKLY_LOG.md",
+    "docs/acceptance/AC-20261106-01.md",
+    "docs/workflow-adoption.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "01cc1cacfd50ac897b5e9be71904128f435360478204955f0018f8a9814b5db7",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T19:29:53.143795+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "01cc1cacfd50ac897b5e9be71904128f435360478204955f0018f8a9814b5db7",
+    "summary_sha256": "e09e77317ab17dc820d1cd599177a7d04c7afaf8752dfecf703a0df8fb0c6def",
+    "scope": "原文hashと既存の要約確認を維持し、変更文書からの逆参照だけを実リンクと照合。"
+  }
+}

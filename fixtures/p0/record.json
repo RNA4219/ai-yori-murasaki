@@ -1,0 +1,25 @@
+{
+  "schema_version": "blue-purple/v1",
+  "campaign_id": "campaign-fixture",
+  "run_id": "blue-fixture",
+  "event_id": "event-fixture",
+  "timestamp": "2026-11-06T00:00:00+09:00",
+  "actor": "blue",
+  "visibility": "blue",
+  "effective_model": "fixture-only",
+  "tool_name": "fixture-observation",
+  "permission_decision": "allow",
+  "target_id": "json-fixture",
+  "status": "observed",
+  "payload": {
+    "http": {
+      "status": 200
+    },
+    "normal_flow": {
+      "ok": true
+    }
+  },
+  "evidence_refs": [
+    "5f3ccb064407e89e5cea07477a1f3a2c5f2434af5ed56b8ba8ae76b20510b1ca"
+  ]
+}

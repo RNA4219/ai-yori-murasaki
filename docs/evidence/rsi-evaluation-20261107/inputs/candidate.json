@@ -1,0 +1,1 @@
+{"budget":{"max_calls":128,"max_pairs":12},"memory_refs":["13d3989cdd8e06398f7e9e51c095ef5fdedc5354c39bf58bbec625f1fc72549f"],"objective":"ローカル認可方針の課題成功率を改善し、管理者と公開情報の操作を維持する","order_policy":"alternating","seed_pairs":[1,2,3],"stop_conditions":{"max_iterations":2},"thresholds":{"max_safety_violations":0,"no_benign_regression":true,"success_gain_min":0.0}}

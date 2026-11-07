@@ -1,0 +1,60 @@
+{
+  "round": 3,
+  "stage": "acceptance-and-boundaries",
+  "reviewer": "glm-5.3:cloud",
+  "verdict": "pass",
+  "initial": {
+    "verdict": "revise",
+    "issues": [
+      {
+        "id": "AYM3-01",
+        "severity": "major",
+        "path": "SPEC-EVALUATION A-3 / ACCEPTANCE-PLAN B-2 / IMPLEMENTATION-PLAN B-Eval-03,04",
+        "problem": "評価identity契約は「効果や昇格を判断する比較評価を開始する場合、適切なprofileでpreflight/postrunを実施する」ことを要求する。RSI比較（A-3）・KPI測定campaign（A-4/B-Eval-04）・昇格判定（rsi ready/apply）は該当する比較評価であるが、SPEC-EVALUATION・ACCEPTANCE-PLAN・IMPLEMENTATION-PLANのいずれにもevaluation identity manifest（schema_version 1.1, workflow profile）のpreflight/postrun要件、Legacy/Candidateのsource path/revision/source hash/input hash、runner・データ集合・実行設定のidentity固定が含まれない。freezeファイル（A-3）は目的・閾値・停止条件・採用基準は持つがidentity項目を持たず、RunContext（SPEC-CORE §10.1）にもmanifestリンク・hash項目が無い。このまま実装するとRSI比較と昇格判定がidentity契約の適用境界外で実行され、検収時（postrun）に遡ってidentityを固定できなくなる。実装前の本レビューでしか修正できない構造欠落であり、実装後の試験未実行とは別の欠陥である。",
+        "minimum_fix": "実装開始前に次を最小限として追加する。(1) A-3 RSI比較・昇格判定（rsi ready/apply の対象比較）と A-4 KPI測定campaignをworkflow profileの比較評価と定義し、preflight（status=frozen・identity確認）成功前に比較runを開始しないこと、postrun（status=completed・artifact_path/sha256/records/metrics記録）を証跡整備条件とすることをSPEC-EVALUATIONに明記。(2) freezeファイルまたは別manifestにLegacy/Candidateのsource hash・input hash・runner hash・データ集合hash・実行設定を記録する欄を追加し、freeze_hashと共にtrusted rootへ保存・照合する。(3) ACCEPTANCE-PLAN B-2/B-5にpreflight/postrun実行記録を検収項目として追加する。新機能ではなく既存freeze・証跡保存の拡張であり、KPI数値の合否実証は引き続きv1検収外とする。"
+      }
+    ],
+    "acceptance_priorities": [
+      "R-012 ローカル実動閉ループ（Red観測成功→Blind検知→実diff修正→攻撃不成立＋正常回帰成功→レビュー待ち）: lab-targetが実HTTPプロセス・実diff・独立Oracle実response判定でありfixtureのみにならない構成は合格。T14/T15のreal区分とFinalVerdict導出の突合を最優先で検収すること。",
+      "Oracle独立性: Oracle経路のLLM呼出禁止（R-014）、FinalVerdictのagent自己申告不可・Oracle導出（SPEC-CORE §4.10）、T16 offline replay一致。remediation_success導出の全条件を検収時に実体から再計算で確認すること。",
+      "Blue漏洩防止: T04のbroker capture・cache key分離・正解store非mount・monitor projection canary検査（IMPLEMENTATION-PLAN §7）。bodyカナリアのOracle限定管理（A-2）を検収時に確認すること。",
+      "production deny: T08常時deny・Dev既定deny・lab一時workspace限定適用（R-035）とpolicy deny 3点独立定義（exit 4 / event / run incomplete）。",
+      "RSI事前条件と分離: freezeのtrusted root保存・照合、観測後変更拒否、holdout access記録と汚染時新規集合、ready/apply別操作・atomic swap・path_guard。AYM3-01修正後にpreflight/postrun記録を含めて検収すること。",
+      "全50Rの実装所有と実行可能な検収: B-6 coverage表でR-001〜R-050全件に主担当と検収が付いていることを確認済み。各Rの受入条件が実行可能な検収手順（B-1〜B-5）に落ちていることを実装中に維持すること。",
+      "MIT配布: LICENSE MIT（R-045）と最終統合時のwheel/package data配布（IMPLEMENTATION-PLAN §8）。公開操作は含めない。",
+      "測定identity: AYM3-01修正後に、RSI/KPI/adoption比較のpreflight/postrun実行とmanifestの不可分保存を検収すること。"
+    ],
+    "notes": [
+      "IMPLEMENTATION-PLAN §3の実装順はC01→…→C05→…→C08と列挙するが、§8はC05がC08に依存し順序はC04→C08→C05と明記する。§8の依存を正とし§3の列挙は表示順であることを実装時に明確化すれば軽微。",
+      "R-028（kaggle-campaign-ops未指定の明示）はSPEC-CORE/SPEC-EVALUATIONに明示的に現れない。要件側で未指定扱いは確定しており、docs側に1行の明記があれば足りる。軽微。",
+      "R-005/R-006の設定入力化（規模・SLA・台数・本番認証）がpolicy.jsonのschemaに具体フィールドとして現れないが、未設定時の挙動（該当評価のみ未確認）は要件で固定済みであり、Eval仕様の設定入力欄で実装時に満たせる。軽微。",
+      "T02bはB-1のT01〜T20枠外の追加検収として明記されており、R-032受入条件（改変注入で検知FAIL観測）と整合している。問題なし。",
+      "Sigma JSON bounded subset（AYM2-07）・LLM adapterメタデータ実体照合（AYM2-12）・enrichment実体hash照合（AYM2-12）は要件を薄めず仕様に反映されている。",
+      "実装後しか実行できない試験（live接続、実Trivy/CodeQL/Wazuh等）の未実行は欠陥としない。contract試験と実接続の区別表示（R-019/R-024）は仕様で維持されている。",
+      "新機能追加・本番対応の追加要求は本レビューには含まない。AYM3-01は既存の評価identity契約をRSI/KPI/昇格判定へ適用する最小修正であり、範囲追加ではない。"
+    ]
+  },
+  "confirmation": {
+    "verdict": "pass",
+    "resolved": [
+      "AYM3-01: 測定identityの事前固定 — SPEC-EVALUATION A-3「比較評価の identity 契約」で schema_version 1.1 / profile workflow / measurement_unit task の manifest、owner/task_id/仮説/action_delta/負の対照/freeze_date の実行前固定、Legacy/Candidate の source_path/source_revision/source_sha256/input_sha256、runner/dataset/model_version/policy_version 固定、freeze への evaluation_manifest_ref/evaluation_manifest_id、Run.manifest_ref 実体への同項目包含を規定。解決。",
+      "AYM3-01: preflight/postrun — status=frozen の preflight 成功前に比較 run 開始不可、postrun で artifact 実在/hash 一致/error_count/crash_count/timeout_count 検証、preflight 後 identity 変更拒否、postrun 不成立での ready/apply 拒否、postrun 成功は採用判断の代用にならないことを明記。ACCEPTANCE-PLAN B-2 に preflight→実比較→postrun 記録保存と拒否例確認を追加、B-5 チェックリストに「比較評価identityのpreflight/postrun記録と実装・入力・結果hash」を追加、IMPLEMENTATION-PLAN §8 で B-Eval-03 が evaluation_identity.py を所有し B-Eval-04/B-Eval-07 が接続・検収する配置を固定。解決。"
+    ],
+    "issues": [],
+    "notes": [
+      "実装未開始・試験未実施は本レビューの欠陥としない（IMPLEMENTATION-PLAN §3 の実装開始保留と整合）。",
+      "identity 契約が KPI 集計（現在値表示）と比較評価を明示的に区別しており、A-4 KPI との境界矛盾は検出されない。",
+      "postrun 成功と remediation_success/採用基準の分離は SPEC-CORE §4.10 FinalVerdict 導出規則と矛盾しない。",
+      "freeze digest と manifest 実体 hash の別管理 trusted root 保存は §6.2 freeze 形式と整合する。"
+    ]
+  },
+  "documents": {
+    "REQUIREMENTS": "3491ab732cf40f1c205dd0ea1c690bbc6900672b45fc8df06e290c07b556e163",
+    "SPEC-CORE": "7a27a1600fb3b6327aa403d0210570275ab0f8ae0a7ce0a2c00f1b131b1daf57",
+    "SPEC-EVALUATION": "a68b9ddd6f7bbc1fb3075b4e07c31da6b03479f1b5abc8cb0f00f0a89d85868a",
+    "API-CONTRACTS": "7b3bfdd0dab43a9ec61ae3414a4d62549b52ea96a81b0952355e03eb98c418dd",
+    "ACCEPTANCE-PLAN": "093a8df505a67db2353f6e8289bd3f1490df4e9c5d28413749f6dcb6a96bdcdd",
+    "IMPLEMENTATION-PLAN": "a0530570b568ccb538e0fb534910232d577baf32640dac47f9a507ebb1ad848c"
+  },
+  "implementation_started_after_review": true
+}

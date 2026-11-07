@@ -1,0 +1,10 @@
+{
+  "wheel": "dist\\ai_yori_murasaki-0.1.0-py3-none-any.whl",
+  "sha256": "d31e26748d610ed038e0ca34196cfa20d8ad70213eb259dd487a7d31f4638ec5",
+  "bytes": 157802,
+  "files": 58,
+  "install_target": "C:\\Users\\ryo-n\\Codex_dev\\aym-wheel-check-20261107-02",
+  "smoke_exit_code": 0,
+  "package_data_matches_source": true,
+  "smoke_stdout": "usage: aym [-h] [--workspace WORKSPACE] [--trusted-root TRUSTED_ROOT]\n           [--policy POLICY]\n           {validate,campaign,run,checkpoint,oracle,verify,monitor,lab,rsi}\n           ...\n\npositional arguments:\n  {validate,campaign,run,checkpoint,oracle,verify,monitor,lab,rsi}\n    rsi                 RSI operations\n\noptions:\n  -h, --help            show this help message and exit\n  --workspace WORKSPACE\n  --trusted-root TRUSTED_ROOT\n  --policy POLICY\n"
+}

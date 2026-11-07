@@ -1,0 +1,181 @@
+{
+  "campaign_id": "c8293880f3348466a",
+  "upstream_preflight": {
+    "exit_code": 0,
+    "output": "Evaluation identity manifest: ok",
+    "executed_before_comparison": true
+  },
+  "freeze": {
+    "audit_run_id": "r47953bf45b8b41df",
+    "campaign_id": "c8293880f3348466a",
+    "content_digest": "eeebff7569907f978e73650ddf6c873a0e8585e9644f698ce6e135cf768775a0",
+    "freeze_id": "fz-4b489a3f8589577e"
+  },
+  "candidate": {
+    "applied": false,
+    "audit_run_id": "rbb549a4710614ec4",
+    "campaign_id": "c8293880f3348466a",
+    "candidate_id": "cd-42be8e587eadc664",
+    "candidate_ref": "885c5dcc2c6fb922f6a5492af71cce6b821502d9fc763cd89b13e9db0fc4e720",
+    "content_digest": "885c5dcc2c6fb922f6a5492af71cce6b821502d9fc763cd89b13e9db0fc4e720",
+    "freeze_id": "fz-4b489a3f8589577e",
+    "status": "created"
+  },
+  "comparison": {
+    "audit_run_id": "r10238df8806144cd",
+    "campaign_id": "c8293880f3348466a",
+    "candidate_id": "cd-42be8e587eadc664",
+    "comparison_ref": "25a0b176c7463a4a59466184ba59a638afd937d81fbdf7c241871b74cc1bd9fd",
+    "completed_manifest_path": "C:\\Users\\ryo-n\\Codex_dev\\ai-yori-murasaki\\docs\\evidence\\rsi-evaluation-20261107-02\\results\\cd-42be8e587eadc664-manifest.json",
+    "completed_manifest_ref": "8af80611b7790a9f8f5fc9cc825cfcec9910ae2d1156416da4777adfd838507e",
+    "holdout_access_ref": "bd96f52d93aac2f21c0322838fb0ca4d4d10fd31bfd5a7cae15b8f7b76cb26ab",
+    "summary": {
+      "baseline": 0,
+      "candidate": 3,
+      "complete": true,
+      "gain": 1.0,
+      "holdout_baseline": 0,
+      "holdout_candidate": 3,
+      "holdout_denominator": 3,
+      "invalid_pairs": 0,
+      "losses": 0,
+      "pairs": 6,
+      "ready": true,
+      "total_calls": 36,
+      "validation_denominator": 3
+    }
+  },
+  "ready": {
+    "audit_run_id": "rf4af247601934ec7",
+    "campaign_id": "c8293880f3348466a",
+    "candidate_id": "cd-42be8e587eadc664",
+    "ready": true,
+    "status": "promotion-ready",
+    "summary": {
+      "baseline": 0,
+      "candidate": 3,
+      "complete": true,
+      "gain": 1.0,
+      "holdout_baseline": 0,
+      "holdout_candidate": 3,
+      "holdout_denominator": 3,
+      "invalid_pairs": 0,
+      "losses": 0,
+      "pairs": 6,
+      "ready": true,
+      "total_calls": 36,
+      "validation_denominator": 3
+    }
+  },
+  "status": "promotion-ready",
+  "applied": false,
+  "cli": [
+    {
+      "exit_code": 0,
+      "response": {
+        "campaign_id": "c8293880f3348466a",
+        "command": "rsi freeze",
+        "data": {
+          "audit_run_id": "r47953bf45b8b41df",
+          "campaign_id": "c8293880f3348466a",
+          "content_digest": "eeebff7569907f978e73650ddf6c873a0e8585e9644f698ce6e135cf768775a0",
+          "freeze_id": "fz-4b489a3f8589577e"
+        },
+        "reason_code": "ok",
+        "run_id": "r47953bf45b8b41df",
+        "schema_version": "1.0.0",
+        "status": "ok"
+      }
+    },
+    {
+      "exit_code": 0,
+      "response": {
+        "campaign_id": "c8293880f3348466a",
+        "command": "rsi candidate",
+        "data": {
+          "applied": false,
+          "audit_run_id": "rbb549a4710614ec4",
+          "campaign_id": "c8293880f3348466a",
+          "candidate_id": "cd-42be8e587eadc664",
+          "candidate_ref": "885c5dcc2c6fb922f6a5492af71cce6b821502d9fc763cd89b13e9db0fc4e720",
+          "content_digest": "885c5dcc2c6fb922f6a5492af71cce6b821502d9fc763cd89b13e9db0fc4e720",
+          "freeze_id": "fz-4b489a3f8589577e",
+          "status": "created"
+        },
+        "reason_code": "ok",
+        "run_id": "rbb549a4710614ec4",
+        "schema_version": "1.0.0",
+        "status": "ok"
+      }
+    },
+    {
+      "exit_code": 0,
+      "response": {
+        "campaign_id": "c8293880f3348466a",
+        "command": "rsi compare",
+        "data": {
+          "audit_run_id": "r10238df8806144cd",
+          "campaign_id": "c8293880f3348466a",
+          "candidate_id": "cd-42be8e587eadc664",
+          "comparison_ref": "25a0b176c7463a4a59466184ba59a638afd937d81fbdf7c241871b74cc1bd9fd",
+          "completed_manifest_path": "C:\\Users\\ryo-n\\Codex_dev\\ai-yori-murasaki\\docs\\evidence\\rsi-evaluation-20261107-02\\results\\cd-42be8e587eadc664-manifest.json",
+          "completed_manifest_ref": "8af80611b7790a9f8f5fc9cc825cfcec9910ae2d1156416da4777adfd838507e",
+          "holdout_access_ref": "bd96f52d93aac2f21c0322838fb0ca4d4d10fd31bfd5a7cae15b8f7b76cb26ab",
+          "summary": {
+            "baseline": 0,
+            "candidate": 3,
+            "complete": true,
+            "gain": 1.0,
+            "holdout_baseline": 0,
+            "holdout_candidate": 3,
+            "holdout_denominator": 3,
+            "invalid_pairs": 0,
+            "losses": 0,
+            "pairs": 6,
+            "ready": true,
+            "total_calls": 36,
+            "validation_denominator": 3
+          }
+        },
+        "reason_code": "ok",
+        "run_id": "r10238df8806144cd",
+        "schema_version": "1.0.0",
+        "status": "ok"
+      }
+    },
+    {
+      "exit_code": 0,
+      "response": {
+        "campaign_id": "c8293880f3348466a",
+        "command": "rsi ready",
+        "data": {
+          "audit_run_id": "rf4af247601934ec7",
+          "campaign_id": "c8293880f3348466a",
+          "candidate_id": "cd-42be8e587eadc664",
+          "ready": true,
+          "status": "promotion-ready",
+          "summary": {
+            "baseline": 0,
+            "candidate": 3,
+            "complete": true,
+            "gain": 1.0,
+            "holdout_baseline": 0,
+            "holdout_candidate": 3,
+            "holdout_denominator": 3,
+            "invalid_pairs": 0,
+            "losses": 0,
+            "pairs": 6,
+            "ready": true,
+            "total_calls": 36,
+            "validation_denominator": 3
+          }
+        },
+        "reason_code": "ok",
+        "run_id": "rf4af247601934ec7",
+        "schema_version": "1.0.0",
+        "status": "ok"
+      }
+    }
+  ],
+  "seconds": 3.64
+}

@@ -1,0 +1,21 @@
+.ga/
+__pycache__/
+.venv/
+.env
+.env.*
+!.env.example
+build/
+dist/
+*.egg-info/
+
+# publication-20261107: local-only sources and runtime state (keep local, do not publish)
+monitor/state.json
+docs/ADR/deep-research-report\ (16).md
+docs/requirements/report-source.html
+docs/requirements/sankai-report.html
+docs/reviews/sources/
+docs/reviews/REVIEW-INTAKE-20261107.html
+docs/birdseye/caps/docs.ADR.deep-research-report*
+docs/birdseye/caps/docs.requirements.report-source*
+docs/birdseye/caps/docs.requirements.sankai-report*
+docs/birdseye/caps/docs.reviews.REVIEW-INTAKE-20261107.html*

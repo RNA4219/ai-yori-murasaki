@@ -1,0 +1,8 @@
+{
+  "schema_version": "blue-purple/v1",
+  "predicate_id": "http-fixture",
+  "operator": "json_equals",
+  "input_ref": "5f3ccb064407e89e5cea07477a1f3a2c5f2434af5ed56b8ba8ae76b20510b1ca",
+  "json_pointer": "/http/status",
+  "expected": 200
+}

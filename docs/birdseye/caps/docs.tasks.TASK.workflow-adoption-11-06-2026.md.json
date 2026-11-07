@@ -1,0 +1,35 @@
+{
+  "id": "docs/tasks/TASK.workflow-adoption-11-06-2026.md",
+  "role": "task",
+  "public_api": [],
+  "summary": "Task 20261106-01。Tier 3 文書導入と RUNBOOK の2スキル規約を対象とし、製品実装・調査実行・公開を範囲外とする。",
+  "deps_out": [
+    "CHANGELOG.md",
+    "EVALUATION.md",
+    "RUNBOOK.md",
+    "docs/ADR/0001-workflow-cookbook-tier3.md",
+    "docs/acceptance/AC-20261106-01.md",
+    "docs/workflow-adoption.md"
+  ],
+  "deps_in": [
+    "CHANGELOG.md",
+    "EVALUATION.md",
+    "docs/ADR/0001-workflow-cookbook-tier3.md",
+    "docs/UPSTREAM_WEEKLY_LOG.md",
+    "docs/acceptance/AC-20261106-01.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md",
+    "docs/workflow-adoption.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "72db48380c9ca4682ba5fa77436ad5b13455ada8b8495bdae3dbfa826ba22924",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T07:12:23.010780+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "72db48380c9ca4682ba5fa77436ad5b13455ada8b8495bdae3dbfa826ba22924",
+    "summary_sha256": "ecc477bac2de96ba8e4fe026816cdf773efbc596830dd08eb0afa9d158e6dbbb",
+    "scope": "完了状態・実検証結果・参照と既存要約の整合。製品の評価・公開承認ではない。"
+  }
+}

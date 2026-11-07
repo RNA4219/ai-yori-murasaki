@@ -1,0 +1,19 @@
+{
+  "id": "docs/acceptance/AC-20261106-04.md",
+  "role": "acceptance",
+  "public_api": [],
+  "summary": "別TaskのP0契約・証跡・Oracle・CLIの検収項目を置く。draftとpendingは製品検証の成功を意味しない。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "b2fca80c9d152123095b7a32d53979704d5269f634ed7ad5040dd70cbf77b86b",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T07:54:28.763350+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "b2fca80c9d152123095b7a32d53979704d5269f634ed7ad5040dd70cbf77b86b",
+    "summary_sha256": "887a7ee2a742fc7826e789e6ad7422563150bac235c4a4c2a632fc78264a07e7",
+    "scope": "原文・要約・参照の整合。別Taskの状態・判定は変更せず、製品の動作・診断精度は評価していない。"
+  }
+}

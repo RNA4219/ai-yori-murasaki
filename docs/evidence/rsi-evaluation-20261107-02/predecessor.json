@@ -1,0 +1,7 @@
+{
+  "previous_manifest": "eval:aym-rsi-20261107-01",
+  "previous_status": "failed_before_freeze_and_comparison",
+  "cause": "resolve/read helper missing name argument",
+  "holdout_accessed": false,
+  "action": "new runner bundle and evaluation identity; original evidence preserved"
+}

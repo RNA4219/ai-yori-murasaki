@@ -1,0 +1,35 @@
+# ローカル製品と文書の運用規約。本番サービスのSLOではない。
+schema_version: 1
+owner: RNA4219
+intent_id: INT-AYM-WORKFLOW-20261106
+adoption:
+  tier: 3
+  scope: local_product_and_documentation
+review:
+  last_reviewed_at: '2026-11-06'
+  next_review_due: '2026-12-06'
+verification:
+  local_required_checks:
+    - adoption_tier_3_and_template_drift
+    - acceptance_structure_and_task_links
+    - birdseye_freshness_require_reviewed
+    - original_report_sha256
+  ci_configured: false
+self_modification:
+  preserve_original_sources: true
+  supplemental_implementation_requires_explicit_approval: true
+operations:
+  production_configured: false
+  live_target_authorization: not_granted_by_document_adoption
+  release_configured: false
+  product_slo: not_defined
+rsi:
+  policy_document: docs/RSI.md
+  status: implemented_local_evaluation
+  freeze_before_evaluation: true
+  separate_train_validation_holdout: true
+  experience_memory: optional_train_only_abstract_cards
+  freeze_experience_snapshot_for_evaluation: true
+  promotion_ready_means: awaiting_review
+  executor_activation_is_separate: true
+  product_thresholds: frozen_per_evaluation_manifest

@@ -1,0 +1,134 @@
+{
+  "status": "verified",
+  "checked_at": "2026-11-06T21:41:22.474790+00:00",
+  "skill": "C:/Users/ryo-n/.codex/skills/yomiyasu/SKILL.md",
+  "checks": "既存8文書はlint/diff/materials/verify、新規3文書はlint/materials/verify。意味の自動合格ではない。",
+  "meaning_review": {
+    "scope": "受領原文と既存要件・会話指示を照合し、提案を必須化しない。完成撤回と既存証跡の保存を別記。",
+    "materials_alerts": "資料にない語の多くは新規ファイル名、行番号、提案を評価する語、既存要件ID、実行記録。パスは実在、引用8件は原文行、743行とSHAは元ファイル、モデル名はOllama原応答、401件は以前の証跡へ照合。外部レビュー本文にすべてを含むとは主張しない。",
+    "retained": {
+      "原文ラベルのコロンと太字": "引用の対応と指示/条件/変更範囲の区分に使用。装飾目的ではない。",
+      "ゲート・正本": "実在する検証条件・採用条件と文書管理上の正本を指す。",
+      "版": "導入した資料やソフトウェアのversionを指す。",
+      "入口": "以前のCHANGELOGにある診断スキルへの導入リンク。今回の意味変更対象ではない。",
+      "否定と条件": "誤った完成主張を撤回し、未確認を確定へ変えないため保持。"
+    }
+  },
+  "records": [
+    {
+      "path": "README.md",
+      "sha256": "3841e1f098070324968ed883c779454ebbac3f8d13f5153122dbab4f7489f721",
+      "run": "yomiyasu-check: executed via=run run=20261106T213929Z-2aa1ab67 attempt=1 final=sha256:3841e1f09807 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=1",
+      "verify": "yomiyasu-check: executed via=verify run=20261106T213929Z-2aa1ab67 attempt=1 final=sha256:3841e1f09807 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=1 replay=skipped",
+      "candidates": [
+        "硬化の検査: 候補なし",
+        "勢いの検査: 候補なし",
+        "見直し候補: 原文 2件 → 最終稿 2件（lint の規則に当たった数で、点数ではありません。増えても減っても読みやすさの良し悪しは示しません）"
+      ]
+    },
+    {
+      "path": "docs/acceptance/AC-20261106-06.md",
+      "sha256": "d393a7e13f7a6e9bdf4f5b3eb874a53063be1af29ae1be109e822776a2d3900f",
+      "run": "yomiyasu-check: executed via=run run=20261106T213940Z-5f25483c attempt=1 final=sha256:d393a7e13f7a mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=7",
+      "verify": "yomiyasu-check: executed via=verify run=20261106T213940Z-5f25483c attempt=1 final=sha256:d393a7e13f7a mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=7 replay=skipped",
+      "candidates": [
+        "硬化の検査: 候補なし",
+        "勢いの検査: 候補なし",
+        "見直し候補: 原文 2件 → 最終稿 2件（lint の規則に当たった数で、点数ではありません。増えても減っても読みやすさの良し悪しは示しません）"
+      ]
+    },
+    {
+      "path": "docs/tasks/TASK.product-completion-11-06-2026.md",
+      "sha256": "029203673e95eb4e79d5bcd5bfafdfd96c41f5bbdc91426843c41d8f97d2863f",
+      "run": "yomiyasu-check: executed via=run run=20261106T213939Z-d1d6a10c attempt=1 final=sha256:029203673e95 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=6",
+      "verify": "yomiyasu-check: executed via=verify run=20261106T213939Z-d1d6a10c attempt=1 final=sha256:029203673e95 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=6 replay=skipped",
+      "candidates": [
+        "硬化の検査: 候補なし",
+        "勢いの検査: 候補なし",
+        "見直し候補: 原文 1件 → 最終稿 1件（lint の規則に当たった数で、点数ではありません。増えても減っても読みやすさの良し悪しは示しません）"
+      ]
+    },
+    {
+      "path": "docs/PRODUCT-ACCEPTANCE.md",
+      "sha256": "f92ba6aabecbbaa084a8d4b2db7fe5ef3a82bc24eec527516346ef63290c5be8",
+      "run": "yomiyasu-check: executed via=run run=20261106T213934Z-125097f7 attempt=1 final=sha256:f92ba6aabecb mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=3",
+      "verify": "yomiyasu-check: executed via=verify run=20261106T213934Z-125097f7 attempt=1 final=sha256:f92ba6aabecb mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=3 replay=skipped",
+      "candidates": [
+        "硬化の検査: 候補なし",
+        "勢いの検査: 候補なし",
+        "見直し候補: 原文 0件 → 最終稿 0件（lint の規則に当たった数で、点数ではありません。増えても減っても読みやすさの良し悪しは示しません）"
+      ]
+    },
+    {
+      "path": "HUB.codex.md",
+      "sha256": "60725ed7bac8d1d3f5ee76d113e70a562710a2bb76ce26a9ec3ed04603cff1f7",
+      "run": "yomiyasu-check: executed via=run run=20261106T213932Z-75407f4c attempt=1 final=sha256:60725ed7bac8 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=1",
+      "verify": "yomiyasu-check: executed via=verify run=20261106T213932Z-75407f4c attempt=1 final=sha256:60725ed7bac8 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=1 replay=skipped",
+      "candidates": [
+        "硬化の検査: 候補なし",
+        "勢いの検査: 候補なし",
+        "見直し候補: 原文 2件 → 最終稿 2件（lint の規則に当たった数で、点数ではありません。増えても減っても読みやすさの良し悪しは示しません）"
+      ]
+    },
+    {
+      "path": "docs/tasks/README.md",
+      "sha256": "1a39d0519e0ebaa1a91613903bc83e1e673ea9afa21dc5f06743a67f34e78c8d",
+      "run": "yomiyasu-check: executed via=run run=20261106T213936Z-43324ebe attempt=1 final=sha256:1a39d0519e0e mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=3",
+      "verify": "yomiyasu-check: executed via=verify run=20261106T213936Z-43324ebe attempt=1 final=sha256:1a39d0519e0e mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=3 replay=skipped",
+      "candidates": [
+        "硬化の検査: 候補なし",
+        "勢いの検査: 候補なし",
+        "見直し候補: 原文 0件 → 最終稿 0件（lint の規則に当たった数で、点数ではありません。増えても減っても読みやすさの良し悪しは示しません）"
+      ]
+    },
+    {
+      "path": "docs/acceptance/INDEX.md",
+      "sha256": "ed7dbd19ec30b7bd8b8b417ffff0da91a665c1158296d789757a5390ec01413f",
+      "run": "yomiyasu-check: executed via=run run=20261106T213937Z-a6892856 attempt=1 final=sha256:ed7dbd19ec30 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=3",
+      "verify": "yomiyasu-check: executed via=verify run=20261106T213937Z-a6892856 attempt=1 final=sha256:ed7dbd19ec30 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=3 replay=skipped",
+      "candidates": [
+        "硬化の検査: 候補なし",
+        "勢いの検査: 候補なし",
+        "見直し候補: 原文 1件 → 最終稿 1件（lint の規則に当たった数で、点数ではありません。増えても減っても読みやすさの良し悪しは示しません）"
+      ]
+    },
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "db387aa4358e480dbd57b892a35f9f66e0c3e375ea0be05eff806f4e1f80a263",
+      "run": "yomiyasu-check: executed via=run run=20261106T213931Z-042f6690 attempt=1 final=sha256:db387aa4358e mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=4",
+      "verify": "yomiyasu-check: executed via=verify run=20261106T213931Z-042f6690 attempt=1 final=sha256:db387aa4358e mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=4 replay=skipped",
+      "candidates": [
+        "硬化の検査: 候補なし",
+        "勢いの検査: 候補なし",
+        "見直し候補: 原文 5件 → 最終稿 5件（lint の規則に当たった数で、点数ではありません。増えても減っても読みやすさの良し悪しは示しません）"
+      ]
+    },
+    {
+      "path": "docs/reviews/REVIEW-INTAKE-20261107.md",
+      "sha256": "f2b4388743e0a75fbaea12fd497cb7d26b8f74a92b5077d1ef334c9fa8111491",
+      "run": "yomiyasu-check: executed via=run run=20261106T213942Z-b474f76c attempt=1 final=sha256:f2b4388743e0 mode=compose doc_type=manual checks=lint,materials meaning_risk=89",
+      "verify": "yomiyasu-check: executed via=verify run=20261106T213942Z-b474f76c attempt=1 final=sha256:f2b4388743e0 mode=compose doc_type=manual checks=lint,materials meaning_risk=89 replay=skipped",
+      "candidates": [
+        "見直し候補: 最終稿 13件（新規作成なので原文の件数はありません。lint の規則に当たった数で、点数ではありません）"
+      ]
+    },
+    {
+      "path": "docs/tasks/TASK.review-intake-11-07-2026.md",
+      "sha256": "16a261523020c82bba98498f999d22ce38120dded2612ce4c5e73f579a3f57f7",
+      "run": "yomiyasu-check: executed via=run run=20261106T213943Z-98671710 attempt=1 final=sha256:16a261523020 mode=compose doc_type=manual checks=lint,materials meaning_risk=39",
+      "verify": "yomiyasu-check: executed via=verify run=20261106T213943Z-98671710 attempt=1 final=sha256:16a261523020 mode=compose doc_type=manual checks=lint,materials meaning_risk=39 replay=skipped",
+      "candidates": [
+        "見直し候補: 最終稿 2件（新規作成なので原文の件数はありません。lint の規則に当たった数で、点数ではありません）"
+      ]
+    },
+    {
+      "path": "docs/acceptance/AC-20261107-02.md",
+      "sha256": "f47800b5667d7951e106fd5ee9f59a29d479c9780a8c9b4294a3c9d828ce9c4e",
+      "run": "yomiyasu-check: executed via=run run=20261106T213944Z-37bbaa53 attempt=1 final=sha256:f47800b5667d mode=compose doc_type=manual checks=lint,materials meaning_risk=28",
+      "verify": "yomiyasu-check: executed via=verify run=20261106T213944Z-37bbaa53 attempt=1 final=sha256:f47800b5667d mode=compose doc_type=manual checks=lint,materials meaning_risk=28 replay=skipped",
+      "candidates": [
+        "見直し候補: 最終稿 2件（新規作成なので原文の件数はありません。lint の規則に当たった数で、点数ではありません）"
+      ]
+    }
+  ]
+}

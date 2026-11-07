@@ -1,0 +1,28 @@
+{
+  "id": "TASK.codex.md",
+  "role": "template",
+  "public_api": [],
+  "summary": "目的・範囲・要件・検証を記す Task 雛形。比較評価と RSI の場合に固定する条件、経験 snapshot、採用と反映の境界も記す。",
+  "deps_out": [
+    "RUNBOOK.md",
+    "docs/CONTRACTS.md",
+    "docs/RSI.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_in": [
+    "HUB.codex.md",
+    "RUNBOOK.md",
+    "docs/tasks/README.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "4fa11391201d0c16dc8834a3ab1e80c05fbfb8a4c58bd87ef520a849b76f85ab",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T07:21:00.344746+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "4fa11391201d0c16dc8834a3ab1e80c05fbfb8a4c58bd87ef520a849b76f85ab",
+    "summary_sha256": "901c7d7697069e1634669149e8d6cd6ce1975ef10bea96afd2cd6cde83dc3e9a",
+    "scope": "RSI 文書追加後の原文・要約・参照の整合。RSI 機能の実装・性能向上は検証していない。"
+  }
+}

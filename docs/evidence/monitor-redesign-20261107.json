@@ -1,0 +1,42 @@
+{
+  "status": "passed",
+  "task_id": "20261107-01",
+  "references": ["https://linear.app/docs/projects", "https://vercel.com/docs/observability"],
+  "roles": {
+    "design_review": "Ollama glm-5.3:cloud",
+    "implementation": "Ollama deepseek-v4.1-flash:cloud",
+    "supervisor": "指示、差分適用、検証、文書。途中で見出し文言とモバイルCSSの数行を直接編集したことをユーザーへ説明。その後の製品コード修正はDeepSeekが生成。"
+  },
+  "model_records": {
+    "root": ".ga/goal-20261106/",
+    "skill_hashes": "visual-redesign-skill-hashes.json",
+    "design": "visual-direction-glm",
+    "implementation": ["visual-build-deepseek", "silent-refresh-corrected", "visual-layout-deepseek", "visual-polish-deepseek", "monitor-final-deepseek", "monitor-list-stale-deepseek"],
+    "reviews_passed": ["monitor-refresh-review-glm", "monitor-presentation-disposition-glm", "monitor-last-delta-review-glm"],
+    "limitations": "GLMはコード・設計をレビュー。ブラウザー画像は監督側が確認。全体レビュー2回は出力上限で未完了として除外し、範囲を分けたレビューで確認した。抜粋を全ファイルと誤認した3指摘は、全文による再確認で撤回。"
+  },
+  "checks": {
+    "server_pytest": {"passed": 23, "seconds": 14.43},
+    "javascript_syntax": "node --check: exit 0",
+    "automatic_poll": {"interval_ms": 15000, "unchanged_view_mutations": 0, "dom_identity": true, "focus": true, "scroll": true, "details_open": true, "selected_runs_view": true},
+    "fault_fixtures": ["changed_metric_in_place", "literal_html_title", "main_503_cached_warning", "runs_503_cached_warning", "HOLD_hides_numbers", "null_unmeasured", "invalid_ratio_rejected", "zero_measured", "recovery_clears_warning"],
+    "home_failure": {"rows_before": 24, "rows_after": 24, "warning": true, "manual_busy_then_clear": true},
+    "responsive": {"widths": [1440, 768, 390], "viewport_overflow": false, "axe_wcag2a_2aa_21aa_violations": 0},
+    "keyboard": ["mobile_menu_enter", "view_button_space", "run_link_navigation"],
+    "run_event_rows": 3,
+    "rapid_route_switch_latest_target": true,
+    "kpi_rows": 11
+  },
+  "verification_corrections": [
+    "Runの初回検査はregion名を誤指定。実DOMの公開イベント履歴で3行を確認した。",
+    "一覧失敗試験の初回はhash遷移で旧JSが残っていた。明示reload後に変更済みJSを確認し、24行保持と警告を確認した。",
+    "wheelの非隔離ビルドはローカルbdist_wheel不在で失敗。pyproject指定の隔離ビルドで成功した。"
+  ],
+  "artifacts": {
+    "html_sha256": "995ee1ebbef5696b5c950282bd8fa09e88b05cd2f665488dd8ad0ad1f2f43c2a",
+    "wheel": "dist/ai_yori_murasaki-0.1.0-py3-none-any.whl",
+    "wheel_sha256": "9198a2fbf22e1722deb803146b78963de9ff5097d22f7fea942775d2a33b16b1",
+    "wheel_html_matches_source": true
+  },
+  "scope": "ローカルの画面・更新挙動の技術確認。ユーザーの見た目の承認、性能改善評価、本番適用、外部公開は含まない。"
+}

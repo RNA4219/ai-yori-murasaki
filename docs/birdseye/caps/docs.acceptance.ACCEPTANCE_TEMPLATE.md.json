@@ -1,0 +1,23 @@
+{
+  "id": "docs/acceptance/ACCEPTANCE_TEMPLATE.md",
+  "role": "template",
+  "public_api": [],
+  "summary": "Scope、Acceptance Criteria、Evidence、Verification Result、Release Mapping を保持する検収記録の雛形。",
+  "deps_out": [
+    "docs/releases/README.md"
+  ],
+  "deps_in": [
+    "docs/acceptance/README.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "e3313f42d738c12fee769a8895f9bd9154987b6093b9d16698019091c8fe080e",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T07:09:44.542881+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "e3313f42d738c12fee769a8895f9bd9154987b6093b9d16698019091c8fe080e",
+    "summary_sha256": "01afc1bbda4d7d2e31715567252209e4f37310d5fc99e09c7ebce0473819a9da",
+    "scope": "原文の役割・要約・参照の整合。外部仕様や製品の効果は検証していない。"
+  }
+}

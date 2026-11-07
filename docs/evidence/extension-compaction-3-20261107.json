@@ -1,0 +1,16 @@
+{
+  "index": 3,
+  "stage": "受入条件",
+  "recorded_at": "2026-11-06T22:42:36.616971+00:00",
+  "source": "docs/requirements/ACCEPTANCE-EXTENSION.md",
+  "sha256": "dcde7ea26fd074fb6cc3e6b7d4fe4836e97ee8c722617087ba18e4bad84b8f6a",
+  "review": ".ga\\goal-20261106\\v2-acceptance-final-metadata.json",
+  "decisions": [
+    "Blueに評価reveal経路を作らない",
+    "診断producerの列挙とホスト/コンテナの権限境界を明記",
+    "独立性の自己申告boolを廃止、実行時検査で判定",
+    "TLS等の環境障害はinvalid/HOLD、観測済みのFP/FNは性能として計上",
+    "実利用者はユーザーが手配。閾値確定・実測が揃うまで製品完成不可"
+  ],
+  "limits": "実装・実測の成功を意味しない。監督による要約保存でありシステム強制compactionではない。"
+}

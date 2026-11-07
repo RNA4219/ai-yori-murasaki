@@ -1,0 +1,27 @@
+{
+  "status": "incomplete",
+  "original_report_sha256": "39debf151e7f333d1371c323a0f07eefca181c918a6a5d0bd7538caa95690625",
+  "pytest": {
+    "passed": 401,
+    "skipped": 2,
+    "subtests_passed": 22,
+    "seconds": 43.03
+  },
+  "lab_image": {
+    "tag": "ai-yori-murasaki-lab:1",
+    "digest": "sha256:08aa9a0cd1ac6b5d9956e6defc298586b78926428f9bcd1dded0a44ad41fdff8"
+  },
+  "rsi_final_review": {
+    "verdict": "PASS",
+    "issues": []
+  },
+  "rsi": "promotion-ready, not applied",
+  "prior_failures_preserved": true,
+  "previous_status": "complete",
+  "reassessment": {
+    "at": "2026-11-06T21:32:47.100480+00:00",
+    "reason": "製品完成判定を撤回。既存のラボ・テスト証跡は保存するが、全要求の充足は示していない。",
+    "assessment": "docs/reviews/REVIEW-INTAKE-20261107.md",
+    "acceptance_status": "rejected"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "id": "docs/requirements/MONITOR-ASSESSMENT.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "評価ビュー拡張設計。既存web/index.htmlの構成とreconcile更新を再利用し、Campaign詳細へ評価タブ1つと検知行の評価状態バッジを追加する。APIはGET /api/campaigns/<id>/assessment（operator投影）を1つ追加し、404/未提供時は未評価表示とする。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "6aaf57de02d8c429dd3b6cd4a2fdaa7c7779a2cd0496249dffa252fe556bace9",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T23:49:11.901048+00:00",
+    "reviewed_by": "GLM",
+    "source_sha256": "6aaf57de02d8c429dd3b6cd4a2fdaa7c7779a2cd0496249dffa252fe556bace9",
+    "summary_sha256": "18a56dff108f64aa283c77bd109d7db7adfc3040b9a891e74d2095b1698b0407",
+    "scope": "GLMが原文全文と要約・依存を照合して確定。文書・要約・リンク整合の確認であり、製品実測や検収の実証ではない。"
+  }
+}

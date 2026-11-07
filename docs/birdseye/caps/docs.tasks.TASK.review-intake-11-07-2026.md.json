@@ -1,0 +1,28 @@
+{
+  "id": "docs/tasks/TASK.review-intake-11-07-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "外部レビューの原文保存、Sankai整理、GLM確認、必要性評価と完成記録の訂正を追跡する。製品実装と提案採用は対象外。",
+  "deps_out": [
+    "docs/acceptance/AC-20261107-02.md",
+    "docs/reviews/REVIEW-INTAKE-20261107.md"
+  ],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261107-02.md",
+    "docs/acceptance/INDEX.md",
+    "docs/reviews/REVIEW-INTAKE-20261107.md",
+    "docs/tasks/README.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "49bad665acd18ff6aad36abe0e9dca72af86f78064cd9d12a4971fcdffcdc37f",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-07T18:30:00+09:00",
+    "reviewed_by": "GLM",
+    "source_sha256": "49bad665acd18ff6aad36abe0e9dca72af86f78064cd9d12a4971fcdffcdc37f",
+    "summary_sha256": "fbb1aaf9645a9904494bb4370f74a2764776cbf2fad7e247e915acdca6cf996d",
+    "scope": "原文全文と要約・リンクを照合した。GitHub Public公開前の最終確定（公開記録RA-20261107-01、非公開原資料のリンク注記、codemap exclude、配布物hash）を反映した。"
+  }
+}

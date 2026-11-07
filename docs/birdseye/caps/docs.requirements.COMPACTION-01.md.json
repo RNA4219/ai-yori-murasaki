@@ -1,0 +1,23 @@
+{
+  "id": "docs/requirements/COMPACTION-01.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "要約保存1。Sankai、15原典、50要件、GLM修正確認と次の仕様段階を記録した当時の判断。",
+  "deps_out": [
+    "docs/requirements/DECISIONS.md",
+    "docs/requirements/FRONTEND-DESIGN.md",
+    "docs/requirements/REQUIREMENTS.md"
+  ],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "60c267dcd6d1f231c01c1fde64d788e28232c1f5ba544c285c03b7b2cede75b5",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T19:30:36.760596+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "60c267dcd6d1f231c01c1fde64d788e28232c1f5ba544c285c03b7b2cede75b5",
+    "summary_sha256": "304261ae319a10bc8cb40c709d94ba3ca92e0950e742acb05768406cf33a3c6d",
+    "scope": "原文と要約・導線を照合。製品の実測範囲と未検証の区別を維持。"
+  }
+}

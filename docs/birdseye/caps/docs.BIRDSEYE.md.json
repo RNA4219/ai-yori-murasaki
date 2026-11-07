@@ -1,0 +1,25 @@
+{
+  "id": "docs/BIRDSEYE.md",
+  "role": "guide",
+  "public_api": [],
+  "summary": "index・hot・Capsule の参照と生成手順、原文 hash と review の分離、通常検索へのフォールバックを説明する。",
+  "deps_out": [
+    "RUNBOOK.md",
+    "codemap.config.json"
+  ],
+  "deps_in": [
+    "AGENTS.md",
+    "RUNBOOK.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "f979e83aa901f4e5557f785bb007730f3e254092e7e344c0cf263da5053dd386",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T07:09:44.542881+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "f979e83aa901f4e5557f785bb007730f3e254092e7e344c0cf263da5053dd386",
+    "summary_sha256": "00fd5874e7180eb4fc38952399de35dd310667633b29fbf700454ff3291b2653",
+    "scope": "原文の役割・要約・参照の整合。外部仕様や製品の効果は検証していない。"
+  }
+}

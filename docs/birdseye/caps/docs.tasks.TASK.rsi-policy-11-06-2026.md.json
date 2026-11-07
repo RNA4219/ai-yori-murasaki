@@ -1,0 +1,34 @@
+{
+  "id": "docs/tasks/TASK.rsi-policy-11-06-2026.md",
+  "role": "task",
+  "public_api": [],
+  "summary": "Task 20261106-02。RSI 方針と関連文書・評価・記録・索引を追加する。実装、実行評価、性能実証と公開は範囲外。",
+  "deps_out": [
+    "CHANGELOG.md",
+    "EVALUATION.md",
+    "RUNBOOK.md",
+    "docs/RSI.md",
+    "docs/acceptance/AC-20261106-02.md",
+    "docs/evidence/rsi-reference-snapshot-20261106.json"
+  ],
+  "deps_in": [
+    "CHANGELOG.md",
+    "EVALUATION.md",
+    "docs/ADR/0002-rsi-policy.md",
+    "docs/RSI.md",
+    "docs/acceptance/AC-20261106-02.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "d33a42b7e4c7f655e2ef4ff6cd7ef1516da4b48ee553d9d4480087a09e7fef81",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T07:28:57.540877+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "d33a42b7e4c7f655e2ef4ff6cd7ef1516da4b48ee553d9d4480087a09e7fef81",
+    "summary_sha256": "905e2f6161b3e2242e61748a632ce8ffcfb34a9f19838506d5cb41554566838a",
+    "scope": "名称削除後の原文・要約・参照の整合。9項目と資料 hash は保全。"
+  }
+}

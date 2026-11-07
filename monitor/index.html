@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>開発モニター</title>
+<style>
+:root {
+  --color-bg: #faf9fc;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f3f0f9;
+  --color-border: #ddd6ea;
+  --color-text: #2a2438;
+  --color-text-muted: #5f5872;
+  --color-accent: #6b4fa8;
+  --color-accent-soft: #ece6f7;
+  --color-focus: #4a2f8a;
+  --color-ok-bg: #e6f4ea;
+  --color-ok-text: #1e5b2e;
+  --color-warn-bg: #fdf3d7;
+  --color-warn-text: #6b4e00;
+  --color-err-bg: #fbe7e7;
+  --color-err-text: #7a1f1f;
+  --color-info-bg: #e8eefb;
+  --color-info-text: #1f3a6b;
+  --color-neutral-bg: #eceaf1;
+  --color-neutral-text: #4a4458;
+  --space-0: 0px;
+  --space-2: 2px;
+  --space-4: 4px;
+  --space-6: 6px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-40: 40px;
+  --space-44: 44px;
+  --space-48: 48px;
+  --space-56: 56px;
+  --space-64: 64px;
+  --space-72: 72px;
+  --space-80: 80px;
+  --space-96: 96px;
+  --space-128: 128px;
+  --space-140: 140px;
+  --space-144: 144px;
+  --space-160: 160px;
+  --radius: 8px;
+  --radius-sm: 4px;
+  --font-stack: system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --shadow: 0 1px 2px rgba(42, 36, 56, 0.08);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-stack);
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+.skip-link {
+  position: absolute;
+  left: var(--space-8);
+  top: -100px;
+  background: var(--color-accent);
+  color: #fff;
+  padding: var(--space-8) var(--space-16);
+  border-radius: var(--radius-sm);
+  z-index: 100;
+  text-decoration: none;
+}
+.skip-link:focus { top: var(--space-8); }
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  min-height: 100vh;
+}
+.sidebar {
+  background: var(--color-surface-alt);
+  border-right: 1px solid var(--color-border);
+  padding: var(--space-24) var(--space-16);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+.sidebar h2 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-8) 0;
+}
+.sidebar nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.sidebar nav a {
+  display: flex;
+  align-items: center;
+  padding: var(--space-8) var(--space-12);
+  min-height: 44px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  text-decoration: none;
+  font-size: 14px;
+}
+.sidebar nav a:hover { background: var(--color-accent-soft); }
+.sidebar nav a:focus-visible { background: var(--color-accent-soft); }
+.nav-toggle {
+  display: block;
+}
+.nav-toggle > nav { display: block; }
+@media (min-width: 768px) {
+  .nav-toggle > summary { display: none; }
+  .nav-toggle > nav { margin-top: 0; }
+}
+.nav-toggle > summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: var(--space-8) var(--space-12);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+.nav-toggle > summary::-webkit-details-marker { display: none; }
+.nav-toggle > summary::after {
+  content: "▾";
+  margin-left: auto;
+  color: var(--color-text-muted);
+}
+.nav-toggle[open] > summary::after { content: "▴"; }
+.nav-toggle > summary:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+.nav-toggle nav { margin-top: var(--space-8); }
+.sidebar .meta-block {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.sidebar .meta-block dt { font-weight: 600; color: var(--color-text); }
+.sidebar .meta-block dd { margin: 0; word-break: break-word; }
+.main {
+  padding: var(--space-32) var(--space-24) var(--space-64);
+  min-width: 0;
+}
+.summary-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-16);
+  margin-bottom: var(--space-24);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+.summary-panel .summary-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8) var(--space-12);
+}
+.summary-panel .summary-head h2 {
+  font-size: 18px;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+.summary-panel .summary-updated {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  text-align: right;
+}
+.summary-panel .summary-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4) var(--space-8);
+  font-size: 14px;
+}
+.summary-panel .summary-label {
+  font-weight: 600;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+.summary-panel .summary-value { word-break: break-word; }
+.summary-panel .summary-value.mono { font-family: var(--font-mono); font-size: 13px; }
+.summary-panel a { color: var(--color-accent); min-height: 44px; display: inline-flex; align-items: center; }
+.summary-panel a:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+.main-inner { max-width: 1100px; margin: 0 auto; }
+h1 {
+  font-size: 24px;
+  margin: 0 0 var(--space-8) 0;
+  line-height: 1.3;
+}
+.subtitle {
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-24) 0;
+  font-size: 14px;
+}
+.banner {
+  border-radius: var(--radius);
+  padding: var(--space-16);
+  margin-bottom: var(--space-24);
+  border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+.banner[data-tone="error"] { background: var(--color-err-bg); color: var(--color-err-text); border-color: #e3b9b9; }
+.banner[data-tone="warn"] { background: var(--color-warn-bg); color: var(--color-warn-text); border-color: #e6d49a; }
+.banner[data-tone="info"] { background: var(--color-info-bg); color: var(--color-info-text); border-color: #b9c8e6; }
+.banner strong { font-size: 15px; }
+.banner p { margin: 0; font-size: 14px; }
+.banner code { font-family: var(--font-mono); background: rgba(0,0,0,0.06); padding: 0 var(--space-4); border-radius: var(--radius-sm); }
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-12);
+  align-items: center;
+  margin-bottom: var(--space-24);
+}
+button, .file-label {
+  font-family: inherit;
+  font-size: 14px;
+  min-height: 44px;
+  padding: var(--space-8) var(--space-16);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-accent);
+  background: var(--color-accent);
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+button:hover, .file-label:hover { background: var(--color-focus); }
+button:disabled { opacity: 0.55; cursor: not-allowed; }
+.file-label { background: var(--color-surface); color: var(--color-accent); }
+.file-label:hover { background: var(--color-accent-soft); }
+.file-label input[type="file"] {
+  position: absolute;
+  width: 1px; height: 1px;
+  opacity: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+.file-label:focus-within { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+.status-line {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  min-height: 20px;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-16);
+  margin-bottom: var(--space-32);
+}
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-16);
+  box-shadow: var(--shadow);
+  min-width: 0;
+}
+.card h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-8) 0;
+}
+.card .value {
+  font-size: 18px;
+  font-weight: 600;
+  word-break: break-word;
+}
+.card .value.mono { font-family: var(--font-mono); font-size: 15px; }
+.card .sub { font-size: 13px; color: var(--color-text-muted); margin-top: var(--space-4); word-break: break-word; }
+section { margin-bottom: var(--space-48); }
+section > h2 {
+  font-size: 18px;
+  margin: 0 0 var(--space-12) 0;
+  padding-bottom: var(--space-8);
+  border-bottom: 1px solid var(--color-border);
+}
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 560px;
+  font-size: 14px;
+}
+caption {
+  text-align: left;
+  padding: var(--space-8) var(--space-12);
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+th, td {
+  text-align: left;
+  padding: var(--space-8) var(--space-12);
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: top;
+}
+th {
+  background: var(--color-surface-alt);
+  font-weight: 600;
+  font-size: 13px;
+  white-space: nowrap;
+}
+tbody tr:last-child td { border-bottom: none; }
+td.num { font-family: var(--font-mono); text-align: right; white-space: nowrap; }
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-2) var(--space-8);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.badge::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.badge[data-status="done"] { background: var(--color-ok-bg); color: var(--color-ok-text); border-color: #b9dcc3; }
+.badge[data-status="in_progress"] { background: var(--color-info-bg); color: var(--color-info-text); border-color: #b9c8e6; }
+.badge[data-status="reviewing"] { background: var(--color-accent-soft); color: var(--color-accent); border-color: #cdbfe8; }
+.badge[data-status="planned"] { background: var(--color-neutral-bg); color: var(--color-neutral-text); border-color: #d4d0dd; }
+.badge[data-status="failed"] { background: var(--color-err-bg); color: var(--color-err-text); border-color: #e3b9b9; }
+.badge[data-status="blocked"] { background: var(--color-warn-bg); color: var(--color-warn-text); border-color: #e6d49a; }
+.badge[data-status="cancelled"] { background: var(--color-neutral-bg); color: var(--color-neutral-text); border-color: #d4d0dd; text-decoration: line-through; }
+.badge[data-status="unknown"] { background: var(--color-neutral-bg); color: var(--color-neutral-text); border-color: #d4d0dd; }
+.badge[data-status="unknown"]::before { background: transparent; border: 1px solid currentColor; }
+.empty {
+  padding: var(--space-16);
+  color: var(--color-text-muted);
+  font-size: 14px;
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius);
+}
+.artifact-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-8); }
+.artifact-list li {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-12) var(--space-16);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8) var(--space-16);
+  align-items: center;
+  justify-content: space-between;
+}
+.artifact-list .artifact-main { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+.artifact-list .artifact-title { font-weight: 600; word-break: break-word; }
+.artifact-list .artifact-path { font-family: var(--font-mono); font-size: 12px; color: var(--color-text-muted); word-break: break-all; }
+.artifact-list a { color: var(--color-accent); min-height: 44px; display: inline-flex; align-items: center; }
+.artifact-list a:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+.data-notes {
+  margin-top: var(--space-32);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+.data-notes > summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: var(--space-8) var(--space-16);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+.data-notes > summary::-webkit-details-marker { display: none; }
+.data-notes > summary::after {
+  content: "▾";
+  margin-left: auto;
+  color: var(--color-text-muted);
+}
+.data-notes[open] > summary::after { content: "▴"; }
+.data-notes > summary:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+.data-notes .data-notes-body {
+  padding: 0 var(--space-16) var(--space-16);
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+.data-notes .data-notes-body p { margin: 0 0 var(--space-8) 0; }
+.data-notes .data-notes-body code { font-family: var(--font-mono); background: var(--color-surface-alt); padding: 0 var(--space-4); border-radius: var(--radius-sm); }
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+@media (max-width: 1024px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+    padding: var(--space-16);
+    gap: var(--space-12);
+  }
+  .sidebar .nav-heading { display: none; }
+  .nav-toggle { display: block; }
+  .sidebar nav ul {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+  @media (min-width: 768px) {
+    .nav-toggle > summary { display: none; }
+    .nav-toggle > nav { margin-top: 0; }
+  }
+  .sidebar nav a { min-height: 44px; }
+  .sidebar .meta-block {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--space-4) var(--space-12);
+    align-items: baseline;
+  }
+  .sidebar .meta-block dt { margin: 0; }
+  .sidebar .meta-block dd { margin: 0; }
+  .main { padding: var(--space-24) var(--space-16) var(--space-48); }
+}
+@media (max-width: 767px) {
+  .sidebar { padding: var(--space-12) var(--space-16); }
+  .main { padding: var(--space-16) var(--space-16) var(--space-40); }
+  .summary-panel .summary-updated { margin-left: 0; text-align: left; width: 100%; }
+}
+@media (max-width: 360px) {
+  body { font-size: 14px; }
+  h1 { font-size: 20px; }
+  .main { padding: var(--space-16) var(--space-12) var(--space-40); }
+  .sidebar { padding: var(--space-12); }
+  .card { padding: var(--space-12); }
+  th, td { padding: var(--space-6) var(--space-8); }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main-content">本文へスキップ</a>
+<div class="layout">
+  <aside class="sidebar" aria-label="サイドバー">
+    <div>
+      <h2 class="nav-heading">ナビゲーション</h2>
+      <details class="nav-toggle" id="nav-toggle">
+        <summary>メニュー</summary>
+        <nav aria-label="ページ内目次">
+          <ul>
+            <li><a href="#overview">概要</a></li>
+            <li><a href="#phases">段階一覧</a></li>
+            <li><a href="#roles">担当モデル</a></li>
+            <li><a href="#jobs">ジョブ履歴</a></li>
+            <li><a href="#decisions">決定事項</a></li>
+            <li><a href="#artifacts">資料</a></li>
+          </ul>
+        </nav>
+      </details>
+    </div>
+    <div>
+      <h2 class="nav-heading">データ状態</h2>
+      <dl class="meta-block">
+        <dt>最終更新</dt>
+        <dd id="sidebar-updated">未取得</dd>
+        <dt>取得方法</dt>
+        <dd id="sidebar-source">未取得</dd>
+      </dl>
+    </div>
+  </aside>
+  <main id="main-content" class="main" tabindex="-1">
+    <div class="main-inner">
+      <h1>開発モニター</h1>
+      <p class="subtitle">記録された実測値のみを表示します。推計は行いません。</p>
+
+      <div id="banner-area" aria-live="polite"></div>
+
+      <section class="summary-panel" id="work-summary" aria-labelledby="work-summary-h">
+        <div class="summary-head">
+          <h2 id="work-summary-h">作業中</h2>
+          <span id="summary-stage-badge"></span>
+          <span class="summary-updated" id="summary-updated">最終更新: 未取得</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">現在の段階</span>
+          <span class="summary-value" id="summary-stage">未取得</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">段階の状態</span>
+          <span class="summary-value" id="summary-phase-status">未取得</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">最新の非完了ジョブ</span>
+          <span class="summary-value" id="summary-job">未取得</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">未確認</span>
+          <span class="summary-value" id="summary-review">未取得</span>
+        </div>
+      </section>
+
+      <div class="controls">
+        <button type="button" id="refresh-btn">手動更新</button>
+        <label class="file-label" for="file-input">JSONファイルを選択
+          <input type="file" id="file-input" accept="application/json,.json" aria-describedby="file-help">
+        </label>
+        <span id="file-help" class="visually-hidden">JSON形式、1MiB以下のファイルのみ読み込めます。</span>
+        <output class="status-line" id="status-line" aria-live="polite"></output>
+      </div>
+
+      <section id="overview" aria-labelledby="overview-h">
+        <h2 id="overview-h">概要</h2>
+        <div class="cards" id="overview-cards">
+          <div class="card"><h3>プロジェクト</h3><div class="value" id="ov-project">未取得</div></div>
+          <div class="card"><h3>ゴール状態</h3><div class="value" id="ov-goal">未取得</div></div>
+          <div class="card"><h3>現在の段階</h3><div class="value" id="ov-stage">未取得</div></div>
+          <div class="card"><h3>更新日時</h3><div class="value mono" id="ov-updated">未取得</div></div>
+          <div class="card"><h3>資料数</h3><div class="value" id="ov-sources">未取得</div></div>
+          <div class="card"><h3>要件レビュー回数</h3><div class="value" id="ov-rounds">未取得</div></div>
+        </div>
+      </section>
+
+      <section id="phases" aria-labelledby="phases-h">
+        <h2 id="phases-h">段階一覧</h2>
+        <div class="table-wrap">
+          <table>
+            <caption>記録をそのまま表示します。</caption>
+            <thead><tr><th scope="col">ID</th><th scope="col">タイトル</th><th scope="col">状態</th><th scope="col">メモ</th></tr></thead>
+            <tbody id="phases-body"><tr><td colspan="4">未取得</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="roles" aria-labelledby="roles-h">
+        <h2 id="roles-h">担当モデル</h2>
+        <div class="table-wrap">
+          <table>
+            <caption>記録をそのまま表示します。</caption>
+            <thead><tr><th scope="col">役割</th><th scope="col">モデル</th><th scope="col">経路</th></tr></thead>
+            <tbody id="roles-body"><tr><td colspan="3">未取得</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="jobs" aria-labelledby="jobs-h">
+        <h2 id="jobs-h">ジョブ履歴</h2>
+        <div class="table-wrap">
+          <table>
+            <caption>履歴の記録値を表示します。所要時間は秒、tokens は記録値です。応答完了はジョブの記録上の完了を指します。</caption>
+            <thead><tr><th scope="col">ID</th><th scope="col">種別</th><th scope="col">モデル</th><th scope="col">状態</th><th scope="col">所要時間(秒)</th><th scope="col">tokens</th><th scope="col">メモ</th></tr></thead>
+            <tbody id="jobs-body"><tr><td colspan="7">未取得</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="decisions" aria-labelledby="decisions-h">
+        <h2 id="decisions-h">決定事項</h2>
+        <div class="table-wrap">
+          <table>
+            <caption>記録をそのまま表示します。</caption>
+            <thead><tr><th scope="col">ID</th><th scope="col">内容</th><th scope="col">状態</th></tr></thead>
+            <tbody id="decisions-body"><tr><td colspan="3">未取得</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="artifacts" aria-labelledby="artifacts-h">
+        <h2 id="artifacts-h">資料</h2>
+        <ul class="artifact-list" id="artifacts-list"><li>未取得</li></ul>
+      </section>
+
+      <details class="data-notes" id="data-notes">
+        <summary>データについて</summary>
+        <div class="data-notes-body">
+          <p>この画面は記録されたデータをそのまま表示します。進捗率・完成率などの推計は行いません。</p>
+          <p>データ形式: <code>schema_version</code> が 1 の JSON オブジェクト。各配列は200件、各文字列は2000文字までを検証します。</p>
+          <p>取得方法: HTTP経由では <code>state.json</code> を15秒ごとに自動取得します（5秒でタイムアウト、1MiB上限）。file:// では自動取得できないため、JSONファイルを選択して読み込んでください。</p>
+          <p>リンク許可範囲: <code>../docs/</code> 配下の安全な子パス、または同階層の <code>index.html</code>・<code>state.json</code> のみ。許可外のパスは文字列として表示します。</p>
+        </div>
+      </details>
+    </div>
+  </main>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var STATE_URL = "state.json";
+  var FETCH_TIMEOUT_MS = 5000;
+  var AUTO_INTERVAL_MS = 15000;
+  var MAX_FILE_BYTES = 1024 * 1024;
+  var MAX_STRING = 2000;
+  var MAX_ARRAY = 200;
+  var KNOWN_STATUS = ["planned", "in_progress", "reviewing", "done", "failed", "blocked", "cancelled"];
+  var STATUS_LABEL = {
+    planned: "計画済み",
+    in_progress: "進行中",
+    reviewing: "レビュー中",
+    done: "完了",
+    failed: "失敗",
+    blocked: "ブロック",
+    cancelled: "中止",
+    unknown: "不明"
+  };
+
+  var state = null;
+  var lastUpdatedAt = null;
+  var lastSource = null;
+  var lastSuccessAt = null;
+  var fetchInFlight = false;
+  var autoTimer = null;
+  var isFileMode = (location.protocol === "file:");
+  var autoPaused = false;
+  var requestGen = 0;
+
+  var el = {
+    bannerArea: document.getElementById("banner-area"),
+    statusLine: document.getElementById("status-line"),
+    refreshBtn: document.getElementById("refresh-btn"),
+    fileInput: document.getElementById("file-input"),
+    sidebarUpdated: document.getElementById("sidebar-updated"),
+    sidebarSource: document.getElementById("sidebar-source"),
+    ovProject: document.getElementById("ov-project"),
+    ovGoal: document.getElementById("ov-goal"),
+    ovStage: document.getElementById("ov-stage"),
+    ovUpdated: document.getElementById("ov-updated"),
+    ovSources: document.getElementById("ov-sources"),
+    ovRounds: document.getElementById("ov-rounds"),
+    phasesBody: document.getElementById("phases-body"),
+    rolesBody: document.getElementById("roles-body"),
+    jobsBody: document.getElementById("jobs-body"),
+    decisionsBody: document.getElementById("decisions-body"),
+    artifactsList: document.getElementById("artifacts-list"),
+    summaryStage: document.getElementById("summary-stage"),
+    summaryStageBadge: document.getElementById("summary-stage-badge"),
+    summaryPhaseStatus: document.getElementById("summary-phase-status"),
+    summaryJob: document.getElementById("summary-job"),
+    summaryReview: document.getElementById("summary-review"),
+    summaryUpdated: document.getElementById("summary-updated")
+  };
+
+  var artifactNodes = {};
+  var artifactOrder = [];
+  var summaryNodes = null;
+  var navToggle = document.getElementById("nav-toggle");
+  var mobileNavQuery = window.matchMedia ? window.matchMedia("(max-width: 767px)") : null;
+
+  function syncNavOpen() {
+    if (!navToggle) { return; }
+    if (mobileNavQuery) {
+      navToggle.open = !mobileNavQuery.matches;
+    } else {
+      navToggle.open = window.innerWidth >= 768;
+    }
+  }
+
+  function ensureSummaryNodes() {
+    if (summaryNodes) { return summaryNodes; }
+    var phaseWrap = el.summaryPhaseStatus;
+    var jobWrap = el.summaryJob;
+    var reviewWrap = el.summaryReview;
+    var phaseText = makeEl("span");
+    clearNode(phaseWrap);
+    phaseWrap.appendChild(phaseText);
+    var jobText = makeEl("span");
+    var jobBadge = makeEl("span");
+    clearNode(jobWrap);
+    jobWrap.appendChild(jobText);
+    jobWrap.appendChild(jobBadge);
+    var reviewText = makeEl("span");
+    var reviewPhasesLink = makeEl("a", null, "段階一覧");
+    reviewPhasesLink.setAttribute("href", "#phases");
+    var reviewJobsLink = makeEl("a", null, "ジョブ履歴");
+    reviewJobsLink.setAttribute("href", "#jobs");
+    var reviewDecisionsLink = makeEl("a", null, "決定事項");
+    reviewDecisionsLink.setAttribute("href", "#decisions");
+    clearNode(reviewWrap);
+    reviewWrap.appendChild(reviewText);
+    reviewWrap.appendChild(reviewPhasesLink);
+    reviewWrap.appendChild(reviewJobsLink);
+    reviewWrap.appendChild(reviewDecisionsLink);
+    summaryNodes = {
+      phaseText: phaseText,
+      jobText: jobText,
+      jobBadge: jobBadge,
+      reviewText: reviewText,
+      reviewPhasesLink: reviewPhasesLink,
+      reviewJobsLink: reviewJobsLink,
+      reviewDecisionsLink: reviewDecisionsLink
+    };
+    return summaryNodes;
+  }
+
+  function setBadge(node, status) {
+    var norm = normalizeStatus(status);
+    node.setAttribute("data-status", norm);
+    node.className = "badge";
+    node.textContent = STATUS_LABEL[norm] + (norm === "unknown" && typeof status === "string" && status !== "" ? " (" + status + ")" : "");
+  }
+
+  function clearNode(node) {
+    while (node.firstChild) { node.removeChild(node.firstChild); }
+  }
+
+  function makeEl(tag, className, text) {
+    var n = document.createElement(tag);
+    if (className) { n.className = className; }
+    if (text !== undefined && text !== null) { n.textContent = String(text); }
+    return n;
+  }
+
+  function setText(node, text) {
+    node.textContent = (text === undefined || text === null || text === "") ? "未取得" : String(text);
+  }
+
+  function formatDateTime(value) {
+    if (typeof value !== "string" || value === "") { return "未取得"; }
+    var d = new Date(value);
+    if (isNaN(d.getTime())) { return value; }
+    try {
+      return d.toLocaleString("ja-JP", {
+        year: "numeric", month: "2-digit", day: "2-digit",
+        hour: "2-digit", minute: "2-digit", second: "2-digit",
+        timeZoneName: "short"
+      });
+    } catch (e) {
+      return value;
+    }
+  }
+
+  function normalizeStatus(s) {
+    if (typeof s !== "string") { return "unknown"; }
+    return KNOWN_STATUS.indexOf(s) >= 0 ? s : "unknown";
+  }
+
+  function statusBadge(status) {
+    var norm = normalizeStatus(status);
+    var span = makeEl("span", "badge", STATUS_LABEL[norm] + (norm === "unknown" && typeof status === "string" && status !== "" ? " (" + status + ")" : ""));
+    span.setAttribute("data-status", norm);
+    return span;
+  }
+
+  function isSafeString(v) {
+    return typeof v === "string" && v.length <= MAX_STRING;
+  }
+
+  function isFiniteNonNegOrNull(v) {
+    return v === null || (typeof v === "number" && isFinite(v) && v >= 0);
+  }
+
+  function validateState(obj) {
+    var errors = [];
+    if (!obj || typeof obj !== "object" || Array.isArray(obj)) {
+      return { ok: false, errors: ["ルートがオブジェクトではありません"] };
+    }
+    if (obj.schema_version !== 1) { errors.push("schema_version が 1 ではありません"); }
+    ["project", "goal_status", "stage", "updated_at"].forEach(function (k) {
+      if (!isSafeString(obj[k])) { errors.push(k + " が文字列(2000文字以内)ではありません"); }
+    });
+    function checkArray(key, fields) {
+      if (!Array.isArray(obj[key])) { errors.push(key + " が配列ではありません"); return; }
+      if (obj[key].length > MAX_ARRAY) { errors.push(key + " が200件を超えています"); return; }
+      obj[key].forEach(function (item, i) {
+        if (!item || typeof item !== "object" || Array.isArray(item)) {
+          errors.push(key + "[" + i + "] がオブジェクトではありません");
+          return;
+        }
+        fields.forEach(function (f) {
+          if (f === "elapsed_seconds" || f === "tokens") {
+            if (!isFiniteNonNegOrNull(item[f])) { errors.push(key + "[" + i + "]." + f + " が不正です"); }
+          } else if (!isSafeString(item[f])) {
+            errors.push(key + "[" + i + "]." + f + " が文字列(2000文字以内)ではありません");
+          }
+        });
+      });
+    }
+    checkArray("roles", ["role", "model", "route"]);
+    checkArray("phases", ["id", "title", "status", "note"]);
+    checkArray("jobs", ["id", "kind", "model", "status", "elapsed_seconds", "tokens", "note"]);
+    checkArray("decisions", ["id", "text", "status"]);
+    checkArray("artifacts", ["title", "path", "status"]);
+    if (!obj.counts || typeof obj.counts !== "object" || Array.isArray(obj.counts)) {
+      errors.push("counts がオブジェクトではありません");
+    } else {
+      if (!isFiniteNonNegOrNull(obj.counts.sources)) { errors.push("counts.sources が不正です"); }
+      if (!isFiniteNonNegOrNull(obj.counts.requirement_review_rounds)) { errors.push("counts.requirement_review_rounds が不正です"); }
+    }
+    return { ok: errors.length === 0, errors: errors };
+  }
+
+  function isSafeSegment(seg) {
+    if (seg === "" || seg === "." || seg === "..") { return false; }
+    if (/[\\%?#\u0000-\u001f\u007f]/.test(seg)) { return false; }
+    return true;
+  }
+
+  function safeArtifactHref(path) {
+    if (typeof path !== "string" || path === "") { return null; }
+    if (path.length > MAX_STRING) { return null; }
+    if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(path)) { return null; }
+    if (path.charAt(0) === "/") { return null; }
+    if (path.indexOf("//") >= 0) { return null; }
+    if (/[\\%?#\u0000-\u001f\u007f]/.test(path)) { return null; }
+    var prefix = "../docs/";
+    var rest;
+    if (path.indexOf(prefix) === 0) {
+      rest = path.slice(prefix.length);
+    } else if (path.indexOf("../") === 0) {
+      return null;
+    } else {
+      if (path.indexOf("/") >= 0) { return null; }
+      if (path !== "index.html" && path !== "state.json") { return null; }
+      rest = path;
+    }
+    if (rest === "") { return null; }
+    var segments = rest.split("/");
+    for (var i = 0; i < segments.length; i++) {
+      if (!isSafeSegment(segments[i])) { return null; }
+    }
+    return path;
+  }
+
+  function renderBanner(tone, title, messages) {
+    clearNode(el.bannerArea);
+    if (!tone) { return; }
+    var box = makeEl("div", "banner");
+    box.setAttribute("data-tone", tone);
+    box.setAttribute("role", tone === "error" ? "alert" : "status");
+    box.appendChild(makeEl("strong", null, title));
+    (messages || []).forEach(function (m) {
+      var p = makeEl("p");
+      if (typeof m === "string") {
+        p.textContent = m;
+      } else if (m && m.code) {
+        p.appendChild(document.createTextNode(m.before || ""));
+        p.appendChild(makeEl("code", null, m.code));
+        p.appendChild(document.createTextNode(m.after || ""));
+      }
+      box.appendChild(p);
+    });
+    el.bannerArea.appendChild(box);
+  }
+
+  function renderStaleBanner(reason) {
+    if (!state) { return; }
+    var msgs = [];
+    if (lastUpdatedAt) {
+      msgs.push("最終更新日時: " + formatDateTime(lastUpdatedAt));
+    }
+    msgs.push("更新停止・前回表示のデータを表示しています。最新の state.json を取得できていません。");
+    if (reason) { msgs.push("理由: " + reason); }
+    renderBanner("warn", "更新停止・前回表示", msgs);
+  }
+
+  function renderFileModeBanner() {
+    renderBanner("info", "file:// で開かれています", [
+      "ブラウザの制約により、file:// では state.json を自動取得できません。",
+      "HTTP経由で表示する場合は、プロジェクトのルートから python -m http.server 8714 --bind 127.0.0.1 を実行し、http://127.0.0.1:8714/monitor/ を開いてください。",
+      "全ファイル公開を避ける場合は、RUNBOOK のモニター手順に従い制限付きの専用サーバーを利用してください。",
+      "または「JSONファイルを選択」から state.json を読み込んでください。"
+    ]);
+  }
+
+  function renderOverview() {
+    if (!state) {
+      setText(el.ovProject, null);
+      setText(el.ovGoal, null);
+      setText(el.ovStage, null);
+      setText(el.ovUpdated, null);
+      setText(el.ovSources, null);
+      setText(el.ovRounds, null);
+      return;
+    }
+    setText(el.ovProject, state.project);
+    setText(el.ovGoal, state.goal_status);
+    setText(el.ovStage, state.stage);
+    setText(el.ovUpdated, formatDateTime(state.updated_at));
+    setText(el.ovSources, state.counts && state.counts.sources !== null && state.counts.sources !== undefined ? String(state.counts.sources) : "未記録");
+    setText(el.ovRounds, state.counts && state.counts.requirement_review_rounds !== null && state.counts.requirement_review_rounds !== undefined ? String(state.counts.requirement_review_rounds) : "未記録");
+  }
+
+  function renderPhases() {
+    clearNode(el.phasesBody);
+    if (!state || !Array.isArray(state.phases) || state.phases.length === 0) {
+      var tr0 = makeEl("tr");
+      var td0 = makeEl("td", null, "未取得");
+      td0.setAttribute("colspan", "4");
+      tr0.appendChild(td0);
+      el.phasesBody.appendChild(tr0);
+      return;
+    }
+    state.phases.forEach(function (p) {
+      var tr = makeEl("tr");
+      tr.appendChild(makeEl("td", null, p.id));
+      tr.appendChild(makeEl("td", null, p.title));
+      var tdS = makeEl("td");
+      tdS.appendChild(statusBadge(p.status));
+      tr.appendChild(tdS);
+      tr.appendChild(makeEl("td", null, p.note));
+      el.phasesBody.appendChild(tr);
+    });
+  }
+
+  function renderRoles() {
+    clearNode(el.rolesBody);
+    if (!state || !Array.isArray(state.roles) || state.roles.length === 0) {
+      var tr0 = makeEl("tr");
+      var td0 = makeEl("td", null, "未取得");
+      td0.setAttribute("colspan", "3");
+      tr0.appendChild(td0);
+      el.rolesBody.appendChild(tr0);
+      return;
+    }
+    state.roles.forEach(function (r) {
+      var tr = makeEl("tr");
+      tr.appendChild(makeEl("td", null, r.role));
+      tr.appendChild(makeEl("td", null, r.model));
+      tr.appendChild(makeEl("td", null, r.route));
+      el.rolesBody.appendChild(tr);
+    });
+  }
+
+  function renderJobs() {
+    clearNode(el.jobsBody);
+    if (!state || !Array.isArray(state.jobs) || state.jobs.length === 0) {
+      var tr0 = makeEl("tr");
+      var td0 = makeEl("td", null, "未取得");
+      td0.setAttribute("colspan", "7");
+      tr0.appendChild(td0);
+      el.jobsBody.appendChild(tr0);
+      return;
+    }
+    state.jobs.forEach(function (j) {
+      var tr = makeEl("tr");
+      tr.appendChild(makeEl("td", null, j.id));
+      tr.appendChild(makeEl("td", null, j.kind));
+      tr.appendChild(makeEl("td", null, j.model));
+      var tdS = makeEl("td");
+      tdS.appendChild(statusBadge(j.status));
+      tr.appendChild(tdS);
+      tr.appendChild(makeEl("td", "num", j.elapsed_seconds === null || j.elapsed_seconds === undefined ? "未記録" : String(j.elapsed_seconds)));
+      tr.appendChild(makeEl("td", "num", j.tokens === null || j.tokens === undefined ? "未記録" : String(j.tokens)));
+      tr.appendChild(makeEl("td", null, j.note));
+      el.jobsBody.appendChild(tr);
+    });
+  }
+
+  function renderDecisions() {
+    clearNode(el.decisionsBody);
+    if (!state || !Array.isArray(state.decisions) || state.decisions.length === 0) {
+      var tr0 = makeEl("tr");
+      var td0 = makeEl("td", null, "未取得");
+      td0.setAttribute("colspan", "3");
+      tr0.appendChild(td0);
+      el.decisionsBody.appendChild(tr0);
+      return;
+    }
+    state.decisions.forEach(function (d) {
+      var tr = makeEl("tr");
+      tr.appendChild(makeEl("td", null, d.id));
+      tr.appendChild(makeEl("td", null, d.text));
+      var tdS = makeEl("td");
+      tdS.appendChild(statusBadge(d.status));
+      tr.appendChild(tdS);
+      el.decisionsBody.appendChild(tr);
+    });
+  }
+
+  function artifactKey(a) {
+    return String(a.path) + "\u0000" + String(a.title);
+  }
+
+  function buildArtifactNode(a) {
+    var li = makeEl("li");
+    var main = makeEl("div", "artifact-main");
+    main.appendChild(makeEl("span", "artifact-title", a.title));
+    main.appendChild(makeEl("span", "artifact-path", a.path));
+    li.appendChild(main);
+    var right = makeEl("div");
+    right.style.display = "flex";
+    right.style.gap = "var(--space-12)";
+    right.style.alignItems = "center";
+    right.style.flexWrap = "wrap";
+    var badge = statusBadge(a.status);
+    right.appendChild(badge);
+    var href = safeArtifactHref(a.path);
+    var link = null;
+    if (href) {
+      link = makeEl("a", null, "開く");
+      link.setAttribute("href", href);
+      link.setAttribute("rel", "noopener");
+      link.setAttribute("aria-label", "資料を開く: " + a.title);
+      right.appendChild(link);
+    }
+    li.appendChild(right);
+    return { li: li, badge: badge, link: link };
+  }
+
+  function updateArtifactNode(node, a) {
+    var badge = node.badge;
+    var norm = normalizeStatus(a.status);
+    badge.setAttribute("data-status", norm);
+    badge.textContent = STATUS_LABEL[norm] + (norm === "unknown" && typeof a.status === "string" && a.status !== "" ? " (" + a.status + ")" : "");
+    var href = safeArtifactHref(a.path);
+    if (href) {
+      if (!node.link) {
+        var link = makeEl("a", null, "開く");
+        link.setAttribute("href", href);
+        link.setAttribute("rel", "noopener");
+        link.setAttribute("aria-label", "資料を開く: " + a.title);
+        node.li.lastChild.appendChild(link);
+        node.link = link;
+      } else {
+        node.link.setAttribute("href", href);
+        node.link.setAttribute("aria-label", "資料を開く: " + a.title);
+      }
+    } else if (node.link) {
+      node.link.parentNode.removeChild(node.link);
+      node.link = null;
+    }
+  }
+
+  function renderArtifacts() {
+    var list = el.artifactsList;
+    if (!state || !Array.isArray(state.artifacts) || state.artifacts.length === 0) {
+      var active = document.activeElement;
+      var hadFocus = active && list.contains(active);
+      clearNode(list);
+      artifactNodes = {};
+      artifactOrder = [];
+      list.appendChild(makeEl("li", null, "未取得"));
+      if (hadFocus) {
+        var h = document.getElementById("artifacts-h");
+        if (h) { h.setAttribute("tabindex", "-1"); h.focus(); }
+        setStatusLine("資料の更新により、フォーカスを「資料」見出しへ移動しました。");
+      }
+      return;
+    }
+    var nextNodes = {};
+    var nextOrder = [];
+    var focusedKey = null;
+    var activeEl = document.activeElement;
+    if (activeEl && list.contains(activeEl)) {
+      for (var k in artifactNodes) {
+        if (Object.prototype.hasOwnProperty.call(artifactNodes, k)) {
+          if (artifactNodes[k].li.contains(activeEl)) { focusedKey = k; break; }
+        }
+      }
+    }
+    state.artifacts.forEach(function (a) {
+      var key = artifactKey(a);
+      var node = artifactNodes[key];
+      if (node) {
+        updateArtifactNode(node, a);
+      } else {
+        node = buildArtifactNode(a);
+      }
+      nextNodes[key] = node;
+      nextOrder.push(key);
+    });
+    var changed = nextOrder.length !== artifactOrder.length;
+    if (!changed) {
+      for (var i = 0; i < nextOrder.length; i++) {
+        if (nextOrder[i] !== artifactOrder[i]) { changed = true; break; }
+      }
+    }
+    if (changed) {
+      var activeBefore = document.activeElement;
+      var focusKey = null;
+      if (activeBefore && list.contains(activeBefore)) {
+        for (var fk in artifactNodes) {
+          if (Object.prototype.hasOwnProperty.call(artifactNodes, fk) && artifactNodes[fk].li.contains(activeBefore)) {
+            focusKey = fk;
+            break;
+          }
+        }
+      }
+      clearNode(list);
+      nextOrder.forEach(function (key) {
+        list.appendChild(nextNodes[key].li);
+      });
+      if (focusKey && nextNodes[focusKey]) {
+        var target = nextNodes[focusKey].link || nextNodes[focusKey].li;
+        if (target && typeof target.focus === "function") {
+          try { target.focus({ preventScroll: true }); } catch (e) { target.focus(); }
+        }
+      }
+    }
+    artifactNodes = nextNodes;
+    artifactOrder = nextOrder;
+    if (focusedKey && !nextNodes[focusedKey]) {
+      var heading = document.getElementById("artifacts-h");
+      if (heading) {
+        heading.setAttribute("tabindex", "-1");
+        heading.focus();
+      }
+      setStatusLine("資料の更新により、フォーカスを「資料」見出しへ移動しました。");
+    }
+  }
+
+  function renderSummary() {
+    var nodes = ensureSummaryNodes();
+    var stageBadge = el.summaryStageBadge;
+    if (!state) {
+      setText(el.summaryStage, null);
+      nodes.phaseText.textContent = "未取得";
+      nodes.jobText.textContent = "未取得";
+      nodes.jobBadge.textContent = "";
+      nodes.jobBadge.removeAttribute("data-status");
+      nodes.reviewText.textContent = "未取得";
+      nodes.reviewPhasesLink.hidden = true;
+      nodes.reviewJobsLink.hidden = true;
+      nodes.reviewDecisionsLink.hidden = true;
+      clearNode(stageBadge);
+      el.summaryUpdated.textContent = "最終更新: 未取得";
+      return;
+    }
+    setText(el.summaryStage, state.stage);
+    el.summaryUpdated.textContent = "最終更新: " + formatDateTime(state.updated_at) + " / 取得方法: " + (lastSource || "未取得");
+
+    var phases = Array.isArray(state.phases) ? state.phases : [];
+    var activePhases = phases.filter(function (p) {
+      var s = normalizeStatus(p.status);
+      return s === "in_progress" || s === "reviewing" || s === "blocked";
+    });
+    if (activePhases.length === 0) {
+      nodes.phaseText.textContent = "進行中・レビュー中・ブロックの段階はありません";
+    } else {
+      var parts = activePhases.map(function (p) {
+        return p.id + " " + STATUS_LABEL[normalizeStatus(p.status)];
+      });
+      nodes.phaseText.textContent = activePhases.length + "件: " + parts.join("、");
+    }
+
+    var jobs = Array.isArray(state.jobs) ? state.jobs : [];
+    var latestJob = null;
+    for (var i = jobs.length - 1; i >= 0; i--) {
+      var js = normalizeStatus(jobs[i].status);
+      if (js !== "done" && js !== "cancelled") {
+        latestJob = jobs[i];
+        break;
+      }
+    }
+    if (!latestJob) {
+      nodes.jobText.textContent = "非完了のジョブはありません";
+      nodes.jobBadge.textContent = "";
+      nodes.jobBadge.removeAttribute("data-status");
+    } else {
+      nodes.jobText.textContent = latestJob.id + " / " + latestJob.kind + " ";
+      setBadge(nodes.jobBadge, latestJob.status);
+    }
+
+    var decisions = Array.isArray(state.decisions) ? state.decisions : [];
+    var reviewPhases = phases.filter(function (p) { return normalizeStatus(p.status) === "reviewing"; });
+    var blockedPhases = phases.filter(function (p) { return normalizeStatus(p.status) === "blocked"; });
+    var reviewJobs = jobs.filter(function (j) { return normalizeStatus(j.status) === "reviewing"; });
+    var blockedJobs = jobs.filter(function (j) { return normalizeStatus(j.status) === "blocked"; });
+    var reviewDecisions = decisions.filter(function (d) { return normalizeStatus(d.status) === "reviewing"; });
+    var blockedDecisions = decisions.filter(function (d) { return normalizeStatus(d.status) === "blocked"; });
+    var phaseCount = reviewPhases.length + blockedPhases.length;
+    var jobCount = reviewJobs.length + blockedJobs.length;
+    var decisionCount = reviewDecisions.length + blockedDecisions.length;
+    var totalReview = phaseCount + jobCount + decisionCount;
+    if (totalReview === 0) {
+      nodes.reviewText.textContent = "レビュー中・確認待ちの記録: 該当状態の記録は0件";
+      nodes.reviewPhasesLink.hidden = true;
+      nodes.reviewJobsLink.hidden = true;
+      nodes.reviewDecisionsLink.hidden = true;
+    } else {
+      nodes.reviewText.textContent = "レビュー中・確認待ちの記録: " + totalReview + "件 ";
+      nodes.reviewPhasesLink.textContent = "段階一覧 " + phaseCount + "件";
+      nodes.reviewPhasesLink.hidden = false;
+      nodes.reviewJobsLink.textContent = "ジョブ履歴 " + jobCount + "件";
+      nodes.reviewJobsLink.hidden = false;
+      nodes.reviewDecisionsLink.textContent = "決定事項 " + decisionCount + "件";
+      nodes.reviewDecisionsLink.hidden = false;
+    }
+  }
+
+  function renderSidebar() {
+    if (lastUpdatedAt) {
+      el.sidebarUpdated.textContent = formatDateTime(lastUpdatedAt);
+    } else {
+      el.sidebarUpdated.textContent = "未取得";
+    }
+    el.sidebarSource.textContent = lastSource || "未取得";
+  }
+
+  function renderAll() {
+    renderSummary();
+    renderOverview();
+    renderPhases();
+    renderRoles();
+    renderJobs();
+    renderDecisions();
+    renderArtifacts();
+    renderSidebar();
+  }
+
+  function setStatusLine(text) {
+    el.statusLine.textContent = text || "";
+  }
+
+  function applyState(obj, sourceLabel) {
+    var v = validateState(obj);
+    if (!v.ok) {
+      var detail = v.errors.slice(0, 5).join(" / ");
+      setStatusLine("読み込み失敗: データ形式が不正です");
+      if (state) {
+        renderStaleBanner("検証失敗: " + detail);
+      } else {
+        renderBanner("error", "読み込み失敗", ["state.json の検証に失敗しました。", detail]);
+      }
+      return false;
+    }
+    state = obj;
+    lastUpdatedAt = obj.updated_at;
+    lastSource = sourceLabel;
+    lastSuccessAt = new Date();
+    renderAll();
+    if (isFileMode) {
+      renderFileModeBanner();
+    } else {
+      renderBanner(null);
+    }
+    setStatusLine("読み込み成功: " + formatDateTime(lastSuccessAt.toISOString()));
+    return true;
+  }
+
+  function handleFetchFailure(reason) {
+    setStatusLine("読み込み失敗/未取得: " + reason);
+    if (state) {
+      renderStaleBanner(reason);
+    } else {
+      renderBanner("error", "読み込み失敗/未取得", ["state.json を取得できませんでした。", reason]);
+    }
+  }
+
+  function readBodyWithLimit(res, controller) {
+    if (!res.body || typeof res.body.getReader !== "function") {
+      var cl = res.headers && res.headers.get ? res.headers.get("Content-Length") : null;
+      if (cl !== null && cl !== undefined) {
+        var n = parseInt(cl, 10);
+        if (isFinite(n) && n > MAX_FILE_BYTES) {
+          if (controller) { try { controller.abort(); } catch (e) {} }
+          return Promise.reject(new Error("サイズ超過(1MiB)"));
+        }
+      }
+      if (controller) { try { controller.abort(); } catch (e2) {} }
+      return Promise.reject(new Error("ストリーム読み取り非対応のため中止"));
+    }
+    var reader = res.body.getReader();
+    var chunks = [];
+    var total = 0;
+    function pump() {
+      return reader.read().then(function (r) {
+        if (r.done) {
+          var merged = new Uint8Array(total);
+          var off = 0;
+          for (var i = 0; i < chunks.length; i++) {
+            merged.set(chunks[i], off);
+            off += chunks[i].length;
+          }
+          return new TextDecoder("utf-8").decode(merged);
+        }
+        var chunk = r.value;
+        total += chunk.length;
+        if (total > MAX_FILE_BYTES) {
+          try { reader.cancel(); } catch (e) {}
+          if (controller) { try { controller.abort(); } catch (e2) {} }
+          throw new Error("サイズ超過(1MiB)");
+        }
+        chunks.push(chunk);
+        return pump();
+      });
+    }
+    return pump();
+  }
+
+  function fetchState() {
+    if (isFileMode) {
+      setStatusLine("file:// のため自動取得できません。JSONファイルを選択してください。");
+      return;
+    }
+    if (fetchInFlight) { return; }
+    fetchInFlight = true;
+    var myGen = ++requestGen;
+    el.refreshBtn.disabled = true;
+    setStatusLine("読み込み中...");
+    var controller = null;
+    var timer = null;
+    var aborted = false;
+    try {
+      controller = new AbortController();
+      timer = setTimeout(function () {
+        aborted = true;
+        try { controller.abort(); } catch (e) {}
+      }, FETCH_TIMEOUT_MS);
+    } catch (e) {
+      controller = null;
+    }
+    var opts = {
+      method: "GET",
+      cache: "no-store",
+      credentials: "same-origin",
+      headers: { "Accept": "application/json" }
+    };
+    if (controller) { opts.signal = controller.signal; }
+    fetch(STATE_URL, opts).then(function (res) {
+      if (!res.ok) { throw new Error("HTTP " + res.status); }
+      return readBodyWithLimit(res, controller);
+    }).then(function (text) {
+      if (myGen !== requestGen) { return; }
+      if (aborted) { throw new Error("タイムアウト"); }
+      var obj;
+      try { obj = JSON.parse(text); } catch (e) { throw new Error("JSON 解析失敗"); }
+      applyState(obj, "HTTP取得 (" + STATE_URL + ")");
+    }).catch(function (err) {
+      if (myGen !== requestGen) { return; }
+      var msg = aborted ? "タイムアウト(5秒)" : (err && err.message ? err.message : "通信エラー");
+      handleFetchFailure(msg);
+    }).then(function () {
+      if (timer) { clearTimeout(timer); }
+      if (myGen === requestGen) {
+        fetchInFlight = false;
+        el.refreshBtn.disabled = false;
+      }
+    });
+  }
+
+  function handleFile(file) {
+    if (!file) { return; }
+    var myGen = ++requestGen;
+    fetchInFlight = false;
+    el.refreshBtn.disabled = false;
+    if (!isFileMode) {
+      autoPaused = true;
+    }
+    if (file.size > MAX_FILE_BYTES) {
+      setStatusLine("読み込み失敗: ファイルが1MiBを超えています");
+      if (state) {
+        renderStaleBanner();
+      } else {
+        renderBanner("error", "読み込み失敗", ["ファイルサイズが1MiBを超えています。"]);
+      }
+      return;
+    }
+    var name = file.name || "";
+    if (!/\.json$/i.test(name) && file.type !== "application/json") {
+      setStatusLine("読み込み失敗: JSONファイルではありません");
+      if (state) {
+        renderStaleBanner();
+      } else {
+        renderBanner("error", "読み込み失敗", ["JSONファイルを選択してください。"]);
+      }
+      return;
+    }
+    var reader = new FileReader();
+    reader.onerror = function () {
+      setStatusLine("読み込み失敗: ファイル読み取りエラー");
+      if (state) {
+        renderStaleBanner();
+      } else {
+        renderBanner("error", "読み込み失敗", ["ファイルを読み取れませんでした。"]);
+      }
+    };
+    reader.onload = function () {
+      if (myGen !== requestGen) { return; }
+      var text = reader.result;
+      if (typeof text !== "string") {
+        setStatusLine("読み込み失敗: 内容が文字列ではありません");
+        return;
+      }
+      var obj;
+      try { obj = JSON.parse(text); } catch (e) {
+        setStatusLine("読み込み失敗: JSON 解析失敗");
+        if (state) {
+          renderStaleBanner();
+        } else {
+          renderBanner("error", "読み込み失敗", ["JSON として解析できませんでした。"]);
+        }
+        return;
+      }
+      applyState(obj, "ファイル選択 (" + name + ")");
+    };
+    reader.readAsText(file, "utf-8");
+  }
+
+  function startAuto() {
+    if (isFileMode) { return; }
+    if (autoTimer) { clearInterval(autoTimer); }
+    autoTimer = setInterval(function () {
+      if (!document.hidden && !autoPaused) { fetchState(); }
+    }, AUTO_INTERVAL_MS);
+  }
+
+  el.refreshBtn.addEventListener("click", function () {
+    if (isFileMode) {
+      setStatusLine("file:// のため自動取得できません。JSONファイルを選択してください。");
+      return;
+    }
+    autoPaused = false;
+    fetchState();
+  });
+
+  el.fileInput.addEventListener("change", function (ev) {
+    var f = ev.target.files && ev.target.files[0];
+    handleFile(f);
+    ev.target.value = "";
+  });
+
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden && !isFileMode && !fetchInFlight && !autoPaused) {
+      fetchState();
+    }
+  });
+
+  syncNavOpen();
+  if (mobileNavQuery) {
+    if (typeof mobileNavQuery.addEventListener === "function") {
+      mobileNavQuery.addEventListener("change", syncNavOpen);
+    } else if (typeof mobileNavQuery.addListener === "function") {
+      mobileNavQuery.addListener(syncNavOpen);
+    }
+  } else {
+    window.addEventListener("resize", syncNavOpen);
+  }
+
+  renderAll();
+  if (isFileMode) {
+    renderFileModeBanner();
+    setStatusLine("file:// のため自動取得できません。JSONファイルを選択してください。");
+  } else {
+    fetchState();
+    startAuto();
+  }
+})();
+</script>
+</body>
+</html>

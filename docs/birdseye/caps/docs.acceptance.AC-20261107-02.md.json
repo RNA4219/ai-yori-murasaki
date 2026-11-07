@@ -1,0 +1,28 @@
+{
+  "id": "docs/acceptance/AC-20261107-02.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "外部レビュー整理の技術検収。引用、提案、原文保存、モデルレビュー、HTML、本文検査、文書ゲートの結果を結ぶ。",
+  "deps_out": [
+    "docs/reviews/REVIEW-INTAKE-20261107.md",
+    "docs/tasks/TASK.review-intake-11-07-2026.md"
+  ],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/acceptance/INDEX.md",
+    "docs/reviews/REVIEW-INTAKE-20261107.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.review-intake-11-07-2026.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "603b821d428485d100196bea900e0c60ec60a91aa67bb8c552edc75593134b80",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-07T18:30:00+09:00",
+    "reviewed_by": "GLM",
+    "source_sha256": "603b821d428485d100196bea900e0c60ec60a91aa67bb8c552edc75593134b80",
+    "summary_sha256": "015b112ffe1a9ee1a84725c1c2c2777a9f6dbe74fe65c27f95f64b89478c380e",
+    "scope": "原文全文と要約・リンクを照合した。GitHub Public公開前の最終確定（公開記録RA-20261107-01、非公開原資料のリンク注記、codemap exclude、配布物hash）を反映した。"
+  }
+}

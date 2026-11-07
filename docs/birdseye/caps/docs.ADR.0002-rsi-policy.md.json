@@ -1,0 +1,28 @@
+{
+  "id": "docs/ADR/0002-rsi-policy.md",
+  "role": "decision",
+  "public_api": [],
+  "summary": "RSI の9項目を設計・運用・評価契約へ採用する判断。既存の閾値を流用せず、今回の文書追加と機能実装・効果実証を分ける。",
+  "deps_out": [
+    "RUNBOOK.md",
+    "docs/CONTRACTS.md",
+    "docs/RSI.md",
+    "docs/acceptance/AC-20261106-02.md",
+    "docs/tasks/TASK.rsi-policy-11-06-2026.md"
+  ],
+  "deps_in": [
+    "docs/ADR/README.md",
+    "docs/RSI.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "77531d72416112ab2077180dafa8a4343f822eb72a9d06f532e3d1d47196835e",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T07:28:57.539353+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "77531d72416112ab2077180dafa8a4343f822eb72a9d06f532e3d1d47196835e",
+    "summary_sha256": "5dd0d4965020ca0d3316f4bfacd13f77e2580609820689b1b2d4ddce3f0a2a22",
+    "scope": "名称削除後の原文・要約・参照の整合。9項目と資料 hash は保全。"
+  }
+}

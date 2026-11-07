@@ -1,0 +1,31 @@
+{
+  "id": "docs/UPSTREAM.md",
+  "role": "provenance",
+  "public_api": [],
+  "summary": "導入元の正本パス、base HEAD とローカル差分、snapshot、更新の採否手順と帰属を管理する。",
+  "deps_out": [
+    "RUNBOOK.md",
+    "docs/UPSTREAM_WEEKLY_LOG.md",
+    "docs/upstream-snapshot.json"
+  ],
+  "deps_in": [
+    "EVALUATION.md",
+    "HUB.codex.md",
+    "RUNBOOK.md",
+    "docs/ADR/0001-workflow-cookbook-tier3.md",
+    "docs/CONTRACTS.md",
+    "docs/UPSTREAM_WEEKLY_LOG.md",
+    "docs/workflow-adoption.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "716e5c9393af2e1989aa03f6fa8953c0d9e6b1a0c81b67d2d684ba69c072e626",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T07:09:44.542881+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "716e5c9393af2e1989aa03f6fa8953c0d9e6b1a0c81b67d2d684ba69c072e626",
+    "summary_sha256": "9cfc1faaf2112693824e2babd885f9cfae1d4ab40dbd976266e391b665befb9e",
+    "scope": "原文の役割・要約・参照の整合。外部仕様や製品の効果は検証していない。"
+  }
+}

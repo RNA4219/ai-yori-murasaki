@@ -1,0 +1,26 @@
+{
+  "id": "docs/ADR/README.md",
+  "role": "index",
+  "public_api": [],
+  "summary": "設計判断の記録方法と ADR 一覧。受領レポートは正式な採用判断と区別して案内する。",
+  "deps_out": [
+    "docs/ADR/0001-workflow-cookbook-tier3.md",
+    "docs/ADR/0002-rsi-policy.md",
+    "docs/ADR/deep-research-report (16).md"
+  ],
+  "deps_in": [
+    "HUB.codex.md",
+    "docs/workflow-adoption.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "c888f969574541df55c7a0e9c61aa18f031efaf5389be0ba8872a2b374b53ddf",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-07T18:30:00+09:00",
+    "reviewed_by": "GLM",
+    "source_sha256": "c888f969574541df55c7a0e9c61aa18f031efaf5389be0ba8872a2b374b53ddf",
+    "summary_sha256": "08a1909441b48822536421d70beb53d31829d16dbe2ffad3eaa117e50bcbfbb5",
+    "scope": "原文全文と要約・リンクを照合した。GitHub Public公開前の最終確定（公開記録RA-20261107-01、非公開原資料のリンク注記、codemap exclude、配布物hash）を反映した。"
+  }
+}

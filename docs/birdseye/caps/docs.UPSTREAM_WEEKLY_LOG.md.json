@@ -1,0 +1,29 @@
+{
+  "id": "docs/UPSTREAM_WEEKLY_LOG.md",
+  "role": "history",
+  "public_api": [],
+  "summary": "2026-11-06 の上流確認と採用判断を記録する。自動の週次実行は設定していない。",
+  "deps_out": [
+    "docs/UPSTREAM.md",
+    "docs/acceptance/AC-20261106-01.md",
+    "docs/tasks/TASK.workflow-adoption-11-06-2026.md",
+    "docs/upstream-snapshot.json",
+    "docs/workflow-adoption.md"
+  ],
+  "deps_in": [
+    "RUNBOOK.md",
+    "docs/UPSTREAM.md",
+    "docs/workflow-adoption.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "54c4e7f34be87cee9795a3ef4b8ac7b5a737c2ae195c556413ba7d867c06a01e",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T07:09:44.542881+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "54c4e7f34be87cee9795a3ef4b8ac7b5a737c2ae195c556413ba7d867c06a01e",
+    "summary_sha256": "ba7735fe0873cdbb2c064943218f0ff677633d74194cdd282300eea68eabccd9",
+    "scope": "原文の役割・要約・参照の整合。外部仕様や製品の効果は検証していない。"
+  }
+}

@@ -1,0 +1,120 @@
+import json
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+from ai_yori_murasaki.evidence import ArtifactStore
+from ai_yori_murasaki.jsonio import DataError, read_json
+from ai_yori_murasaki.oracle import evaluate, final_verdict
+from .helpers import ROOT, example
+
+
+class OracleAndCliTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory(prefix="aym-oracle-")
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        self.store = ArtifactStore(self.root / "artifacts")
+        self.ref = self.store.put(example("evidence_event")["payload"])
+
+    def cli(self, *args):
+        return subprocess.run([sys.executable, "-m", "ai_yori_murasaki", *map(str, args)],
+                              cwd=ROOT, capture_output=True, text=True, encoding="utf-8")
+
+    def test_oracle_pass_fail_hold_and_replay(self):
+        predicate = example("oracle_predicate")
+        first = evaluate(predicate, self.store)
+        self.assertEqual(first["status"], "pass")
+        self.assertEqual(first, evaluate(predicate, self.store))
+        predicate["expected"] = 500
+        self.assertEqual(evaluate(predicate, self.store)["status"], "fail")
+        predicate["json_pointer"] = "/not-observed"
+        self.assertEqual(evaluate(predicate, self.store)["status"], "hold")
+        predicate["input_ref"] = "0" * 64
+        self.assertEqual(evaluate(predicate, self.store)["status"], "hold")
+
+    def test_json_pointer_escaping_boolean_types_and_large_index(self):
+        predicate = example("oracle_predicate")
+        predicate.update(input_ref=self.store.put({"a/b": {"~key": [True]}}),
+                         json_pointer="/a~1b/~0key/0", expected=True)
+        self.assertEqual(evaluate(predicate, self.store)["status"], "pass")
+        predicate["expected"] = 1
+        self.assertEqual(evaluate(predicate, self.store)["status"], "fail")
+        predicate["json_pointer"] = "/a~1b/~0key/" + "9" * 5000
+        self.assertEqual(evaluate(predicate, self.store)["status"], "hold")
+
+    def test_unknown_operator_and_bad_pointer_rejected(self):
+        for field, value in (("operator", "shell"), ("json_pointer", "/bad~2escape")):
+            predicate = example("oracle_predicate")
+            predicate[field] = value
+            with self.assertRaises(DataError):
+                evaluate(predicate, self.store)
+
+    def test_missing_artifact_does_not_create_a_store(self):
+        path = self.root / "not-created"
+        result = evaluate(example("oracle_predicate"), ArtifactStore(path))
+        self.assertEqual(result["status"], "hold")
+        self.assertFalse(path.exists())
+
+    def test_empty_and_incomplete_checks_never_pass(self):
+        args = ("final-fixture", "campaign-fixture", "blue-fixture", example("run")["started_at"])
+        self.assertEqual(final_verdict(*args, [])["decision"], "hold")
+        hold = {"predicate_id": "one", "status": "hold", "reason": "unobserved"}
+        passed = {"predicate_id": "two", "status": "pass", "reason": "observed"}
+        self.assertEqual(final_verdict(*args, [hold, passed])["decision"], "hold")
+        self.assertEqual(final_verdict(*args, [passed])["decision"], "pass")
+        failed = dict(hold, status="fail")
+        self.assertEqual(final_verdict(*args, [passed, failed])["decision"], "fail")
+        with self.assertRaises(DataError):
+            final_verdict(*args, [passed, passed])
+
+    def test_cli_fixtures_and_no_sensitive_value_in_errors(self):
+        result = self.cli("fixtures", ROOT / "fixtures/p0/contracts.json")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(result.stdout)["contracts"], 8)
+        data = example("finding")
+        data["unexpected"] = "fixture-sensitive-invalid-value"
+        path = self.root / "invalid.json"
+        path.write_text(json.dumps(data), encoding="utf-8")
+        result = self.cli("validate", "finding", path)
+        self.assertEqual(result.returncode, 2)
+        self.assertNotIn("fixture-sensitive-invalid-value", result.stdout + result.stderr)
+
+    def test_cli_genesis_append_verify_and_view(self):
+        result = self.cli("genesis", "--campaign", "campaign-fixture", "--run", "blue-fixture")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        seal_path = self.root / "seal.json"
+        seal_path.write_text(result.stdout, encoding="utf-8")
+        ledger_path = self.root / "events.jsonl"
+        common = ("--ledger", ledger_path, "--artifacts", self.store.root, "--seal", seal_path)
+        result = self.cli("append", *common, "--record", ROOT / "fixtures/p0/record.json")
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        seal_path.write_text(result.stdout, encoding="utf-8")
+        result = self.cli("verify", *common)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue(json.loads(result.stdout)["verified"])
+        result = self.cli("blind-view", *common)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(len(json.loads(result.stdout)), 1)
+
+    def test_cli_oracle_exit_codes(self):
+        path = self.root / "predicate.json"
+        predicate = example("oracle_predicate")
+        for expected, pointer, code in ((200, "/http/status", 0),
+                                       (500, "/http/status", 1),
+                                       (200, "/missing", 3)):
+            predicate.update(expected=expected, json_pointer=pointer)
+            path.write_text(json.dumps(predicate), encoding="utf-8")
+            result = self.cli("oracle", "--predicate", path, "--artifacts", self.store.root)
+            self.assertEqual(result.returncode, code, result.stderr + result.stdout)
+
+    def test_cli_artifact_redaction_and_raw_text_not_executed(self):
+        source = self.root / "observation.json"
+        source.write_text(json.dumps({"token": "test-only", "instruction": "create-a-file"}), encoding="utf-8")
+        result = self.cli("artifact-put", "--root", self.store.root, "--input", source)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        value = self.store.get(json.loads(result.stdout)["digest"])
+        self.assertEqual(value["token"], "[REDACTED]")
+        self.assertFalse((self.root / "create-a-file").exists())

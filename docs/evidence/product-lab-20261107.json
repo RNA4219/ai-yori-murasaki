@@ -1,0 +1,71 @@
+{
+  "kind": "product-real-docker-lab",
+  "started_at": 1793989184.6457436,
+  "result": {
+    "campaign_id": "c95ccd13a24c64eee",
+    "baseline_statuses": [
+      200,
+      200,
+      200
+    ],
+    "blue_detections": 3,
+    "replay_statuses": [
+      403,
+      403,
+      403
+    ],
+    "benign_checks": [
+      {
+        "name": "health",
+        "expected": 200,
+        "actual": 200,
+        "passed": true
+      },
+      {
+        "name": "public",
+        "expected": 200,
+        "actual": 200,
+        "passed": true
+      },
+      {
+        "name": "admin_record",
+        "expected": 200,
+        "actual": 200,
+        "passed": true
+      },
+      {
+        "name": "unknown",
+        "expected": 404,
+        "actual": 404,
+        "passed": true
+      },
+      {
+        "name": "health_repeat",
+        "expected": 200,
+        "actual": 200,
+        "passed": true
+      }
+    ],
+    "final_verdict": {
+      "schema_version": "1.0.0",
+      "campaign_id": "c95ccd13a24c64eee",
+      "run_id": "r3c7531a7715642dd",
+      "oracle_verdict": "FAIL",
+      "oracle_reason_code": "exploit_not_succeeded",
+      "run_completion": "completed",
+      "adapter_status": [],
+      "cancellation": null,
+      "remediation_success": true,
+      "benign_regression_passed": true,
+      "remediation_id": "rem-c871d737-75af-4f3f-adef-7b3b8e9bd506",
+      "test_report_refs": [
+        "026697c3c106e860dced48e122fa5f03c41a5452ab8628fbef7cf446f0ccf5ff"
+      ],
+      "decided_at": "2026-11-06T18:19:57.163451Z"
+    },
+    "status": "review_pending",
+    "verification_journal_ref": "b7c78ce912ef02fef2e7055af151f429b5913153918e87f11ccae8ebc6debd6b"
+  },
+  "status": "completed",
+  "seconds": 15.734
+}

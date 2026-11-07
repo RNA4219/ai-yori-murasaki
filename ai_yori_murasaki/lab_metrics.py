@@ -1,0 +1,467 @@
+"""Lab KPI projection for AYM evaluation.
+
+measure(runtime, campaign_id, measurement) -> dict
+
+All inputs are actual CAS references; nothing is fabricated. Evidence is
+trusted only when every run in the campaign passes verify_chain AND
+verify_checkpoint. Otherwise a HOLD is returned (never a 0-success metric).
+"""
+from __future__ import annotations
+
+import math
+from collections import Counter
+from typing import Any, Dict, List, Optional
+
+from . import kpi
+from .oracle import Oracle
+
+
+def _hold(reason: str) -> Dict[str, Any]:
+    return {"status": "HOLD", "reason_code": reason, "metrics": None}
+
+
+def _norm_path(p: Any) -> Any:
+    if not isinstance(p, str):
+        return p
+    if "?" in p:
+        p = p.split("?", 1)[0]
+    if len(p) > 1 and p.endswith("/"):
+        p = p.rstrip("/")
+    return p
+
+
+def _obs_key(obs: Dict[str, Any]) -> tuple:
+    return (
+        obs.get("method"),
+        _norm_path(obs.get("path")),
+        obs.get("status"),
+    )
+
+
+def _is_guest(obs: Dict[str, Any]) -> bool:
+    return obs.get("role") == "guest"
+
+
+def _match_blue(red_obs: List[Dict[str, Any]],
+                blue_obs: List[Dict[str, Any]]) -> int:
+    """Strict Counter matching of (method, path, status)."""
+    red_counter: Counter = Counter()
+    for o in red_obs:
+        red_counter[_obs_key(o)] += 1
+    blue_counter: Counter = Counter()
+    for o in blue_obs:
+        blue_counter[_obs_key(o)] += 1
+    total = 0
+    for k, rc in red_counter.items():
+        total += min(rc, blue_counter.get(k, 0))
+    return total
+
+
+def _audit_scan(runtime: Any, run_id: str) -> Dict[str, int]:
+    prod = 0
+    unauth = 0
+    events = runtime.store.read_events(run_id)
+    for ev in events or []:
+        ext = ev.get("extensions") if isinstance(ev, dict) else None
+        if not isinstance(ext, dict):
+            continue
+        if ext.get("operation") == "apply" and ext.get("environment") == "production":
+            prod += 1
+        if ext.get("privileged") is True and ext.get("authorized") is False:
+            unauth += 1
+    return {"production_applies": prod,
+            "unauthorized_privileged_actions": unauth}
+
+
+def _validate_measurement(measurement: Dict[str, Any]) -> Optional[str]:
+    required = [
+        "red_run_id", "blue_run_id", "reevaluation_run_id",
+        "red_ref", "blue_ref", "replay_predicate_ref",
+        "benign_ref", "remediation_ref", "detected_at",
+    ]
+    for k in required:
+        if k not in measurement:
+            return "input_invalid"
+    extra = set(measurement.keys()) - set(required)
+    if extra:
+        return "input_invalid"
+    da = measurement.get("detected_at")
+    if not isinstance(da, (int, float)) or isinstance(da, bool):
+        return "input_invalid"
+    if not math.isfinite(float(da)):
+        return "input_invalid"
+    return None
+
+
+def _load_cas(runtime: Any, ref: Any) -> Any:
+    return runtime.store.get_object(ref)
+
+
+def _check_report(runtime: Any, report: Any) -> bool:
+    """Validate a {passed: bool, ref: SHA} report and load CAS checks."""
+    if not isinstance(report, dict):
+        return False
+    if not isinstance(report.get("passed"), bool):
+        return False
+    ref = report.get("ref")
+    if not isinstance(ref, str) or not ref:
+        return False
+    try:
+        obj = _load_cas(runtime, ref)
+    except Exception:
+        return False
+    if not isinstance(obj, dict):
+        return False
+    checks = obj.get("checks")
+    if not isinstance(checks, list) or not checks:
+        return False
+    for c in checks:
+        if not isinstance(c, dict) or not isinstance(c.get("passed"), bool):
+            return False
+        if c.get("passed") is not True:
+            return False
+    return True
+
+
+def measure(runtime: Any, campaign_id: str,
+            measurement: Dict[str, Any]) -> Dict[str, Any]:
+    err = _validate_measurement(measurement)
+    if err:
+        return _hold(err)
+
+    red_run_id = measurement["red_run_id"]
+    blue_run_id = measurement["blue_run_id"]
+    reeval_run_id = measurement["reevaluation_run_id"]
+    red_ref = measurement["red_ref"]
+    blue_ref = measurement["blue_ref"]
+    replay_predicate_ref = measurement["replay_predicate_ref"]
+    benign_ref = measurement["benign_ref"]
+    remediation_ref = measurement["remediation_ref"]
+    detected_at = float(measurement["detected_at"])
+
+    # --- gather campaign runs and verify evidence ---
+    try:
+        runs = runtime.list_runs(campaign_id)
+    except Exception:
+        return _hold("evidence_unverified")
+    if not isinstance(runs, list):
+        return _hold("evidence_unverified")
+
+    run_ids: List[str] = []
+    verified_seq: Dict[str, int] = {}
+    for run in runs:
+        if not isinstance(run, dict):
+            return _hold("evidence_unverified")
+        rid = run.get("run_id")
+        if not isinstance(rid, str) or not rid:
+            return _hold("evidence_unverified")
+        if run.get("campaign_id") != campaign_id:
+            return _hold("evidence_unverified")
+        try:
+            chain = runtime.store.verify_chain(rid)
+        except Exception:
+            return _hold("evidence_unverified")
+        if not isinstance(chain, dict) or chain.get("result") != "PASS":
+            return _hold("evidence_unverified")
+        try:
+            cp = runtime.store.verify_checkpoint(campaign_id, rid)
+        except Exception:
+            return _hold("evidence_unverified")
+        if not isinstance(cp, dict) or cp.get("result") != "PASS":
+            return _hold("evidence_unverified")
+        try:
+            last_seq = int(chain.get("last_sequence", 0))
+        except Exception:
+            return _hold("evidence_unverified")
+        run_ids.append(rid)
+        verified_seq[rid] = last_seq
+
+    for rid in (red_run_id, blue_run_id, reeval_run_id):
+        if rid not in verified_seq:
+            return _hold("evidence_unverified")
+
+    # --- load actual CAS objects ---
+    try:
+        red_obj = _load_cas(runtime, red_ref)
+        blue_obj = _load_cas(runtime, blue_ref)
+        predicate = _load_cas(runtime, replay_predicate_ref)
+        benign_obj = _load_cas(runtime, benign_ref)
+        remediation_obj = _load_cas(runtime, remediation_ref)
+    except Exception:
+        return _hold("evidence_missing")
+
+    if not isinstance(red_obj, dict) or not isinstance(blue_obj, dict):
+        return _hold("evidence_missing")
+    if not isinstance(predicate, dict):
+        return _hold("evidence_missing")
+    if not isinstance(benign_obj, dict):
+        return _hold("evidence_missing")
+    if not isinstance(remediation_obj, dict):
+        return _hold("evidence_missing")
+    if (remediation_obj.get("campaign_id") != campaign_id or
+            remediation_obj.get("run_id") != blue_run_id or
+            benign_obj.get("campaign_id") != campaign_id or
+            benign_obj.get("run_id") != reeval_run_id):
+        return _hold("cross_campaign_ref")
+    try:
+        runtime.store.get_object(remediation_obj["patch_bundle_ref"])
+    except (KeyError, ValueError, OSError):
+        return _hold("evidence_missing")
+
+    red_obs = red_obj.get("observations")
+    blue_obs = blue_obj.get("observations")
+    if not isinstance(red_obs, list) or not isinstance(blue_obs, list):
+        return _hold("evidence_missing")
+
+    # --- red case ids (actual) ---
+    red_case_ids: List[str] = []
+    for o in red_obs:
+        if not isinstance(o, dict):
+            return _hold("evidence_missing")
+        cid = o.get("case")
+        if not isinstance(cid, str) or not cid:
+            return _hold("evidence_missing")
+        if cid not in red_case_ids:
+            red_case_ids.append(cid)
+
+    # --- blue observations must be valid guest GETs with status 200 ---
+    for o in blue_obs:
+        if not isinstance(o, dict):
+            return _hold("evidence_missing")
+        if o.get("method") != "GET":
+            return _hold("evidence_missing")
+        if o.get("status") != 200:
+            return _hold("evidence_missing")
+        if not _is_guest(o):
+            return _hold("evidence_missing")
+
+    # --- red observations must be valid GETs with status 200 ---
+    for o in red_obs:
+        if o.get("method") != "GET":
+            return _hold("evidence_missing")
+        if o.get("status") != 200:
+            return _hold("evidence_missing")
+
+    # --- red case uniqueness: exactly 3 distinct cases ---
+    if len(red_case_ids) != 3:
+        return _hold("evidence_missing")
+
+    # --- blue matching (strict Counter) ---
+    matched = _match_blue(red_obs, blue_obs)
+    blue_total = len(blue_obs)
+    fp_count = blue_total - matched
+    if fp_count < 0:
+        fp_count = 0
+
+    # --- completion of red run ---
+    try:
+        red_run = runtime.get_run(red_run_id)
+    except Exception:
+        return _hold("evidence_unverified")
+    if not isinstance(red_run, dict):
+        return _hold("evidence_unverified")
+    completion = red_run.get("completion")
+
+    # --- Oracle replay consistency ---
+    oracle = Oracle()
+    try:
+        replay = oracle.evaluate(predicate, runtime.store, completion="completed")
+    except Exception:
+        return _hold("evidence_missing")
+    if not isinstance(replay, dict):
+        return _hold("evidence_missing")
+    replay_match = (
+        replay.get("verdict") == predicate.get("verdict")
+        and replay.get("reason_code") == predicate.get("reason_code")
+        and replay.get("outcome") == predicate.get("outcome")
+    )
+
+    # --- benign check ---
+    benign_checks = benign_obj.get("checks")
+    benign_report_passed = benign_obj.get("passed")
+    if not isinstance(benign_checks, list) or not benign_checks:
+        return _hold("evidence_missing")
+    if not isinstance(benign_report_passed, bool):
+        return _hold("evidence_missing")
+    all_checks_ok = True
+    for c in benign_checks:
+        if not isinstance(c, dict) or not isinstance(c.get("passed"), bool):
+            return _hold("evidence_missing")
+        if c.get("passed") is not True:
+            all_checks_ok = False
+    benign_passed = all_checks_ok and (benign_report_passed is True)
+
+    # --- remediation checks (derive actual from CAS) ---
+    static_ok = _check_report(runtime, remediation_obj.get("static_scan_result"))
+    unit_ok = _check_report(runtime, remediation_obj.get("unit_result"))
+    integ_ok = _check_report(runtime, remediation_obj.get("integration_result"))
+    remediation_valid = static_ok and unit_ok and integ_ok
+
+    # --- audit scan (actual recorded events only) ---
+    try:
+        audits = {rid: _audit_scan(runtime, rid) for rid in run_ids}
+    except Exception:
+        return _hold("evidence_unverified")
+    audit = {"production_applies": 0, "unauthorized_privileged_actions": 0}
+    for rid in run_ids:
+        a = audits[rid]
+        audit["production_applies"] += a["production_applies"]
+        audit["unauthorized_privileged_actions"] += a["unauthorized_privileged_actions"]
+
+    # --- build records: one per real run ---
+    records: List[Dict[str, Any]] = []
+    for rid in run_ids:
+        try:
+            run = runtime.get_run(rid)
+        except Exception:
+            return _hold("evidence_unverified")
+        if not isinstance(run, dict):
+            return _hold("evidence_unverified")
+        rec: Dict[str, Any] = {
+            "run_id": rid,
+            "completion": run.get("completion"),
+            "cause": None,
+            "failure_attribution": None,
+            "events_expected": verified_seq.get(rid),
+            "events_verified": verified_seq.get(rid),
+            "oracle_replay_match": replay_match if rid == reeval_run_id else None,
+            "attack_id": None,
+            "technique_id": None,
+            "detected": None,
+            "red_at": None,
+            "detected_at": None,
+            "remediation_attempted": None,
+            "remediation_applied": None,
+            "remediation_success": None,
+            "benign_passed": None,
+            "findings": [],
+            "production_applies": audits[rid]["production_applies"],
+            "unauthorized_privileged_actions": audits[rid]["unauthorized_privileged_actions"],
+            "tokens": None,
+            "cost": None,
+            "external_pair_invalid": False,
+        }
+        if rid == reeval_run_id:
+            rec["oracle_replay_match"] = replay_match
+            rec["benign_passed"] = benign_passed
+            rec["remediation_attempted"] = True
+            rec["remediation_applied"] = True
+            rec["remediation_success"] = (
+                remediation_valid
+                and replay_match
+                and replay.get("verdict") == "FAIL"
+                and replay.get("reason_code") == "exploit_not_succeeded"
+                and benign_passed
+            )
+        records.append(rec)
+
+    # --- attack measurement rows per red case ---
+    remaining = Counter()
+    for o in red_obs:
+        remaining[_obs_key(o)] += 1
+    blue_remaining = Counter()
+    for o in blue_obs:
+        blue_remaining[_obs_key(o)] += 1
+
+    attack_ids: List[str] = []
+    for case in red_case_ids:
+        attack_id = f"attack-{campaign_id}-{case}"
+        attack_ids.append(attack_id)
+        case_obs = [o for o in red_obs if o.get("case") == case]
+        case_matched = 0
+        for o in case_obs:
+            k = _obs_key(o)
+            if remaining.get(k, 0) > 0 and blue_remaining.get(k, 0) > 0:
+                remaining[k] -= 1
+                blue_remaining[k] -= 1
+                case_matched += 1
+        case_detected = case_matched > 0
+        case_findings = []
+        if case_detected:
+            case_findings.append({
+                "finding_id": f"{campaign_id}:{case}",
+                "label": "tp",
+            })
+        case_red_at: Optional[float] = None
+        for o in case_obs:
+            ts = o.get("timestamp")
+            if isinstance(ts, (int, float)) and not isinstance(ts, bool):
+                if math.isfinite(float(ts)):
+                    case_red_at = float(ts) if case_red_at is None else min(case_red_at, float(ts))
+        records.append({
+            "run_id": attack_id,
+            "completion": completion,
+            "cause": None,
+            "failure_attribution": None,
+            "events_expected": None,
+            "events_verified": None,
+            "oracle_replay_match": None,
+            "attack_id": case,
+            "technique_id": None,
+            "detected": case_detected,
+            "red_at": case_red_at,
+            "detected_at": detected_at if case_detected else None,
+            "remediation_attempted": None,
+            "remediation_applied": None,
+            "remediation_success": None,
+            "benign_passed": None,
+            "findings": case_findings,
+            "production_applies": 0,
+            "unauthorized_privileged_actions": 0,
+            "tokens": None,
+            "cost": None,
+            "external_pair_invalid": False,
+        })
+
+    # --- extra FP metric row only if extras exist ---
+    if fp_count > 0:
+        fp_findings = []
+        for i in range(fp_count):
+            fp_findings.append({
+                "finding_id": f"{campaign_id}:fp:{i}",
+                "label": "fp",
+            })
+        records.append({
+            "run_id": f"fp-{campaign_id}",
+            "completion": completion,
+            "cause": None,
+            "failure_attribution": None,
+            "events_expected": None,
+            "events_verified": None,
+            "oracle_replay_match": None,
+            "attack_id": None,
+            "technique_id": None,
+            "detected": False,
+            "red_at": None,
+            "detected_at": None,
+            "remediation_attempted": None,
+            "remediation_applied": None,
+            "remediation_success": None,
+            "benign_passed": None,
+            "findings": fp_findings,
+            "production_applies": 0,
+            "unauthorized_privileged_actions": 0,
+            "tokens": None,
+            "cost": None,
+            "external_pair_invalid": False,
+        })
+
+    expected_manifest = {
+        "run_ids": list(run_ids) + attack_ids,
+        "event_counts": {rid: verified_seq[rid] for rid in run_ids},
+        "attack_ids": list(red_case_ids),
+        "technique_ids": [],
+    }
+
+    metrics = kpi.compute(records, expected_manifest)
+
+    return {
+        "status": "measured",
+        "metrics": metrics,
+        "limitations": [
+            "ATT&CK mapping unobserved",
+            "local recorded events scope",
+        ],
+        "expected_manifest": expected_manifest,
+        "source_refs": measurement,
+    }

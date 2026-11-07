@@ -1,0 +1,27 @@
+{
+  "id": "docs/tasks/TASK.rsi-naming-11-06-2026.md",
+  "role": "task",
+  "public_api": [],
+  "summary": "Task 20261106-03。文書・パス・記録から参照元名称を削除し、RSI の9項目と資料 hash を保全する。",
+  "deps_out": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261106-03.md"
+  ],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261106-03.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "dddab01f203ab0741e552a8498045e75ab15819cabbc3b229985d21122b6791d",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T07:29:33.186519+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "dddab01f203ab0741e552a8498045e75ab15819cabbc3b229985d21122b6791d",
+    "summary_sha256": "e37c1a7b3046fbd338536724ccba4d07d0f6db20b738c047b809788306fc8556",
+    "scope": "名称整理の完了状態・検証記録・要約と参照の整合。"
+  }
+}

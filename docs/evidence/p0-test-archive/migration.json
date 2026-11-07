@@ -1,0 +1,25 @@
+{
+  "reason": "未検収P0はv1契約と非互換。旧試験は原文保全。機能と拒否境界をv1試験へ移行。",
+  "coverage": {
+    "contracts": "tests/test_v1_contracts.py",
+    "evidence": "tests/test_v1_storage.py, tests/test_v1_transactions.py, tests/test_v1_server.py",
+    "oracle_cli": "tests/test_v1_oracle.py, tests/test_v1_cli.py"
+  },
+  "files": [
+    {
+      "path": "tests/test_contracts.py",
+      "archived_sha256": "a34bbc56d50728fb932e3665dc26282c3f1154285e1bc7e0241bb9615a475194",
+      "current_sha256": "feb857ab12ddf04f53096fdf7444287f8b508bbbbbf0ee8b13fa41809ba33d78"
+    },
+    {
+      "path": "tests/test_evidence.py",
+      "archived_sha256": "1c1c78653ebcf134d6365bb96b6b076302f3561385a1f770a4130ac6bd183822",
+      "current_sha256": "489b6784b9938571cde51d72b9ec3153866f3bef002db6219bb61235c823a52d"
+    },
+    {
+      "path": "tests/test_oracle_cli.py",
+      "archived_sha256": "51e3c30d1628a4b2a083a1e0976e898aec8a9003aad0e3bf993f3f9510b837ae",
+      "current_sha256": "6e96c5f05cae3457982cc3d8541a320367a6d2278b031693d26b9cbf6ccf4e88"
+    }
+  ]
+}

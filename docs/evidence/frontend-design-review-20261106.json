@@ -1,0 +1,86 @@
+{
+  "date": "2026-11-06",
+  "scope": "開発HTML monitor frontend",
+  "user_instruction": "HTML・フロントエンドデザインをfrontend Skill入力済みのGLMに担当させる。",
+  "designer": "glm-5.3:cloud",
+  "implementer": "deepseek-v4.1-flash:cloud",
+  "skill_manifest": {
+    "model": "glm-5.3:cloud",
+    "files": [
+      {
+        "path": "C:\\Users\\ryo-n\\.codex\\skills\\ai-instructions-frontend\\SKILL.md",
+        "sha256": "87c0a7f0a835c9e8522ba419cbd618b2287a631fa5fa9f048a05ae9ca91ac73d",
+        "characters": 1720
+      },
+      {
+        "path": "C:\\Users\\ryo-n\\.codex\\skills\\ai-instructions-frontend\\references\\layout-code.md",
+        "sha256": "011e4b9f7a4958bb6c44670a37c8f414116fada4baa86d1dffd0491c9194b503",
+        "characters": 5964
+      },
+      {
+        "path": "C:\\Users\\ryo-n\\.codex\\skills\\ai-instructions-frontend\\references\\interaction.md",
+        "sha256": "6c20af66c422f0ae6d38c2e37dc071200c5b108ab0642d97493366c2a6873123",
+        "characters": 4772
+      },
+      {
+        "path": "C:\\Users\\ryo-n\\.codex\\skills\\ai-instructions-frontend\\references\\delivery-quality.md",
+        "sha256": "3ad7555beaf64b99b5c5bf28dc4fc4f449bc28e884de8172a372a954a92194ef",
+        "characters": 4236
+      }
+    ]
+  },
+  "reviews": [
+    "frontend-redesign-review",
+    "frontend-review-final",
+    "frontend-review-pass"
+  ],
+  "final_review": {
+    "verdict": "pass",
+    "resolved": [
+      "NAV-01",
+      "FOCUS-01",
+      "FOCUS-02",
+      "DATA-01",
+      "DATA-02",
+      "SEC-01",
+      "A11Y-01",
+      "NAV-02"
+    ],
+    "issues": []
+  },
+  "verification": {
+    "script_syntax": "node --check passed",
+    "viewports": [
+      {
+        "width": 390,
+        "no_page_overflow": true,
+        "navigation": "closed by default; click opens",
+        "summary_updated_visible": true
+      },
+      {
+        "width": 768,
+        "no_page_overflow": true,
+        "navigation": "links visible; height 44px",
+        "summary_updated_visible": true
+      },
+      {
+        "width": 1440,
+        "no_page_overflow": true,
+        "navigation": "links visible; height 44px",
+        "summary_updated_visible": true
+      }
+    ],
+    "artifact_reorder_focus": "passed",
+    "summary_link_refresh_focus": "passed",
+    "reviewing_job_display": "passed",
+    "screenshots": [
+      ".ga/goal-20261106/frontend-verified-390.png",
+      ".ga/goal-20261106/frontend-verified-768.png",
+      ".ga/goal-20261106/frontend-verified-1440.png"
+    ]
+  },
+  "html_sha256": "cca228e98fbd627b0781e4ce1881d8d971e84fec4bed0bc2d438653eba2d1b74",
+  "limitations": [
+    "製品本体のHTMLは仕様段階。開発モニターの合格を製品全体の検収にしない。"
+  ]
+}

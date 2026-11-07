@@ -1,0 +1,136 @@
+import json
+import tempfile
+import unittest
+from pathlib import Path
+
+from ai_yori_murasaki.evidence import ArtifactStore, Ledger, blind_blue_view, genesis, sanitize
+from ai_yori_murasaki.jsonio import DataError, canonical
+from .helpers import example, record
+
+
+class EvidenceTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory(prefix="aym-evidence-")
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        self.store = ArtifactStore(self.root / "artifacts")
+        self.store.put(example("evidence_event")["payload"])
+        self.ledger = Ledger(self.root / "events.jsonl")
+        self.zero = genesis("campaign-fixture", "blue-fixture")
+
+    def two_events(self):
+        first = self.ledger.append(record("event-1"), self.zero, self.store)
+        second = self.ledger.append(record("event-2"), first, self.store)
+        return first, second
+
+    def write_events(self, events):
+        self.ledger.path.write_bytes(b"".join(canonical(e) + b"\n" for e in events))
+
+    def test_append_roundtrip_and_artifact_idempotence(self):
+        first, second = self.two_events()
+        self.assertEqual(first["event_count"], 1)
+        self.assertEqual(len(self.ledger.verify(second, self.store)), 2)
+        value = example("evidence_event")["payload"]
+        self.assertEqual(self.store.put(value), self.store.put(value))
+
+    def test_event_tampering_is_detected(self):
+        _, seal = self.two_events()
+        events = self.ledger.verify(seal, self.store)
+        events[0]["payload"]["http"]["status"] = 500
+        self.write_events(events)
+        with self.assertRaises(DataError):
+            self.ledger.verify(seal, self.store)
+
+    def test_deletion_tail_deletion_and_order_change_are_detected(self):
+        _, seal = self.two_events()
+        events = self.ledger.verify(seal, self.store)
+        for changed in (events[:1], events[1:], [], list(reversed(events))):
+            with self.subTest(length=len(changed)):
+                self.write_events(changed)
+                with self.assertRaises(DataError):
+                    self.ledger.verify(seal, self.store)
+
+    def test_partial_last_line_rejected(self):
+        _, seal = self.two_events()
+        self.ledger.path.write_bytes(self.ledger.path.read_bytes().rstrip(b"\n"))
+        with self.assertRaises(DataError):
+            self.ledger.verify(seal, self.store)
+
+    def test_stale_anchor_and_wrong_run_do_not_append(self):
+        first, second = self.two_events()
+        before = self.ledger.path.read_bytes()
+        with self.assertRaises(DataError):
+            self.ledger.append(record("event-3"), first, self.store)
+        bad = dict(second, run_id="different-run")
+        with self.assertRaises(DataError):
+            self.ledger.append(record("event-3"), bad, self.store)
+        self.assertEqual(before, self.ledger.path.read_bytes())
+
+    def test_duplicate_event_and_derived_fields_rejected(self):
+        seal = self.ledger.append(record(), self.zero, self.store)
+        with self.assertRaises(DataError):
+            self.ledger.append(record(), seal, self.store)
+        invalid = record("event-2")
+        invalid["sequence"] = 2
+        with self.assertRaises(DataError):
+            self.ledger.append(invalid, seal, self.store)
+        self.assertEqual(len(self.ledger.verify(seal, self.store)), 1)
+
+    def test_missing_or_corrupt_artifact_rejected(self):
+        _, seal = self.two_events()
+        ref = example("evidence_event")["evidence_refs"][0]
+        path = self.store.root / (ref + ".json")
+        path.write_text('{"changed":true}', encoding="utf-8")
+        with self.assertRaises(DataError):
+            self.ledger.verify(seal, self.store)
+        with self.assertRaises(DataError):
+            self.store.put(example("evidence_event")["payload"])
+        path.unlink()
+        with self.assertRaises(OSError):
+            self.ledger.verify(seal, self.store)
+
+    def test_secret_values_and_keys_never_reach_persisted_evidence(self):
+        secret = "fixture-private-sentinel"
+        store = ArtifactStore(self.root / "private", (secret,))
+        value = {"Authorization": "Bearer test-only", "note": secret, secret: "value"}
+        ref = store.put(value)
+        self.assertNotIn(secret, (store.root / (ref + ".json")).read_text(encoding="utf-8"))
+        self.assertEqual(store.get(ref)["Authorization"], "[REDACTED]")
+        event = record()
+        event["payload"] = value
+        event["evidence_refs"] = [ref]
+        ledger = Ledger(self.root / "redacted.jsonl", (secret,))
+        seal = ledger.append(event, self.zero, store)
+        self.assertNotIn(secret, ledger.path.read_text(encoding="utf-8"))
+        self.assertNotIn("Bearer test-only", ledger.path.read_text(encoding="utf-8"))
+        ledger.verify(seal, store)
+
+    def test_redaction_collision_and_empty_secret_rejected(self):
+        with self.assertRaises(DataError):
+            sanitize({"one": 1, "two": 2}, ("one", "two"))
+        with self.assertRaises(DataError):
+            sanitize({"value": "text"}, ("",))
+
+    def test_busy_writer_lock_is_preserved(self):
+        lock = self.ledger.path.with_name("events.jsonl.lock")
+        lock.write_text("other-writer", encoding="utf-8")
+        with self.assertRaises(DataError):
+            self.ledger.append(record(), self.zero, self.store)
+        self.assertEqual(lock.read_text(encoding="utf-8"), "other-writer")
+        self.assertFalse(self.ledger.path.exists())
+
+    def test_blind_view_excludes_red_and_oracle_even_when_shared(self):
+        seal = self.zero
+        for actor in ("red", "oracle", "blue"):
+            event = record("event-" + actor, actor, "shared")
+            event["payload"] = {"message": actor + "-private-context"}
+            seal = self.ledger.append(event, seal, self.store)
+        view = blind_blue_view(self.ledger.verify(seal, self.store))
+        self.assertEqual([e["actor"] for e in view], ["blue"])
+        self.assertNotIn("red-private-context", json.dumps(view))
+        self.assertNotIn("oracle-private-context", json.dumps(view))
+        self.assertNotIn("previous_event_hash", view[0])
+
+    def test_artifact_digest_path_traversal_rejected(self):
+        with self.assertRaises(DataError):
+            self.store.get("../outside")

@@ -1,0 +1,25 @@
+{
+  "id": "governance/policy.yaml",
+  "role": "governance",
+  "public_api": [],
+  "summary": "Tier 3、ローカル検証、原文保全、RSIの凍結と反映分離、本番・公開未設定を機械可読で定める。",
+  "deps_out": [
+    "docs/RSI.md"
+  ],
+  "deps_in": [
+    "GUARDRAILS.md",
+    "HUB.codex.md",
+    "docs/workflow-adoption.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "704ecdfbfed12d09849f6e1175600f3ff704aaf9c3c2f5cc588ed343faa08546",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T19:30:36.760596+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "704ecdfbfed12d09849f6e1175600f3ff704aaf9c3c2f5cc588ed343faa08546",
+    "summary_sha256": "d50796eb79afef40a1d27a17de3adf59d1ecb719e5cd864e4be48ed6ff1f9d27",
+    "scope": "原文と要約・導線を照合。製品の実測範囲と未検証の区別を維持。"
+  }
+}

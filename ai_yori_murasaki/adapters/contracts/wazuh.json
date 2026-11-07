@@ -1,0 +1,1 @@
+{"input_ref":"47473a58bf6d4c200517c58b0a455a95b5db0cc2051c5372b60ef31aa6ebda40","name":"wazuh","output_ref":"5c1d98005a0aae0cb8422a6192f90803bb33476f259afb358a27611b61f58a4c","response_cap":10485760,"retry_cap":2,"timeout_ms":30000,"version":"1.0.0"}

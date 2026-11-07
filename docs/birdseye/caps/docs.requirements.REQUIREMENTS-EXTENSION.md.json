@@ -1,0 +1,19 @@
+{
+  "id": "docs/requirements/REQUIREMENTS-EXTENSION.md",
+  "role": "requirements",
+  "public_api": [],
+  "summary": "R-051〜R-063を要件として確定。R-061（実利用者試験）は2026-11-07のユーザー訂正によりwithdrawnで番号再利用なし。追加承認A（CVSS・業務影響）とB（最低5類型評価）はv1 MUST、R-046は維持。試験T21〜T35の対応表と未確定事項を含む。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "4b8071bf91c446087bf11323c515f15273a653916f9ff9685dbbd923a6b5bdf8",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-07T11:20:00+09:00",
+    "reviewed_by": "GLM",
+    "source_sha256": "4b8071bf91c446087bf11323c515f15273a653916f9ff9685dbbd923a6b5bdf8",
+    "summary_sha256": "853fbb8b4b35f2076ae538e577e3cdc0d0d1484a49f8cdd8763462217c5ddd5d",
+    "scope": "原文全文と要約・リンクを照合した。実測証跡に基づきAC-20261107-03技術検収合格と残件4項目完了を反映した。"
+  }
+}

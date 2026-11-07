@@ -1,0 +1,47 @@
+{
+  "id": "docs/RSI.md",
+  "role": "policy",
+  "public_api": [],
+  "summary": "再帰的自己改善の9項目と実装・比較・未見課題・経験・レビュー・反映の分離を定め、実検収へ案内する。",
+  "deps_out": [
+    "EVALUATION.md",
+    "RUNBOOK.md",
+    "docs/ADR/0002-rsi-policy.md",
+    "docs/CONTRACTS.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/acceptance/AC-20261106-02.md",
+    "docs/acceptance/AC-20261106-06.md",
+    "docs/evidence/rsi-reference-snapshot-20261106.json",
+    "docs/tasks/TASK.rsi-policy-11-06-2026.md"
+  ],
+  "deps_in": [
+    "AGENTS.md",
+    "BLUEPRINT.md",
+    "CHECKLISTS.md",
+    "EVALUATION.md",
+    "GUARDRAILS.md",
+    "HUB.codex.md",
+    "README.md",
+    "RUNBOOK.md",
+    "TASK.codex.md",
+    "docs/ADR/0002-rsi-policy.md",
+    "docs/CONTRACTS.md",
+    "docs/tasks/TASK.rsi-policy-11-06-2026.md",
+    "governance/policy.yaml"
+  ],
+  "risks": [
+    "文書上の自己改善方針を機能実装・性能実証の完了と混同しない。"
+  ],
+  "tests": [
+    "RUNBOOK の文書ゲートと RSI-DOC-01〜06 を照合する。"
+  ],
+  "source_sha256": "e6fb02186ec0aa4420b8ec522726dfb4b7c6589fdc8e9c8f78e1041633ad3692",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T19:30:36.760596+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "e6fb02186ec0aa4420b8ec522726dfb4b7c6589fdc8e9c8f78e1041633ad3692",
+    "summary_sha256": "e4697ba20eee17351f3008fc2f5c704bc771d26fc34017ac49485d3b58ca1458",
+    "scope": "原文と要約・導線を照合。製品の実測範囲と未検証の区別を維持。"
+  }
+}

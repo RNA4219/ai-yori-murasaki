@@ -1,0 +1,50 @@
+{
+  "checks": {
+    "arbitrary_argv_denied": true,
+    "argv_cap_drop": true,
+    "argv_cpus": true,
+    "argv_memory": true,
+    "argv_mount": true,
+    "argv_mount_readonly": true,
+    "argv_mount_source": true,
+    "argv_mount_target": true,
+    "argv_network_none": true,
+    "argv_pids_limit": true,
+    "argv_readonly": true,
+    "argv_security_opt": true,
+    "argv_user": true,
+    "container_probe_checks": {
+      "absent:/oracle/answers.json": true,
+      "absent:/red/context.json": true,
+      "absent:/var/run/docker.sock": true,
+      "absent:/workspace/catalog.json": true,
+      "readonly": true
+    },
+    "crash_cause": true,
+    "crash_incomplete": true,
+    "crash_resume_path": "SIGKILL child -> Oracle.evaluate incomplete HOLD -> resume_after_crash marks prior incomplete/crash and creates new run",
+    "injector_fixture_marker": "INJECT-MARKER-d455fe7670c1470892998ed25b3bd099",
+    "injector_preserved_as_data": true,
+    "llm_retry_count": true,
+    "oracle_hold_on_incomplete": true,
+    "oracle_hold_reason": true,
+    "probe_all_checks": true,
+    "probe_returncode": true,
+    "resume_idempotent": true,
+    "resume_new_id": true,
+    "rustxng_retry_count": true,
+    "sigkill_returncode": true,
+    "tool_calls_not_executed": true,
+    "tool_calls_preserved": true,
+    "wazuh_retry_count": true
+  },
+  "modes": {
+    "container_boundary": "real_docker",
+    "crash_resume": "explicit_crash_result_to_runtime",
+    "fault_clients": "in_process_fake_network",
+    "prompt_injection": "in_process_fixture_data_only",
+    "sigkill": "real_docker_child_worker_SIGKILL"
+  },
+  "run_id": "d455fe7670c1470892998ed25b3bd099",
+  "status": "passed"
+}

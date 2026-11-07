@@ -1,0 +1,30 @@
+{
+  "id": "AGENTS.md",
+  "role": "policy",
+  "public_api": [],
+  "summary": "日本語、作業順、Goalで承認された実装範囲、Imozuru/Yomiyasu、評価identity、Birdseyeと検証の規則を定める。",
+  "deps_out": [
+    ".agents/skills/security-audit/SKILL.md",
+    "RUNBOOK.md",
+    "docs/BIRDSEYE.md",
+    "docs/CONTRACTS.md",
+    "docs/RSI.md",
+    "docs/SECURITY-AUDIT.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_in": [
+    "CHECKLISTS.md",
+    "HUB.codex.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "91d296fb8a58c133a7a5cf4609381e0ab90468216cf0dceb8413d617cf82fa19",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T23:49:11.901048+00:00",
+    "reviewed_by": "GLM",
+    "source_sha256": "91d296fb8a58c133a7a5cf4609381e0ab90468216cf0dceb8413d617cf82fa19",
+    "summary_sha256": "cf19fc930dd903372dd96d076038bc8353eb03a3d5943faaa5d475470d40e8f8",
+    "scope": "GLMが原文全文と要約・依存を照合して確定。文書・要約・リンク整合の確認であり、製品実測や検収の実証ではない。"
+  }
+}

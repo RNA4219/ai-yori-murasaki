@@ -1,0 +1,124 @@
+{
+  "campaign": {
+    "schema_version": "blue-purple/v1",
+    "campaign_id": "campaign-fixture",
+    "owner": "fixture-operator",
+    "authorization_ref": "offline-fixture-only",
+    "status": "authorized",
+    "created_at": "2026-11-06T00:00:00+09:00",
+    "targets": [
+      {
+        "target_id": "json-fixture",
+        "environment": "lab",
+        "asset_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      }
+    ],
+    "budget": {
+      "max_events": 100,
+      "max_seconds": 60
+    }
+  },
+  "run": {
+    "schema_version": "blue-purple/v1",
+    "campaign_id": "campaign-fixture",
+    "run_id": "blue-fixture",
+    "target_id": "json-fixture",
+    "role": "blue",
+    "mode": "blue-blind",
+    "status": "completed",
+    "model": "fixture-only",
+    "input_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "policy_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "context_namespace": "blue-context",
+    "credential_namespace": "blue-credentials",
+    "started_at": "2026-11-06T00:00:00+09:00"
+  },
+  "evidence_event": {
+    "schema_version": "blue-purple/v1",
+    "campaign_id": "campaign-fixture",
+    "run_id": "blue-fixture",
+    "event_id": "event-fixture",
+    "sequence": 1,
+    "timestamp": "2026-11-06T00:00:00+09:00",
+    "actor": "blue",
+    "visibility": "blue",
+    "effective_model": "fixture-only",
+    "tool_name": "fixture-observation",
+    "permission_decision": "allow",
+    "target_id": "json-fixture",
+    "status": "observed",
+    "payload": {
+      "http": {
+        "status": 200
+      },
+      "normal_flow": {
+        "ok": true
+      }
+    },
+    "evidence_refs": [
+      "5f3ccb064407e89e5cea07477a1f3a2c5f2434af5ed56b8ba8ae76b20510b1ca"
+    ],
+    "result_digest": "5f3ccb064407e89e5cea07477a1f3a2c5f2434af5ed56b8ba8ae76b20510b1ca",
+    "previous_event_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "event_hash": "ad5779f92de37e47fc0680dac2755e550dfd8d8f0fafd9483af7ef4aaaf4afd4"
+  },
+  "oracle_predicate": {
+    "schema_version": "blue-purple/v1",
+    "predicate_id": "http-fixture",
+    "operator": "json_equals",
+    "input_ref": "5f3ccb064407e89e5cea07477a1f3a2c5f2434af5ed56b8ba8ae76b20510b1ca",
+    "json_pointer": "/http/status",
+    "expected": 200
+  },
+  "finding": {
+    "schema_version": "blue-purple/v1",
+    "finding_id": "finding-fixture",
+    "campaign_id": "campaign-fixture",
+    "run_id": "blue-fixture",
+    "target_id": "json-fixture",
+    "source": "oracle",
+    "title": "Synthetic observation; no vulnerability claim",
+    "severity": "info",
+    "state": "unverified",
+    "evidence_refs": [
+      "5f3ccb064407e89e5cea07477a1f3a2c5f2434af5ed56b8ba8ae76b20510b1ca"
+    ]
+  },
+  "remediation": {
+    "schema_version": "blue-purple/v1",
+    "remediation_id": "remediation-fixture",
+    "campaign_id": "campaign-fixture",
+    "finding_ids": [
+      "finding-fixture"
+    ],
+    "patch_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "status": "draft",
+    "delivery": "pr-only",
+    "production_apply": false,
+    "validation": {
+      "static": "hold",
+      "exploit_replay": "hold",
+      "benign_regression": "hold"
+    }
+  },
+  "approval": {
+    "schema_version": "blue-purple/v1",
+    "approval_id": "approval-fixture",
+    "subject_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "action": "patch_pr",
+    "reviewer_id": "fixture-reviewer",
+    "reviewer_kind": "technical",
+    "decision": "pending",
+    "reason": "offline fixture only",
+    "issued_at": "2026-11-06T00:00:00+09:00"
+  },
+  "final_verdict": {
+    "schema_version": "blue-purple/v1",
+    "verdict_id": "verdict-fixture",
+    "campaign_id": "campaign-fixture",
+    "run_id": "blue-fixture",
+    "timestamp": "2026-11-06T00:00:00+09:00",
+    "decision": "hold",
+    "checks": []
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "id": ".agents/skills/security-audit/AUDIT-PLANNING.md",
+  "role": "policy",
+  "public_api": [],
+  "summary": "完全監査の前回結果、プロファイル、範囲、厳密な呼び出し予算と未完了時の扱いを定める。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "e28b07020be6e3c1a4476aacdc79b62c1c544115f9faf497dcfc8709e58c8da5",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T07:54:28.763350+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "e28b07020be6e3c1a4476aacdc79b62c1c544115f9faf497dcfc8709e58c8da5",
+    "summary_sha256": "0926a059b0b4a6305fc78219b56d01141ea718ba44dba209cb02b5c4bc9ce7d6",
+    "scope": "原文・要約・参照の整合。別Taskの状態・判定は変更せず、製品の動作・診断精度は評価していない。"
+  }
+}

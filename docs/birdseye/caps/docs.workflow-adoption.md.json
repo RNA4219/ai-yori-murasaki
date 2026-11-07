@@ -1,0 +1,48 @@
+{
+  "id": "docs/workflow-adoption.md",
+  "role": "compliance",
+  "public_api": [],
+  "summary": "Workflow Cookbook Tier 3 Fullの対応、テンプレート版、ローカル製品への適用と未設定CI/SLOの境界。",
+  "deps_out": [
+    "BLUEPRINT.md",
+    "CHANGELOG.md",
+    "EVALUATION.md",
+    "GUARDRAILS.md",
+    "HUB.codex.md",
+    "README.md",
+    "RUNBOOK.md",
+    "docs/ADR/0001-workflow-cookbook-tier3.md",
+    "docs/ADR/README.md",
+    "docs/INCIDENT_TEMPLATE.md",
+    "docs/UPSTREAM.md",
+    "docs/UPSTREAM_WEEKLY_LOG.md",
+    "docs/acceptance/AC-20261106-01.md",
+    "docs/acceptance/AC-20261106-06.md",
+    "docs/acceptance/INDEX.md",
+    "docs/releases/README.md",
+    "docs/requirements/ACCEPTANCE-PLAN.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.workflow-adoption-11-06-2026.md",
+    "docs/upstream-snapshot.json",
+    "governance/policy.yaml"
+  ],
+  "deps_in": [
+    "EVALUATION.md",
+    "HUB.codex.md",
+    "README.md",
+    "docs/ADR/0001-workflow-cookbook-tier3.md",
+    "docs/UPSTREAM_WEEKLY_LOG.md",
+    "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "6874541712371a19e29b35dbb88e7e8fa66a183950822bde868c00a0e07158f2",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T19:30:36.760596+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "6874541712371a19e29b35dbb88e7e8fa66a183950822bde868c00a0e07158f2",
+    "summary_sha256": "de76b95c71aa12bc7a658554966939a6c9e9ddfffb259f20e2a6f918b01f7014",
+    "scope": "原文と要約・導線を照合。製品の実測範囲と未検証の区別を維持。"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "id": "docs/ADR/0001-workflow-cookbook-tier3.md",
+  "role": "decision",
+  "public_api": [],
+  "summary": "ユーザーの依頼を Tier 3 として適用し、ローカルの上流 CLI と2スキルを参照する採用判断と影響。",
+  "deps_out": [
+    "docs/UPSTREAM.md",
+    "docs/acceptance/AC-20261106-01.md",
+    "docs/tasks/TASK.workflow-adoption-11-06-2026.md",
+    "docs/workflow-adoption.md"
+  ],
+  "deps_in": [
+    "docs/ADR/README.md",
+    "docs/tasks/TASK.workflow-adoption-11-06-2026.md",
+    "docs/workflow-adoption.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "b8181a0d578c163152cdfddd17b9f7dea120983cce63e40c26275a49aa9a3fd3",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T07:09:44.542881+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "b8181a0d578c163152cdfddd17b9f7dea120983cce63e40c26275a49aa9a3fd3",
+    "summary_sha256": "b6c534159736e95294af2a69d1b16a2de73070bd09a49084baa04087364804ee",
+    "scope": "原文の役割・要約・参照の整合。外部仕様や製品の効果は検証していない。"
+  }
+}

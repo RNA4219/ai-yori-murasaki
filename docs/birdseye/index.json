@@ -1,0 +1,1608 @@
+{
+  "generated_at": "00021",
+  "nodes": {
+    "AGENTS.md": {
+      "role": "policy",
+      "caps": "docs/birdseye/caps/AGENTS.md.json",
+      "mtime": "00001"
+    },
+    "BLUEPRINT.md": {
+      "role": "requirements",
+      "caps": "docs/birdseye/caps/BLUEPRINT.md.json",
+      "mtime": "00002",
+      "source_sha256": "eba4c5e22e425deb958f98c53409c7371acd858955b7208e97b8719d945f6199"
+    },
+    "CHANGELOG.md": {
+      "role": "history",
+      "caps": "docs/birdseye/caps/CHANGELOG.md.json",
+      "mtime": "00003",
+      "source_sha256": "3447a0cdcead70d18d6dda7321c0520d52a140a9e8aa702f0ba046454ae01b99"
+    },
+    "CHECKLISTS.md": {
+      "role": "checklist",
+      "caps": "docs/birdseye/caps/CHECKLISTS.md.json",
+      "mtime": "00004"
+    },
+    "EVALUATION.md": {
+      "role": "quality",
+      "caps": "docs/birdseye/caps/EVALUATION.md.json",
+      "mtime": "00005"
+    },
+    "GUARDRAILS.md": {
+      "role": "policy",
+      "caps": "docs/birdseye/caps/GUARDRAILS.md.json",
+      "mtime": "00006"
+    },
+    "HUB.codex.md": {
+      "role": "navigation",
+      "caps": "docs/birdseye/caps/HUB.codex.md.json",
+      "mtime": "00007",
+      "source_sha256": "ccdf8ba20bc7f45124907a28928ac84cfbf4594b0f1a5b2d75c475a94ae73631"
+    },
+    "README.md": {
+      "role": "overview",
+      "caps": "docs/birdseye/caps/README.md.json",
+      "mtime": "00008",
+      "source_sha256": "e39f0fc36e2640a27e0a23e392ce157d0a1af3b7758c3e941e4a791c7f9028c5"
+    },
+    "RUNBOOK.md": {
+      "role": "operations",
+      "caps": "docs/birdseye/caps/RUNBOOK.md.json",
+      "mtime": "00009",
+      "source_sha256": "3f12e2007def059ff9781e422dcc22bdda8195f4d48785a73ed7aa0cd470fdaf"
+    },
+    "TASK.codex.md": {
+      "role": "template",
+      "caps": "docs/birdseye/caps/TASK.codex.md.json",
+      "mtime": "00010"
+    },
+    "docs/acceptance/AC-20261106-01.md": {
+      "role": "acceptance",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261106-01.md.json",
+      "mtime": "00011",
+      "source_sha256": "87615389b859dba948876e95182610e4c7218121c834c1c7afcd042eb7a20788"
+    },
+    "docs/acceptance/ACCEPTANCE_TEMPLATE.md": {
+      "role": "template",
+      "caps": "docs/birdseye/caps/docs.acceptance.ACCEPTANCE_TEMPLATE.md.json",
+      "mtime": "00012"
+    },
+    "docs/acceptance/INDEX.md": {
+      "role": "index",
+      "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
+      "mtime": "00013"
+    },
+    "docs/acceptance/README.md": {
+      "role": "guide",
+      "caps": "docs/birdseye/caps/docs.acceptance.README.md.json",
+      "mtime": "00014"
+    },
+    "docs/ADR/0001-workflow-cookbook-tier3.md": {
+      "role": "decision",
+      "caps": "docs/birdseye/caps/docs.ADR.0001-workflow-cookbook-tier3.md.json",
+      "mtime": "00015"
+    },
+    "docs/ADR/README.md": {
+      "role": "index",
+      "caps": "docs/birdseye/caps/docs.ADR.README.md.json",
+      "mtime": "00017",
+      "source_sha256": "c888f969574541df55c7a0e9c61aa18f031efaf5389be0ba8872a2b374b53ddf"
+    },
+    "docs/BIRDSEYE.md": {
+      "role": "guide",
+      "caps": "docs/birdseye/caps/docs.BIRDSEYE.md.json",
+      "mtime": "00018"
+    },
+    "docs/CONTRACTS.md": {
+      "role": "contract",
+      "caps": "docs/birdseye/caps/docs.CONTRACTS.md.json",
+      "mtime": "00019"
+    },
+    "docs/INCIDENT_TEMPLATE.md": {
+      "role": "template",
+      "caps": "docs/birdseye/caps/docs.INCIDENT_TEMPLATE.md.json",
+      "mtime": "00020"
+    },
+    "docs/releases/README.md": {
+      "role": "guide",
+      "caps": "docs/birdseye/caps/docs.releases.README.md.json",
+      "mtime": "00021",
+      "source_sha256": "8c3d2e996d5ec109aa10991c4e5b1270abdb143bd3d33c9db3c09335c687dac4"
+    },
+    "docs/tasks/README.md": {
+      "role": "guide",
+      "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
+      "mtime": "00022"
+    },
+    "docs/tasks/TASK.workflow-adoption-11-06-2026.md": {
+      "role": "task",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.workflow-adoption-11-06-2026.md.json",
+      "mtime": "00023"
+    },
+    "docs/UPSTREAM.md": {
+      "role": "provenance",
+      "caps": "docs/birdseye/caps/docs.UPSTREAM.md.json",
+      "mtime": "00024"
+    },
+    "docs/UPSTREAM_WEEKLY_LOG.md": {
+      "role": "history",
+      "caps": "docs/birdseye/caps/docs.UPSTREAM_WEEKLY_LOG.md.json",
+      "mtime": "00025"
+    },
+    "docs/workflow-adoption.md": {
+      "role": "compliance",
+      "caps": "docs/birdseye/caps/docs.workflow-adoption.md.json",
+      "mtime": "00026"
+    },
+    "governance/policy.yaml": {
+      "role": "governance",
+      "caps": "docs/birdseye/caps/governance.policy.yaml.json",
+      "mtime": "00027"
+    },
+    "codemap.config.json": {
+      "role": "configuration",
+      "caps": "docs/birdseye/caps/codemap.config.json.json",
+      "mtime": "00028",
+      "source_sha256": "1b08339e12ca6456b91acf829036f10592b2120a59d6da3a00cf0b5379164221"
+    },
+    ".github/PULL_REQUEST_TEMPLATE.md": {
+      "role": "template",
+      "caps": "docs/birdseye/caps/.github.PULL_REQUEST_TEMPLATE.md.json",
+      "mtime": "00029"
+    },
+    ".github/ISSUE_TEMPLATE/bug.yml": {
+      "role": "template",
+      "caps": "docs/birdseye/caps/.github.ISSUE_TEMPLATE.bug.yml.json",
+      "mtime": "00030"
+    },
+    "docs/upstream-snapshot.json": {
+      "role": "provenance",
+      "caps": "docs/birdseye/caps/docs.upstream-snapshot.json.json",
+      "mtime": "00031"
+    },
+    "docs/acceptance/AC-20261106-02.md": {
+      "role": "acceptance",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261106-02.md.json",
+      "mtime": "00032"
+    },
+    "docs/ADR/0002-rsi-policy.md": {
+      "role": "decision",
+      "caps": "docs/birdseye/caps/docs.ADR.0002-rsi-policy.md.json",
+      "mtime": "00033"
+    },
+    "docs/RSI.md": {
+      "role": "policy",
+      "caps": "docs/birdseye/caps/docs.RSI.md.json",
+      "mtime": "00034"
+    },
+    "docs/tasks/TASK.rsi-policy-11-06-2026.md": {
+      "role": "task",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.rsi-policy-11-06-2026.md.json",
+      "mtime": "00035"
+    },
+    "docs/evidence/rsi-reference-snapshot-20261106.json": {
+      "role": "provenance",
+      "caps": "docs/birdseye/caps/docs.evidence.rsi-reference-snapshot-20261106.json.json",
+      "mtime": "00036"
+    },
+    "docs/acceptance/AC-20261106-03.md": {
+      "role": "acceptance",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261106-03.md.json",
+      "mtime": "00037"
+    },
+    "docs/tasks/TASK.rsi-naming-11-06-2026.md": {
+      "role": "task",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.rsi-naming-11-06-2026.md.json",
+      "mtime": "00038"
+    },
+    "docs/acceptance/AC-20261106-04.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261106-04.md.json",
+      "mtime": "00039"
+    },
+    "docs/acceptance/AC-20261106-05.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261106-05.md.json",
+      "mtime": "00040"
+    },
+    "docs/P0-CONTRACTS.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.P0-CONTRACTS.md.json",
+      "mtime": "00041"
+    },
+    "docs/SECURITY-AUDIT.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.SECURITY-AUDIT.md.json",
+      "mtime": "00042"
+    },
+    "docs/tasks/TASK.p0-core-11-06-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.p0-core-11-06-2026.md.json",
+      "mtime": "00043",
+      "source_sha256": "cac9658071492e2de5980d6ece574c90846c1001abf699979089c88c9359301d"
+    },
+    "docs/tasks/TASK.security-audit-skill-11-06-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.security-audit-skill-11-06-2026.md.json",
+      "mtime": "00044"
+    },
+    "docs/evidence/security-audit-skill-snapshot-20261106.json": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.evidence.security-audit-skill-snapshot-20261106.json.json",
+      "mtime": "00045"
+    },
+    ".agents/skills/security-audit/SKILL.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/.agents.skills.security-audit.SKILL.md.json",
+      "mtime": "00046"
+    },
+    ".agents/skills/security-audit/AUDIT-PLANNING.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/.agents.skills.security-audit.AUDIT-PLANNING.md.json",
+      "mtime": "00047"
+    },
+    ".agents/skills/security-audit/EXECUTION-SAFETY.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/.agents.skills.security-audit.EXECUTION-SAFETY.md.json",
+      "mtime": "00048"
+    },
+    "docs/acceptance/AC-20261106-06.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261106-06.md.json",
+      "mtime": "00049"
+    },
+    "docs/PRODUCT-ACCEPTANCE.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.PRODUCT-ACCEPTANCE.md.json",
+      "mtime": "00050"
+    },
+    "docs/PRODUCT-GUIDE.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.PRODUCT-GUIDE.md.json",
+      "mtime": "00051"
+    },
+    "docs/requirements/ACCEPTANCE-PLAN.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.ACCEPTANCE-PLAN.md.json",
+      "mtime": "00052"
+    },
+    "docs/requirements/API-CONTRACTS.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.API-CONTRACTS.md.json",
+      "mtime": "00053"
+    },
+    "docs/requirements/COMPACTION-01.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.COMPACTION-01.md.json",
+      "mtime": "00054"
+    },
+    "docs/requirements/COMPACTION-02.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.COMPACTION-02.md.json",
+      "mtime": "00055"
+    },
+    "docs/requirements/COMPACTION-03.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.COMPACTION-03.md.json",
+      "mtime": "00056"
+    },
+    "docs/requirements/DECISIONS.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.DECISIONS.md.json",
+      "mtime": "00057"
+    },
+    "docs/requirements/ENRICHMENT-FORMATS.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.ENRICHMENT-FORMATS.md.json",
+      "mtime": "00058"
+    },
+    "docs/requirements/FRONTEND-DESIGN.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.FRONTEND-DESIGN.md.json",
+      "mtime": "00059"
+    },
+    "docs/requirements/IMPLEMENTATION-PLAN.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.IMPLEMENTATION-PLAN.md.json",
+      "mtime": "00060"
+    },
+    "docs/requirements/REQUIREMENTS.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.REQUIREMENTS.md.json",
+      "mtime": "00061"
+    },
+    "docs/requirements/SPEC-CORE.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.SPEC-CORE.md.json",
+      "mtime": "00062"
+    },
+    "docs/requirements/SPEC-EVALUATION.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.SPEC-EVALUATION.md.json",
+      "mtime": "00063"
+    },
+    "docs/tasks/TASK.product-completion-11-06-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.product-completion-11-06-2026.md.json",
+      "mtime": "00064",
+      "source_sha256": "dff5d8c0fa688327df271a663c797fd96537c6d3abd6e89d06e0f0fcfd6f3335"
+    },
+    "docs/acceptance/AC-20261107-01.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261107-01.md.json",
+      "mtime": "00065"
+    },
+    "docs/requirements/MONITOR-REDESIGN.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.MONITOR-REDESIGN.md.json",
+      "mtime": "00066"
+    },
+    "docs/tasks/TASK.monitor-redesign-11-07-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.monitor-redesign-11-07-2026.md.json",
+      "mtime": "00067"
+    },
+    "docs/acceptance/AC-20261107-02.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261107-02.md.json",
+      "mtime": "00068",
+      "source_sha256": "603b821d428485d100196bea900e0c60ec60a91aa67bb8c552edc75593134b80"
+    },
+    "docs/reviews/REVIEW-INTAKE-20261107.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.reviews.REVIEW-INTAKE-20261107.md.json",
+      "mtime": "00069",
+      "source_sha256": "1a5ed36513c6015fd8f7a06774503d76908e6c1347862f37250111a5d798b7d1"
+    },
+    "docs/tasks/TASK.review-intake-11-07-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.review-intake-11-07-2026.md.json",
+      "mtime": "00070",
+      "source_sha256": "49bad665acd18ff6aad36abe0e9dca72af86f78064cd9d12a4971fcdffcdc37f"
+    },
+    "docs/acceptance/AC-20261107-03.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261107-03.md.json",
+      "mtime": "00071",
+      "source_sha256": "c25d56cd446f83b348e5e09fb27a42900f9975c031ad3ec3e2565963eae0e7a4"
+    },
+    "docs/requirements/ACCEPTANCE-EXTENSION.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.ACCEPTANCE-EXTENSION.md.json",
+      "mtime": "00072",
+      "source_sha256": "2ec5328a40da3b99bc54347ae6188f46e67edfdadd1e4c39f08dcca32b005511"
+    },
+    "docs/requirements/MONITOR-ASSESSMENT.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.MONITOR-ASSESSMENT.md.json",
+      "mtime": "00073"
+    },
+    "docs/requirements/REQUIREMENTS-EXTENSION.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.REQUIREMENTS-EXTENSION.md.json",
+      "mtime": "00074",
+      "source_sha256": "4b8071bf91c446087bf11323c515f15273a653916f9ff9685dbbd923a6b5bdf8"
+    },
+    "docs/requirements/SPEC-ASSESSMENT.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.SPEC-ASSESSMENT.md.json",
+      "mtime": "00075"
+    },
+    "docs/requirements/USER-STUDY-PLAN.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.USER-STUDY-PLAN.md.json",
+      "mtime": "00076",
+      "source_sha256": "9b9f4d281b8d2db5ed0316a454ddb387b747000f6dee6b6e1893e7ef852dcb65"
+    },
+    "docs/tasks/REMAINING-WORK-20261107.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.REMAINING-WORK-20261107.md.json",
+      "mtime": "00077",
+      "source_sha256": "757ed6756a198ea930a9ca00f2ca6c426da086f68f4b7513fe79d1ffe9710834"
+    },
+    "docs/tasks/TASK.product-clarity-11-07-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.product-clarity-11-07-2026.md.json",
+      "mtime": "00078",
+      "source_sha256": "385f51de541c1c1168437f684c81e8a2a29e161f3a905b7c53f6c4c8c6b0aee2"
+    }
+  },
+  "edges": [
+    [
+      "AGENTS.md",
+      ".agents/skills/security-audit/SKILL.md"
+    ],
+    [
+      "AGENTS.md",
+      "RUNBOOK.md"
+    ],
+    [
+      "AGENTS.md",
+      "docs/BIRDSEYE.md"
+    ],
+    [
+      "AGENTS.md",
+      "docs/CONTRACTS.md"
+    ],
+    [
+      "AGENTS.md",
+      "docs/RSI.md"
+    ],
+    [
+      "AGENTS.md",
+      "docs/SECURITY-AUDIT.md"
+    ],
+    [
+      "AGENTS.md",
+      "docs/tasks/README.md"
+    ],
+    [
+      "BLUEPRINT.md",
+      "RUNBOOK.md"
+    ],
+    [
+      "BLUEPRINT.md",
+      "docs/CONTRACTS.md"
+    ],
+    [
+      "BLUEPRINT.md",
+      "docs/PRODUCT-GUIDE.md"
+    ],
+    [
+      "BLUEPRINT.md",
+      "docs/RSI.md"
+    ],
+    [
+      "BLUEPRINT.md",
+      "docs/acceptance/AC-20261106-06.md"
+    ],
+    [
+      "BLUEPRINT.md",
+      "docs/requirements/ACCEPTANCE-PLAN.md"
+    ],
+    [
+      "BLUEPRINT.md",
+      "docs/requirements/API-CONTRACTS.md"
+    ],
+    [
+      "BLUEPRINT.md",
+      "docs/requirements/DECISIONS.md"
+    ],
+    [
+      "BLUEPRINT.md",
+      "docs/requirements/REQUIREMENTS.md"
+    ],
+    [
+      "BLUEPRINT.md",
+      "docs/requirements/SPEC-CORE.md"
+    ],
+    [
+      "BLUEPRINT.md",
+      "docs/requirements/SPEC-EVALUATION.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/acceptance/AC-20261106-01.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/acceptance/AC-20261106-02.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/acceptance/AC-20261106-03.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/acceptance/AC-20261106-05.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/acceptance/AC-20261106-06.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/acceptance/AC-20261107-01.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/acceptance/AC-20261107-02.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.monitor-redesign-11-07-2026.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.product-completion-11-06-2026.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.review-intake-11-07-2026.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.rsi-naming-11-06-2026.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.rsi-policy-11-06-2026.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.security-audit-skill-11-06-2026.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
+    ],
+    [
+      "CHECKLISTS.md",
+      "AGENTS.md"
+    ],
+    [
+      "CHECKLISTS.md",
+      "GUARDRAILS.md"
+    ],
+    [
+      "CHECKLISTS.md",
+      "HUB.codex.md"
+    ],
+    [
+      "CHECKLISTS.md",
+      "RUNBOOK.md"
+    ],
+    [
+      "CHECKLISTS.md",
+      "docs/RSI.md"
+    ],
+    [
+      "CHECKLISTS.md",
+      "docs/releases/README.md"
+    ],
+    [
+      "EVALUATION.md",
+      "BLUEPRINT.md"
+    ],
+    [
+      "EVALUATION.md",
+      "CHECKLISTS.md"
+    ],
+    [
+      "EVALUATION.md",
+      "RUNBOOK.md"
+    ],
+    [
+      "EVALUATION.md",
+      "docs/CONTRACTS.md"
+    ],
+    [
+      "EVALUATION.md",
+      "docs/RSI.md"
+    ],
+    [
+      "EVALUATION.md",
+      "docs/UPSTREAM.md"
+    ],
+    [
+      "EVALUATION.md",
+      "docs/acceptance/AC-20261106-01.md"
+    ],
+    [
+      "EVALUATION.md",
+      "docs/acceptance/AC-20261106-02.md"
+    ],
+    [
+      "EVALUATION.md",
+      "docs/acceptance/AC-20261106-06.md"
+    ],
+    [
+      "EVALUATION.md",
+      "docs/requirements/ACCEPTANCE-PLAN.md"
+    ],
+    [
+      "EVALUATION.md",
+      "docs/tasks/TASK.rsi-policy-11-06-2026.md"
+    ],
+    [
+      "EVALUATION.md",
+      "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
+    ],
+    [
+      "EVALUATION.md",
+      "docs/upstream-snapshot.json"
+    ],
+    [
+      "EVALUATION.md",
+      "docs/workflow-adoption.md"
+    ],
+    [
+      "GUARDRAILS.md",
+      "BLUEPRINT.md"
+    ],
+    [
+      "GUARDRAILS.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "GUARDRAILS.md",
+      "HUB.codex.md"
+    ],
+    [
+      "GUARDRAILS.md",
+      "README.md"
+    ],
+    [
+      "GUARDRAILS.md",
+      "RUNBOOK.md"
+    ],
+    [
+      "GUARDRAILS.md",
+      "docs/CONTRACTS.md"
+    ],
+    [
+      "GUARDRAILS.md",
+      "docs/RSI.md"
+    ],
+    [
+      "GUARDRAILS.md",
+      "docs/acceptance/README.md"
+    ],
+    [
+      "GUARDRAILS.md",
+      "governance/policy.yaml"
+    ],
+    [
+      "HUB.codex.md",
+      ".agents/skills/security-audit/SKILL.md"
+    ],
+    [
+      "HUB.codex.md",
+      "AGENTS.md"
+    ],
+    [
+      "HUB.codex.md",
+      "BLUEPRINT.md"
+    ],
+    [
+      "HUB.codex.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "HUB.codex.md",
+      "CHECKLISTS.md"
+    ],
+    [
+      "HUB.codex.md",
+      "EVALUATION.md"
+    ],
+    [
+      "HUB.codex.md",
+      "GUARDRAILS.md"
+    ],
+    [
+      "HUB.codex.md",
+      "README.md"
+    ],
+    [
+      "HUB.codex.md",
+      "RUNBOOK.md"
+    ],
+    [
+      "HUB.codex.md",
+      "TASK.codex.md"
+    ],
+    [
+      "HUB.codex.md",
+      "codemap.config.json"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/ADR/README.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/CONTRACTS.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/INCIDENT_TEMPLATE.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/PRODUCT-GUIDE.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/RSI.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/SECURITY-AUDIT.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/UPSTREAM.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/acceptance/AC-20261106-06.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/acceptance/AC-20261107-01.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/acceptance/INDEX.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/acceptance/README.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/releases/README.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/requirements/MONITOR-REDESIGN.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/reviews/REVIEW-INTAKE-20261107.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/tasks/README.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/workflow-adoption.md"
+    ],
+    [
+      "HUB.codex.md",
+      "governance/policy.yaml"
+    ],
+    [
+      "README.md",
+      "BLUEPRINT.md"
+    ],
+    [
+      "README.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "README.md",
+      "EVALUATION.md"
+    ],
+    [
+      "README.md",
+      "GUARDRAILS.md"
+    ],
+    [
+      "README.md",
+      "HUB.codex.md"
+    ],
+    [
+      "README.md",
+      "RUNBOOK.md"
+    ],
+    [
+      "README.md",
+      "docs/PRODUCT-GUIDE.md"
+    ],
+    [
+      "README.md",
+      "docs/RSI.md"
+    ],
+    [
+      "README.md",
+      "docs/acceptance/AC-20261106-06.md"
+    ],
+    [
+      "README.md",
+      "docs/acceptance/INDEX.md"
+    ],
+    [
+      "README.md",
+      "docs/requirements/API-CONTRACTS.md"
+    ],
+    [
+      "README.md",
+      "docs/requirements/DECISIONS.md"
+    ],
+    [
+      "README.md",
+      "docs/requirements/REQUIREMENTS.md"
+    ],
+    [
+      "README.md",
+      "docs/requirements/SPEC-CORE.md"
+    ],
+    [
+      "README.md",
+      "docs/requirements/SPEC-EVALUATION.md"
+    ],
+    [
+      "README.md",
+      "docs/reviews/REVIEW-INTAKE-20261107.md"
+    ],
+    [
+      "README.md",
+      "docs/tasks/README.md"
+    ],
+    [
+      "README.md",
+      "docs/workflow-adoption.md"
+    ],
+    [
+      "RUNBOOK.md",
+      ".agents/skills/security-audit/SKILL.md"
+    ],
+    [
+      "RUNBOOK.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "RUNBOOK.md",
+      "CHECKLISTS.md"
+    ],
+    [
+      "RUNBOOK.md",
+      "EVALUATION.md"
+    ],
+    [
+      "RUNBOOK.md",
+      "GUARDRAILS.md"
+    ],
+    [
+      "RUNBOOK.md",
+      "HUB.codex.md"
+    ],
+    [
+      "RUNBOOK.md",
+      "README.md"
+    ],
+    [
+      "RUNBOOK.md",
+      "TASK.codex.md"
+    ],
+    [
+      "RUNBOOK.md",
+      "docs/BIRDSEYE.md"
+    ],
+    [
+      "RUNBOOK.md",
+      "docs/CONTRACTS.md"
+    ],
+    [
+      "RUNBOOK.md",
+      "docs/INCIDENT_TEMPLATE.md"
+    ],
+    [
+      "RUNBOOK.md",
+      "docs/PRODUCT-GUIDE.md"
+    ],
+    [
+      "RUNBOOK.md",
+      "docs/RSI.md"
+    ],
+    [
+      "RUNBOOK.md",
+      "docs/SECURITY-AUDIT.md"
+    ],
+    [
+      "RUNBOOK.md",
+      "docs/UPSTREAM.md"
+    ],
+    [
+      "RUNBOOK.md",
+      "docs/UPSTREAM_WEEKLY_LOG.md"
+    ],
+    [
+      "RUNBOOK.md",
+      "docs/acceptance/AC-20261106-06.md"
+    ],
+    [
+      "RUNBOOK.md",
+      "docs/acceptance/INDEX.md"
+    ],
+    [
+      "RUNBOOK.md",
+      "docs/requirements/DECISIONS.md"
+    ],
+    [
+      "RUNBOOK.md",
+      "docs/tasks/README.md"
+    ],
+    [
+      "TASK.codex.md",
+      "RUNBOOK.md"
+    ],
+    [
+      "TASK.codex.md",
+      "docs/CONTRACTS.md"
+    ],
+    [
+      "TASK.codex.md",
+      "docs/RSI.md"
+    ],
+    [
+      "TASK.codex.md",
+      "docs/tasks/README.md"
+    ],
+    [
+      "docs/ADR/0001-workflow-cookbook-tier3.md",
+      "docs/UPSTREAM.md"
+    ],
+    [
+      "docs/ADR/0001-workflow-cookbook-tier3.md",
+      "docs/acceptance/AC-20261106-01.md"
+    ],
+    [
+      "docs/ADR/0001-workflow-cookbook-tier3.md",
+      "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
+    ],
+    [
+      "docs/ADR/0001-workflow-cookbook-tier3.md",
+      "docs/workflow-adoption.md"
+    ],
+    [
+      "docs/ADR/0002-rsi-policy.md",
+      "RUNBOOK.md"
+    ],
+    [
+      "docs/ADR/0002-rsi-policy.md",
+      "docs/CONTRACTS.md"
+    ],
+    [
+      "docs/ADR/0002-rsi-policy.md",
+      "docs/RSI.md"
+    ],
+    [
+      "docs/ADR/0002-rsi-policy.md",
+      "docs/acceptance/AC-20261106-02.md"
+    ],
+    [
+      "docs/ADR/0002-rsi-policy.md",
+      "docs/tasks/TASK.rsi-policy-11-06-2026.md"
+    ],
+    [
+      "docs/ADR/README.md",
+      "docs/ADR/0001-workflow-cookbook-tier3.md"
+    ],
+    [
+      "docs/ADR/README.md",
+      "docs/ADR/0002-rsi-policy.md"
+    ],
+    [
+      "docs/BIRDSEYE.md",
+      "RUNBOOK.md"
+    ],
+    [
+      "docs/BIRDSEYE.md",
+      "codemap.config.json"
+    ],
+    [
+      "docs/CONTRACTS.md",
+      "docs/RSI.md"
+    ],
+    [
+      "docs/CONTRACTS.md",
+      "docs/UPSTREAM.md"
+    ],
+    [
+      "docs/CONTRACTS.md",
+      "docs/requirements/API-CONTRACTS.md"
+    ],
+    [
+      "docs/CONTRACTS.md",
+      "docs/requirements/SPEC-CORE.md"
+    ],
+    [
+      "docs/CONTRACTS.md",
+      "docs/requirements/SPEC-EVALUATION.md"
+    ],
+    [
+      "docs/INCIDENT_TEMPLATE.md",
+      "EVALUATION.md"
+    ],
+    [
+      "docs/INCIDENT_TEMPLATE.md",
+      "RUNBOOK.md"
+    ],
+    [
+      "docs/PRODUCT-ACCEPTANCE.md",
+      "docs/acceptance/AC-20261106-06.md"
+    ],
+    [
+      "docs/PRODUCT-ACCEPTANCE.md",
+      "docs/requirements/ACCEPTANCE-PLAN.md"
+    ],
+    [
+      "docs/PRODUCT-ACCEPTANCE.md",
+      "docs/reviews/REVIEW-INTAKE-20261107.md"
+    ],
+    [
+      "docs/PRODUCT-GUIDE.md",
+      "README.md"
+    ],
+    [
+      "docs/PRODUCT-GUIDE.md",
+      "docs/CONTRACTS.md"
+    ],
+    [
+      "docs/PRODUCT-GUIDE.md",
+      "docs/acceptance/AC-20261106-06.md"
+    ],
+    [
+      "docs/RSI.md",
+      "EVALUATION.md"
+    ],
+    [
+      "docs/RSI.md",
+      "RUNBOOK.md"
+    ],
+    [
+      "docs/RSI.md",
+      "docs/ADR/0002-rsi-policy.md"
+    ],
+    [
+      "docs/RSI.md",
+      "docs/CONTRACTS.md"
+    ],
+    [
+      "docs/RSI.md",
+      "docs/PRODUCT-GUIDE.md"
+    ],
+    [
+      "docs/RSI.md",
+      "docs/acceptance/AC-20261106-02.md"
+    ],
+    [
+      "docs/RSI.md",
+      "docs/acceptance/AC-20261106-06.md"
+    ],
+    [
+      "docs/RSI.md",
+      "docs/evidence/rsi-reference-snapshot-20261106.json"
+    ],
+    [
+      "docs/RSI.md",
+      "docs/tasks/TASK.rsi-policy-11-06-2026.md"
+    ],
+    [
+      "docs/UPSTREAM.md",
+      "RUNBOOK.md"
+    ],
+    [
+      "docs/UPSTREAM.md",
+      "docs/UPSTREAM_WEEKLY_LOG.md"
+    ],
+    [
+      "docs/UPSTREAM.md",
+      "docs/upstream-snapshot.json"
+    ],
+    [
+      "docs/UPSTREAM_WEEKLY_LOG.md",
+      "docs/UPSTREAM.md"
+    ],
+    [
+      "docs/UPSTREAM_WEEKLY_LOG.md",
+      "docs/acceptance/AC-20261106-01.md"
+    ],
+    [
+      "docs/UPSTREAM_WEEKLY_LOG.md",
+      "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
+    ],
+    [
+      "docs/UPSTREAM_WEEKLY_LOG.md",
+      "docs/upstream-snapshot.json"
+    ],
+    [
+      "docs/UPSTREAM_WEEKLY_LOG.md",
+      "docs/workflow-adoption.md"
+    ],
+    [
+      "docs/acceptance/AC-20261106-01.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "docs/acceptance/AC-20261106-01.md",
+      "RUNBOOK.md"
+    ],
+    [
+      "docs/acceptance/AC-20261106-01.md",
+      "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
+    ],
+    [
+      "docs/acceptance/AC-20261106-01.md",
+      "docs/upstream-snapshot.json"
+    ],
+    [
+      "docs/acceptance/AC-20261106-02.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "docs/acceptance/AC-20261106-02.md",
+      "RUNBOOK.md"
+    ],
+    [
+      "docs/acceptance/AC-20261106-02.md",
+      "docs/evidence/rsi-reference-snapshot-20261106.json"
+    ],
+    [
+      "docs/acceptance/AC-20261106-02.md",
+      "docs/tasks/TASK.rsi-policy-11-06-2026.md"
+    ],
+    [
+      "docs/acceptance/AC-20261106-03.md",
+      "RUNBOOK.md"
+    ],
+    [
+      "docs/acceptance/AC-20261106-03.md",
+      "docs/tasks/TASK.rsi-naming-11-06-2026.md"
+    ],
+    [
+      "docs/acceptance/AC-20261106-06.md",
+      "docs/PRODUCT-ACCEPTANCE.md"
+    ],
+    [
+      "docs/acceptance/AC-20261106-06.md",
+      "docs/reviews/REVIEW-INTAKE-20261107.md"
+    ],
+    [
+      "docs/acceptance/AC-20261106-06.md",
+      "docs/tasks/TASK.product-completion-11-06-2026.md"
+    ],
+    [
+      "docs/acceptance/AC-20261107-01.md",
+      "docs/requirements/MONITOR-REDESIGN.md"
+    ],
+    [
+      "docs/acceptance/AC-20261107-01.md",
+      "docs/tasks/TASK.monitor-redesign-11-07-2026.md"
+    ],
+    [
+      "docs/acceptance/AC-20261107-02.md",
+      "docs/reviews/REVIEW-INTAKE-20261107.md"
+    ],
+    [
+      "docs/acceptance/AC-20261107-02.md",
+      "docs/tasks/TASK.review-intake-11-07-2026.md"
+    ],
+    [
+      "docs/acceptance/ACCEPTANCE_TEMPLATE.md",
+      "docs/releases/README.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261106-01.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261106-02.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261106-03.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261106-05.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261106-06.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261107-01.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261107-02.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.monitor-redesign-11-07-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.product-completion-11-06-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.review-intake-11-07-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.rsi-naming-11-06-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.rsi-policy-11-06-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.security-audit-skill-11-06-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
+    ],
+    [
+      "docs/acceptance/README.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "docs/acceptance/README.md",
+      "RUNBOOK.md"
+    ],
+    [
+      "docs/acceptance/README.md",
+      "docs/acceptance/ACCEPTANCE_TEMPLATE.md"
+    ],
+    [
+      "docs/acceptance/README.md",
+      "docs/acceptance/INDEX.md"
+    ],
+    [
+      "docs/releases/README.md",
+      "docs/CONTRACTS.md"
+    ],
+    [
+      "docs/requirements/ACCEPTANCE-PLAN.md",
+      "docs/PRODUCT-ACCEPTANCE.md"
+    ],
+    [
+      "docs/requirements/API-CONTRACTS.md",
+      "docs/PRODUCT-ACCEPTANCE.md"
+    ],
+    [
+      "docs/requirements/COMPACTION-01.md",
+      "docs/requirements/DECISIONS.md"
+    ],
+    [
+      "docs/requirements/COMPACTION-01.md",
+      "docs/requirements/FRONTEND-DESIGN.md"
+    ],
+    [
+      "docs/requirements/COMPACTION-01.md",
+      "docs/requirements/REQUIREMENTS.md"
+    ],
+    [
+      "docs/requirements/COMPACTION-02.md",
+      "docs/requirements/ACCEPTANCE-PLAN.md"
+    ],
+    [
+      "docs/requirements/COMPACTION-02.md",
+      "docs/requirements/API-CONTRACTS.md"
+    ],
+    [
+      "docs/requirements/COMPACTION-02.md",
+      "docs/requirements/IMPLEMENTATION-PLAN.md"
+    ],
+    [
+      "docs/requirements/COMPACTION-02.md",
+      "docs/requirements/SPEC-CORE.md"
+    ],
+    [
+      "docs/requirements/COMPACTION-02.md",
+      "docs/requirements/SPEC-EVALUATION.md"
+    ],
+    [
+      "docs/requirements/COMPACTION-03.md",
+      "docs/requirements/ACCEPTANCE-PLAN.md"
+    ],
+    [
+      "docs/requirements/COMPACTION-03.md",
+      "docs/requirements/IMPLEMENTATION-PLAN.md"
+    ],
+    [
+      "docs/requirements/DECISIONS.md",
+      "docs/PRODUCT-ACCEPTANCE.md"
+    ],
+    [
+      "docs/requirements/FRONTEND-DESIGN.md",
+      "docs/PRODUCT-ACCEPTANCE.md"
+    ],
+    [
+      "docs/requirements/FRONTEND-DESIGN.md",
+      "docs/requirements/MONITOR-REDESIGN.md"
+    ],
+    [
+      "docs/requirements/IMPLEMENTATION-PLAN.md",
+      "docs/PRODUCT-ACCEPTANCE.md"
+    ],
+    [
+      "docs/requirements/MONITOR-REDESIGN.md",
+      "docs/acceptance/AC-20261107-01.md"
+    ],
+    [
+      "docs/requirements/MONITOR-REDESIGN.md",
+      "docs/tasks/TASK.monitor-redesign-11-07-2026.md"
+    ],
+    [
+      "docs/requirements/REQUIREMENTS.md",
+      "docs/PRODUCT-ACCEPTANCE.md"
+    ],
+    [
+      "docs/requirements/SPEC-CORE.md",
+      "docs/PRODUCT-ACCEPTANCE.md"
+    ],
+    [
+      "docs/requirements/SPEC-EVALUATION.md",
+      "docs/CONTRACTS.md"
+    ],
+    [
+      "docs/requirements/SPEC-EVALUATION.md",
+      "docs/PRODUCT-ACCEPTANCE.md"
+    ],
+    [
+      "docs/reviews/REVIEW-INTAKE-20261107.md",
+      "docs/acceptance/AC-20261107-02.md"
+    ],
+    [
+      "docs/reviews/REVIEW-INTAKE-20261107.md",
+      "docs/requirements/REQUIREMENTS.md"
+    ],
+    [
+      "docs/reviews/REVIEW-INTAKE-20261107.md",
+      "docs/tasks/TASK.review-intake-11-07-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "HUB.codex.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "TASK.codex.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261106-01.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261106-02.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261106-03.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261106-05.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261106-06.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261107-01.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261107-02.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/README.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/releases/README.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.monitor-redesign-11-07-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.product-completion-11-06-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.review-intake-11-07-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.rsi-naming-11-06-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.rsi-policy-11-06-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.security-audit-skill-11-06-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
+    ],
+    [
+      "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
+      "docs/acceptance/AC-20261107-01.md"
+    ],
+    [
+      "docs/tasks/TASK.product-completion-11-06-2026.md",
+      "docs/PRODUCT-ACCEPTANCE.md"
+    ],
+    [
+      "docs/tasks/TASK.product-completion-11-06-2026.md",
+      "docs/acceptance/AC-20261106-06.md"
+    ],
+    [
+      "docs/tasks/TASK.product-completion-11-06-2026.md",
+      "docs/reviews/REVIEW-INTAKE-20261107.md"
+    ],
+    [
+      "docs/tasks/TASK.product-completion-11-06-2026.md",
+      "docs/tasks/TASK.p0-core-11-06-2026.md"
+    ],
+    [
+      "docs/tasks/TASK.review-intake-11-07-2026.md",
+      "docs/acceptance/AC-20261107-02.md"
+    ],
+    [
+      "docs/tasks/TASK.review-intake-11-07-2026.md",
+      "docs/reviews/REVIEW-INTAKE-20261107.md"
+    ],
+    [
+      "docs/tasks/TASK.rsi-naming-11-06-2026.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "docs/tasks/TASK.rsi-naming-11-06-2026.md",
+      "docs/acceptance/AC-20261106-03.md"
+    ],
+    [
+      "docs/tasks/TASK.rsi-policy-11-06-2026.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "docs/tasks/TASK.rsi-policy-11-06-2026.md",
+      "EVALUATION.md"
+    ],
+    [
+      "docs/tasks/TASK.rsi-policy-11-06-2026.md",
+      "RUNBOOK.md"
+    ],
+    [
+      "docs/tasks/TASK.rsi-policy-11-06-2026.md",
+      "docs/RSI.md"
+    ],
+    [
+      "docs/tasks/TASK.rsi-policy-11-06-2026.md",
+      "docs/acceptance/AC-20261106-02.md"
+    ],
+    [
+      "docs/tasks/TASK.rsi-policy-11-06-2026.md",
+      "docs/evidence/rsi-reference-snapshot-20261106.json"
+    ],
+    [
+      "docs/tasks/TASK.workflow-adoption-11-06-2026.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "docs/tasks/TASK.workflow-adoption-11-06-2026.md",
+      "EVALUATION.md"
+    ],
+    [
+      "docs/tasks/TASK.workflow-adoption-11-06-2026.md",
+      "RUNBOOK.md"
+    ],
+    [
+      "docs/tasks/TASK.workflow-adoption-11-06-2026.md",
+      "docs/ADR/0001-workflow-cookbook-tier3.md"
+    ],
+    [
+      "docs/tasks/TASK.workflow-adoption-11-06-2026.md",
+      "docs/acceptance/AC-20261106-01.md"
+    ],
+    [
+      "docs/tasks/TASK.workflow-adoption-11-06-2026.md",
+      "docs/workflow-adoption.md"
+    ],
+    [
+      "docs/workflow-adoption.md",
+      "BLUEPRINT.md"
+    ],
+    [
+      "docs/workflow-adoption.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "docs/workflow-adoption.md",
+      "EVALUATION.md"
+    ],
+    [
+      "docs/workflow-adoption.md",
+      "GUARDRAILS.md"
+    ],
+    [
+      "docs/workflow-adoption.md",
+      "HUB.codex.md"
+    ],
+    [
+      "docs/workflow-adoption.md",
+      "README.md"
+    ],
+    [
+      "docs/workflow-adoption.md",
+      "RUNBOOK.md"
+    ],
+    [
+      "docs/workflow-adoption.md",
+      "docs/ADR/0001-workflow-cookbook-tier3.md"
+    ],
+    [
+      "docs/workflow-adoption.md",
+      "docs/ADR/README.md"
+    ],
+    [
+      "docs/workflow-adoption.md",
+      "docs/INCIDENT_TEMPLATE.md"
+    ],
+    [
+      "docs/workflow-adoption.md",
+      "docs/UPSTREAM.md"
+    ],
+    [
+      "docs/workflow-adoption.md",
+      "docs/UPSTREAM_WEEKLY_LOG.md"
+    ],
+    [
+      "docs/workflow-adoption.md",
+      "docs/acceptance/AC-20261106-01.md"
+    ],
+    [
+      "docs/workflow-adoption.md",
+      "docs/acceptance/AC-20261106-06.md"
+    ],
+    [
+      "docs/workflow-adoption.md",
+      "docs/acceptance/INDEX.md"
+    ],
+    [
+      "docs/workflow-adoption.md",
+      "docs/releases/README.md"
+    ],
+    [
+      "docs/workflow-adoption.md",
+      "docs/requirements/ACCEPTANCE-PLAN.md"
+    ],
+    [
+      "docs/workflow-adoption.md",
+      "docs/tasks/README.md"
+    ],
+    [
+      "docs/workflow-adoption.md",
+      "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
+    ],
+    [
+      "docs/workflow-adoption.md",
+      "docs/upstream-snapshot.json"
+    ],
+    [
+      "docs/workflow-adoption.md",
+      "governance/policy.yaml"
+    ],
+    [
+      "governance/policy.yaml",
+      "docs/RSI.md"
+    ]
+  ]
+}

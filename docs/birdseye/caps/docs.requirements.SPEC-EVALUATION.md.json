@@ -1,0 +1,27 @@
+{
+  "id": "docs/requirements/SPEC-EVALUATION.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "7adapter、ラボfixture、RSI、KPI、enrichment、P2の評価仕様と外部実接続の境界。",
+  "deps_out": [
+    "docs/CONTRACTS.md",
+    "docs/PRODUCT-ACCEPTANCE.md"
+  ],
+  "deps_in": [
+    "BLUEPRINT.md",
+    "README.md",
+    "docs/CONTRACTS.md",
+    "docs/requirements/COMPACTION-02.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "ba4f1c22af8eaa33ed8b9a4c1aa3949b80c882b714212ecddb5ace80ae652ebc",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T19:30:36.760596+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "ba4f1c22af8eaa33ed8b9a4c1aa3949b80c882b714212ecddb5ace80ae652ebc",
+    "summary_sha256": "17e3ce112311b7faaf47dd0a34e1797fc7b858e55f62b3b5a8b270430dbd4dd8",
+    "scope": "原文と要約・導線を照合。製品の実測範囲と未検証の区別を維持。"
+  }
+}

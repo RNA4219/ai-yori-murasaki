@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aym.local/schemas/v1/common.schema.json",
+  "title": "aym-json-v1 common definitions",
+  "$defs": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "aym-timestamp",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,9})?Z$"
+    },
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "agent_id", "model"],
+      "properties": {
+        "role": {
+          "type": "string",
+          "enum": ["operator", "orchestrator", "oracle", "worker-red", "worker-blue", "monitor", "auditor"]
+        },
+        "agent_id": {
+          "$ref": "#/$defs/id"
+        },
+        "model": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "identifier"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["lab-target", "fixture"]
+        },
+        "identifier": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "additionalProperties": true,
+      "maxProperties": 256
+    },
+    "seal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["campaign_id", "run_id", "last_sequence", "last_event_hash", "sealed_at", "operator_id"],
+      "properties": {
+        "campaign_id": {
+          "$ref": "#/$defs/id"
+        },
+        "run_id": {
+          "$ref": "#/$defs/id"
+        },
+        "last_sequence": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "last_event_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "sealed_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "operator_id": {
+          "$ref": "#/$defs/id"
+        },
+        "signature": {
+          "type": ["string", "null"]
+        }
+      }
+    }
+  }
+}

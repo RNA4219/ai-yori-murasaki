@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aym.local/schemas/v1/remediation.schema.json",
+  "title": "Remediation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "remediation_id", "finding_id", "campaign_id", "run_id", "patch_bundle_ref", "static_scan_result", "unit_result", "integration_result", "oracle_replay_result", "benign_regression_result", "status"],
+  "properties": {
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/schema_version"
+    },
+    "remediation_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "finding_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "campaign_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "run_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "patch_bundle_ref": {
+      "$ref": "common.schema.json#/$defs/sha256"
+    },
+    "static_scan_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["passed", "ref"],
+      "properties": {
+        "passed": {
+          "type": "boolean"
+        },
+        "ref": {
+          "$ref": "common.schema.json#/$defs/sha256"
+        }
+      }
+    },
+    "unit_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["passed", "ref"],
+      "properties": {
+        "passed": {
+          "type": "boolean"
+        },
+        "ref": {
+          "$ref": "common.schema.json#/$defs/sha256"
+        }
+      }
+    },
+    "integration_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["passed", "ref"],
+      "properties": {
+        "passed": {
+          "type": "boolean"
+        },
+        "ref": {
+          "$ref": "common.schema.json#/$defs/sha256"
+        }
+      }
+    },
+    "oracle_replay_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verdict", "reason_code", "ref"],
+      "properties": {
+        "verdict": {
+          "type": "string",
+          "enum": ["PASS", "FAIL", "HOLD"]
+        },
+        "reason_code": {
+          "type": "string",
+          "enum": ["exploit_succeeded", "exploit_not_succeeded", "execution_error", "evidence_missing", "evidence_mismatch", "not_executed", "adapter_unavailable", "cancelled"]
+        },
+        "ref": {
+          "$ref": "common.schema.json#/$defs/sha256"
+        }
+      }
+    },
+    "benign_regression_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["passed", "ref"],
+      "properties": {
+        "passed": {
+          "type": "boolean"
+        },
+        "ref": {
+          "$ref": "common.schema.json#/$defs/sha256"
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "static_scan_passed", "unit_passed", "integration_passed", "oracle_replay_passed", "benign_regression_passed", "review_pending", "approved", "rejected", "failed"]
+    },
+    "extensions": {
+      "$ref": "common.schema.json#/$defs/extensions"
+    }
+  }
+}

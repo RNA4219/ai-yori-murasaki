@@ -1,0 +1,29 @@
+{
+  "id": "docs/acceptance/AC-20261107-01.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "モニター再設計の技術検収。DOM保持、エラー時の表示、画面幅、操作、モデルレビューと配布物の実結果を結ぶ。",
+  "deps_out": [
+    "docs/requirements/MONITOR-REDESIGN.md",
+    "docs/tasks/TASK.monitor-redesign-11-07-2026.md"
+  ],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/INDEX.md",
+    "docs/requirements/MONITOR-REDESIGN.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.monitor-redesign-11-07-2026.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "0a45ce7de3d37066489fe91fc9b7045a548b0b24de20957a8b9f446e083ed72e",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T20:01:26.138861+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "0a45ce7de3d37066489fe91fc9b7045a548b0b24de20957a8b9f446e083ed72e",
+    "summary_sha256": "f58a58321064501f8f0215551612597003045521aeb4253b869d4381de127fae",
+    "scope": "原文と要約・実リンクを照合。モニターの変更と技術検収を確認し、見た目のユーザー承認を代行しない。"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "id": ".agents/skills/security-audit/EXECUTION-SAFETY.md",
+  "role": "policy",
+  "public_api": [],
+  "summary": "対象コードのOS隔離、出力・所有者、親側の証跡昇格11手順とJSON検証器のOS条件を定める。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "5d673f83138ce6dd11734ac875653ccb4a91c984b0ea33caa221238dcb5009d7",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T07:54:28.763350+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "5d673f83138ce6dd11734ac875653ccb4a91c984b0ea33caa221238dcb5009d7",
+    "summary_sha256": "779640e0aba1bb04b05a4a323cbcde8759e706d235d5590489c5b9f2173d2bf2",
+    "scope": "原文・要約・参照の整合。別Taskの状態・判定は変更せず、製品の動作・診断精度は評価していない。"
+  }
+}

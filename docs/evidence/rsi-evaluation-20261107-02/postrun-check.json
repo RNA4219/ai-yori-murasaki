@@ -1,0 +1,9 @@
+{
+  "checker": "tools.ci.check_evaluation_identity_manifest",
+  "stage": "postrun",
+  "artifact_root": "C:\\Users\\ryo-n\\Codex_dev\\ai-yori-murasaki\\docs\\evidence\\rsi-evaluation-20261107-02",
+  "manifest": "results/cd-42be8e587eadc664-manifest.json",
+  "exit_code": 0,
+  "output": "Evaluation identity manifest: ok",
+  "verification": "Executed upstream checker after actual comparison; no re-evaluation"
+}

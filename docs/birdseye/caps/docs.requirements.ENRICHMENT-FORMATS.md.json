@@ -1,0 +1,19 @@
+{
+  "id": "docs/requirements/ENRICHMENT-FORMATS.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "ATT&CK/KEV/EPSSのoffline入力形式、原文hashとCAS wrapper、TTL、不在・破損時の扱い。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "f18204fb1b031f73d2ea290fe5f8151026deafb8734cb41efb9f6dd93f5d9202",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T19:30:36.760596+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "f18204fb1b031f73d2ea290fe5f8151026deafb8734cb41efb9f6dd93f5d9202",
+    "summary_sha256": "baa680cd493daa2790d7aefc2f322af4a6aac5061faded3ddc9084f0c659f8f2",
+    "scope": "原文と要約・導線を照合。製品の実測範囲と未検証の区別を維持。"
+  }
+}

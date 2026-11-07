@@ -1,0 +1,26 @@
+{
+  "id": "docs/requirements/SPEC-CORE.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "単一台帳とCAS、8データ契約、policy、checkpoint、状態遷移、worker、CLIとモジュールI/Fの仕様。",
+  "deps_out": [
+    "docs/PRODUCT-ACCEPTANCE.md"
+  ],
+  "deps_in": [
+    "BLUEPRINT.md",
+    "README.md",
+    "docs/CONTRACTS.md",
+    "docs/requirements/COMPACTION-02.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "eb16ab1c0715962295f8ec35f348acc53f6531e0d0328a1a2ea513e14fe070d7",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T19:30:36.760596+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "eb16ab1c0715962295f8ec35f348acc53f6531e0d0328a1a2ea513e14fe070d7",
+    "summary_sha256": "c48ea4d933c0c32601e227f11aef7b7ec152ff57c4bbf44825afa33c29360aa2",
+    "scope": "原文と要約・導線を照合。製品の実測範囲と未検証の区別を維持。"
+  }
+}

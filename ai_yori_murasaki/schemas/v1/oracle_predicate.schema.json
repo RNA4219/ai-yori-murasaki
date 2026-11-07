@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aym.local/schemas/v1/oracle_predicate.schema.json",
+  "title": "OraclePredicate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "predicate_id", "kind", "input_digest", "expected", "actual", "outcome", "verdict", "reason_code", "evaluated_at"],
+  "properties": {
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/schema_version"
+    },
+    "predicate_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["http_status", "exit_code", "file_state", "db_state", "network_state", "alert_fired", "test_pass", "evidence_hash"]
+    },
+    "input_digest": {
+      "$ref": "common.schema.json#/$defs/sha256"
+    },
+    "expected": {
+      "type": "object",
+      "additionalProperties": true,
+      "maxProperties": 16
+    },
+    "actual": {
+      "type": ["object", "null"],
+      "additionalProperties": true,
+      "maxProperties": 16
+    },
+    "outcome": {
+      "type": ["boolean", "null"]
+    },
+    "verdict": {
+      "type": "string",
+      "enum": ["PASS", "FAIL", "HOLD"]
+    },
+    "reason_code": {
+      "type": "string",
+      "enum": ["exploit_succeeded", "exploit_not_succeeded", "execution_error", "evidence_missing", "evidence_mismatch", "not_executed", "adapter_unavailable", "cancelled"]
+    },
+    "evaluated_at": {
+      "$ref": "common.schema.json#/$defs/timestamp"
+    },
+    "extensions": {
+      "$ref": "common.schema.json#/$defs/extensions"
+    }
+  }
+}

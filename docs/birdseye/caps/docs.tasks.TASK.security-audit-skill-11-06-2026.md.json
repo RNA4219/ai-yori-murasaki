@@ -1,0 +1,23 @@
+{
+  "id": "docs/tasks/TASK.security-audit-skill-11-06-2026.md",
+  "role": "task",
+  "public_api": [],
+  "summary": "診断スキルのプロジェクト配置と運用接続を追跡する。製品実行器や実ターゲット診断を含まない。",
+  "deps_out": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "9e2a0cfa3eceba4d2769f2b48c05182e97cb6ad8f65b2a8c74e0eb45373f054c",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T19:29:53.143795+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "9e2a0cfa3eceba4d2769f2b48c05182e97cb6ad8f65b2a8c74e0eb45373f054c",
+    "summary_sha256": "7011c3de97dd5e9db054f6a1041f4b33f4f380254d6a2fac83264c862162107b",
+    "scope": "原文hashと既存の要約確認を維持し、変更文書からの逆参照だけを実リンクと照合。"
+  }
+}

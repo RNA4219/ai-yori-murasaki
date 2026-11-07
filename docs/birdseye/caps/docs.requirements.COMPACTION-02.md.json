@@ -1,0 +1,25 @@
+{
+  "id": "docs/requirements/COMPACTION-02.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "要約保存2。Core/評価/API仕様のGLM修正確認と証跡・隔離・分母・未接続の境界を記録した。",
+  "deps_out": [
+    "docs/requirements/ACCEPTANCE-PLAN.md",
+    "docs/requirements/API-CONTRACTS.md",
+    "docs/requirements/IMPLEMENTATION-PLAN.md",
+    "docs/requirements/SPEC-CORE.md",
+    "docs/requirements/SPEC-EVALUATION.md"
+  ],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "78d19c84251896fe6942bd97ab23f0edd53b3b22ce3cf211056d3a616d72e39b",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T19:30:36.760596+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "78d19c84251896fe6942bd97ab23f0edd53b3b22ce3cf211056d3a616d72e39b",
+    "summary_sha256": "9d5be3fcee37c76d3367ca6196a1e6bb9b7916f09dd27e117fbaa2f772139f96",
+    "scope": "原文と要約・導線を照合。製品の実測範囲と未検証の区別を維持。"
+  }
+}

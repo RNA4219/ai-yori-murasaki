@@ -1,0 +1,27 @@
+{
+  "id": "docs/acceptance/AC-20261106-03.md",
+  "role": "acceptance",
+  "public_api": [],
+  "summary": "AC-20261106-03。名称の残存、9項目と資料の保全、文書・検収・索引の整合を技術検収する。",
+  "deps_out": [
+    "RUNBOOK.md",
+    "docs/tasks/TASK.rsi-naming-11-06-2026.md"
+  ],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.rsi-naming-11-06-2026.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "56ef192b4955a03d23fdd334144e452f713861b77127c9cba5a6a924b0384621",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T07:29:33.194661+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "56ef192b4955a03d23fdd334144e452f713861b77127c9cba5a6a924b0384621",
+    "summary_sha256": "cf8188ad0f4846d7e2f513c95dc54350e5f232ef7277b4f7943551114a03ffab",
+    "scope": "名称整理の完了状態・検証記録・要約と参照の整合。"
+  }
+}

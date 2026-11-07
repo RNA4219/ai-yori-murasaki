@@ -1,0 +1,40 @@
+{
+  "scope": "product-adapter-live-connection",
+  "models": [
+    {
+      "complete": true,
+      "effective_model": "glm-5.3",
+      "requested_model": "glm-5.3:cloud",
+      "token_count": 30,
+      "request_hash": "738c6949a49e970b53adb872187849f98c696e11a8c728ec49dbe01b502105ae",
+      "prompt_hash": "351ef1f9a64a3ebcdaa721d93edaffffac5918c93b6e5d27cfac977b4b455c96",
+      "done": true,
+      "done_reason": "stop",
+      "tool_calls_executed": false,
+      "status": "connected",
+      "role": "reviewer",
+      "model": "glm-5.3:cloud",
+      "elapsed_seconds": 2.765,
+      "checked_at": "2026-11-06T00:38:04.258259+00:00",
+      "pin_status": "unverified"
+    },
+    {
+      "complete": true,
+      "effective_model": "deepseek-v4.1-flash",
+      "requested_model": "deepseek-v4.1-flash:cloud",
+      "token_count": 22,
+      "request_hash": "352c16f25affd2d616152c62060f3c58bd1fed54e39eb21db6b71c2c7aa0de2b",
+      "prompt_hash": "a4cd390b71854976e4ebb04968e440017ad3fccfb3a39cf115597e517dea65fc",
+      "done": true,
+      "done_reason": "stop",
+      "tool_calls_executed": false,
+      "status": "connected",
+      "role": "implementer",
+      "model": "deepseek-v4.1-flash:cloud",
+      "elapsed_seconds": 0.86,
+      "checked_at": "2026-11-06T00:38:05.119567+00:00",
+      "pin_status": "unverified"
+    }
+  ],
+  "implementation_sha256": "c7c2edc56d12b703da189a5d59ac031aa7112e5952047161f80ca67ebdf37a18"
+}

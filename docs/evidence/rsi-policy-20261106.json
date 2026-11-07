@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "verified_on_jst": "2026-11-06",
+  "task_id": "20261106-02",
+  "acceptance_id": "AC-20261106-02",
+  "scope": "RSI policy and documentation integration; runtime implementation and performance evaluation not executed",
+  "checks": [
+    {
+      "name": "tier_and_drift",
+      "command": "py -3 tools/ci/check_adoption_tier.py --repo 'C:\\Users\\ryo-n\\Codex_dev\\ai-yori-murasaki' --min-tier 3 --check-drift --check",
+      "exit_code": 0,
+      "output": "Repo: C:\\Users\\ryo-n\\Codex_dev\\ai-yori-murasaki\r\nCurrent Tier: 3 (Full)\r\n\r\nTier 0: OK README.md\r\nTier 1: OK HUB.codex.md, OK BLUEPRINT.md\r\nTier 2: OK RUNBOOK.md, OK GUARDRAILS.md, OK EVALUATION.md\r\nTier 3: OK docs/acceptance, OK docs/tasks, OK docs/birdseye/index.json, OK docs/birdseye/hot.json, OK docs/birdseye/caps\r\n\r\nTemplate drift:\r\n- OK HUB.codex.md (doc=1.0.0, template=1.0.0)\r\n- OK BLUEPRINT.md (doc=1.0.0, template=1.0.0)\r\n- OK RUNBOOK.md (doc=1.0.0, template=1.0.0)\r\n- OK GUARDRAILS.md (doc=1.1.0, template=1.1.0)\r\n- OK EVALUATION.md (doc=1.0.0, template=1.0.0)",
+      "elapsed_seconds": 0.728747
+    },
+    {
+      "name": "acceptance_structure",
+      "command": "py -3 tools/ci/check_acceptance.py --check 'C:\\Users\\ryo-n\\Codex_dev\\ai-yori-murasaki'",
+      "exit_code": 0,
+      "output": "",
+      "elapsed_seconds": 0.7000673
+    },
+    {
+      "name": "birdseye_reviewed",
+      "command": "py -3 -m tools.ci.check_birdseye_freshness --repo-root 'C:\\Users\\ryo-n\\Codex_dev\\ai-yori-murasaki' --index-path 'C:\\Users\\ryo-n\\Codex_dev\\ai-yori-murasaki\\docs\\birdseye\\index.json' --hot-path 'C:\\Users\\ryo-n\\Codex_dev\\ai-yori-murasaki\\docs\\birdseye\\hot.json' --require-reviewed --check",
+      "exit_code": 0,
+      "output": "{\"index_path\": \"C:\\\\Users\\\\ryo-n\\\\Codex_dev\\\\ai-yori-murasaki\\\\docs\\\\birdseye\\\\index.json\", \"hot_path\": \"C:\\\\Users\\\\ryo-n\\\\Codex_dev\\\\ai-yori-murasaki\\\\docs\\\\birdseye\\\\hot.json\", \"failures\": [], \"warnings\": [], \"remediations\": []}",
+      "elapsed_seconds": 0.9386033
+    },
+    {
+      "name": "rsi_document_consistency",
+      "command": "One-off inline document audit: user-provided sections, links/anchors, formats, identities, provenance, graph",
+      "exit_code": 0,
+      "output": "{\"status\": \"passed\", \"provided_sections_preserved\": 9, \"applicability_notes_preserved\": true, \"local_links_and_anchors_checked\": 232, \"template_heading_sets_checked\": 5, \"capsules_checked\": 36, \"edges_checked\": 194, \"protected_files_unchanged\": 18, \"reference_hashes_unchanged\": 3, \"json_and_yaml\": \"valid\", \"task_states\": {\"20261106-02\": {\"task\": \"in_progress\", \"acceptance\": \"draft\"}, \"20261106-01\": {\"task\": \"done\", \"acceptance\": \"approved\"}}, \"generation\": \"00007\", \"scope\": \"RSI documentation only; no runtime or performance experiment\"}",
+      "elapsed_seconds": 0.7891581
+    }
+  ],
+  "document_audit": {
+    "status": "passed",
+    "provided_sections_preserved": 9,
+    "applicability_notes_preserved": true,
+    "local_links_and_anchors_checked": 232,
+    "template_heading_sets_checked": 5,
+    "capsules_checked": 36,
+    "edges_checked": 194,
+    "protected_files_unchanged": 18,
+    "reference_hashes_unchanged": 3,
+    "json_and_yaml": "valid",
+    "task_states": {
+      "20261106-02": {
+        "task": "in_progress",
+        "acceptance": "draft"
+      },
+      "20261106-01": {
+        "task": "done",
+        "acceptance": "approved"
+      }
+    },
+    "generation": "00007",
+    "scope": "RSI documentation only; no runtime or performance experiment"
+  },
+  "reference_snapshot": "docs/evidence/rsi-reference-snapshot-20261106.json",
+  "completion_record_sync": {
+    "results": [
+      {
+        "name": "acceptance_after_completion",
+        "exit_code": 0,
+        "output": "",
+        "elapsed_seconds": 0.796863
+      },
+      {
+        "name": "birdseye_after_completion",
+        "exit_code": 0,
+        "output": "{\"index_path\": \"C:\\\\Users\\\\ryo-n\\\\Codex_dev\\\\ai-yori-murasaki\\\\docs\\\\birdseye\\\\index.json\", \"hot_path\": \"C:\\\\Users\\\\ryo-n\\\\Codex_dev\\\\ai-yori-murasaki\\\\docs\\\\birdseye\\\\hot.json\", \"failures\": [], \"warnings\": [], \"remediations\": []}",
+        "elapsed_seconds": 0.9519055
+      },
+      {
+        "name": "rsi_consistency_after_completion",
+        "exit_code": 0,
+        "output": "{\"status\": \"passed\", \"provided_sections_preserved\": 9, \"applicability_notes_preserved\": true, \"local_links_and_anchors_checked\": 233, \"template_heading_sets_checked\": 5, \"capsules_checked\": 36, \"edges_checked\": 194, \"protected_files_unchanged\": 18, \"reference_hashes_unchanged\": 3, \"json_and_yaml\": \"valid\", \"task_states\": {\"20261106-02\": {\"task\": \"done\", \"acceptance\": \"approved\"}, \"20261106-01\": {\"task\": \"done\", \"acceptance\": \"approved\"}}, \"generation\": \"00008\", \"scope\": \"RSI documentation only; no runtime or performance experiment\"}",
+        "elapsed_seconds": 1.02928
+      }
+    ],
+    "document_audit": {
+      "status": "passed",
+      "provided_sections_preserved": 9,
+      "applicability_notes_preserved": true,
+      "local_links_and_anchors_checked": 233,
+      "template_heading_sets_checked": 5,
+      "capsules_checked": 36,
+      "edges_checked": 194,
+      "protected_files_unchanged": 18,
+      "reference_hashes_unchanged": 3,
+      "json_and_yaml": "valid",
+      "task_states": {
+        "20261106-02": {
+          "task": "done",
+          "acceptance": "approved"
+        },
+        "20261106-01": {
+          "task": "done",
+          "acceptance": "approved"
+        }
+      },
+      "generation": "00008",
+      "scope": "RSI documentation only; no runtime or performance experiment"
+    }
+  },
+  "not_executed": [
+    "RSI runtime/evaluator/Experience Memory implementation",
+    "Live-target or paired performance experiments",
+    "Promotion or executor activation",
+    "Changes to reference sources or previous acceptance evidence",
+    "Deployment or publication"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "docs/requirements/USER-STUDY-PLAN.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "2026-11-07のユーザー訂正により撤回した履歴。実利用者試験の人数・正答率の合格条件は承認前の提案値であり、必須要件ではない。実施する場合は任意の検証として扱い、AI代役を実測と記録しない。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "9b9f4d281b8d2db5ed0316a454ddb387b747000f6dee6b6e1893e7ef852dcb65",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-07T11:20:00+09:00",
+    "reviewed_by": "GLM",
+    "source_sha256": "9b9f4d281b8d2db5ed0316a454ddb387b747000f6dee6b6e1893e7ef852dcb65",
+    "summary_sha256": "83feb1d7ee666dada5d64b739c8f041fca8b5e0da30ad90fd009c23034289617",
+    "scope": "原文全文と要約・リンクを照合した。実測証跡に基づきAC-20261107-03技術検収合格と残件4項目完了を反映した。"
+  }
+}

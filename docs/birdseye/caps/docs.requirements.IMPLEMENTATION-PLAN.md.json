@@ -1,0 +1,24 @@
+{
+  "id": "docs/requirements/IMPLEMENTATION-PLAN.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "Core/Evalの所有範囲、依存順、検証、モデル接続・配布・統合要件と現行検収への対応。",
+  "deps_out": [
+    "docs/PRODUCT-ACCEPTANCE.md"
+  ],
+  "deps_in": [
+    "docs/requirements/COMPACTION-02.md",
+    "docs/requirements/COMPACTION-03.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "6ef4284027a280a03744c4e14665fb9cfde3966b5c922d54eddf23642e4bea4c",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T19:30:36.760596+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "6ef4284027a280a03744c4e14665fb9cfde3966b5c922d54eddf23642e4bea4c",
+    "summary_sha256": "b288be6db96140140073860f6201087a08de4a7c159428cae8ee13afd18aae18",
+    "scope": "原文と要約・導線を照合。製品の実測範囲と未検証の区別を維持。"
+  }
+}

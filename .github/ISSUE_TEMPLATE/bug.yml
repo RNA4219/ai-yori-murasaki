@@ -1,0 +1,29 @@
+name: 不具合報告
+description: 再現条件と期待する結果を記録する
+title: '[Bug] '
+body:
+  - type: input
+    id: intent
+    attributes:
+      label: Intent ID
+      description: 関連する目的の識別子
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 再現手順・期待結果・実際の結果
+      description: 対象文書、版、コマンド、終了コードを記載する。機密情報は貼らない。
+    validations:
+      required: true
+  - type: textarea
+    id: gates
+    attributes:
+      label: ゲートの確認結果
+      description: Tier、Acceptance、Birdseye の成功・失敗・未実行理由を記載する。
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: 関連 Task・Acceptance・影響範囲

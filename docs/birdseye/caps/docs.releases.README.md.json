@@ -1,0 +1,27 @@
+{
+  "id": "docs/releases/README.md",
+  "role": "guide",
+  "public_api": [],
+  "summary": "現在は公開なし。将来公開するときの版・成果物・承認 ID・Task・検収・復旧の追跡を定める。",
+  "deps_out": [
+    "docs/CONTRACTS.md"
+  ],
+  "deps_in": [
+    "CHECKLISTS.md",
+    "HUB.codex.md",
+    "docs/acceptance/ACCEPTANCE_TEMPLATE.md",
+    "docs/tasks/README.md",
+    "docs/workflow-adoption.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "8c3d2e996d5ec109aa10991c4e5b1270abdb143bd3d33c9db3c09335c687dac4",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-07T18:30:00+09:00",
+    "reviewed_by": "GLM",
+    "source_sha256": "8c3d2e996d5ec109aa10991c4e5b1270abdb143bd3d33c9db3c09335c687dac4",
+    "summary_sha256": "a9bb8f79e5d8d46d6f06d4e072a45923c5471c29b9a0b804210ba6e3d2c6d395",
+    "scope": "原文全文と要約・リンクを照合した。GitHub Public公開前の最終確定（公開記録RA-20261107-01、非公開原資料のリンク注記、codemap exclude、配布物hash）を反映した。"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "id": "docs/acceptance/AC-20261106-06.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "製品完成の検収をrejectedへ訂正した記録。過去のテストとラボ実行は保持し、製品全体の充足を示さないことを明記する。",
+  "deps_out": [
+    "docs/PRODUCT-ACCEPTANCE.md",
+    "docs/reviews/REVIEW-INTAKE-20261107.md",
+    "docs/tasks/TASK.product-completion-11-06-2026.md"
+  ],
+  "deps_in": [
+    "BLUEPRINT.md",
+    "CHANGELOG.md",
+    "EVALUATION.md",
+    "HUB.codex.md",
+    "README.md",
+    "RUNBOOK.md",
+    "docs/PRODUCT-ACCEPTANCE.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/RSI.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.product-completion-11-06-2026.md",
+    "docs/workflow-adoption.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "d393a7e13f7a6e9bdf4f5b3eb874a53063be1af29ae1be109e822776a2d3900f",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T21:40:29.654233+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "d393a7e13f7a6e9bdf4f5b3eb874a53063be1af29ae1be109e822776a2d3900f",
+    "summary_sha256": "bebc19e9b16ebfc5a3084917be2d8ab6e8d375bdb0382ccca712d04792e981a4",
+    "scope": "原文・要約・実リンクを照合。外部レビュー整理と完成判定撤回を確認し、製品合格や追加要件の採用を代行しない。"
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "config": {
+    "objective": "ローカル認可方針の課題成功率を改善し、管理者と公開情報の操作を維持する",
+    "seed_pairs": [
+      1,
+      2,
+      3
+    ],
+    "order_policy": "alternating",
+    "budget": {
+      "max_pairs": 12,
+      "max_calls": 128
+    },
+    "thresholds": {
+      "success_gain_min": 0.0,
+      "no_benign_regression": true,
+      "max_safety_violations": 0
+    },
+    "stop_conditions": {
+      "max_iterations": 2
+    },
+    "memory_refs": [
+      "13d3989cdd8e06398f7e9e51c095ef5fdedc5354c39bf58bbec625f1fc72549f"
+    ]
+  },
+  "manifest": {
+    "schema_version": "1.1",
+    "profile": "workflow",
+    "manifest_id": "eval:aym-rsi-20261107-01",
+    "task_id": "20261106-06",
+    "owner": "RNA4219",
+    "purpose": "comparison",
+    "status": "frozen",
+    "freeze_date": "2026-11-07",
+    "hypothesis": "学習課題から得た管理者必須の方針は、正常操作を維持して認可課題の成功率を上げる",
+    "action_delta": "require_adminをfalseからtrueへ変更する。候補はtrainの実行証跡から生成する。",
+    "negative_control": "管理者のrecord取得と全ロールのpublic取得の許可を維持する。",
+    "identity": {
+      "legacy": {
+        "label": "legacy",
+        "source_path": "baseline/policy.json",
+        "source_revision": "bundle:2524ec40fd7d0de922b9db597cb37546bf62f10c1a4df71b1fb01cbc3bf192b1",
+        "source_sha256": "sha256:2524ec40fd7d0de922b9db597cb37546bf62f10c1a4df71b1fb01cbc3bf192b1",
+        "input_sha256": "sha256:3e17feef36db75c5fe75807ffa859e53e279948e24a1abc55a0a1ebc3bae505c"
+      },
+      "candidate": {
+        "label": "candidate",
+        "source_path": "candidate/policy.json",
+        "source_revision": "bundle:885c5dcc2c6fb922f6a5492af71cce6b821502d9fc763cd89b13e9db0fc4e720",
+        "source_sha256": "sha256:885c5dcc2c6fb922f6a5492af71cce6b821502d9fc763cd89b13e9db0fc4e720",
+        "input_sha256": "sha256:3e17feef36db75c5fe75807ffa859e53e279948e24a1abc55a0a1ebc3bae505c"
+      },
+      "runner": {
+        "id": "aym-rsi-bundle-v1",
+        "sha256": "sha256:7dfa798d22a99b1b325ba02013aaeebe9135664ee7f600918b6ac0877e27e509"
+      }
+    },
+    "evaluation": {
+      "dataset_id": "aym-local-authz-20261107",
+      "dataset_sha256": "sha256:fa4361f65287cd3b0c47d96457cda740f271abf716938852691f7c6f32ad6e92",
+      "measurement_unit": "task",
+      "primary_metric": "success_gain",
+      "model_version": "not_used:deterministic-local-policy",
+      "policy_version": "aym-local-authz-v1",
+      "configuration": {
+        "objective": "ローカル認可方針の課題成功率を改善し、管理者と公開情報の操作を維持する",
+        "seed_pairs": [
+          1,
+          2,
+          3
+        ],
+        "order_policy": "alternating",
+        "budget": {
+          "max_pairs": 12,
+          "max_calls": 128
+        },
+        "thresholds": {
+          "success_gain_min": 0.0,
+          "no_benign_regression": true,
+          "max_safety_violations": 0
+        },
+        "stop_conditions": {
+          "max_iterations": 2
+        },
+        "memory_refs": [
+          "13d3989cdd8e06398f7e9e51c095ef5fdedc5354c39bf58bbec625f1fc72549f"
+        ]
+      }
+    },
+    "external_mutations": {
+      "registry_frozen": true,
+      "submission_frozen": true
+    }
+  },
+  "bindings": {
+    "legacy_source": "baseline/policy.json",
+    "candidate_source": "candidate/policy.json",
+    "legacy_input": "inputs/legacy.json",
+    "candidate_input": "inputs/candidate.json",
+    "runner": "runner-bundle.json",
+    "dataset": "dataset.json"
+  },
+  "artifact_root": "C:\\Users\\ryo-n\\Codex_dev\\ai-yori-murasaki\\docs\\evidence\\rsi-evaluation-20261107"
+}

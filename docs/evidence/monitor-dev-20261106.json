@@ -1,0 +1,98 @@
+{
+  "date": "2026-11-06",
+  "scope": "開発HTMLモニター",
+  "implementer": "deepseek-v4.1-flash:cloud",
+  "reviewer": "glm-5.3:cloud",
+  "review_file": ".ga/goal-20261106/monitor-review.json",
+  "disposition": "4指摘をDeepSeek修正で反映。URL許可とエラー情報、非stream読込拒否、手動ファイルの取得停止。",
+  "browser_checks": [
+    {
+      "case": "1440px表示",
+      "pass": true
+    },
+    {
+      "case": "390px表示",
+      "pass": true
+    },
+    {
+      "case": "通信503時の古い表示・理由",
+      "pass": true
+    },
+    {
+      "case": "schema不正時の古い表示・理由",
+      "pass": true
+    },
+    {
+      "case": "HTML文字列のtext表示",
+      "pass": true
+    },
+    {
+      "case": "不正資料リンクの非リンク化",
+      "pass": true
+    },
+    {
+      "case": "ファイル選択後の自動更新停止",
+      "pass": true
+    },
+    {
+      "case": "手動でHTTP再開",
+      "pass": true
+    },
+    {
+      "case": "Sankai資料リンク",
+      "pass": true
+    },
+    {
+      "case": "キーボードskipリンク",
+      "pass": true
+    }
+  ],
+  "http_checks": [
+    {
+      "path": "/monitor/state.json",
+      "expected": 200,
+      "actual": 200,
+      "pass": true
+    },
+    {
+      "path": "/docs/requirements/sankai-report.html",
+      "expected": 200,
+      "actual": 200,
+      "pass": true
+    },
+    {
+      "path": "/.ga/goal-20261106/monitor-review-response.json",
+      "expected": 404,
+      "actual": 404,
+      "pass": true
+    },
+    {
+      "path": "/docs/requirements/%2e%2e/RSI.md",
+      "expected": 404,
+      "actual": 404,
+      "pass": true
+    },
+    {
+      "path": "/docs/requirements/",
+      "expected": 404,
+      "actual": 404,
+      "pass": true
+    },
+    {
+      "path": "/README.md",
+      "expected": 404,
+      "actual": 404,
+      "pass": true
+    },
+    {
+      "case": "unknown Host denied",
+      "actual": 400,
+      "pass": true
+    }
+  ],
+  "html_sha256": "cef43f7124a02d997aa46853e9dbe7b97936de9d616a8993277c4a9d9a98c26e",
+  "limitations": [
+    "開発用stateは監督が実績から更新。製品の実行観測APIは別途実装。",
+    "実行コマンドとログ本文はモニターへ配信しない。"
+  ]
+}

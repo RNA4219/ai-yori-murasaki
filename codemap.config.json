@@ -1,0 +1,6 @@
+{
+  "schemaVersion": "workflow-cookbook/codemap-discovery/v1",
+  "include": ["*.md", "docs/**/*.md", "docs/upstream-snapshot.json", "docs/evidence/rsi-reference-snapshot-20261106.json", "docs/evidence/security-audit-skill-snapshot-20261106.json", ".agents/skills/security-audit/SKILL.md", ".agents/skills/security-audit/AUDIT-PLANNING.md", ".agents/skills/security-audit/EXECUTION-SAFETY.md", "governance/*.yaml", "codemap.config.json", ".github/**/*.md", ".github/**/*.yml"],
+  "exclude": ["docs/birdseye/**", "monitor/state.json", "docs/ADR/deep-research-report (16).md", "docs/requirements/report-source.html", "docs/requirements/sankai-report.html", "docs/reviews/sources/**", "docs/reviews/REVIEW-INTAKE-20261107.html"],
+  "defaultRole": "doc"
+}

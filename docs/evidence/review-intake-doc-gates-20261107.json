@@ -1,0 +1,58 @@
+{
+  "status": "passed",
+  "checked_at": "2026-11-06T21:40:31.017812+00:00",
+  "checks": [
+    {
+      "check": "tier3_drift",
+      "command": [
+        "C:\\Users\\ryo-n\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+        "C:\\Users\\ryo-n\\Codex_dev\\Agent_tools\\workflow-cookbook\\tools\\ci\\check_adoption_tier.py",
+        "--repo",
+        "C:\\Users\\ryo-n\\Codex_dev\\ai-yori-murasaki",
+        "--min-tier",
+        "3",
+        "--check-drift",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.172,
+      "stdout": "Repo: C:\\Users\\ryo-n\\Codex_dev\\ai-yori-murasaki\nCurrent Tier: 3 (Full)\n\nTier 0: OK README.md\nTier 1: OK HUB.codex.md, OK BLUEPRINT.md\nTier 2: OK RUNBOOK.md, OK GUARDRAILS.md, OK EVALUATION.md\nTier 3: OK docs/acceptance, OK docs/tasks, OK docs/birdseye/index.json, OK docs/birdseye/hot.json, OK docs/birdseye/caps\n\nTemplate drift:\n- OK HUB.codex.md (doc=1.0.0, template=1.0.0)\n- OK BLUEPRINT.md (doc=1.0.0, template=1.0.0)\n- OK RUNBOOK.md (doc=1.0.0, template=1.0.0)\n- OK GUARDRAILS.md (doc=1.1.0, template=1.1.0)\n- OK EVALUATION.md (doc=1.0.0, template=1.0.0)\n",
+      "stderr": ""
+    },
+    {
+      "check": "acceptance",
+      "command": [
+        "C:\\Users\\ryo-n\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+        "C:\\Users\\ryo-n\\Codex_dev\\Agent_tools\\workflow-cookbook\\tools\\ci\\check_acceptance.py",
+        "--check",
+        "C:\\Users\\ryo-n\\Codex_dev\\ai-yori-murasaki"
+      ],
+      "exit_code": 0,
+      "seconds": 0.141,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "check": "birdseye",
+      "command": [
+        "C:\\Users\\ryo-n\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+        "-m",
+        "tools.ci.check_birdseye_freshness",
+        "--repo-root",
+        "C:\\Users\\ryo-n\\Codex_dev\\ai-yori-murasaki",
+        "--index-path",
+        "C:\\Users\\ryo-n\\Codex_dev\\ai-yori-murasaki\\docs\\birdseye\\index.json",
+        "--hot-path",
+        "C:\\Users\\ryo-n\\Codex_dev\\ai-yori-murasaki\\docs\\birdseye\\hot.json",
+        "--require-reviewed",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.312,
+      "stdout": "{\"index_path\": \"C:\\\\Users\\\\ryo-n\\\\Codex_dev\\\\ai-yori-murasaki\\\\docs\\\\birdseye\\\\index.json\", \"hot_path\": \"C:\\\\Users\\\\ryo-n\\\\Codex_dev\\\\ai-yori-murasaki\\\\docs\\\\birdseye\\\\hot.json\", \"failures\": [], \"warnings\": [], \"remediations\": []}\n",
+      "stderr": ""
+    }
+  ],
+  "original_report_sha256": "39debf151e7f333d1371c323a0f07eefca181c918a6a5d0bd7538caa95690625",
+  "scope": "Tier3 Full/template versions, Acceptance structure, actual source/capsule review freshness. Not external production assurance."
+}

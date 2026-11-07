@@ -1,0 +1,38 @@
+{
+  "id": "docs/CONTRACTS.md",
+  "role": "contract",
+  "public_api": [],
+  "summary": "Task/Acceptanceの記録契約、評価identityのpreflight/postrun、RSIの論理記録と実装仕様への参照を定める。",
+  "deps_out": [
+    "docs/RSI.md",
+    "docs/UPSTREAM.md",
+    "docs/requirements/API-CONTRACTS.md",
+    "docs/requirements/SPEC-CORE.md",
+    "docs/requirements/SPEC-EVALUATION.md"
+  ],
+  "deps_in": [
+    "AGENTS.md",
+    "BLUEPRINT.md",
+    "EVALUATION.md",
+    "GUARDRAILS.md",
+    "HUB.codex.md",
+    "RUNBOOK.md",
+    "TASK.codex.md",
+    "docs/ADR/0002-rsi-policy.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/RSI.md",
+    "docs/releases/README.md",
+    "docs/requirements/SPEC-EVALUATION.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "668b036acd18f21ae593d9edc3c230587066d05e332c9f7be79f059b3187e795",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T19:30:36.760596+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "668b036acd18f21ae593d9edc3c230587066d05e332c9f7be79f059b3187e795",
+    "summary_sha256": "3e04de65fd170f220eef4848b8ee55de36abdf6f001ce5e28bf1d09954244e60",
+    "scope": "原文と要約・導線を照合。製品の実測範囲と未検証の区別を維持。"
+  }
+}

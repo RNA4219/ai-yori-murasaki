@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "verified_on_jst": "2026-11-06",
+  "task_id": "20261106-01",
+  "acceptance_id": "AC-20261106-01",
+  "scope": "Workflow Cookbook Tier 3 documentation adoption; no product evaluation or release",
+  "checks": [
+    {
+      "name": "tier_and_drift",
+      "command": "py -3 tools/ci/check_adoption_tier.py --repo 'C:\\Users\\ryo-n\\Codex_dev\\ai-yori-murasaki' --min-tier 3 --check-drift --check",
+      "exit_code": 0,
+      "output": "Repo: C:\\Users\\ryo-n\\Codex_dev\\ai-yori-murasaki\r\nCurrent Tier: 3 (Full)\r\n\r\nTier 0: OK README.md\r\nTier 1: OK HUB.codex.md, OK BLUEPRINT.md\r\nTier 2: OK RUNBOOK.md, OK GUARDRAILS.md, OK EVALUATION.md\r\nTier 3: OK docs/acceptance, OK docs/tasks, OK docs/birdseye/index.json, OK docs/birdseye/hot.json, OK docs/birdseye/caps\r\n\r\nTemplate drift:\r\n- OK HUB.codex.md (doc=1.0.0, template=1.0.0)\r\n- OK BLUEPRINT.md (doc=1.0.0, template=1.0.0)\r\n- OK RUNBOOK.md (doc=1.0.0, template=1.0.0)\r\n- OK GUARDRAILS.md (doc=1.1.0, template=1.1.0)\r\n- OK EVALUATION.md (doc=1.0.0, template=1.0.0)",
+      "elapsed_seconds": 0.7160629
+    },
+    {
+      "name": "acceptance_structure",
+      "command": "py -3 tools/ci/check_acceptance.py --check 'C:\\Users\\ryo-n\\Codex_dev\\ai-yori-murasaki'",
+      "exit_code": 0,
+      "output": "",
+      "elapsed_seconds": 0.6491171
+    },
+    {
+      "name": "birdseye_reviewed",
+      "command": "py -3 -m tools.ci.check_birdseye_freshness --repo-root 'C:\\Users\\ryo-n\\Codex_dev\\ai-yori-murasaki' --index-path 'C:\\Users\\ryo-n\\Codex_dev\\ai-yori-murasaki\\docs\\birdseye\\index.json' --hot-path 'C:\\Users\\ryo-n\\Codex_dev\\ai-yori-murasaki\\docs\\birdseye\\hot.json' --require-reviewed --check",
+      "exit_code": 0,
+      "output": "{\"index_path\": \"C:\\\\Users\\\\ryo-n\\\\Codex_dev\\\\ai-yori-murasaki\\\\docs\\\\birdseye\\\\index.json\", \"hot_path\": \"C:\\\\Users\\\\ryo-n\\\\Codex_dev\\\\ai-yori-murasaki\\\\docs\\\\birdseye\\\\hot.json\", \"failures\": [], \"warnings\": [], \"remediations\": []}",
+      "elapsed_seconds": 0.8947702
+    }
+  ],
+  "document_audit": {
+    "status": "passed",
+    "local_links_and_anchors_checked": 178,
+    "template_heading_sets_checked": 5,
+    "capsules_checked": 31,
+    "edges_checked": 152,
+    "original_report_sha256": "39debf151e7f333d1371c323a0f07eefca181c918a6a5d0bd7538caa95690625",
+    "upstream_file_hashes_unchanged": 28,
+    "json_and_yaml": "valid",
+    "task_acceptance_changelog": "consistent",
+    "scope": "documentation_only",
+    "elapsed_seconds": 0.6290045
+  },
+  "corrected_setup_and_audit": [
+    "First Codemap attempt stopped before writing because docs/birdseye/caps did not exist. Created the required directory and reran successfully.",
+    "The auxiliary audit initially required every capsule generation to equal the current index generation. Corrected it to the upstream contract: index/hot share one generation; capsule generations are valid prior/current generations and source/review hashes establish freshness.",
+    "Observed the original report at docs/ADR after the initial root-level snapshot. Updated links to the current location and confirmed identical SHA-256. No command in this change moved or rewrote the original report."
+  ],
+  "completion_record_sync": {
+    "task_status": "done",
+    "acceptance_status": "approved",
+    "approval_type": "technical",
+    "generated_at": "00005",
+    "results": [
+      {
+        "name": "acceptance_structure_after_completion",
+        "exit_code": 0,
+        "output": "",
+        "elapsed_seconds": 0.5662922
+      },
+      {
+        "name": "birdseye_reviewed_after_completion",
+        "exit_code": 0,
+        "output": "{\"index_path\": \"C:\\\\Users\\\\ryo-n\\\\Codex_dev\\\\ai-yori-murasaki\\\\docs\\\\birdseye\\\\index.json\", \"hot_path\": \"C:\\\\Users\\\\ryo-n\\\\Codex_dev\\\\ai-yori-murasaki\\\\docs\\\\birdseye\\\\hot.json\", \"failures\": [], \"warnings\": [], \"remediations\": []}",
+        "elapsed_seconds": 0.6495713
+      },
+      {
+        "name": "document_consistency_after_completion",
+        "exit_code": 0,
+        "output": "{\"status\": \"passed\", \"local_links_and_anchors_checked\": 179, \"template_heading_sets_checked\": 5, \"capsules_checked\": 31, \"edges_checked\": 152, \"original_report_sha256\": \"39debf151e7f333d1371c323a0f07eefca181c918a6a5d0bd7538caa95690625\", \"upstream_file_hashes_unchanged\": 28, \"json_and_yaml\": \"valid\", \"task_acceptance_changelog\": \"consistent\", \"scope\": \"documentation_only\"}",
+        "elapsed_seconds": 0.6961805
+      }
+    ],
+    "document_audit": {
+      "status": "passed",
+      "local_links_and_anchors_checked": 179,
+      "template_heading_sets_checked": 5,
+      "capsules_checked": 31,
+      "edges_checked": 152,
+      "original_report_sha256": "39debf151e7f333d1371c323a0f07eefca181c918a6a5d0bd7538caa95690625",
+      "upstream_file_hashes_unchanged": 28,
+      "json_and_yaml": "valid",
+      "task_acceptance_changelog": "consistent",
+      "scope": "documentation_only"
+    }
+  },
+  "not_executed": [
+    "Product tests and experiments",
+    "External-source research using Imozuru",
+    "Full editing of the received report with Yomiyasu",
+    "Git initialization, remote setup, CI execution, deployment or publication"
+  ]
+}

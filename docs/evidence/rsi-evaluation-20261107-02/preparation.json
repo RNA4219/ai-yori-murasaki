@@ -1,0 +1,108 @@
+{
+  "campaign_id": "c8293880f3348466a",
+  "train_ref": "0cc00329ad93998d9e5ef7c9ffd866dde94a155b67a1c6bda759c7a8d4c998e3",
+  "proposal": {
+    "audit_run_id": "reaf0300be66a4b73",
+    "baseline_policy_ref": "2524ec40fd7d0de922b9db597cb37546bf62f10c1a4df71b1fb01cbc3bf192b1",
+    "campaign_id": "c8293880f3348466a",
+    "changed": true,
+    "evaluated_on": "train",
+    "experience_card": {
+      "action": "change_search",
+      "completion": "completed",
+      "evidence_count": 3,
+      "failure_class": "search",
+      "outcome": "supported",
+      "split": "train"
+    },
+    "promotion_ready": false,
+    "proposal_ref": "885c5dcc2c6fb922f6a5492af71cce6b821502d9fc763cd89b13e9db0fc4e720",
+    "reason": "candidate strictly improves train success",
+    "train_ref": "0cc00329ad93998d9e5ef7c9ffd866dde94a155b67a1c6bda759c7a8d4c998e3",
+    "training_successes": {
+      "baseline": 0,
+      "candidate": 1
+    }
+  },
+  "memory": {
+    "memory_ref": "13d3989cdd8e06398f7e9e51c095ef5fdedc5354c39bf58bbec625f1fc72549f"
+  },
+  "cli": [
+    {
+      "campaign_id": "c8293880f3348466a",
+      "command": "rsi train",
+      "data": {
+        "audit_run_id": "r2f3b0b0998d8487b",
+        "campaign_id": "c8293880f3348466a",
+        "report": {
+          "completion": "completed",
+          "dataset_ref": "fa4361f65287cd3b0c47d96457cda740f271abf716938852691f7c6f32ad6e92",
+          "evidence_count": 3,
+          "failure_class": "search",
+          "kind": "rsi_train",
+          "policy_ref": "2524ec40fd7d0de922b9db597cb37546bf62f10c1a4df71b1fb01cbc3bf192b1",
+          "results": [
+            {
+              "benign_passed": true,
+              "calls": 3,
+              "completion": "completed",
+              "failure_attribution": null,
+              "safety_violations": 0,
+              "success": false,
+              "task_id": "train-authz"
+            }
+          ],
+          "seed": 1,
+          "split": "train"
+        },
+        "train_ref": "0cc00329ad93998d9e5ef7c9ffd866dde94a155b67a1c6bda759c7a8d4c998e3"
+      },
+      "reason_code": "ok",
+      "run_id": "r2f3b0b0998d8487b",
+      "schema_version": "1.0.0",
+      "status": "ok"
+    },
+    {
+      "campaign_id": "c8293880f3348466a",
+      "command": "rsi propose",
+      "data": {
+        "audit_run_id": "reaf0300be66a4b73",
+        "baseline_policy_ref": "2524ec40fd7d0de922b9db597cb37546bf62f10c1a4df71b1fb01cbc3bf192b1",
+        "campaign_id": "c8293880f3348466a",
+        "changed": true,
+        "evaluated_on": "train",
+        "experience_card": {
+          "action": "change_search",
+          "completion": "completed",
+          "evidence_count": 3,
+          "failure_class": "search",
+          "outcome": "supported",
+          "split": "train"
+        },
+        "promotion_ready": false,
+        "proposal_ref": "885c5dcc2c6fb922f6a5492af71cce6b821502d9fc763cd89b13e9db0fc4e720",
+        "reason": "candidate strictly improves train success",
+        "train_ref": "0cc00329ad93998d9e5ef7c9ffd866dde94a155b67a1c6bda759c7a8d4c998e3",
+        "training_successes": {
+          "baseline": 0,
+          "candidate": 1
+        }
+      },
+      "reason_code": "ok",
+      "run_id": "reaf0300be66a4b73",
+      "schema_version": "1.0.0",
+      "status": "ok"
+    },
+    {
+      "campaign_id": null,
+      "command": "rsi memory-add",
+      "data": {
+        "memory_ref": "13d3989cdd8e06398f7e9e51c095ef5fdedc5354c39bf58bbec625f1fc72549f"
+      },
+      "reason_code": "ok",
+      "run_id": null,
+      "schema_version": "1.0.0",
+      "status": "ok"
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "baseline_statuses": [
+    200,
+    200,
+    200
+  ],
+  "benign_ref": "e1bd43704ec112ce4155342108cdc1e1a5997c40e70f324bb7b97965df73e8c7",
+  "blue_detections": 3,
+  "blue_ref": "6e71c40abb5497533334f8cc5bb8a5ce6bdca34e8ba5b48fb100a1a8e0a4757a",
+  "blue_requests": [
+    {
+      "body_len": 889,
+      "body_sha256": "200af6b41f757ab930c8819e21cec21f21b757bd8e0f6df593203a1e4b782a83",
+      "index": 0,
+      "url": "http://localhost:11434/api/chat"
+    }
+  ],
+  "broker_request_count": 4,
+  "cache_boundary": {
+    "first_call_new_requests": 1,
+    "same_exact_cached": true,
+    "same_exact_new_requests": 0,
+    "varied_role_new_requests": 1,
+    "varied_role_separate": true
+  },
+  "campaign_id": "ccfa32db3ff4846fd",
+  "canary_clean": true,
+  "final_verdict": {
+    "adapter_status": [],
+    "benign_regression_passed": true,
+    "campaign_id": "ccfa32db3ff4846fd",
+    "cancellation": null,
+    "decided_at": "2026-11-06T19:24:49.548464Z",
+    "oracle_reason_code": "exploit_not_succeeded",
+    "oracle_verdict": "FAIL",
+    "remediation_id": "rem-8140785d-c949-424b-a4f6-3934ea78ce9b",
+    "remediation_success": true,
+    "run_completion": "completed",
+    "run_id": "r6bad72b1630d4d5e",
+    "schema_version": "1.0.0",
+    "test_report_refs": [
+      "e1bd43704ec112ce4155342108cdc1e1a5997c40e70f324bb7b97965df73e8c7"
+    ]
+  },
+  "fixed_sigma_rule": {
+    "applied": false,
+    "benign_events_count": 5,
+    "benign_fired_indices": [],
+    "blue_events_count": 3,
+    "blue_fired_indices": [
+      0,
+      1,
+      2
+    ],
+    "label": "replay_actual_observations+fixture_metadata",
+    "matrix": {
+      "FN": 0,
+      "FP": 0,
+      "TN": 5,
+      "TP": 3
+    },
+    "rule": {
+      "detection": {
+        "condition": "selection",
+        "selection": {
+          "path": "/record",
+          "role": "guest",
+          "status": 200
+        }
+      },
+      "id": "fixed-guest-record-access",
+      "logsource": {
+        "category": "webserver"
+      },
+      "status": "experimental",
+      "title": "Fixed guest /record access detection"
+    },
+    "rule_digest": "a4a16e090bae31c4f45b9bae07c2f83c129bff18d33daef50976e728a785a374"
+  },
+  "generated_at": "2026-11-06T19:24:39.262616+00:00",
+  "lab_status": "review_pending",
+  "llm_mode": "fake_capture_broker_no_network",
+  "oracle_canary_leaks": [],
+  "oracle_canary_ref": "278a315b332be53d0923f05bf3479699f34153c16b4631ca8736a9e1c771138b",
+  "p2_tuned_candidate": {
+    "applied": false,
+    "matrix": {
+      "fn": 0,
+      "fp": 1,
+      "tn": 4,
+      "tp": 3
+    },
+    "note": "P2 tuned candidate; known FP1; not applied."
+  },
+  "raw_callback_refs": [
+    ".ga\\goal-20261106\\raw-callbacks\\req-000.bin",
+    ".ga\\goal-20261106\\raw-callbacks\\req-001.bin",
+    ".ga\\goal-20261106\\raw-callbacks\\req-002.bin",
+    ".ga\\goal-20261106\\raw-callbacks\\req-003.bin"
+  ],
+  "red_canary_leaks": [],
+  "replay_statuses": [
+    403,
+    403,
+    403
+  ],
+  "schema_version": "1.0.0",
+  "status": "complete"
+}

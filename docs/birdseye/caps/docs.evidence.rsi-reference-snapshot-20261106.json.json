@@ -1,0 +1,23 @@
+{
+  "id": "docs/evidence/rsi-reference-snapshot-20261106.json",
+  "role": "provenance",
+  "public_api": [],
+  "summary": "参照3資料を ID・相対名・SHA-256 と base HEAD で識別する。参照元名称を含む絶対パスは削除済み。",
+  "deps_out": [],
+  "deps_in": [
+    "docs/RSI.md",
+    "docs/acceptance/AC-20261106-02.md",
+    "docs/tasks/TASK.rsi-policy-11-06-2026.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "f78a3e55114e214ef4ef6c0b3decc569d366756bcca5a7572b2cc959f7116a3d",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T07:28:57.540877+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "f78a3e55114e214ef4ef6c0b3decc569d366756bcca5a7572b2cc959f7116a3d",
+    "summary_sha256": "f96929025f4c04a5a8aedf9b939b1aa072189c127678f422e37e1e8485426f84",
+    "scope": "名称削除後の原文・要約・参照の整合。9項目と資料 hash は保全。"
+  }
+}

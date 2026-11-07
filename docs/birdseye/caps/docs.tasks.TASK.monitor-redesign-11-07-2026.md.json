@@ -1,0 +1,28 @@
+{
+  "id": "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "ユーザー指定の画面再設計と自動更新改善を追跡し、モデル分担・ブラウザー確認・検収へ接続する。",
+  "deps_out": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261107-01.md"
+  ],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261107-01.md",
+    "docs/acceptance/INDEX.md",
+    "docs/requirements/MONITOR-REDESIGN.md",
+    "docs/tasks/README.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "d9dad0bcf3576b069ccd6f6983bf5af93412250e88e236b053816ea2eee66f63",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T20:01:26.138861+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "d9dad0bcf3576b069ccd6f6983bf5af93412250e88e236b053816ea2eee66f63",
+    "summary_sha256": "edb66f2257f5f56defb437af590876b5f7d18243a76163c9d5d41c34bbbc9c23",
+    "scope": "原文と要約・実リンクを照合。モニターの変更と技術検収を確認し、見た目のユーザー承認を代行しない。"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "id": "docs/requirements/ACCEPTANCE-EXTENSION.md",
+  "role": "acceptance",
+  "public_api": [],
+  "summary": "R-051〜R-063の追加受入・CLI/API契約・試験T21〜T35・完成阻止条件。R-061撤回を反映し実利用者試験の未実施を完成阻止理由としない。評価マニフェストの事前固定とOracle独立性の実行時検査、hold/incomplete等のexit code規則を含む。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "2ec5328a40da3b99bc54347ae6188f46e67edfdadd1e4c39f08dcca32b005511",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-07T11:20:00+09:00",
+    "reviewed_by": "GLM",
+    "source_sha256": "2ec5328a40da3b99bc54347ae6188f46e67edfdadd1e4c39f08dcca32b005511",
+    "summary_sha256": "a6ee249b2a7979d6ee6bc3166f0da5448b8196f681ce7027e3327569f661bd4a",
+    "scope": "原文全文と要約・リンクを照合した。実測証跡に基づきAC-20261107-03技術検収合格と残件4項目完了を反映した。"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "id": "docs/acceptance/AC-20261106-05.md",
+  "role": "acceptance",
+  "public_api": [],
+  "summary": "診断スキルの配置一致、利用導線、参照、日本語本文と文書・索引の検査について技術検収を記録する。",
+  "deps_out": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "7eb6f853418608282fff5656d1481b895d762dcd9296df4be519b1834c179b87",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T19:29:53.143795+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "7eb6f853418608282fff5656d1481b895d762dcd9296df4be519b1834c179b87",
+    "summary_sha256": "1bc0ecb40d67f465d87f7a528bdda21e4d1d4a18dcd014be2469feee15e79b51",
+    "scope": "原文hashと既存の要約確認を維持し、変更文書からの逆参照だけを実リンクと照合。"
+  }
+}

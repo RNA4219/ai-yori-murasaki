@@ -1,0 +1,35 @@
+{
+  "id": "GUARDRAILS.md",
+  "role": "policy",
+  "public_api": [],
+  "summary": "認可された隔離ラボ、秘密情報、役割分離、採用と反映、依頼外実装の境界を定める。",
+  "deps_out": [
+    "BLUEPRINT.md",
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "README.md",
+    "RUNBOOK.md",
+    "docs/CONTRACTS.md",
+    "docs/RSI.md",
+    "docs/acceptance/README.md",
+    "governance/policy.yaml"
+  ],
+  "deps_in": [
+    "CHECKLISTS.md",
+    "HUB.codex.md",
+    "README.md",
+    "RUNBOOK.md",
+    "docs/workflow-adoption.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "27f5594d2053159e253e771d50f1791e72be15f495bbee9c399cd462d0f80458",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T19:30:36.760596+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "27f5594d2053159e253e771d50f1791e72be15f495bbee9c399cd462d0f80458",
+    "summary_sha256": "9f91e0c65ae223dce92e7255d9d4bdffd3d5cfe7d541d76d61d6574f9c9edc6d",
+    "scope": "原文と要約・導線を照合。製品の実測範囲と未検証の区別を維持。"
+  }
+}

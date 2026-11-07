@@ -1,0 +1,23 @@
+{
+  "id": "docs/SECURITY-AUDIT.md",
+  "role": "operations",
+  "public_api": [],
+  "summary": "23ファイルの診断スキル、使用方法、隔離・独立検証・Windowsの制約と更新元を案内する。製品Finding契約への自動変換は含まない。",
+  "deps_out": [],
+  "deps_in": [
+    "AGENTS.md",
+    "HUB.codex.md",
+    "RUNBOOK.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "a62d7e2959b497fbc3df51bed0b4edcd0735bd1be0b33548af2d8dfc9a3357f5",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T19:29:53.143795+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "a62d7e2959b497fbc3df51bed0b4edcd0735bd1be0b33548af2d8dfc9a3357f5",
+    "summary_sha256": "b2a9ff789ea016e39a4945e62b5c071b15df10dab3806ce3b311c03550238c80",
+    "scope": "原文hashと既存の要約確認を維持し、変更文書からの逆参照だけを実リンクと照合。"
+  }
+}

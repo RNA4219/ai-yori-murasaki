@@ -1,0 +1,22 @@
+{
+  "id": "docs/requirements/COMPACTION-03.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "要約保存3。受入と実装依存順のレビューを終え、identityを固定して製品実装へ進む判断。",
+  "deps_out": [
+    "docs/requirements/ACCEPTANCE-PLAN.md",
+    "docs/requirements/IMPLEMENTATION-PLAN.md"
+  ],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "55144791db2f13a029a6d4f839248e55fb18ded7e4aa77e4c89d4ae4a53626ad",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T19:30:36.760596+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "55144791db2f13a029a6d4f839248e55fb18ded7e4aa77e4c89d4ae4a53626ad",
+    "summary_sha256": "3cb59aa9f63909a227bf1e0a1a2750e2392e38411d5f8de88633d795137a3466",
+    "scope": "原文と要約・導線を照合。製品の実測範囲と未検証の区別を維持。"
+  }
+}

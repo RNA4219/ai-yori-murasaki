@@ -1,0 +1,45 @@
+{
+  "id": "EVALUATION.md",
+  "role": "quality",
+  "public_api": [],
+  "summary": "製品受入と11種KPIの扱いを示し、初期の文書導入検収条件を履歴として保持する。",
+  "deps_out": [
+    "BLUEPRINT.md",
+    "CHECKLISTS.md",
+    "RUNBOOK.md",
+    "docs/CONTRACTS.md",
+    "docs/RSI.md",
+    "docs/UPSTREAM.md",
+    "docs/acceptance/AC-20261106-01.md",
+    "docs/acceptance/AC-20261106-02.md",
+    "docs/acceptance/AC-20261106-06.md",
+    "docs/requirements/ACCEPTANCE-PLAN.md",
+    "docs/tasks/TASK.rsi-policy-11-06-2026.md",
+    "docs/tasks/TASK.workflow-adoption-11-06-2026.md",
+    "docs/upstream-snapshot.json",
+    "docs/workflow-adoption.md"
+  ],
+  "deps_in": [
+    "HUB.codex.md",
+    "README.md",
+    "RUNBOOK.md",
+    "docs/INCIDENT_TEMPLATE.md",
+    "docs/RSI.md",
+    "docs/tasks/TASK.rsi-policy-11-06-2026.md",
+    "docs/tasks/TASK.workflow-adoption-11-06-2026.md",
+    "docs/workflow-adoption.md"
+  ],
+  "risks": [],
+  "tests": [
+    "RUNBOOK の Tier / Acceptance / Birdseye 検査と、ID・リンク・原資料 hash の照合。"
+  ],
+  "source_sha256": "5152d48166eef5545bfc38906fb22a81fa4506037a49f7ae53c565f0f63d65f1",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T19:30:36.760596+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "5152d48166eef5545bfc38906fb22a81fa4506037a49f7ae53c565f0f63d65f1",
+    "summary_sha256": "2c538809b3f0bde02fd0b04e0f0db1f087dbbfb8b1ed610f0003fa6fbfeac633",
+    "scope": "原文と要約・導線を照合。製品の実測範囲と未検証の区別を維持。"
+  }
+}

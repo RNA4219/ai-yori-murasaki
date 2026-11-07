@@ -1,0 +1,281 @@
+{
+  "status": "passed",
+  "scope": "資料整理と完成記録の訂正。製品合格や提案採用の判定ではない。",
+  "source_sha256": "8f5804185de4e57f35034a51ad58e023cbb00c0044eec7479cb4d38ed055355c",
+  "source_lines": 743,
+  "units": [
+    {
+      "unit": "W1",
+      "instruction_preserved": true,
+      "quote_exact": true,
+      "source_lines": [
+        81,
+        103
+      ]
+    },
+    {
+      "unit": "W2",
+      "instruction_preserved": true,
+      "quote_exact": true,
+      "source_lines": [
+        105,
+        181
+      ]
+    },
+    {
+      "unit": "W3",
+      "instruction_preserved": true,
+      "quote_exact": true,
+      "source_lines": [
+        245,
+        263
+      ]
+    },
+    {
+      "unit": "W4",
+      "instruction_preserved": true,
+      "quote_exact": true,
+      "source_lines": [
+        205,
+        241
+      ]
+    },
+    {
+      "unit": "W5",
+      "instruction_preserved": true,
+      "quote_exact": true,
+      "source_lines": [
+        480,
+        500
+      ]
+    },
+    {
+      "unit": "W6",
+      "instruction_preserved": true,
+      "quote_exact": true,
+      "source_lines": [
+        532,
+        595
+      ]
+    },
+    {
+      "unit": "W7",
+      "instruction_preserved": true,
+      "quote_exact": true,
+      "source_lines": [
+        619,
+        641
+      ]
+    },
+    {
+      "unit": "W8",
+      "instruction_preserved": true,
+      "quote_exact": true,
+      "source_lines": [
+        643,
+        709
+      ]
+    }
+  ],
+  "proposals": 13,
+  "html_visible_chars": 7314,
+  "source_chars": 20783,
+  "ratio": 0.352,
+  "source_html_lines_exact": true,
+  "local_links_exist": true,
+  "glm_final": {
+    "verdict": "pass",
+    "scope": "REVIEW-INTAKE-20261107最終稿に対するI-01〜I-04の反映確認。資料整理のレビューであり、要件・仕様・実装の開始や製品合格の判定ではない。",
+    "issues": [],
+    "checks": [
+      {
+        "id": "C-01",
+        "target": "I-01 / W2 / R-052",
+        "result": "反映済み",
+        "note": "W2のconditionsに『R-046で既に必須なのはATT&CK/KEV/EPSSの実装。全体系の必須化をR-046だけから導かない』を追記し、R-052の判断欄も『全体系の必須化や新しい算出機能はR-046だけで正当化しない』と分離した。CWE・CVEのv1必須化が承認待ちの追加提案であることが明確になった。さらにCWE/CVEの必要性を原レポートのCVE/attack_mappingとユーザーの類型要求にも基づかせる補正は、既存依頼の是正を不要な許可待ちにしない方針と整合し、指摘の趣旨を損なわない。適切。"
+      },
+      {
+        "id": "C-02",
+        "target": "I-02 / R-056",
+        "result": "反映済み",
+        "note": "R-056の判断欄を『追加提案を含む。KEV/EPSS統合は継続し、新たな算出機能をv1へ加えるかは採否判断する』と修正し、追加判断AとしてCVSS算出・業務影響評価の採否を独立させた。KEV/EPSS是正がこの判断を待たないことも明記され、R-046の先送り不可範囲が正確になった。適切。"
+      },
+      {
+        "id": "C-03",
+        "target": "I-03 / W6 / R-059",
+        "result": "反映済み",
+        "note": "W6のconditionsに『依存類型の検出評価とT09/T10の正規化・SARIF契約適合は別の確認として対応を記す』を追記した。検出評価と契約適合の担当分離が条件として保持され、T21〜T34とT01〜T20の重複整理がunfixed放置ではなく採用時条件になった。R-059でも5類型が上限でない条件を維持している。適切。"
+      },
+      {
+        "id": "C-04",
+        "target": "I-04 / W7 / R-061",
+        "result": "反映済み",
+        "note": "W7のconditionsを『試験方針の採用、人数・閾値の確定、参加者への募集連絡は別の判断とする』、R-061を『実利用者試験を完成条件にするか、提案値を採用するかを分けて判断。参加者の募集連絡は別操作』と3点分離した。追加判断Cでも人数・閾値・危険誤認条件の別途固定と『参加者への連絡は行っていない』を明記し、承認時に募集実施と閾値固定を別々に判断できる。適切。"
+      },
+      {
+        "id": "C-05",
+        "target": "全体 / 資料整理の位置付け",
+        "result": "適合",
+        "note": "受領文書を外部GPTによる資料レビューと位置付け、コードの新規検査・実行検証でないことを維持。R-051〜R-063・T21〜T34を提案番号として自動追加しないこと、既存R-001〜R-050・R-046を先送りしないことを明記。製品完成判定の撤回とAC-20261106-06のrejected訂正も整合する。"
+      },
+      {
+        "id": "C-06",
+        "target": "全体 / 開始表示の不在",
+        "result": "適合",
+        "note": "『次は既存要求と採用された提案を要件へ反映し…』と将来形で記述しており、要件・仕様・実装を開始したとは表示していない。提案採否が未決定でも既存要件の不足調査を止めない条件も維持されている。"
+      },
+      {
+        "id": "C-07",
+        "target": "全体 / 製品合格判定の不在",
+        "result": "適合",
+        "note": "本稿は受領資料の整理と必要性評価であり、製品の合格・完成を判定する文書ではない。一次資料の未照合・原典追跡の未実施・Imozuru調査の完了と報告しないことも明記されている。"
+      }
+    ]
+  },
+  "model_jobs": [
+    {
+      "job": "review-intake-sankai",
+      "model_requested": "deepseek-v4.1-flash:cloud",
+      "model_reported": "deepseek-v4.1-flash",
+      "seconds": 15.67,
+      "tokens": 4650,
+      "status": "done",
+      "verdict": "整理案"
+    },
+    {
+      "job": "review-intake-glm",
+      "model_requested": "glm-5.3:cloud",
+      "model_reported": "glm-5.3",
+      "seconds": 23.31,
+      "tokens": 4212,
+      "status": "done",
+      "verdict": "changes_required"
+    },
+    {
+      "job": "review-intake-glm-final",
+      "model_requested": "glm-5.3:cloud",
+      "model_reported": "glm-5.3",
+      "seconds": 7.94,
+      "tokens": 1505,
+      "status": "done",
+      "verdict": "pass"
+    },
+    {
+      "job": "review-intake-html",
+      "model_requested": "deepseek-v4.1-flash:cloud",
+      "model_reported": "deepseek-v4.1-flash",
+      "seconds": 8.73,
+      "tokens": 4135,
+      "status": "done",
+      "verdict": null
+    },
+    {
+      "job": "review-intake-html-fix",
+      "model_requested": "deepseek-v4.1-flash:cloud",
+      "model_reported": "deepseek-v4.1-flash",
+      "seconds": 10.0,
+      "tokens": 4159,
+      "status": "done",
+      "verdict": null
+    },
+    {
+      "job": "review-intake-html-label",
+      "model_requested": "deepseek-v4.1-flash:cloud",
+      "model_reported": "deepseek-v4.1-flash",
+      "seconds": 3.34,
+      "tokens": 120,
+      "status": "done",
+      "verdict": null
+    }
+  ],
+  "browser": {
+    "widths": [
+      390,
+      1440
+    ],
+    "overflow": false,
+    "source_anchor": "L81",
+    "source_line_count": 743,
+    "keyboard_focus": "link with solid outline",
+    "script_count": 0,
+    "visual_review": "本文と狭幅の表を確認。引用は常時表示、開閉操作なし。"
+  },
+  "not_run": [
+    "製品再試験",
+    "新たな脆弱性診断",
+    "外部原典の内容確認",
+    "参加者募集",
+    "性能比較"
+  ],
+  "corrections": [
+    {
+      "path": "README.md",
+      "before_sha256": "0f3685576d3838698d77f240d26863f91e007af849c61bca83aa0699b84675e5",
+      "after_sha256": "3841e1f098070324968ed883c779454ebbac3f8d13f5153122dbab4f7489f721",
+      "current_sha256": "3841e1f098070324968ed883c779454ebbac3f8d13f5153122dbab4f7489f721"
+    },
+    {
+      "path": "docs/acceptance/AC-20261106-06.md",
+      "before_sha256": "0f5daecab4532965556b77ac6fa4a341ad630879c921a522ef5151f07146e340",
+      "after_sha256": "d393a7e13f7a6e9bdf4f5b3eb874a53063be1af29ae1be109e822776a2d3900f",
+      "current_sha256": "d393a7e13f7a6e9bdf4f5b3eb874a53063be1af29ae1be109e822776a2d3900f"
+    },
+    {
+      "path": "docs/tasks/TASK.product-completion-11-06-2026.md",
+      "before_sha256": "0bab3c9a307c73545be0b0f22b9356d7e93e22e821ce48a4fc54aadeb7a3a790",
+      "after_sha256": "029203673e95eb4e79d5bcd5bfafdfd96c41f5bbdc91426843c41d8f97d2863f",
+      "current_sha256": "029203673e95eb4e79d5bcd5bfafdfd96c41f5bbdc91426843c41d8f97d2863f"
+    },
+    {
+      "path": "docs/PRODUCT-ACCEPTANCE.md",
+      "before_sha256": "777eaa826df9fa7da782399759f0eeb9a8958f6ba23481b57afb6f85b4c845b8",
+      "after_sha256": "f92ba6aabecbbaa084a8d4b2db7fe5ef3a82bc24eec527516346ef63290c5be8",
+      "current_sha256": "f92ba6aabecbbaa084a8d4b2db7fe5ef3a82bc24eec527516346ef63290c5be8"
+    },
+    {
+      "path": "HUB.codex.md",
+      "before_sha256": "f15362a89a3142ac226e49290b06b456cce57a9c99b1360992b2785163726aad",
+      "after_sha256": "60725ed7bac8d1d3f5ee76d113e70a562710a2bb76ce26a9ec3ed04603cff1f7",
+      "current_sha256": "60725ed7bac8d1d3f5ee76d113e70a562710a2bb76ce26a9ec3ed04603cff1f7"
+    },
+    {
+      "path": "docs/tasks/README.md",
+      "before_sha256": "6b8b8991275688e2ea4284895f0162b09fddb70d262ab7bd5d565332d669da1b",
+      "after_sha256": "1a39d0519e0ebaa1a91613903bc83e1e673ea9afa21dc5f06743a67f34e78c8d",
+      "current_sha256": "1a39d0519e0ebaa1a91613903bc83e1e673ea9afa21dc5f06743a67f34e78c8d"
+    },
+    {
+      "path": "docs/acceptance/INDEX.md",
+      "before_sha256": "9a67e40ee41f57953f9d2758ae1de41599edb2e65d595756f406aaffa07a8b03",
+      "after_sha256": "ed7dbd19ec30b7bd8b8b417ffff0da91a665c1158296d789757a5390ec01413f",
+      "current_sha256": "ed7dbd19ec30b7bd8b8b417ffff0da91a665c1158296d789757a5390ec01413f"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "before_sha256": "3efe9977f82ab93aa2c8f41ec9eae83903788e466c1582420d7c864ed26770f6",
+      "after_sha256": "db387aa4358e480dbd57b892a35f9f66e0c3e375ea0be05eff806f4e1f80a263",
+      "current_sha256": "db387aa4358e480dbd57b892a35f9f66e0c3e375ea0be05eff806f4e1f80a263"
+    },
+    {
+      "path": "docs/evidence/product-summary-20261107.json",
+      "before_sha256": "1ca6046b85c3fccece1e4e6e32e0c984bd7e847ebbed73fe98bee3335a23ed6b",
+      "after_sha256": "291e615646c225570dd9aaf74562a065aa3dc980a8b0865808a9b110e30c6f49",
+      "current_sha256": "291e615646c225570dd9aaf74562a065aa3dc980a8b0865808a9b110e30c6f49"
+    },
+    {
+      "path": ".ga/goal-20261106/progress-20261107.json",
+      "before_sha256": "5cc8c9e5e47ee22eac9abf05a682b265238d5e5a76218d49824965d581310a14",
+      "after_sha256": "35a92234ee4380b96431f9d3682ee6efb708f8df31ed513527264902e96f5e8e",
+      "current_sha256": "35a92234ee4380b96431f9d3682ee6efb708f8df31ed513527264902e96f5e8e"
+    },
+    {
+      "path": "monitor/state.json",
+      "before_sha256": "4514491c1df8b77168030864aaf8688eb951596131f81df008ce434a2ed145b1",
+      "after_sha256": "39dba6022a201fd6c84c75d7413cb9db907917bc60efba363c3516eaf0d6dec1",
+      "current_sha256": "d84eacf3d98fba884f61075d1e25fc695c12ba160e0d96c297fa050dd60518c9"
+    }
+  ],
+  "editorial_record": "docs/evidence/review-intake-editorial-20261107.json",
+  "document_gates": "docs/evidence/review-intake-doc-gates-20261107.json",
+  "existing_product_html_unchanged": true
+}

@@ -1,0 +1,19 @@
+{
+  "id": "docs/acceptance/AC-20261107-03.md",
+  "role": "acceptance",
+  "public_api": [],
+  "summary": "Task 20261107-03の技術検収（approved、2026-11-07技術検収合格）。要件・仕様・受入条件の対応、分類と判断根拠の実行経路、CVSSと業務影響の区別、5類型評価（15run全split合格・identity凍結・holdout追補pass）、初心者向け表示（実campaign B-01〜B-04 pass）を確認した。配布一致はdist-finished-20261107再ビルド後、コード/assets・収録文書/metadata比較とも不一致0件。実利用者試験は撤回済み。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "c25d56cd446f83b348e5e09fb27a42900f9975c031ad3ec3e2565963eae0e7a4",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-07T18:30:00+09:00",
+    "reviewed_by": "GLM",
+    "source_sha256": "c25d56cd446f83b348e5e09fb27a42900f9975c031ad3ec3e2565963eae0e7a4",
+    "summary_sha256": "ff5fc2f9aeb053fed083ac7e9437096e98db4602ed15e97ea687626b798203b7",
+    "scope": "原文全文と要約・リンクを照合した。GitHub Public公開前の最終確定（公開記録RA-20261107-01、非公開原資料のリンク注記、codemap exclude、配布物hash）を反映した。"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "id": ".github/ISSUE_TEMPLATE/bug.yml",
+  "role": "template",
+  "public_api": [],
+  "summary": "Intent、再現条件と期待結果、ゲート結果、関連する Task・検収を記録する不具合フォーム。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "9cf6283e5b4c1395559cfe885b183ecb50f5027b868344c5a84e20578ffe8ba4",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T07:09:44.542881+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "9cf6283e5b4c1395559cfe885b183ecb50f5027b868344c5a84e20578ffe8ba4",
+    "summary_sha256": "075fd77256a43951b88246383a7736f33e2b8c1372a49a2809c4f179b8cf3c42",
+    "scope": "原文の役割・要約・参照の整合。外部仕様や製品の効果は検証していない。"
+  }
+}

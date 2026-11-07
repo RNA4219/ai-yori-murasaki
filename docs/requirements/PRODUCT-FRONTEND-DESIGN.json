@@ -1,0 +1,183 @@
+{
+  "glm_design": {
+    "verdict": "designed",
+    "intent_id": "INT-AYM-PRODUCT-20261106",
+    "scope": "ai_yori_murasaki/web/index.html 製品実行モニター（read-only）。既存 monitor/ は変更しない。開発モニター実装は完了済みで本設計対象外。",
+    "license": "MIT",
+    "files": [
+      {
+        "path": "ai_yori_murasaki/web/index.html",
+        "role": "単一HTML+CSS+JS package。外部依存ゼロ、画像・Webフォントなし、system-uiスタック。Python stdlib serverのGET / から配信される。",
+        "note": "既存design tokens（--color-*, --space-*, --radius*, --font-*）を流用。Spacingは閉じた許可リストのみ。新規Primitive値は追加しない。[L03]"
+      }
+    ],
+    "layout": [
+      {
+        "viewport": "Desktop 1025px+",
+        "structure": "2カラム。sidebar 260px（Campaign一覧nav＋データ状態）＋main max-width 1100px。横overflowなし。"
+      },
+      {
+        "viewport": "Tablet 768–1024px",
+        "structure": "sidebarをmain直上の横並びnav（flex-wrap、各項目min-height 44px）へ切替。データ状態dlはnav直下1行。"
+      },
+      {
+        "viewport": "Mobile 0–767px",
+        "structure": "navはdetails/summary「メニュー」折りたたみ（閉時は見出し＋サマリのみでviewport内、summary 44px）。表は.table-wrap内部横スクロール（min-width 560px, overflow-x:auto）。"
+      },
+      {
+        "sections": [
+          "skip-link（mainへ）",
+          "header: 見出し＋最終取得日時＋取得方法（HTTP）＋手動更新button（44px）",
+          "banner-area（aria-live=polite、常時マウント）",
+          "Campaign一覧（初期view）: 名前、Blind状態、最終実行日時（実記録）、検知件数（実記録）。詳細はa[href]でhash遷移（#/campaign/<id>）",
+          "Campaign詳細: 検知と修復を別セクションへ分離（混在禁止）。Blind中は非開示項目を「権限により非表示」と明示（空白にしない）",
+          "Run詳細: run状態、sealed_at、last_sequence、last_event_hash（実記録のみ）",
+          "証跡verify: 各証跡のverify結果（成功/失敗/未検証＋理由文字）。承認/再verify buttonは作らない",
+          "承認待ち: 「レビュー待ち」と「反映済み」を別見出しで分離。数は実件数のみ",
+          "RSI: freeze_id、content_digest、ready状態。比較は実測ペアのみ、未測定は「未測定」",
+          "モデル状態4区分: running / sealed / hold / 不明（実API値から導出、推計しない）",
+          "details/summary補足: データ形式、API一覧、read-onlyである旨"
+        ]
+      }
+    ],
+    "components": [
+      {
+        "name": "StatusBadge",
+        "spec": "状態は色＋文字＋形状（●/○）3要素。可視文字をそのままアクセシブルネームにする。running/sealed/hold/不明、verify成功/失敗/未検証、レビュー待ち/反映済みに使用。"
+      },
+      {
+        "name": "DataTable",
+        "spec": "semantic table＋thead。.table-wrapで横スクロール。null/欠落は「未記録」、空配列は「該当なし」を明示。"
+      },
+      {
+        "name": "BannerArea",
+        "spec": "常時マウントのaria-live=polite領域。error時role=alertへ切替。loadingはoutput要素「読み込み中…」。"
+      },
+      {
+        "name": "RefreshButton",
+        "spec": "唯一の操作。native button、44px、focus-visible 3px outline。fetch中はdisabled＋「読み込み中…」。"
+      },
+      {
+        "name": "CampaignLink",
+        "spec": "a[href='#/campaign/<id>']。focus中の再renderはnode再利用（開発モニターの監督条件2を同一適用）。"
+      },
+      {
+        "name": "SectionHeading",
+        "spec": "見出し階層を飛ばさない。h1→h2（Campaign/Run/証跡/承認/RSI/モデル状態）→h3。"
+      }
+    ],
+    "data_contract": [
+      {
+        "endpoint": "GET /api/campaigns",
+        "use": "Campaign一覧。campaigns配列から名前、Blind状態、最終実行日時、検知件数を表示。"
+      },
+      {
+        "endpoint": "GET /api/campaigns/<campaign_id>",
+        "use": "Campaign詳細。検知/修復セクション分離の材料。"
+      },
+      {
+        "endpoint": "GET /api/runs/<run_id>",
+        "use": "Run状態、sealed_at、last_sequence、last_event_hash。"
+      },
+      {
+        "endpoint": "GET /api/runs/<run_id>/events?after=<seq>&limit=<int>",
+        "use": "公開イベント履歴。limit既定100上限1000。evidence_refsは件数のみ（projection準拠）。"
+      },
+      {
+        "endpoint": "GET /api/verification/<run_id>",
+        "use": "証跡verify結果（成功/失敗/未検証＋理由）。"
+      },
+      {
+        "endpoint": "GET /api/approvals",
+        "use": "レビュー待ち/反映済みの分離表示。"
+      },
+      {
+        "endpoint": "GET /api/health",
+        "use": "接続確認。失敗時は「サーバーに接続できません」をHTTPエラーと区別して表示。"
+      },
+      {
+        "proposed_additions": [
+          {
+            "endpoint": "GET /api/campaigns/<campaign_id>/runs",
+            "reason": "Campaign詳細からRun一覧への導線に必要。既存契約はrun_id直指定のみで、UIからrun_idを発見できない。{runs:[...]}、404/500、256 KiB上限、他endpointと同一形式を想定。",
+            "fallback": "採用されない場合、Campaign詳細はevents_publicからrun_idを列挙するか、Run詳細への導線を省略する。実装時にCore担当へ確認すること。"
+          },
+          {
+            "endpoint": "GET /api/runs/<run_id>/rsi",
+            "reason": "RSI freeze/ready状態の表示に必要。{freeze_id, content_digest, ready}。既存CLI（rsi freeze/ready）のread-only投影。",
+            "fallback": "採用されない場合、RSIセクションは「API未提供」と正直表示する。捏造しない。"
+          }
+        ]
+      },
+      {
+        "rules": [
+          "全応答はunknownとして受けて実行時検証（必須キー・型・上限）を通す。response.json()をas/直接断言しない。[L11]",
+          "HTTPエラー（4xx/5xx）と通信断・タイムアウトを文言で区別する。[Q06]",
+          "外部入力はtextContent挿入のみ。innerHTML/eval/Function禁止。XSS対策として全文字列をDOM API経由で挿入する。[Q08]",
+          "fetchはAbortControllerで競合制御。新要求発行時に旧要求をabortし、旧要求のabortは障害表示しない（利用者キャンセル扱い）。[Q07]",
+          "期限はAbortSignal.timeout()。自動再試行はしない（read-only画面のため手動更新導線のみ）。[Q07]"
+        ]
+      }
+    ],
+    "states": [
+      {
+        "name": "loading",
+        "display": "「読み込み中…」＋output要素。前回データがあれば併存表示し、消去しない。"
+      },
+      {
+        "name": "empty",
+        "display": "「該当なし」または「未取得」。空配列とnullを区別。"
+      },
+      {
+        "name": "error_http",
+        "display": "role=alert banner。HTTPステータスと「画面を更新してください」等の復旧方法を近接テキストで。"
+      },
+      {
+        "name": "error_network",
+        "display": "「サーバーに接続できません」。HTTPエラーと文言で区別。"
+      },
+      {
+        "name": "stale",
+        "display": "warn banner「前回取得時のデータを表示しています」＋前回取得日時。"
+      },
+      {
+        "name": "unknown_field",
+        "display": "「未記録」/「未測定」/「不明」。空白・0・ハイフンにしない。"
+      },
+      {
+        "name": "redacted",
+        "display": "「権限により非表示」。Blue viewの[redacted]をそのまま出さず、統一文言へ置換。"
+      },
+      {
+        "name": "disconnected",
+        "display": "health失敗時「サーバーに接続できません」。他セクションはstale扱い。"
+      },
+      {
+        "name": "model_state_4",
+        "display": "running / sealed / hold / 不明。API実値から導出し、推計・進捗率は作らない。"
+      }
+    ],
+    "acceptance": [
+      "390pxで初期viewportに見出し・サマリ・更新buttonが収まる。表は内部横スクロールでレイアウト崩壊なし。",
+      "768px未満すべてでnav折りたたみ、768–1024px横並び、1025px以上sidebar（監督条件1）。",
+      "全操作要素44px、focus-visible表示、Tabのみで更新操作まで到達可能。skip-link動作する。",
+      "承認・再verify・反映を実行するbuttonがDOMに存在しないこと（読取表示のみ）を検証。",
+      "空配列・null・404・500・通信断・タイムアウト・[redacted]・未測定がそれぞれ区別された文言で表示される。",
+      "検知と修復が別セクション、「レビュー待ち」と「反映済み」が別見出しで分離されている。",
+      "XSS: API応答に<script>やHTML断片を含めても実行・解釈されない（textContent挿入の確認）。",
+      "fetch競合: 連打・画面切替中の旧応答が新状態を上書きしない。abort時はエラー表示なし。",
+      "focus中の再renderでnode再利用され、消滅リンクのみフォーカス復旧＋告知される（監督条件2）。",
+      "キーボードのみで全画面閲覧が完了する。axe-core系自動確認＋主要画面の手動確認。[Q11]"
+    ],
+    "implementation_notes": [
+      "既存monitor/の実装パターン（banner-area、.table-wrap、badge、fetch競合制御、node再利用）を複製せず、同一トークン・同一規約で新規作成する。ただし同一仕様の共通処理が抽出済みならそれを参照する。[L01]",
+      "URL許可は実装側の既定（../docs/安全な子パス、同階層index.html/state.json相当）に従う。本画面のリンクはhash遷移（#/campaign/<id>）のみで外部URL・file参照を作らない。",
+      "文言は日本語敬体。API内部名（projection名、reason_code等）はdetails補足へ集約し、通常UI文言から排除する。",
+      "reason_codeはCLI契約の列挙をそのまま表示せず、人向け短文言へ写像する（写像不能なcodeはcode自体をdetailsに表示）。",
+      "追加API提案（runs一覧、rsi）はCore担当確認事項として実装者に引き継ぐ。未提供なら「API未提供」表示で捏造しない。",
+      "更新系テストは不要（read-only）。UI部品表示は単体＋統合必須、API応答処理は単体＋統合必須、E2Eは条件付き。[Q09]",
+      "モックはMSW基準。固定待機禁止、状態条件で待つ。[Q10]"
+    ]
+  },
+  "supervisor_integration": "監督統合条件:\n(1)モデル状態は requested_role_model/registration/development_call/product_connection/pin。GLMのrunning/sealed/holdはRun状態との混同なので使わない。\n(2)承認approvedと反映appliedを混同しない。\n(3)補助GETを採用:\n /api/models -> {models:[{role,requested_role_model,registration:{status,checked_at,evidence_ref},development_call:{status,evidence_refs},product_connection:{status,checked_at,evidence_ref},pin:{status,version}}]}\n /api/adapters -> {adapters:[{name,status,mode,checked_at}]}\n /api/campaigns/<id>/runs -> {runs:[Run投影]}\n /api/campaigns/<id>/rsi -> {rsi:[{candidate_id,freeze_id,content_digest,status,comparison:{pairs,baseline,candidate,gain}|null,applied:bool}]}\n Campaign投影: campaign_id,intent_id,status,created_at,last_run_at:null|timestamp,finding_count:null|int。\n 詳細: {campaign:投影,findings:[{finding_id,severity,title,source}],remediations:[{remediation_id,status}],metrics:object|null}\n Run投影: run_id,campaign_id,phase,status,completion,cause,started_at,ended_at,sealed_at,last_sequence,last_event_hash。\n Approval投影: approval_id,remediation_id,decision,decided_at,expires_at,applied:boolean（無ければfalseにせず未確認）。\n(4)hash route campaign/run の一覧導線。初期campaign一覧とmodel/adapters表示。\n(5)必要API未提供を代替完成にしない、実装予定のこのcontractへ接続。\n(6)15秒ごとの読取更新を追加、hidden時休止、fetch5秒上限/1MiBストリームcap、古い応答無視、stale保持、manualbutton disableでfocus喪失させない。\n(7)本画面はoperatorローカル専用。Blueはhost到達不能。"
+}

@@ -1,0 +1,2601 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>紫 - 製品実行モニター</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%237b4fa0'/%3E%3C/svg%3E">
+<style>
+:root {
+  --color-bg: #0e0e11;
+  --color-bg-sidebar: #131317;
+  --color-bg-topbar: #16161a;
+  --color-surface: #1a1a1f;
+  --color-surface-hover: #202026;
+  --color-border-subtle: #26262c;
+  --color-border: #33333b;
+  --color-text: #e8e6e3;
+  --color-text-muted: #a09d99;
+  --color-text-faint: #a09d99;
+  --color-brand: #8b5cf6;
+  --color-brand-dim: #6d4fd8;
+  --color-review: #e6b865;
+  --color-ok: #69b88a;
+  --color-err: #ed8179;
+  --color-focus: #b89af5;
+  --color-accent: #8b5cf6;
+  --color-accent-soft: #202026;
+  --color-surface-alt: #16161a;
+  --color-ok-bg: transparent;
+  --color-ok-text: #69b88a;
+  --color-warn-bg: transparent;
+  --color-warn-text: #e6b865;
+  --color-err-bg: transparent;
+  --color-err-text: #ed8179;
+  --color-info-bg: transparent;
+  --color-info-text: #a09d99;
+  --color-neutral-bg: transparent;
+  --color-neutral-text: #a09d99;
+  --space-0: 0px;
+  --space-2: 2px;
+  --space-4: 4px;
+  --space-6: 6px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-40: 40px;
+  --space-44: 44px;
+  --space-48: 48px;
+  --space-56: 56px;
+  --space-64: 64px;
+  --space-72: 72px;
+  --space-80: 80px;
+  --space-96: 96px;
+  --space-128: 128px;
+  --space-140: 140px;
+  --space-144: 144px;
+  --space-160: 160px;
+  --radius: 0px;
+  --radius-sm: 4px;
+  --font-stack: system-ui, -apple-system, "Segoe UI", "Yu Gothic UI", "Meiryo", "Hiragino Sans", "Noto Sans JP", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --shadow: none;
+  --z-topbar: 20;
+  --z-sidebar: 10;
+  --z-skip: 100;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font-stack);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--color-text); text-decoration: none; }
+a:hover { color: var(--color-text); text-decoration: underline; }
+a:focus-visible, button:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+.skip-link {
+  position: absolute; left: var(--space-8); top: -100px;
+  background: var(--color-brand); color: #fff;
+  padding: var(--space-8) var(--space-16);
+  border-radius: var(--radius-sm); z-index: var(--z-skip);
+  text-decoration: none;
+}
+.skip-link:focus { top: var(--space-8); }
+
+/* Layout: full-height sidebar + main */
+.layout {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 0;
+  min-height: 100vh;
+}
+.sidebar {
+  background: var(--color-bg-sidebar);
+  border-right: 1px solid var(--color-border-subtle);
+  padding: var(--space-16) 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: var(--z-sidebar);
+}
+.sidebar-brand {
+  display: flex; align-items: center; gap: var(--space-8);
+  padding: 0 var(--space-16) var(--space-16);
+  border-bottom: 1px solid var(--color-border-subtle);
+  margin-bottom: var(--space-12);
+}
+.brand-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--color-brand); flex: none;
+}
+.brand-name { font-size: 12px; font-weight: 600; color: var(--color-text); }
+.brand-desc { font-size: 10px; color: var(--color-text-muted); letter-spacing: 0.08em; }
+.sidebar-label {
+  font-size: 11px; margin: 0 var(--space-16) var(--space-8);
+  color: var(--color-text-muted); text-transform: uppercase;
+  letter-spacing: 0.06em; font-weight: 600;
+}
+.nav-list { list-style: none; padding: 0; margin: 0 0 var(--space-16); }
+.nav-list li { margin: 0; }
+.nav-list a {
+  display: block;
+  padding: var(--space-6) var(--space-12) var(--space-6) var(--space-16);
+  min-height: 44px;
+  border-left: 2px solid transparent;
+  color: var(--color-text);
+  font-size: 13px;
+  font-family: var(--font-mono);
+  overflow-wrap: anywhere;
+}
+.nav-list a:hover { background: var(--color-surface-hover); text-decoration: none; }
+.nav-list a[aria-current="page"] {
+  background: var(--color-surface);
+  border-left-color: var(--color-brand);
+  font-weight: 600;
+}
+.nav-list .meta {
+  display: block; font-size: 11px; color: var(--color-text-muted);
+  font-family: var(--font-stack); margin-top: var(--space-2);
+}
+.data-status {
+  font-size: 11px; color: var(--color-text-muted);
+  border-top: 1px solid var(--color-border-subtle);
+  padding: var(--space-12) var(--space-16) 0;
+  margin: 0;
+}
+.data-status dt { font-weight: 600; color: var(--color-text-muted); font-size: 11px; }
+.data-status dd { margin: 0 0 var(--space-6); font-family: var(--font-mono); font-size: 11px; }
+.data-status dt, .data-status dd { min-width: 0; }
+.data-status dd { overflow-wrap: anywhere; word-break: break-all; }
+
+main { min-width: 0; padding: var(--space-24); }
+
+/* Topbar */
+header.page-header {
+  position: sticky; top: 0; z-index: var(--z-topbar);
+  background: var(--color-bg-topbar);
+  border-bottom: 1px solid var(--color-border-subtle);
+  min-height: 48px;
+  padding: var(--space-8) var(--space-16);
+  margin: calc(-1 * var(--space-24)) calc(-1 * var(--space-24)) var(--space-16);
+  display: flex; flex-wrap: wrap; gap: var(--space-12); align-items: center; justify-content: space-between;
+}
+.header-left { display: flex; align-items: center; gap: var(--space-12); min-width: 0; }
+.header-brand { display: flex; align-items: center; gap: var(--space-6); }
+.header-brand .brand-name { font-size: 12px; }
+.header-brand-text { color: var(--color-text-muted); font-size: 12px; }
+.header-sep { width: 1px; height: 16px; background: var(--color-border); }
+header.page-header h1 { font-size: 16px; font-weight: 600; margin: 0; }
+.header-meta { font-size: 12px; color: var(--color-text-muted); display: flex; flex-wrap: wrap; gap: var(--space-8); align-items: center; }
+.header-meta strong { color: var(--color-text); font-family: var(--font-mono); font-weight: 500; }
+.conn-ok { color: var(--color-ok); }
+.conn-err { color: var(--color-err); }
+button.refresh {
+  min-height: 44px; min-width: 44px;
+  padding: var(--space-6) var(--space-12);
+  background: var(--color-surface); color: var(--color-text);
+  border: 1px solid var(--color-border); border-radius: var(--radius-sm);
+  font-family: inherit; font-size: 13px; font-weight: 500;
+  cursor: pointer;
+}
+button.refresh:hover:not(:disabled):not([aria-disabled="true"]) { background: var(--color-surface-hover); }
+button.refresh:disabled { opacity: 0.6; cursor: progress; }
+button.refresh[data-manual-busy] { cursor: progress; color: var(--color-text-muted); }
+
+/* Banners */
+.banner-area { margin-bottom: var(--space-16); }
+.banner {
+  padding: var(--space-8) var(--space-12);
+  border-radius: 0;
+  border: none;
+  border-left: 2px solid var(--color-border);
+  background: var(--color-surface);
+  margin-bottom: var(--space-6);
+  font-size: 13px;
+  color: var(--color-text);
+}
+.banner[data-kind="info"] { border-left-color: var(--color-text-muted); }
+.banner[data-kind="warn"] { border-left-color: var(--color-review); color: var(--color-review); }
+.banner[data-kind="error"] { border-left-color: var(--color-err); color: var(--color-err); }
+.banner[data-kind="ok"] { border-left-color: var(--color-ok); color: var(--color-ok); }
+
+/* Sections (flat, no card) */
+.panel {
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--color-border-subtle);
+  border-radius: 0;
+  padding: var(--space-16) 0;
+  margin-bottom: var(--space-8);
+}
+.panel:first-child { border-top: none; padding-top: 0; }
+.panel h2 {
+  font-size: 13px; font-weight: 600; margin: 0 0 var(--space-12);
+  color: var(--color-text-muted); letter-spacing: 0.04em;
+}
+.panel h3 {
+  font-size: 12px; margin: var(--space-16) 0 var(--space-8);
+  color: var(--color-text-muted); font-weight: 600;
+}
+.panel p.lead { margin: 0 0 var(--space-12); color: var(--color-text-muted); font-size: 12px; }
+
+/* Campaign detail header */
+.detail-head { margin-bottom: var(--space-16); }
+.detail-head h2 {
+  font-size: 22px; font-weight: 600; margin: 0 0 var(--space-6);
+  color: var(--color-text); font-family: var(--font-mono);
+  letter-spacing: 0; overflow-wrap: anywhere;
+}
+.detail-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-4) var(--space-16);
+  margin: 0; font-size: 12px;
+}
+.detail-meta dt { color: var(--color-text-muted); font-size: 11px; margin: 0; }
+.detail-meta dd { margin: 0 0 var(--space-4); color: var(--color-text); font-family: var(--font-mono); font-size: 12px; overflow-wrap: anywhere; }
+
+/* Summary metrics */
+.summary-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--color-border-subtle);
+  border-bottom: 1px solid var(--color-border-subtle);
+  margin-bottom: var(--space-16);
+}
+.summary-metrics .metric {
+  padding: var(--space-12) var(--space-16);
+  border-left: 1px solid var(--color-border-subtle);
+  min-width: 0;
+}
+.summary-metrics .metric:first-child { border-left: none; }
+.summary-metrics .metric-label { font-size: 12px; color: var(--color-text-muted); margin: 0 0 var(--space-4); }
+.summary-metrics .metric-value {
+  font-size: 32px; font-weight: 500; font-family: var(--font-mono);
+  color: var(--color-text); font-variant-numeric: tabular-nums;
+  line-height: 1.1; overflow-wrap: anywhere;
+}
+.summary-metrics .metric-value.is-hold { color: var(--color-review); font-size: 16px; }
+.summary-metrics .metric-value.is-muted { color: var(--color-text-muted); font-size: 16px; }
+.summary-hold {
+  grid-column: 1 / -1;
+  padding: var(--space-12) var(--space-16);
+  color: var(--color-review); font-size: 13px;
+}
+
+/* Local view tabs */
+.view-tabs {
+  display: flex; flex-wrap: wrap; gap: 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+  margin-bottom: var(--space-16);
+}
+.view-tabs button {
+  min-height: 44px; padding: var(--space-8) var(--space-12);
+  background: transparent; border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--color-text-muted); font-family: inherit; font-size: 13px;
+  cursor: pointer;
+}
+.view-tabs button:hover { color: var(--color-text); background: var(--color-surface-hover); }
+.view-tabs button[aria-pressed="true"] {
+  color: var(--color-text); border-bottom-color: var(--color-brand); font-weight: 600;
+}
+.view-tabs .tab-count { font-family: var(--font-mono); font-size: 11px; color: var(--color-text-muted); margin-left: var(--space-4); }
+
+/* Tables */
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 0 var(--space-12); }
+.table-wrap:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 560px; }
+th, td { text-align: left; padding: var(--space-6) var(--space-12); border-bottom: 1px solid var(--color-border-subtle); vertical-align: top; }
+th { background: transparent; font-weight: 500; font-size: 12px; color: var(--color-text-muted); border-bottom: 1px solid var(--color-border); }
+td a { display: inline-flex; align-items: center; min-height: 44px; }
+tbody tr:hover { background: var(--color-surface-hover); }
+tr:last-child td { border-bottom: none; }
+td.mono { font-family: var(--font-mono); font-size: 12px; word-break: break-all; }
+td, th { font-variant-numeric: tabular-nums; }
+
+/* Status text (no filled badges) */
+.badge {
+  display: inline; padding: 0; border-radius: 0;
+  font-size: 12px; font-weight: 500;
+  background: transparent; color: var(--color-text-muted);
+  white-space: nowrap;
+}
+.badge .shape { display: none; }
+.badge[data-tone="ok"] { color: var(--color-ok); }
+.badge[data-tone="warn"] { color: var(--color-review); }
+.badge[data-tone="error"] { color: var(--color-err); }
+.badge[data-tone="info"] { color: var(--color-text-muted); }
+
+.empty, .unrecorded { color: var(--color-text-muted); font-style: italic; }
+.muted { color: var(--color-text-muted); }
+
+/* Findings incident rows */
+.incident-list { list-style: none; padding: 0; margin: 0; }
+.incident-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: var(--space-4) var(--space-12);
+  align-items: baseline;
+  padding: var(--space-8) 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+.incident-row:last-child { border-bottom: none; }
+.incident-sev { font-size: 12px; color: var(--color-review); font-weight: 600; white-space: nowrap; }
+.incident-sev[data-sev="critical"] { color: var(--color-err); }
+.incident-title { font-size: 13px; color: var(--color-text); min-width: 0; overflow-wrap: anywhere; }
+.incident-id { font-family: var(--font-mono); font-size: 11px; color: var(--color-text-muted); grid-column: 2; overflow-wrap: anywhere; }
+.incident-source { font-size: 11px; color: var(--color-text-muted); grid-column: 2; }
+.incident-status { font-size: 12px; color: var(--color-text-muted); white-space: nowrap; }
+.incident-status[data-tone="ok"] { color: var(--color-ok); }
+.incident-status[data-tone="warn"] { color: var(--color-review); }
+
+/* Details */
+.details-block { margin-top: var(--space-16); border-top: 1px solid var(--color-border-subtle); }
+.details-block summary {
+  cursor: pointer; padding: var(--space-12) 0; min-height: 44px;
+  display: list-item; line-height: 1.55; font-weight: 600; font-size: 13px;
+  color: var(--color-text);
+}
+.details-block summary::marker { color: var(--color-text-muted); }
+.details-block[open] summary { margin-bottom: var(--space-8); }
+.details-block .content { font-size: 12px; color: var(--color-text-muted); }
+.details-block code {
+  font-family: var(--font-mono); background: var(--color-surface);
+  padding: var(--space-2) var(--space-6); border-radius: var(--radius-sm); font-size: 11px;
+  color: var(--color-text);
+}
+.details-block ul { margin: 0 0 var(--space-8); padding-left: var(--space-20); }
+
+/* Mobile nav */
+.mobile-nav { display: none; }
+
+@media (max-width: 1024px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar {
+    position: static; height: auto; max-height: none;
+    border-right: none; border-bottom: 1px solid var(--color-border-subtle);
+    padding: var(--space-12) 0;
+  }
+  .sidebar-brand { padding: 0 var(--space-16) var(--space-12); margin-bottom: var(--space-8); }
+  .sidebar-label { display: none; }
+  .nav-list {
+    display: flex; flex-wrap: nowrap; gap: 0; margin-bottom: 0;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+    padding: 0 var(--space-8);
+  }
+  .nav-list a {
+    min-height: 44px; display: flex; flex-direction: column; justify-content: center;
+    border-left: none; border-bottom: 2px solid transparent;
+    white-space: nowrap; padding: var(--space-6) var(--space-12);
+  }
+  .nav-list a[aria-current="page"] { border-left: none; border-bottom-color: var(--color-brand); }
+  .nav-list .meta { display: none; }
+  .data-status {
+    display: flex; flex-wrap: wrap; gap: var(--space-12);
+    border-top: none; padding: var(--space-8) var(--space-16) 0;
+  }
+  .data-status dt, .data-status dd { display: inline; margin: 0; }
+  .data-status dd { margin-right: var(--space-12); }
+  main { padding: var(--space-16); }
+  header.page-header { margin: calc(-1 * var(--space-16)) calc(-1 * var(--space-16)) var(--space-16); }
+}
+
+@media (max-width: 767px) {
+  .sidebar { padding: var(--space-8) 0; }
+  .sidebar > .data-status { display: none; }
+  .header-brand-text, .header-sep { display: none; }
+  .nav-list { display: none; }
+  .mobile-nav { display: block; padding: 0 var(--space-12); }
+  .mobile-nav summary {
+    min-height: 44px; display: list-item; line-height: 1.55;
+    padding: var(--space-8) var(--space-12);
+    background: var(--color-surface); border-radius: var(--radius-sm);
+    cursor: pointer; font-weight: 600; font-size: 13px;
+  }
+  .mobile-nav[open] .nav-list {
+    display: flex; flex-direction: column; margin-top: var(--space-8);
+    padding: 0; overflow-x: visible;
+  }
+  .mobile-nav[open] .nav-list a { border-bottom: none; border-left: 2px solid transparent; }
+  .mobile-nav[open] .nav-list a[aria-current="page"] { border-left-color: var(--color-brand); }
+  header.page-header { padding: var(--space-8) var(--space-12); }
+  header.page-header h1 { font-size: 15px; }
+  .header-meta { font-size: 11px; }
+  .detail-head h2 { font-size: 18px; }
+  .summary-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .summary-metrics .metric:nth-child(3) { border-left: none; }
+  .summary-metrics .metric { border-top: 1px solid var(--color-border-subtle); }
+  .summary-metrics .metric:nth-child(1), .summary-metrics .metric:nth-child(2) { border-top: none; }
+  .summary-metrics .metric-value { font-size: 28px; }
+  .incident-row { grid-template-columns: auto minmax(0, 1fr); }
+  .incident-status { grid-column: 2; }
+  .data-status { flex-direction: column; gap: var(--space-2); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">本文へスキップ</a>
+<div class="layout">
+  <aside class="sidebar" aria-label="ナビゲーション">
+    <div class="sidebar-brand">
+      <span class="brand-dot" aria-hidden="true"></span>
+      <div>
+        <div class="brand-name">紫</div>
+        <div class="brand-desc">AI YORI MURASAKI</div>
+      </div>
+    </div>
+    <p class="sidebar-label">Campaign</p>
+    <details class="mobile-nav">
+      <summary>メニュー</summary>
+      <ul class="nav-list" id="nav-list-mobile"></ul>
+    </details>
+    <ul class="nav-list" id="nav-list" aria-label="Campaign一覧"></ul>
+    <dl class="data-status" id="data-status">
+      <dt>最終取得</dt><dd id="status-fetched">未取得</dd>
+      <dt>接続</dt><dd id="status-conn">未確認</dd>
+    </dl>
+  </aside>
+  <main id="main" tabindex="-1">
+    <header class="page-header">
+      <div class="header-left">
+        <span class="header-brand-text">ワークスペース</span>
+        <span class="header-sep" aria-hidden="true"></span>
+        <h1>製品実行モニター</h1>
+      </div>
+      <div class="header-meta">
+        <span id="header-conn">未確認</span>
+        <span>最終取得: <strong id="header-fetched">未取得</strong></span>
+        <button type="button" class="refresh" id="refresh-btn" aria-label="データを手動更新">手動更新</button>
+      </div>
+    </header>
+    <div class="banner-area" id="banner-area"></div>
+    <div id="view-root"></div>
+    <details class="details-block">
+      <summary>補足情報（データ形式・API一覧・read-onlyについて）</summary>
+      <div class="content">
+        <p>本画面は operator ローカル専用の read-only モニターです。承認・再verify・反映などの更新操作は提供しません。</p>
+        <p>参照API: <code>GET /api/campaigns</code>, <code>GET /api/campaigns/&lt;id&gt;</code>, <code>GET /api/campaigns/&lt;id&gt;/runs</code>, <code>GET /api/campaigns/&lt;id&gt;/rsi</code>, <code>GET /api/runs/&lt;id&gt;</code>, <code>GET /api/runs/&lt;id&gt;/events</code>, <code>GET /api/verification/&lt;id&gt;</code>, <code>GET /api/approvals</code>, <code>GET /api/models</code>, <code>GET /api/adapters</code>, <code>GET /api/health</code></p>
+        <p>権限により非表示となる項目は「権限により非表示」と表示します。status名のみから未提供データを推測しません。</p>
+        <p>15秒ごとに自動更新します（タブ非表示時は休止）。手動更新ボタンでも取得できます。応答は5秒でタイムアウト、1MiBを超える応答は破棄します。</p>
+        <p>API内部名（projection名・reason_code等）は本補足に集約し、通常UI文言からは排除しています。</p>
+      </div>
+    </details>
+  </main>
+</div>
+<script>
+(function () {
+  'use strict';
+
+  var FETCH_TIMEOUT_MS = 5000;
+  var MAX_BYTES = 1024 * 1024;
+  var AUTO_REFRESH_MS = 15000;
+
+  var state = {
+    campaigns: null,
+    campaignsError: null,
+    models: null,
+    modelsError: null,
+    adapters: null,
+    adaptersError: null,
+    health: null,
+    healthError: null,
+    approvals: null,
+    approvalsError: null,
+    lastFetched: null,
+    route: { name: 'list', params: {} },
+    detail: null,
+    detailError: null,
+    detailLoading: false,
+    assessment: null,
+    inflight: {},
+    focusKey: null,
+    campaignViews: {}
+  };
+
+  var el = {
+    bannerArea: document.getElementById('banner-area'),
+    viewRoot: document.getElementById('view-root'),
+    navList: document.getElementById('nav-list'),
+    navListMobile: document.getElementById('nav-list-mobile'),
+    refreshBtn: document.getElementById('refresh-btn'),
+    statusFetched: document.getElementById('status-fetched'),
+    statusConn: document.getElementById('status-conn'),
+    headerFetched: document.getElementById('header-fetched')
+  };
+
+  function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+
+  function text(tag, str, cls) {
+    var n = document.createElement(tag);
+    if (str !== null && str !== undefined) n.textContent = String(str);
+    if (cls) n.className = cls;
+    return n;
+  }
+
+  function fmtTime(iso) {
+    if (!iso) return null;
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return null;
+    try {
+      return d.toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    } catch (e) { return iso; }
+  }
+
+  function orUnrecorded(v) {
+    if (v === null || v === undefined || v === '') return text('span', '未記録', 'unrecorded');
+    if (v === '[redacted]') return text('span', '権限により非表示', 'unrecorded');
+    return document.createTextNode(String(v));
+  }
+
+  function badge(label, tone, shape) {
+    var b = document.createElement('span');
+    b.className = 'badge';
+    if (tone) b.setAttribute('data-tone', tone);
+    var s = document.createElement('span');
+    s.className = 'shape'; s.setAttribute('aria-hidden', 'true');
+    s.textContent = shape || '●';
+    b.appendChild(s);
+    b.appendChild(document.createTextNode(label));
+    return b;
+  }
+
+  function banner(kind, msg) {
+    var b = document.createElement('div');
+    b.className = 'banner';
+    b.setAttribute('data-kind', kind);
+    if (kind === 'error') b.setAttribute('role', 'alert');
+    b.textContent = msg;
+    return b;
+  }
+
+  function setBanners(list) {
+    reconcileChildren(el.bannerArea, list);
+  }
+
+  // Safe DOM reconciliation: match by node type + tag + data-key (or text for text nodes).
+  // Preserves node identity for unchanged subtrees; ignores `open` attribute on existing details.
+  function nodeKey(n) {
+    if (!n) return null;
+    if (n.nodeType === 3) return 'text:' + n.nodeValue;
+    if (n.nodeType !== 1) return null;
+    var k = n.getAttribute && n.getAttribute('data-key');
+    if (k) return 'k:' + n.tagName + ':' + k;
+    return 't:' + n.tagName;
+  }
+
+  function sameShape(a, b) {
+    if (!a || !b) return false;
+    if (a.nodeType !== b.nodeType) return false;
+    if (a.nodeType === 1 && a.tagName !== b.tagName) return false;
+    // Respect data-key: if either side has a key, they must match.
+    if (a.nodeType === 1) {
+      var ka = a.getAttribute && a.getAttribute('data-key');
+      var kb = b.getAttribute && b.getAttribute('data-key');
+      if (ka || kb) {
+        if (ka !== kb) return false;
+      }
+    }
+    return true;
+  }
+
+  function reconcileNode(oldN, newN) {
+    if (!oldN || !newN) return newN;
+    if (oldN.nodeType !== newN.nodeType) return newN;
+    if (oldN.nodeType === 3) {
+      if (oldN.nodeValue !== newN.nodeValue) oldN.nodeValue = newN.nodeValue;
+      return oldN;
+    }
+    if (oldN.nodeType !== 1) return newN;
+    if (oldN.tagName !== newN.tagName) return newN;
+    // Attributes: copy new attrs, but preserve `open` on existing details.
+    var isDetails = oldN.tagName === 'DETAILS';
+    var oldAttrs = oldN.attributes;
+    var newAttrs = newN.attributes;
+    var i, a;
+    // Remove attrs not in new (except preserved open on details)
+    for (i = oldAttrs.length - 1; i >= 0; i--) {
+      a = oldAttrs[i];
+      if (isDetails && a.name === 'open') continue;
+      if (!newN.hasAttribute(a.name)) oldN.removeAttribute(a.name);
+    }
+    for (i = 0; i < newAttrs.length; i++) {
+      a = newAttrs[i];
+      if (isDetails && a.name === 'open') continue;
+      if (oldN.getAttribute(a.name) !== a.value) oldN.setAttribute(a.name, a.value);
+    }
+    // Reconcile children (snapshot newChildren to avoid live NodeList shrink)
+    reconcileChildren(oldN, newN.childNodes);
+    return oldN;
+  }
+
+  function reconcileChildren(parent, newChildren) {
+    // Snapshot: newChildren may be a live NodeList that shrinks as we append/replace.
+    var newArr = Array.prototype.slice.call(newChildren);
+    var oldChildren = parent.childNodes;
+    var i = 0;
+    var newLen = newArr.length;
+    while (i < newLen) {
+      var newC = newArr[i];
+      var oldC = oldChildren[i];
+      if (!oldC) {
+        parent.appendChild(newC);
+        i++;
+        continue;
+      }
+      if (!sameShape(oldC, newC)) {
+        // Try to find a matching old node later in the list
+        var matchIdx = -1;
+        var nk = nodeKey(newC);
+        if (nk) {
+          for (var j = i + 1; j < oldChildren.length; j++) {
+            if (nodeKey(oldChildren[j]) === nk && sameShape(oldChildren[j], newC)) { matchIdx = j; break; }
+          }
+        }
+        if (matchIdx >= 0) {
+          parent.insertBefore(oldChildren[matchIdx], oldC);
+          oldC = oldChildren[i];
+        } else {
+          parent.replaceChild(newC, oldC);
+          i++;
+          continue;
+        }
+      }
+      var result = reconcileNode(oldC, newC);
+      if (result !== oldC) parent.replaceChild(result, oldC);
+      i++;
+    }
+    // Remove extra old children
+    while (oldChildren.length > newLen) {
+      parent.removeChild(oldChildren[oldChildren.length - 1]);
+    }
+  }
+
+  function buildBanners() {
+    var out = [];
+    if (state.healthError) {
+      if (state.healthErrorKind === 'http') {
+        out.push(banner('error', 'HTTPエラーが発生しました（画面を更新してください）: ' + state.healthError));
+      } else if (state.healthErrorKind === 'timeout') {
+        out.push(banner('error', 'サーバーに接続できません。' + state.healthError));
+      } else {
+        out.push(banner('error', 'サーバーに接続できません。' + state.healthError));
+      }
+    }
+    if (state.detailError) {
+      out.push(banner('error', '詳細の取得に失敗しました: ' + state.detailError));
+    }
+    if (state.detailStale) {
+      out.push(banner('warn', '詳細は前回取得に成功したデータを表示しています。'));
+    }
+    var det = state.detail;
+    if (det) {
+      if (det.runsStale) out.push(banner('warn', 'Run一覧は前回取得時のデータを表示しています。'));
+      if (det.rsiStale) out.push(banner('warn', 'RSIは前回取得時のデータを表示しています。'));
+      if (det.eventsStale) out.push(banner('warn', 'イベント履歴は前回取得時のデータを表示しています。'));
+      if (det.verifyStale) out.push(banner('warn', '検証結果は前回取得時のデータを表示しています。'));
+      if (det.assessmentStale) out.push(banner('warn', '評価レポートは前回取得時のデータを表示しています。'));
+    }
+    if (state.campaignsError) {
+      out.push(banner('error', 'Campaign一覧の取得に失敗しました: ' + state.campaignsError));
+    }
+    if (state.lastFetched && (state.campaignsError || state.healthError)) {
+      out.push(banner('warn', '前回取得に成功したデータを表示しています。'));
+    }
+    return out;
+  }
+
+  function fetchJSON(url, key) {
+    if (state.inflight[key]) {
+      var prev = state.inflight[key];
+      prev.superseded = true;
+      try { prev.abort(); } catch (e) {}
+    }
+    var ctrl = new AbortController();
+    ctrl.superseded = false;
+    state.inflight[key] = ctrl;
+    var timer = setTimeout(function () {
+      ctrl.timedOut = true;
+      try { ctrl.abort(); } catch (e) {}
+    }, FETCH_TIMEOUT_MS);
+    return fetch(url, { signal: ctrl.signal, headers: { 'Accept': 'application/json' }, credentials: 'same-origin' })
+      .then(function (res) {
+        if (!res.ok) {
+          var err = new Error('HTTP ' + res.status);
+          err.httpStatus = res.status;
+          throw err;
+        }
+        var reader = res.body && res.body.getReader ? res.body.getReader() : null;
+        if (!reader) return res.text().then(function (t) {
+          var bytes = new TextEncoder().encode(t);
+          if (bytes.length > MAX_BYTES) throw new Error('応答サイズが上限（1MiB）を超えました');
+          return JSON.parse(t);
+        });
+        var chunks = [];
+        var total = 0;
+        function pump() {
+          return reader.read().then(function (r) {
+            if (r.done) {
+              var buf = new Uint8Array(total);
+              var off = 0;
+              for (var i = 0; i < chunks.length; i++) { buf.set(chunks[i], off); off += chunks[i].length; }
+              var str = new TextDecoder('utf-8').decode(buf);
+              return JSON.parse(str);
+            }
+            total += r.value.length;
+            if (total > MAX_BYTES) {
+              try { reader.cancel(); } catch (e) {}
+              throw new Error('応答サイズが上限（1MiB）を超えました');
+            }
+            chunks.push(r.value);
+            return pump();
+          });
+        }
+        return pump();
+      })
+      .then(function (data) {
+        clearTimeout(timer);
+        if (state.inflight[key] === ctrl) delete state.inflight[key];
+        return data;
+      })
+      .catch(function (err) {
+        clearTimeout(timer);
+        if (state.inflight[key] === ctrl) delete state.inflight[key];
+        if (err && err.name === 'AbortError') {
+          if (ctrl.superseded) {
+            var es = new Error('superseded');
+            es.superseded = true;
+            throw es;
+          }
+          var e2 = new Error('timeout');
+          e2.aborted = true;
+          throw e2;
+        }
+        throw err;
+      });
+  }
+
+  function errMsg(err) {
+    if (!err) return '不明なエラー';
+    if (err.superseded) return null;
+    if (err.aborted) return '応答がタイムアウトしました（5秒）';
+    if (err.httpStatus) return 'HTTP ' + err.httpStatus + ' エラー';
+    if (err.message && err.message.indexOf('上限') >= 0) return err.message;
+    if (err.name === 'TypeError' || (err.message && err.message.indexOf('fetch') >= 0)) return '通信に失敗しました';
+    return err.message || '不明なエラー';
+  }
+
+  function isTimeout(err) { return !!(err && err.aborted); }
+  function isHttp(err) { return !!(err && err.httpStatus); }
+  function isNetwork(err) { return !!(err && !err.aborted && !err.httpStatus && (err.name === 'TypeError' || (err.message && err.message.indexOf('fetch') >= 0))); }
+
+  function setBusy(busy) {
+    if (busy) {
+      el.refreshBtn.setAttribute('aria-busy', 'true');
+      el.refreshBtn.setAttribute('aria-disabled', 'true');
+    } else {
+      el.refreshBtn.removeAttribute('aria-busy');
+      el.refreshBtn.removeAttribute('aria-disabled');
+    }
+  }
+
+  function loadCore() {
+    var gen = (state.coreGen || 0) + 1;
+    state.coreGen = gen;
+    function isCurrent() { return state.coreGen === gen; }
+    var p1 = fetchJSON('/api/campaigns', 'campaigns').then(function (d) {
+      if (!isCurrent()) return;
+      if (d && Array.isArray(d.campaigns)) { state.campaigns = d.campaigns; state.campaignsError = null; }
+      else { state.campaignsError = '応答形式が不正です'; }
+    }).catch(function (e) {
+      if (!isCurrent()) return;
+      var m = errMsg(e); if (m === null) return;
+      state.campaignsError = m;
+    });
+    var p2 = fetchJSON('/api/models', 'models').then(function (d) {
+      if (!isCurrent()) return;
+      if (d && Array.isArray(d.models)) { state.models = d.models; state.modelsError = null; }
+      else { state.modelsError = '応答形式が不正です'; }
+    }).catch(function (e) {
+      if (!isCurrent()) return;
+      var m = errMsg(e); if (m === null) return;
+      state.modelsError = m;
+    });
+    var p3 = fetchJSON('/api/adapters', 'adapters').then(function (d) {
+      if (!isCurrent()) return;
+      if (d && Array.isArray(d.adapters)) { state.adapters = d.adapters; state.adaptersError = null; }
+      else { state.adaptersError = '応答形式が不正です'; }
+    }).catch(function (e) {
+      if (!isCurrent()) return;
+      var m = errMsg(e); if (m === null) return;
+      state.adaptersError = m;
+    });
+    var p4 = fetchJSON('/api/health', 'health').then(function (d) {
+      if (!isCurrent()) return;
+      state.health = d; state.healthError = null; state.healthErrorKind = null;
+    }).catch(function (e) {
+      if (!isCurrent()) return;
+      var m = errMsg(e); if (m === null) return;
+      state.healthError = m;
+      state.healthErrorKind = isHttp(e) ? 'http' : (isTimeout(e) ? 'timeout' : 'network');
+    });
+    var p5 = fetchJSON('/api/approvals', 'approvals').then(function (d) {
+      if (!isCurrent()) return;
+      if (d && Array.isArray(d.approvals)) { state.approvals = d.approvals; state.approvalsError = null; }
+      else { state.approvalsError = '応答形式が不正です'; }
+    }).catch(function (e) {
+      if (!isCurrent()) return;
+      var m = errMsg(e); if (m === null) return;
+      state.approvalsError = m;
+    });
+    return Promise.all([p1, p2, p3, p4, p5]).then(function () {
+      if (!isCurrent()) return;
+      state.lastFetched = new Date().toISOString();
+      render();
+    });
+  }
+
+  function loadDetail() {
+    var r = state.route;
+    if (r.name !== 'campaign' && r.name !== 'run') {
+      state.detailVersion = (state.detailVersion || 0) + 1;
+      state.detailLoading = false;
+      state.detail = null;
+      return Promise.resolve();
+    }
+    var kind = r.name;
+    var id = r.params.id;
+    var version = (state.detailVersion || 0) + 1;
+    state.detailVersion = version;
+    function isCurrent() {
+      return state.detailVersion === version && state.route.name === kind && state.route.params.id === id;
+    }
+    var prevDetail = state.detail;
+    var sameRoute = !!(prevDetail && prevDetail.kind === kind && prevDetail.routeId === id);
+    var aggregate = { kind: kind, routeId: id, data: null, runs: undefined, rsi: undefined, events: undefined, verify: undefined, assessment: undefined };
+    var mainError = null;
+    if (!sameRoute) {
+      state.detailLoading = true;
+      state.detailError = null;
+      state.detailStale = false;
+      state.detail = null;
+      render();
+    } else {
+      // Preserve current detail DOM during refresh; keep prior data visible.
+      state.detailLoading = false;
+    }
+    var requests = [];
+    if (kind === 'campaign') {
+      requests.push(fetchJSON('/api/campaigns/' + encodeURIComponent(id), 'detail-c').then(function (d) {
+        if (!isCurrent()) return;
+        if (d && d.campaign) { aggregate.data = d; }
+        else { mainError = '応答形式が不正です'; }
+      }).catch(function (e) {
+        if (!isCurrent()) return;
+        var m = errMsg(e);
+        if (m === null) return;
+        mainError = m;
+      }));
+      requests.push(fetchJSON('/api/campaigns/' + encodeURIComponent(id) + '/runs', 'detail-runs').then(function (d) {
+        if (!isCurrent()) return;
+        if (d && Array.isArray(d.runs)) { aggregate.runs = d.runs; }
+        else { aggregate.runs = null; aggregate.runsError = '応答形式が不正です'; }
+      }).catch(function (e) {
+        if (!isCurrent()) return;
+        var m = errMsg(e);
+        if (m === null) return;
+        aggregate.runs = null;
+        aggregate.runsError = m;
+      }));
+      requests.push(fetchJSON('/api/campaigns/' + encodeURIComponent(id) + '/rsi', 'detail-rsi').then(function (d) {
+        if (!isCurrent()) return;
+        if (d && Array.isArray(d.rsi)) { aggregate.rsi = d.rsi; }
+        else { aggregate.rsi = null; aggregate.rsiError = '応答形式が不正です'; }
+      }).catch(function (e) {
+        if (!isCurrent()) return;
+        var m = errMsg(e);
+        if (m === null) return;
+        aggregate.rsi = null;
+        aggregate.rsiError = m;
+      }));
+      requests.push(fetchJSON('/api/campaigns/' + encodeURIComponent(id) + '/assessment', 'detail-assessment').then(function (d) {
+        if (!isCurrent()) return;
+        if (d && d.status === 'hold') { aggregate.assessment = { status: 'hold' }; return; }
+        var rep = d && d.report;
+        if (rep && rep.status === 'withheld') { aggregate.assessment = { status: 'withheld' }; }
+        else if (rep && rep.status === 'none') { aggregate.assessment = { status: 'none' }; }
+        else if (rep && rep.status === 'ready' && Array.isArray(rep.findings) && rep.coverage && Array.isArray(rep.coverage.categories)) {
+          aggregate.assessment = rep;
+          aggregate.assessment.enrichment = Array.isArray(rep.enrichment) ? rep.enrichment : null;
+        }
+        else { aggregate.assessment = null; aggregate.assessmentError = '応答形式が不正です'; }
+      }).catch(function (e) {
+        if (!isCurrent()) return;
+        if (isHttp(e) && e.httpStatus === 404) { aggregate.assessment = { status: 'none' }; return; }
+        var m = errMsg(e);
+        if (m === null) return;
+        aggregate.assessment = null;
+        aggregate.assessmentError = m;
+        aggregate.assessmentStale = true;
+      }));
+    } else {
+      requests.push(fetchJSON('/api/runs/' + encodeURIComponent(id), 'detail-run').then(function (d) {
+        if (!isCurrent()) return;
+        if (d && d.run) { aggregate.data = d; }
+        else if (d && d.run_id) { aggregate.data = { run: d }; }
+        else { mainError = '応答形式が不正です'; }
+      }).catch(function (e) {
+        if (!isCurrent()) return;
+        var m = errMsg(e);
+        if (m === null) return;
+        mainError = m;
+      }));
+      requests.push(fetchJSON('/api/runs/' + encodeURIComponent(id) + '/events?limit=100', 'detail-events').then(function (d) {
+        if (!isCurrent()) return;
+        if (d && Array.isArray(d.events)) { aggregate.events = d.events; }
+        else { aggregate.events = null; aggregate.eventsError = '応答形式が不正です'; }
+      }).catch(function (e) {
+        if (!isCurrent()) return;
+        var m = errMsg(e);
+        if (m === null) return;
+        aggregate.events = null;
+        aggregate.eventsError = m;
+      }));
+      requests.push(fetchJSON('/api/verification/' + encodeURIComponent(id), 'detail-verify').then(function (d) {
+        if (!isCurrent()) return;
+        if (d) { aggregate.verify = d; }
+        else { aggregate.verify = null; aggregate.verifyError = '応答形式が不正です'; }
+      }).catch(function (e) {
+        if (!isCurrent()) return;
+        var m = errMsg(e);
+        if (m === null) return;
+        aggregate.verify = null;
+        aggregate.verifyError = m;
+      }));
+    }
+    return Promise.all(requests).then(function () {
+      if (!isCurrent()) return;
+      if (aggregate.data) {
+        // Merge subrequest failures with prior usable values (same route only).
+        if (sameRoute && prevDetail) {
+          if (aggregate.runs === null && prevDetail.runs) { aggregate.runs = prevDetail.runs; aggregate.runsStale = true; }
+          if (aggregate.rsi === null && prevDetail.rsi) { aggregate.rsi = prevDetail.rsi; aggregate.rsiStale = true; }
+          if (aggregate.events === null && prevDetail.events) { aggregate.events = prevDetail.events; aggregate.eventsStale = true; }
+          if (aggregate.verify === null && prevDetail.verify) { aggregate.verify = prevDetail.verify; aggregate.verifyStale = true; }
+          if (aggregate.assessment === null && prevDetail.assessment) { aggregate.assessment = prevDetail.assessment; aggregate.assessmentStale = true; }
+        }
+        state.detail = aggregate;
+        state.detailError = null;
+        state.detailStale = false;
+      } else if (sameRoute && prevDetail) {
+        // Background main failure: retain prior detail with stale/error message.
+        state.detail = prevDetail;
+        state.detailError = mainError || '応答形式が不正です';
+        state.detailStale = true;
+      } else {
+        state.detail = null;
+        state.detailError = mainError || '応答形式が不正です';
+        state.detailStale = false;
+      }
+      state.detailLoading = false;
+      render();
+    });
+  }
+
+  function parseHash() {
+    var h = location.hash || '#/';
+    var m = h.match(/^#\/campaign\/([^/]+)$/);
+    if (m) {
+      try { return { name: 'campaign', params: { id: decodeURIComponent(m[1]) } }; }
+      catch (e) { return { name: 'list', params: {} }; }
+    }
+    var r = h.match(/^#\/run\/([^/]+)$/);
+    if (r) {
+      try { return { name: 'run', params: { id: decodeURIComponent(r[1]) } }; }
+      catch (e) { return { name: 'list', params: {} }; }
+    }
+    return { name: 'list', params: {} };
+  }
+
+  function routeKey(r) {
+    if (!r) return '';
+    if (r.name === 'list') return 'list';
+    return r.name + ':' + (r.params && r.params.id ? r.params.id : '');
+  }
+
+  function navigate() {
+    var next = parseHash();
+    if (routeKey(next) === routeKey(state.route)) return;
+    state.route = next;
+    state.detail = null;
+    state.detailError = null;
+    state.detailStale = false;
+    state.detailVersion = (state.detailVersion || 0) + 1;
+    // Route change: clear view root before render, reset scroll and focus main.
+    clear(el.viewRoot);
+    try { window.scrollTo(0, 0); } catch (e) {}
+    render();
+    var mainEl = document.getElementById('main');
+    if (mainEl && typeof mainEl.focus === 'function') {
+      try { mainEl.focus({ preventScroll: true }); } catch (e) { mainEl.focus(); }
+    }
+    loadDetail();
+  }
+
+  function renderNav() {
+    var lists = [el.navList, el.navListMobile];
+    for (var li = 0; li < lists.length; li++) {
+      var list = lists[li];
+      var items = [];
+      var homeLi = document.createElement('li');
+      homeLi.setAttribute('data-key', list.id + '-home-li');
+      var homeA = document.createElement('a');
+      homeA.href = '#/';
+      homeA.setAttribute('data-key', list.id + '-home');
+      homeA.textContent = 'すべてのCampaign';
+      if (state.route.name === 'list') homeA.setAttribute('aria-current', 'page');
+      homeLi.appendChild(homeA);
+      items.push(homeLi);
+      if (state.campaigns) {
+        for (var i = 0; i < state.campaigns.length; i++) {
+          var c = state.campaigns[i];
+          if (!c || !c.campaign_id) continue;
+          var li2 = document.createElement('li');
+          li2.setAttribute('data-key', list.id + '-campaign-li-' + c.campaign_id);
+          var a = document.createElement('a');
+          a.href = '#/campaign/' + encodeURIComponent(c.campaign_id);
+          a.setAttribute('data-key', list.id + '-campaign-' + c.campaign_id);
+          a.textContent = c.campaign_id;
+          if (state.route.name === 'campaign' && state.route.params.id === c.campaign_id) a.setAttribute('aria-current', 'page');
+          var meta = document.createElement('span');
+          meta.className = 'meta';
+          meta.textContent = (c.status || '未記録') + ' ／ 検知 ' + (c.finding_count === null || c.finding_count === undefined ? '未記録' : c.finding_count);
+          a.appendChild(meta);
+          li2.appendChild(a);
+          items.push(li2);
+        }
+      }
+      reconcileChildren(list, items);
+    }
+  }
+
+  function renderStatus() {
+    var f = state.lastFetched ? fmtTime(state.lastFetched) : '未取得';
+    el.statusFetched.textContent = f;
+    el.headerFetched.textContent = f;
+    var connText, connClass;
+    if (state.healthError) { connText = '接続不可'; connClass = 'conn-err'; }
+    else if (state.health) { connText = '接続中'; connClass = 'conn-ok'; }
+    else { connText = '未確認'; connClass = ''; }
+    el.statusConn.textContent = connText;
+    var hc = document.getElementById('header-conn');
+    if (hc) {
+      hc.textContent = connText;
+      hc.className = connClass;
+    }
+  }
+
+  var COLUMN_LABELS = {
+    approval_id: '承認ID',
+    remediation_id: '修復ID',
+    decision: '判断',
+    applied: '反映',
+    decided_at: '判断日時',
+    name: '名称',
+    status: '状態',
+    mode: '動作方式',
+    checked_at: '確認日時',
+    finding_id: '検知ID',
+    severity: '重要度',
+    title: '内容',
+    source: '情報源',
+    run_id: '実行ID',
+    phase: '段階',
+    completion: '完了状態',
+    started_at: '開始日時',
+    ended_at: '終了日時',
+    candidate_id: '候補ID',
+    freeze_id: '凍結ID',
+    content_digest: '内容ハッシュ',
+    comparison: '比較結果',
+    sequence: '通番',
+    event_type: 'イベント種別',
+    timestamp: '記録日時',
+    evidence_count: '証拠件数',
+    verify_id: '検証ID',
+    result: '結果',
+    reason_code: '理由コード',
+    intent_id: '目的ID',
+    created_at: '作成日時',
+    last_run_at: '最終実行日時',
+    finding_count: '検知件数',
+    sealed_at: '封印日時',
+    last_sequence: '最終通番',
+    last_event_hash: '最終ハッシュ',
+    manifest_ref: '実行条件の参照',
+    cause: '原因',
+    campaign_id: 'Campaign ID'
+  };
+
+  function fieldLabel(key) {
+    return COLUMN_LABELS[key] || key;
+  }
+
+  function cellKeyText(cell) {
+    if (cell === null || cell === undefined) return null;
+    if (cell.nodeType === 1) {
+      var k = cell.getAttribute && cell.getAttribute('data-key');
+      if (k) return k;
+      return cell.textContent || null;
+    }
+    if (cell.nodeType === 3) return cell.nodeValue || null;
+    return String(cell);
+  }
+
+  function makeTable(headers, rows, label) {
+    var wrap = document.createElement('div');
+    wrap.className = 'table-wrap';
+    wrap.setAttribute('tabindex', '0');
+    wrap.setAttribute('role', 'region');
+    wrap.setAttribute('aria-label', label || 'データ一覧');
+    var t = document.createElement('table');
+    var thead = document.createElement('thead');
+    var trh = document.createElement('tr');
+    for (var i = 0; i < headers.length; i++) {
+      var th = document.createElement('th');
+      th.scope = 'col';
+      th.textContent = COLUMN_LABELS[headers[i]] || headers[i];
+      trh.appendChild(th);
+    }
+    thead.appendChild(trh);
+    t.appendChild(thead);
+    var tbody = document.createElement('tbody');
+    if (!rows || rows.length === 0) {
+      var tr0 = document.createElement('tr');
+      var td0 = document.createElement('td');
+      td0.colSpan = headers.length;
+      td0.className = 'empty';
+      td0.textContent = '該当なし';
+      tr0.appendChild(td0);
+      tbody.appendChild(tr0);
+    } else {
+      // Compute stable row keys from first cell; only if unique within rows.
+      var keyCounts = Object.create(null);
+      var rawKeys = [];
+      for (var kr = 0; kr < rows.length; kr++) {
+        var kk = cellKeyText(rows[kr] && rows[kr][0]);
+        rawKeys.push(kk);
+        if (kk !== null) keyCounts[kk] = (keyCounts[kk] || 0) + 1;
+      }
+      for (var r = 0; r < rows.length; r++) {
+        var tr = document.createElement('tr');
+        var rk = rawKeys[r];
+        if (rk !== null && keyCounts[rk] === 1) tr.setAttribute('data-key', 'row-' + rk);
+        else tr.setAttribute('data-key', 'row-idx-' + r);
+        for (var c = 0; c < rows[r].length; c++) {
+          var td = document.createElement('td');
+          var cell = rows[r][c];
+          if (cell && cell.nodeType) td.appendChild(cell);
+          else if (cell === null || cell === undefined) td.appendChild(orUnrecorded(null));
+          else td.textContent = String(cell);
+          tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+      }
+    }
+    t.appendChild(tbody);
+    wrap.appendChild(t);
+    return wrap;
+  }
+
+  var KPI_LABELS = {
+    evidence_completeness: '証拠の完全性',
+    oracle_replay_match_rate: 'Oracle再実行一致率',
+    blue_recall: '検知率',
+    blue_precision: '検知の適合率',
+    remediation_success_rate: '修復成功率',
+    over_remediation_rate: '過剰修復率',
+    evidence_missing_rate: '証拠の欠落率',
+    red_to_detection_time: '攻撃から検知までの時間',
+    undetected_attack_techniques: '未検知ATT&CK技法',
+    production_auto_apply_count: '本番自動適用件数',
+    unauthorized_privileged_actions: '未承認の特権操作件数'
+  };
+  var KPI_KEYS = [
+    'evidence_completeness',
+    'oracle_replay_match_rate',
+    'blue_recall',
+    'blue_precision',
+    'remediation_success_rate',
+    'over_remediation_rate',
+    'evidence_missing_rate',
+    'red_to_detection_time',
+    'undetected_attack_techniques',
+    'production_auto_apply_count',
+    'unauthorized_privileged_actions'
+  ];
+  var KPI_RATIO_KEYS = {
+    evidence_completeness: true,
+    oracle_replay_match_rate: true,
+    blue_recall: true,
+    blue_precision: true,
+    remediation_success_rate: true,
+    over_remediation_rate: true,
+    evidence_missing_rate: true
+  };
+  var KPI_SECONDS_KEYS = { red_to_detection_time: true };
+  var KPI_COUNT_KEYS = {
+    undetected_attack_techniques: true,
+    production_auto_apply_count: true,
+    unauthorized_privileged_actions: true
+  };
+  var KPI_SCOPE_MAP = {
+    'manifest event_counts': '固定された証跡のイベント数',
+    'replayable runs': 'Oracleの再実行対象',
+    'attack fixtures': '攻撃用のラボ課題',
+    'stable finding_id dedup': '重複を除いた検知',
+    'remediation attempts': '修復の試行',
+    'applied remediations': 'ラボに適用した修復',
+    'detected pairs': '攻撃と検知の対応',
+    'technique fixtures': '対応付け済みの技法',
+    'all runs': 'ラボの記録済みイベント',
+    lab_recorded_events: 'このラボの記録済みイベント',
+    lab_events: 'このラボの記録済みイベント',
+    campaign: 'このCampaign',
+    campaign_runs: 'このCampaignのRun',
+    all_runs: '全Run',
+    host_audit: 'ホスト全体の監査',
+    host: 'ホスト全体'
+  };
+  var KPI_LIMITATION_MAP = {
+    'ATT&CK mapping unobserved': 'ATT&CKの対応付けは未測定です。',
+    'local recorded events scope': '監査件数の対象は、このラボの記録済みイベントです。',
+    attack_mapping_unmeasured: 'ATT&CKの対応付けは未測定です。',
+    attack_mapping_not_measured: 'ATT&CKの対応付けは未測定です。',
+    audit_scope_lab_events: '監査件数はこのラボの記録済みイベントを対象とします。ホスト全体の監査ではありません。',
+    audit_scope_lab_recorded: '監査件数はこのラボの記録済みイベントを対象とします。ホスト全体の監査ではありません。'
+  };
+
+  function isFiniteNumber(v) {
+    return typeof v === 'number' && Number.isFinite(v);
+  }
+
+  function isNonNegInt(v) {
+    return typeof v === 'number' && Number.isFinite(v) && v >= 0 && Math.floor(v) === v;
+  }
+
+  function parseMetrics(raw) {
+    if (raw === null || raw === undefined) return null;
+    if (typeof raw !== 'object' || Array.isArray(raw)) return { invalid: true };
+    var status = raw.status;
+    if (status !== 'measured' && status !== 'HOLD') return { invalid: true };
+    var metrics = raw.metrics;
+    if (metrics === null || metrics === undefined) metrics = null;
+    else if (typeof metrics !== 'object' || Array.isArray(metrics)) metrics = null;
+    var limitations = [];
+    if (Array.isArray(raw.limitations)) {
+      for (var li = 0; li < raw.limitations.length; li++) {
+        if (typeof raw.limitations[li] === 'string') limitations.push(raw.limitations[li]);
+      }
+    }
+    return { status: status, metrics: metrics, limitations: limitations };
+  }
+
+  function kpiValueCell(key, entry) {
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return text('span', '形式不正', 'unrecorded');
+    var v = entry.value;
+    if (v === null || v === undefined) return text('span', '未測定', 'unrecorded');
+    if (!isFiniteNumber(v)) return text('span', '形式不正', 'unrecorded');
+    if (KPI_RATIO_KEYS[key]) {
+      if (v < 0 || v > 1) return text('span', '形式不正', 'unrecorded');
+      var pct = v * 100;
+      var rounded = Math.round(pct * 10) / 10;
+      return document.createTextNode(String(rounded) + '%');
+    }
+    if (KPI_SECONDS_KEYS[key]) {
+      return document.createTextNode(v.toFixed(2) + ' 秒');
+    }
+    if (KPI_COUNT_KEYS[key]) {
+      if (Math.floor(v) !== v) return text('span', '形式不正', 'unrecorded');
+      return document.createTextNode(String(v));
+    }
+    return document.createTextNode(String(v));
+  }
+
+  function kpiFractionCell(entry) {
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return text('span', '形式不正', 'unrecorded');
+    var n = entry.numerator;
+    var d = entry.denominator;
+    var nOk = n === null || n === undefined || isFiniteNumber(n);
+    var dOk = d === null || d === undefined || isFiniteNumber(d);
+    if (!nOk || !dOk) return text('span', '形式不正', 'unrecorded');
+    var nTxt = (n === null || n === undefined) ? '未測定' : String(n);
+    var dTxt = (d === null || d === undefined) ? '未測定' : String(d);
+    return document.createTextNode(nTxt + ' / ' + dTxt);
+  }
+
+  function kpiCountsCell(entry) {
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return text('span', '形式不正', 'unrecorded');
+    var parts = [];
+    var fields = [['invalid', '無効'], ['skipped', '対象外'], ['pair_fail', '比較不能']];
+    for (var i = 0; i < fields.length; i++) {
+      var fk = fields[i][0];
+      var label = fields[i][1];
+      var val = entry[fk];
+      if (val === null || val === undefined) {
+        parts.push(label + ' 未確認');
+      } else if (isNonNegInt(val)) {
+        parts.push(label + ' ' + val + '件');
+      } else {
+        parts.push(label + ' 未確認');
+      }
+    }
+    return document.createTextNode(parts.join('・'));
+  }
+
+  function kpiScopeCell(entry) {
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return text('span', '形式不正', 'unrecorded');
+    var s = entry.scope;
+    if (s === null || s === undefined || s === '') return text('span', '未測定', 'unrecorded');
+    if (typeof s !== 'string') return text('span', '形式不正', 'unrecorded');
+    if (KPI_SCOPE_MAP[s]) return document.createTextNode(KPI_SCOPE_MAP[s]);
+    return document.createTextNode(s);
+  }
+
+  function renderKPIPanel(raw) {
+    var p = document.createElement('section');
+    p.className = 'panel';
+    p.appendChild(text('h2', 'KPI（測定結果）'));
+    var parsed = parseMetrics(raw);
+    if (parsed === null) {
+      p.appendChild(text('p', '測定結果は未測定です。', 'muted'));
+      return p;
+    }
+    if (parsed.invalid) {
+      p.appendChild(text('p', '測定結果の形式が不正です。', 'muted'));
+      return p;
+    }
+    if (parsed.status === 'HOLD') {
+      var holdRow = document.createElement('p');
+      holdRow.appendChild(badge('検証保留', 'warn', '○'));
+      holdRow.appendChild(document.createTextNode(' 検証保留中のため、本CampaignのKPIは確定していません。'));
+      p.appendChild(holdRow);
+      p.appendChild(text('p', '検証保留のため、数値は表示しません。', 'muted'));
+      return p;
+    }
+    if (parsed.metrics === null) {
+      p.appendChild(text('p', '測定結果は未測定です。', 'muted'));
+      return p;
+    }
+    var rows = [];
+    for (var i = 0; i < KPI_KEYS.length; i++) {
+      var key = KPI_KEYS[i];
+      var entry = parsed.metrics[key];
+      var label = KPI_LABELS[key];
+      var valueCell = kpiValueCell(key, entry);
+      var fracCell = kpiFractionCell(entry);
+      var countsCell = kpiCountsCell(entry);
+      var scopeCell = kpiScopeCell(entry);
+      rows.push([text('span', label), valueCell, fracCell, countsCell, scopeCell]);
+    }
+    var wrap = makeTable(['指標', '値', '分子・分母', '無効・対象外・比較不能', '対象'], rows, 'KPI測定結果');
+    p.appendChild(wrap);
+    p.appendChild(text('h3', '測定の限界'));
+    if (!parsed.limitations || parsed.limitations.length === 0) {
+      p.appendChild(text('p', '記載なし', 'muted'));
+    } else {
+      var ul = document.createElement('ul');
+      for (var li = 0; li < parsed.limitations.length; li++) {
+        var s = parsed.limitations[li];
+        var liEl = document.createElement('li');
+        if (KPI_LIMITATION_MAP[s]) liEl.textContent = KPI_LIMITATION_MAP[s];
+        else liEl.textContent = s;
+        ul.appendChild(liEl);
+      }
+      p.appendChild(ul);
+    }
+    return p;
+  }
+
+  var STATUS_MAP = {
+    unknown: { label: '不明', tone: 'error', shape: '○' },
+    available: { label: '利用可能', tone: 'ok', shape: '●' },
+    connected: { label: '接続済み', tone: 'ok', shape: '●' },
+    succeeded: { label: '成功', tone: 'ok', shape: '●' },
+    failed: { label: '失敗', tone: 'error', shape: '○' },
+    not_tested: { label: '未検証', tone: 'warn', shape: '○' },
+    unverified: { label: '未確認', tone: 'warn', shape: '○' },
+    immutable: { label: '不変', tone: 'info', shape: '●' },
+    created: { label: '作成済み', tone: 'info', shape: '●' },
+    review_pending: { label: 'レビュー待ち', tone: 'warn', shape: '○' },
+    completed: { label: '完了', tone: 'ok', shape: '●' },
+    incomplete: { label: '未完了', tone: 'warn', shape: '○' },
+    approved: { label: '承認済み', tone: 'ok', shape: '●' },
+    'promotion-ready': { label: 'レビュー待ち（採用候補）', tone: 'warn', shape: '○' }
+  };
+
+  function statusBadge(status) {
+    if (status === null || status === undefined || status === '') return badge('不明', 'error', '○');
+    var s = STATUS_MAP[status];
+    if (!s) return badge(String(status), 'info', '●');
+    return badge(s.label, s.tone, s.shape);
+  }
+
+  function renderApprovals() {
+    var p = document.createElement('section');
+    p.className = 'panel';
+    p.appendChild(text('h2', '承認（approvals）'));
+    p.appendChild(text('p', 'レビュー待ち・承認済み（未反映・未確認）・反映済みを区別して表示します。反映済みと確認できたものを表示します。', 'lead'));
+    if (state.approvalsError) {
+      p.appendChild(text('p', '取得に失敗しました: ' + state.approvalsError, 'muted'));
+      if (!state.approvals) {
+        return p;
+      }
+      p.appendChild(text('p', '表示中の内容は古い可能性があります（再取得に失敗）。', 'muted'));
+    }
+    if (!state.approvals) {
+      var oA = document.createElement('output');
+      oA.textContent = '読み込み中…';
+      oA.className = 'muted';
+      p.appendChild(oA);
+      return p;
+    }
+    var pending = [], approved = [], applied = [], other = [];
+    for (var i = 0; i < state.approvals.length; i++) {
+      var a = state.approvals[i];
+      if (!a) continue;
+      if (a.applied === true) applied.push(a);
+      else if (a.decision === 'approved') approved.push(a);
+      else if (a.decision === null || a.decision === undefined || a.decision === '') pending.push(a);
+      else other.push(a);
+    }
+    function section(title, list) {
+      var h = document.createElement('h3');
+      h.textContent = title + '（' + list.length + '）';
+      p.appendChild(h);
+      var rows = [];
+      for (var j = 0; j < list.length; j++) {
+        var it = list[j];
+        rows.push([
+          orUnrecorded(it.approval_id),
+          orUnrecorded(it.remediation_id),
+          orUnrecorded(it.decision),
+          it.applied === true ? badge('反映済み', 'ok', '●') : it.applied === false ? badge('未反映', 'info', '○') : text('span', '未確認', 'unrecorded'),
+          orUnrecorded(fmtTime(it.decided_at || it.created_at))
+        ]);
+      }
+      p.appendChild(makeTable(['approval_id', 'remediation_id', 'decision', 'applied', 'decided_at'], rows, '承認一覧（' + title + '）'));
+    }
+    section('レビュー待ち', pending);
+    section('承認済み（未反映/未確認）', approved);
+    section('反映済み', applied);
+    section('その他の承認', other);
+    return p;
+  }
+
+  function renderList() {
+    var frag = document.createDocumentFragment();
+    var p1 = document.createElement('section');
+    p1.className = 'panel';
+    p1.appendChild(text('h2', 'Campaign一覧'));
+    p1.appendChild(text('p', '各Campaignの状態・最終実行日時・検知件数を表示します。詳細はリンクから遷移します。', 'lead'));
+    if (state.campaignsError) {
+      p1.appendChild(text('p', '取得に失敗しました: ' + state.campaignsError, 'muted'));
+      if (state.campaigns) {
+        p1.appendChild(text('p', '表示中の内容は古い可能性があります（再取得に失敗）。', 'muted'));
+      }
+    }
+    if (!state.campaigns) {
+      if (!state.campaignsError) {
+        var oC = document.createElement('output');
+        oC.textContent = '読み込み中…';
+        oC.className = 'muted';
+        p1.appendChild(oC);
+      }
+    } else {
+      var rows = [];
+      for (var i = 0; i < state.campaigns.length; i++) {
+        var c = state.campaigns[i];
+        if (!c || !c.campaign_id) continue;
+        var link = document.createElement('a');
+        link.href = '#/campaign/' + encodeURIComponent(c.campaign_id);
+        link.setAttribute('data-key', 'list-campaign-' + c.campaign_id);
+        link.textContent = c.campaign_id;
+        var blind = c.status === 'blind' ? badge('Blind', 'warn', '○') : badge(c.status || '未記録', 'info', '●');
+        rows.push([link, blind, orUnrecorded(fmtTime(c.last_run_at)), orUnrecorded(c.finding_count)]);
+      }
+      p1.appendChild(makeTable(['Campaign', '状態', '最終実行日時', '検知件数'], rows, 'キャンペーン一覧'));
+    }
+    frag.appendChild(p1);
+
+    var p2 = document.createElement('section');
+    p2.className = 'panel';
+    p2.appendChild(text('h2', 'モデル状態'));
+    p2.appendChild(text('p', '各役割について、要求モデル・登録・開発呼び出し・製品接続・モデル版の固定の各状態を表示します。', 'lead'));
+    if (state.modelsError) {
+      p2.appendChild(text('p', '取得に失敗しました: ' + state.modelsError, 'muted'));
+      if (state.models) {
+        p2.appendChild(text('p', '表示中の内容は古い可能性があります（再取得に失敗）。', 'muted'));
+      }
+    }
+    if (!state.models) {
+      if (!state.modelsError) {
+        var oM = document.createElement('output');
+        oM.textContent = '読み込み中…';
+        oM.className = 'muted';
+        p2.appendChild(oM);
+      }
+    } else {
+      var mrows = [];
+      for (var j = 0; j < state.models.length; j++) {
+        var m = state.models[j];
+        if (!m) continue;
+        mrows.push([
+          m.role === 'reviewer' ? text('span', 'レビュアー') : m.role === 'implementer' ? text('span', '実装担当') : orUnrecorded(m.role),
+          orUnrecorded(m.requested_role_model),
+          statusBadge(m.registration && m.registration.status),
+          statusBadge(m.development_call && m.development_call.status),
+          statusBadge(m.product_connection && m.product_connection.status),
+          statusBadge(m.pin && m.pin.status)
+        ]);
+      }
+      p2.appendChild(makeTable(['役割', '要求モデル', '登録状態', '開発呼び出し状態', '製品接続状態', 'モデル版の固定'], mrows, 'モデル状態'));
+    }
+    frag.appendChild(p2);
+
+    var p3 = document.createElement('section');
+    p3.className = 'panel';
+    p3.appendChild(text('h2', 'アダプタ状態'));
+    if (state.adaptersError) {
+      p3.appendChild(text('p', '取得に失敗しました: ' + state.adaptersError, 'muted'));
+      if (state.adapters) {
+        p3.appendChild(text('p', '表示中の内容は古い可能性があります（再取得に失敗）。', 'muted'));
+      }
+    }
+    if (!state.adapters) {
+      if (!state.adaptersError) {
+        var oAd = document.createElement('output');
+        oAd.textContent = '読み込み中…';
+        oAd.className = 'muted';
+        p3.appendChild(oAd);
+      }
+    } else {
+      var arows = [];
+      for (var k = 0; k < state.adapters.length; k++) {
+        var a = state.adapters[k];
+        if (!a) continue;
+        arows.push([orUnrecorded(a.name), orUnrecorded(a.status), orUnrecorded(a.mode), orUnrecorded(fmtTime(a.checked_at))]);
+      }
+      p3.appendChild(makeTable(['name', 'status', 'mode', 'checked_at'], arows, '接続先一覧'));
+    }
+    frag.appendChild(p3);
+
+    frag.appendChild(renderApprovals());
+
+    return frag;
+  }
+
+  var CAMPAIGN_VIEWS = [
+    { id: 'overview', label: '概要' },
+    { id: 'runs', label: '実行履歴' },
+    { id: 'rsi', label: 'RSI' },
+    { id: 'assessment', label: '評価' }
+  ];
+
+  function getCampaignView(id) {
+    var v = state.campaignViews[id];
+    for (var i = 0; i < CAMPAIGN_VIEWS.length; i++) {
+      if (CAMPAIGN_VIEWS[i].id === v) return v;
+    }
+    return 'overview';
+  }
+
+  function setCampaignView(id, view) {
+    state.campaignViews[id] = view;
+  }
+
+  function applyCampaignView(root, id) {
+    var view = getCampaignView(id);
+    var sections = root.querySelectorAll('[data-campaign-view]');
+    for (var i = 0; i < sections.length; i++) {
+      var sv = sections[i].getAttribute('data-campaign-view');
+      if (sv === view) {
+        if (sections[i].hasAttribute('hidden')) sections[i].removeAttribute('hidden');
+      } else {
+        if (!sections[i].hasAttribute('hidden')) sections[i].setAttribute('hidden', '');
+      }
+    }
+    var btns = root.querySelectorAll('.view-tabs button[data-view]');
+    for (var j = 0; j < btns.length; j++) {
+      var bv = btns[j].getAttribute('data-view');
+      var want = bv === view ? 'true' : 'false';
+      if (btns[j].getAttribute('aria-pressed') !== want) btns[j].setAttribute('aria-pressed', want);
+    }
+  }
+
+  function onViewRootClick(ev) {
+    var t = ev.target;
+    while (t && t !== el.viewRoot) {
+      if (t.tagName === 'BUTTON' && t.getAttribute && t.getAttribute('data-view')) {
+        var view = t.getAttribute('data-view');
+        var id = state.route.name === 'campaign' ? state.route.params.id : null;
+        if (!id) return;
+        setCampaignView(id, view);
+        applyCampaignView(el.viewRoot, id);
+        return;
+      }
+      t = t.parentNode;
+    }
+  }
+
+  function metricValueNode(key, parsed) {
+    // Thin wrapper: validation lives in kpiValueCell / kpiFractionCell.
+    if (!parsed) return { value: text('span', '未測定', 'is-muted'), denom: null };
+    if (parsed.invalid) return { value: text('span', '形式不正', 'is-muted'), denom: null };
+    if (parsed.status === 'HOLD') return { value: text('span', '検証保留', 'is-hold'), denom: null };
+    if (!parsed.metrics) return { value: text('span', '未測定', 'is-muted'), denom: null };
+    var entry = parsed.metrics[key];
+    return { value: kpiValueCell(key, entry), denom: kpiFractionCell(entry) };
+  }
+
+  function renderCampaignDetail() {
+    var frag = document.createDocumentFragment();
+    var id = state.route.params.id;
+    var p = document.createElement('section');
+    p.className = 'panel';
+    p.setAttribute('data-key', 'campaign-detail-' + id);
+    if (state.detailLoading) {
+      p.appendChild(text('h2', 'Campaign: ' + id));
+      var oDc = document.createElement('output');
+      oDc.textContent = '読み込み中…';
+      oDc.className = 'muted';
+      p.appendChild(oDc);
+      frag.appendChild(p);
+      return frag;
+    }
+    if (state.detailError && !state.detail) {
+      p.appendChild(text('h2', 'Campaign: ' + id));
+      p.appendChild(text('p', '取得に失敗しました: ' + state.detailError, 'muted'));
+      frag.appendChild(p);
+      return frag;
+    }
+    if (!state.detail || state.detail.kind !== 'campaign') {
+      p.appendChild(text('h2', 'Campaign: ' + id));
+      p.appendChild(text('p', 'データがありません。', 'muted'));
+      frag.appendChild(p);
+      return frag;
+    }
+    var d = state.detail.data;
+    var c = d.campaign || {};
+
+    // Header: compact title + 5 metadata pairs
+    var head = document.createElement('div');
+    head.className = 'detail-head';
+    head.setAttribute('data-key', 'campaign-head-' + id);
+    var h2 = text('h2', id);
+    head.appendChild(h2);
+    var dl = document.createElement('dl');
+    dl.className = 'detail-meta';
+    var fields = [
+      ['intent_id', c.intent_id],
+      ['status', c.status],
+      ['created_at', fmtTime(c.created_at)],
+      ['last_run_at', fmtTime(c.last_run_at)],
+      ['finding_count', c.finding_count]
+    ];
+    for (var i = 0; i < fields.length; i++) {
+      var pair = document.createElement('div');
+      pair.setAttribute('data-key', 'meta-' + fields[i][0]);
+      var dt = document.createElement('dt'); dt.textContent = fieldLabel(fields[i][0]);
+      var dd = document.createElement('dd');
+      if (fields[i][0] === 'status') {
+        dd.appendChild(statusBadge(fields[i][1]));
+      } else if (fields[i][1] === null || fields[i][1] === undefined) {
+        dd.appendChild(orUnrecorded(null));
+      } else {
+        dd.textContent = String(fields[i][1]);
+      }
+      pair.appendChild(dt); pair.appendChild(dd);
+      dl.appendChild(pair);
+    }
+    head.appendChild(dl);
+    p.appendChild(head);
+
+    // Summary metrics (4)
+    var parsed = parseMetrics(d.metrics);
+    var summary = document.createElement('div');
+    summary.className = 'summary-metrics';
+    summary.setAttribute('data-key', 'campaign-summary-' + id);
+    var summaryKeys = ['evidence_completeness', 'blue_recall', 'blue_precision', 'remediation_success_rate'];
+    for (var si = 0; si < summaryKeys.length; si++) {
+      var sk = summaryKeys[si];
+      var m = document.createElement('div');
+      m.className = 'metric';
+      m.setAttribute('data-key', 'metric-' + sk);
+      m.appendChild(text('div', KPI_LABELS[sk], 'metric-label'));
+      var mv = document.createElement('div');
+      mv.className = 'metric-value';
+      var res = metricValueNode(sk, parsed);
+      if (res.value.nodeType === 1) {
+        var cls = res.value.className || '';
+        if (cls.indexOf('is-hold') >= 0) mv.className = 'metric-value is-hold';
+        else mv.className = 'metric-value is-muted';
+        mv.appendChild(res.value);
+      } else {
+        mv.appendChild(res.value);
+      }
+      m.appendChild(mv);
+      if (res.denom) {
+        var dn = document.createElement('div');
+        dn.className = 'muted';
+        dn.style.fontSize = '12px';
+        dn.appendChild(res.denom);
+        m.appendChild(dn);
+      }
+      summary.appendChild(m);
+    }
+    p.appendChild(summary);
+
+    // Tabs
+    var tabs = document.createElement('div');
+    tabs.className = 'view-tabs';
+    tabs.setAttribute('role', 'group');
+    tabs.setAttribute('aria-label', '表示切替');
+    tabs.setAttribute('data-key', 'campaign-tabs-' + id);
+    var runsArr = Array.isArray(state.detail.runs) ? state.detail.runs : null;
+    var rsiArr = Array.isArray(state.detail.rsi) ? state.detail.rsi : null;
+    var counts = {
+      overview: null,
+      runs: runsArr ? runsArr.length : null,
+      rsi: rsiArr ? rsiArr.length : null,
+      assessment: null
+    };
+    for (var ti = 0; ti < CAMPAIGN_VIEWS.length; ti++) {
+      var vdef = CAMPAIGN_VIEWS[ti];
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.setAttribute('data-view', vdef.id);
+      btn.setAttribute('data-key', 'tab-' + vdef.id);
+      btn.setAttribute('aria-pressed', 'false');
+      btn.appendChild(document.createTextNode(vdef.label));
+      if (counts[vdef.id] !== null) {
+        var cnt = document.createElement('span');
+        cnt.className = 'tab-count';
+        cnt.textContent = '(' + counts[vdef.id] + ')';
+        btn.appendChild(cnt);
+      }
+      tabs.appendChild(btn);
+    }
+    p.appendChild(tabs);
+
+    // Overview section
+    var secOverview = document.createElement('div');
+    secOverview.setAttribute('data-campaign-view', 'overview');
+    secOverview.setAttribute('data-key', 'view-overview');
+    var kpiDetails = document.createElement('details');
+    kpiDetails.className = 'details-block';
+    kpiDetails.setAttribute('data-key', 'kpi-details');
+    kpiDetails.appendChild(text('summary', 'KPI（全11指標）'));
+    var kpiContent = document.createElement('div');
+    kpiContent.className = 'content';
+    var kpiPanel = renderKPIPanel(d.metrics);
+    // Move only h2 + table into the collapse; keep h3 limitations and early messages visible.
+    var kpiNodes = Array.prototype.slice.call(kpiPanel.childNodes);
+    var limitationsNodes = [];
+    var inLimitations = false;
+    for (var kn = 0; kn < kpiNodes.length; kn++) {
+      var node = kpiNodes[kn];
+      if (node.nodeType === 1 && node.tagName === 'H3') inLimitations = true;
+      if (inLimitations) limitationsNodes.push(node);
+      else kpiContent.appendChild(node);
+    }
+    kpiDetails.appendChild(kpiContent);
+    secOverview.appendChild(kpiDetails);
+    for (var ln = 0; ln < limitationsNodes.length; ln++) secOverview.appendChild(limitationsNodes[ln]);
+    p.appendChild(secOverview);
+
+    // Findings section (always visible, not tabbed)
+    var pFind = document.createElement('section');
+    pFind.className = 'panel';
+    pFind.setAttribute('data-key', 'campaign-findings-' + id);
+    pFind.appendChild(text('h2', '検知（findings）'));
+    var findings = Array.isArray(d.findings) ? d.findings : [];
+    var assessStatusById = null;
+    var aRep = state.detail.assessment;
+    if (aRep && aRep.status === undefined && Array.isArray(aRep.findings)) {
+      assessStatusById = {};
+      for (var ai = 0; ai < aRep.findings.length; ai++) {
+        var af = aRep.findings[ai];
+        if (af && af.finding_id) assessStatusById[af.finding_id] = deriveFindingStatus(af, aRep.historical);
+      }
+    }
+    if (findings.length === 0) {
+      pFind.appendChild(text('p', '該当なし', 'muted'));
+    } else {
+      var ul = document.createElement('ul');
+      ul.className = 'incident-list';
+      for (var fi = 0; fi < findings.length; fi++) {
+        var f = findings[fi];
+        if (!f) continue;
+        var li = document.createElement('li');
+        li.className = 'incident-row';
+        li.setAttribute('data-key', 'finding-' + (f.finding_id || fi));
+        var sev = document.createElement('span');
+        sev.className = 'incident-sev';
+        if (f.severity) sev.setAttribute('data-sev', String(f.severity));
+        sev.textContent = f.severity ? String(f.severity) : '未記録';
+        li.appendChild(sev);
+        var title = document.createElement('span');
+        title.className = 'incident-title';
+        if (f.title === null || f.title === undefined || f.title === '') title.appendChild(orUnrecorded(null));
+        else title.textContent = String(f.title);
+        li.appendChild(title);
+        var status = document.createElement('span');
+        status.className = 'incident-status';
+        if (f.status) status.appendChild(statusBadge(f.status));
+        else if (assessStatusById && f.finding_id && assessStatusById[f.finding_id]) status.appendChild(assessStatusBadge(ASSESS_FINDING_STATUS, assessStatusById[f.finding_id]));
+        else status.textContent = '';
+        li.appendChild(status);
+        var fid = document.createElement('span');
+        fid.className = 'incident-id';
+        if (f.finding_id === null || f.finding_id === undefined) fid.appendChild(orUnrecorded(null));
+        else fid.textContent = String(f.finding_id);
+        li.appendChild(fid);
+        var src = document.createElement('span');
+        src.className = 'incident-source';
+        if (f.source === null || f.source === undefined) src.appendChild(orUnrecorded(null));
+        else src.textContent = '情報源: ' + String(f.source);
+        li.appendChild(src);
+        ul.appendChild(li);
+      }
+      pFind.appendChild(ul);
+    }
+    secOverview.appendChild(pFind);
+
+    // Remediations section (always visible)
+    var pRem = document.createElement('section');
+    pRem.className = 'panel';
+    pRem.setAttribute('data-key', 'campaign-remediations-' + id);
+    pRem.appendChild(text('h2', '修復（remediations）'));
+    var rems = Array.isArray(d.remediations) ? d.remediations : [];
+    if (rems.length === 0) {
+      pRem.appendChild(text('p', '該当なし', 'muted'));
+    } else {
+      var rrows = [];
+      for (var ri = 0; ri < rems.length; ri++) {
+        var rm = rems[ri];
+        if (!rm) continue;
+        var ridCell;
+        if (rm.remediation_id === null || rm.remediation_id === undefined) ridCell = orUnrecorded(null);
+        else ridCell = document.createTextNode(String(rm.remediation_id));
+        var stCell = rm.status ? statusBadge(rm.status) : orUnrecorded(null);
+        rrows.push([ridCell, stCell]);
+      }
+      pRem.appendChild(makeTable(['remediation_id', 'status'], rrows, '修復一覧'));
+    }
+    secOverview.appendChild(pRem);
+
+    // Runs section (tab)
+    var secRuns = document.createElement('div');
+    secRuns.setAttribute('data-campaign-view', 'runs');
+    secRuns.setAttribute('data-key', 'view-runs');
+    secRuns.setAttribute('hidden', '');
+    var pRuns = document.createElement('section');
+    pRuns.className = 'panel';
+    pRuns.appendChild(text('h2', 'Run一覧'));
+    if (state.detail.runs === null) {
+      pRuns.appendChild(text('p', 'Run一覧を取得できませんでした: ' + (state.detail.runsError || '未提供'), 'muted'));
+    } else if (!state.detail.runs) {
+      pRuns.appendChild(text('p', '読み込み中…', 'muted'));
+    } else {
+      var runRows = [];
+      for (var rj = 0; rj < state.detail.runs.length; rj++) {
+        var run = state.detail.runs[rj];
+        if (!run || !run.run_id) continue;
+        var rlink = document.createElement('a');
+        rlink.href = '#/run/' + encodeURIComponent(run.run_id);
+        rlink.setAttribute('data-key', 'run-' + run.run_id);
+        rlink.textContent = run.run_id;
+        runRows.push([rlink, orUnrecorded(run.phase), run.status ? statusBadge(run.status) : orUnrecorded(null), orUnrecorded(run.completion), orUnrecorded(fmtTime(run.started_at)), orUnrecorded(fmtTime(run.ended_at))]);
+      }
+      pRuns.appendChild(makeTable(['run_id', 'phase', 'status', 'completion', 'started_at', 'ended_at'], runRows, '実行一覧'));
+    }
+    secRuns.appendChild(pRuns);
+    p.appendChild(secRuns);
+
+    // RSI section (tab)
+    var secRsi = document.createElement('div');
+    secRsi.setAttribute('data-campaign-view', 'rsi');
+    secRsi.setAttribute('data-key', 'view-rsi');
+    secRsi.setAttribute('hidden', '');
+    var pRsi = document.createElement('section');
+    pRsi.className = 'panel';
+    pRsi.appendChild(text('h2', 'RSI'));
+    if (state.detail.rsi === null) {
+      pRsi.appendChild(text('p', 'RSIを取得できませんでした: ' + (state.detail.rsiError || '未提供'), 'muted'));
+    } else if (!state.detail.rsi) {
+      pRsi.appendChild(text('p', '読み込み中…', 'muted'));
+    } else {
+      var rsiRows = [];
+      for (var sk2 = 0; sk2 < state.detail.rsi.length; sk2++) {
+        var rsi = state.detail.rsi[sk2];
+        if (!rsi) continue;
+        var cmp = rsi.comparison;
+        var cmpText = '未測定';
+        if (cmp && cmp.pairs !== undefined) cmpText = 'pairs=' + cmp.pairs + ' gain=' + (cmp.gain === null || cmp.gain === undefined ? '未測定' : cmp.gain);
+        rsiRows.push([
+          orUnrecorded(rsi.candidate_id),
+          orUnrecorded(rsi.freeze_id),
+          orUnrecorded(rsi.content_digest),
+          rsi.status ? statusBadge(rsi.status) : orUnrecorded(null),
+          cmpText,
+          rsi.applied === true ? badge('反映済み', 'ok', '●') : rsi.applied === false ? badge('未反映', 'info', '○') : orUnrecorded(null)
+        ]);
+      }
+      pRsi.appendChild(makeTable(['candidate_id', 'freeze_id', 'content_digest', 'status', 'comparison', 'applied'], rsiRows, '改善候補一覧'));
+    }
+    secRsi.appendChild(pRsi);
+    p.appendChild(secRsi);
+
+    // Assessment section (tab)
+    var secAssess = document.createElement('div');
+    secAssess.setAttribute('data-campaign-view', 'assessment');
+    secAssess.setAttribute('data-key', 'view-assessment');
+    secAssess.setAttribute('hidden', '');
+    secAssess.appendChild(renderAssessmentPanel(state.detail));
+    p.appendChild(secAssess);
+
+    frag.appendChild(p);
+
+    // Apply saved view after fragment is built (will be applied again after reconcile)
+    return frag;
+  }
+
+  var ASSESS_CATEGORY_LABELS = {
+    authz: '権限の不備',
+    sqli: 'SQLへの不正な指示',
+    xss: '画面への不正なスクリプト',
+    path_traversal: '許可範囲外のファイル参照',
+    dependency_cve: '依存部品の既知の脆弱性',
+    unknown: 'その他（対象外・未確認）'
+  };
+  var ASSESS_COVERAGE_STATUS = {
+    not_executed: { label: '未実施', tone: 'warn' },
+    failed: { label: '実行失敗', tone: 'error' },
+    executed: { label: '実施済み', tone: 'ok' }
+  };
+  var ASSESS_FINDING_STATUS = {
+    confirmed: { label: '確認済み', tone: 'ok' },
+    candidate: { label: '候補', tone: 'warn' },
+    refuted: { label: '反証済み', tone: 'info' },
+    retested: { label: '再検証済み', tone: 'ok' },
+    proposed: { label: '修正提案', tone: 'info' },
+    undetermined: { label: '判定不能', tone: 'warn' },
+    historical: { label: '古い証跡', tone: 'muted' },
+    hypothesis: { label: '候補', tone: 'warn' },
+    unverified: { label: '未確認', tone: 'warn' },
+    unknown: { label: '未確認', tone: 'warn' }
+  };
+  var ASSESS_CLASS_STATUS = {
+    identified: '特定済み',
+    confirmed: '確認済み',
+    candidate: '候補',
+    observed: '観測済み',
+    unknown: '未特定',
+    unverified: '未確認',
+    not_applicable: '該当なし'
+  };
+  var ASSESS_VALIDATION_RESULT = {
+    success: '成功',
+    failed: '失敗',
+    undetermined: '判定不能',
+    unverified: '未確認',
+    unknown: '未確認'
+  };
+  var ASSESS_GLOSSARY = [
+    ['未調査', 'まだ検査を実施していない状態です。安全とは限りません。'],
+    ['未検出', '検査を実施し、問題が見つからなかった状態です。'],
+    ['確認済み', '観測と根拠から問題の存在が確認された状態です。'],
+    ['候補', '問題の可能性があるが、まだ確認されていない状態です。'],
+    ['修正提案', '修正案が提示されているが、まだ適用・確認されていない状態です。'],
+    ['再検証済み', '修正後に再検証が成功した状態です。'],
+    ['判定不能', '証拠不足などで判定できなかった状態です。'],
+    ['古い証跡', '以前の評価時点の記録であり、現在の状態とは異なる可能性があります。']
+  ];
+
+  function shortHash(ref) {
+    if (typeof ref !== 'string' || ref === '') return null;
+    return ref.length > 12 ? ref.slice(0, 12) : ref;
+  }
+
+  function assessStatusBadge(map, status) {
+    if (status === null || status === undefined || status === '') return badge('未確認', 'warn', '○');
+    var s = map[status];
+    if (!s) return badge('未確認', 'warn', '○');
+    return badge(s.label, s.tone, '○');
+  }
+
+  function assessLabel(map, status) {
+    if (status === null || status === undefined || status === '') return '未確認';
+    var entry = map[status];
+    if (!entry) return '未確認';
+    return typeof entry === 'string' ? entry : (entry.label || '未確認');
+  }
+
+  function deriveFindingStatus(f, historical) {
+    if (!f) return 'unknown';
+    if (historical) return 'historical';
+    if (f.historical) return 'historical';
+    var val = f.validation;
+    if (val) {
+      if (val.result === 'success') return 'retested';
+      if (val.result === 'undetermined') return 'undetermined';
+    }
+    if (f.remediation) return 'proposed';
+    var claims = Array.isArray(f.claims) ? f.claims : [];
+    var anyConfirmed = false;
+    var allRefuted = claims.length > 0;
+    for (var i = 0; i < claims.length; i++) {
+      var c = claims[i];
+      if (!c) { allRefuted = false; continue; }
+      if (c.status === 'confirmed') anyConfirmed = true;
+      if (c.status !== 'refuted') allRefuted = false;
+    }
+    if (anyConfirmed) return 'confirmed';
+    if (allRefuted) return 'refuted';
+    var cls = f.classification || {};
+    for (var hi = 0; hi < claims.length; hi++) {
+      if (claims[hi] && claims[hi].status === 'hypothesis') return 'candidate';
+    }
+    if (cls.cve && cls.cve.status === 'candidate') return 'candidate';
+    return 'unknown';
+  }
+
+  function nextActionFor(status) {
+    if (status === 'confirmed') return '修正案を確認してください。';
+    if (status === 'candidate') return '追加の証拠を確認してください。';
+    if (status === 'refuted') return 'この仮説は反証されています。残る仮説と未確認範囲を確認してください。';
+    if (status === 'proposed') return '修正案の適用と再検証を進めてください。';
+    if (status === 'retested') return '再検証結果を記録し、未検証範囲を確認してください。';
+    if (status === 'undetermined') return '証拠不足のため判定できませんでした。追加の証拠を確認してください。';
+    if (status === 'historical') return '古い証跡です。現在の状態を再確認してください。';
+    return '状態が未確認のため、担当者に確認してください。';
+  }
+
+  var ENRICH_KEV_TEXT = {
+    listed: 'KEV収録済み（既知の悪用あり）',
+    not_listed: 'KEV未収録（収録されていないだけで危険ではないとは限りません）',
+    expired: 'KEV期限切れ（最新の情報ではありません）',
+    missing: 'KEV取得失敗（情報を確認できません）',
+    corrupt: 'KEV取得失敗（情報を確認できません）',
+    not_tested: 'KEV未照合（スナップショット未登録）',
+    not_applicable: 'KEV対象外（CVEなし）'
+  };
+  var ENRICH_EPSS_TEXT = {
+    not_listed: 'EPSS未収録（収録されていないだけで安全とは限りません）',
+    expired: 'EPSS期限切れ',
+    missing: 'EPSS取得失敗',
+    corrupt: 'EPSS取得失敗',
+    not_tested: 'EPSS未照合（スナップショット未登録）',
+    not_applicable: 'EPSS対象外（CVEなし。数値はありません）'
+  };
+
+  function findEnrichment(enrichment, findingId, kind) {
+    if (!Array.isArray(enrichment) || !findingId) return null;
+    for (var i = 0; i < enrichment.length; i++) {
+      var r = enrichment[i];
+      if (r && r.finding_id === findingId && r.kind === kind) return r;
+    }
+    return null;
+  }
+
+  function enrichmentKevText(rec) {
+    if (!rec) return 'KEV未照合（評価レポートに外部脅威情報がありません）';
+    var s = rec.status;
+    if (s === 'listed' || s === 'not_listed' || s === 'expired' || s === 'missing' || s === 'corrupt' || s === 'not_tested' || s === 'not_applicable') return ENRICH_KEV_TEXT[s];
+    return 'KEV取得失敗（情報を確認できません）';
+  }
+
+  function enrichmentEpssText(rec) {
+    if (!rec) return 'EPSS未照合';
+    var s = rec.status;
+    if (s === 'scored') {
+      if (typeof rec.epss !== 'number' || !isFinite(rec.epss)) return 'EPSS取得失敗';
+      var pct = (typeof rec.percentile === 'number' && isFinite(rec.percentile)) ? String(Math.round(rec.percentile * 1000) / 10) : '未記録';
+      return 'EPSS ' + rec.epss + '（上位' + pct + '％。悪用される可能性の推定値）';
+    }
+    if (s === 'not_listed' || s === 'expired' || s === 'missing' || s === 'corrupt' || s === 'not_tested' || s === 'not_applicable') return ENRICH_EPSS_TEXT[s];
+    return 'EPSS取得失敗';
+  }
+
+  function renderEnrichmentBlock(enrichment, findingId, fkey) {
+    var box = document.createElement('div');
+    box.setAttribute('data-key', 'assess-enrich-' + fkey);
+    box.appendChild(text('h3', '外部脅威情報'));
+    var kevRec = findEnrichment(enrichment, findingId, 'kev');
+    var epssRec = findEnrichment(enrichment, findingId, 'epss');
+    var ul = document.createElement('ul');
+    var liKev = document.createElement('li');
+    liKev.setAttribute('data-key', 'assess-enrich-kev-' + fkey);
+    liKev.textContent = enrichmentKevText(kevRec);
+    ul.appendChild(liKev);
+    var liEpss = document.createElement('li');
+    liEpss.setAttribute('data-key', 'assess-enrich-epss-' + fkey);
+    liEpss.textContent = enrichmentEpssText(epssRec);
+    ul.appendChild(liEpss);
+    box.appendChild(ul);
+    var srcUrl = (kevRec && kevRec.source_url) || (epssRec && epssRec.source_url) || null;
+    if (typeof srcUrl === 'string' && srcUrl !== '') {
+      var srcP = document.createElement('p');
+      srcP.setAttribute('data-key', 'assess-enrich-src-' + fkey);
+      srcP.className = 'muted';
+      srcP.appendChild(document.createTextNode('出典: '));
+      if (/^https?:\/\//.test(srcUrl)) {
+        var a = document.createElement('a');
+        a.href = srcUrl;
+        a.rel = 'noopener noreferrer';
+        a.target = '_blank';
+        a.textContent = srcUrl;
+        srcP.appendChild(a);
+      } else {
+        srcP.appendChild(document.createTextNode(srcUrl));
+      }
+      box.appendChild(srcP);
+    }
+    box.appendChild(text('p', 'KEVは既知の悪用、EPSSは悪用される可能性の推定です。CVSS深刻度・業務影響とは別の情報で、相互に自動決定されません。', 'muted'));
+    return box;
+  }
+
+  function renderAssessmentPanel(detail) {
+    var p = document.createElement('section');
+    p.className = 'panel';
+    p.setAttribute('data-key', 'assessment-panel');
+    p.appendChild(text('h2', '評価'));
+    var a = detail ? detail.assessment : null;
+    if (a === null || a === undefined) {
+      p.appendChild(text('p', '評価情報を取得できませんでした: ' + ((detail && detail.assessmentError) || '未提供'), 'muted'));
+      return p;
+    }
+    if (detail && detail.assessmentStale) p.appendChild(text('p', '評価情報を更新できませんでした。以前の評価を表示しています。', 'warn'));
+    if (a.status === 'hold') {
+      p.appendChild(text('p', '検証保留：評価記録を確認できません。', 'warn'));
+      return p;
+    }
+    if (a.status === 'withheld') {
+      p.appendChild(text('p', '評価情報はBlueに非公開です。', 'muted'));
+      return p;
+    }
+    if (a.status === 'none') {
+      p.appendChild(text('p', '評価レポートなし（未評価）', 'muted'));
+      return p;
+    }
+    if (a.historical) {
+      p.appendChild(text('p', '古い証跡: 以前の評価時点の記録です。', 'muted'));
+    }
+    // A. Coverage
+    p.appendChild(text('h3', '検査範囲（Coverage）'));
+    p.appendChild(text('p', '未実施は安全ではありません。未検出（実施して何も見つからなかった）とは別の状態です。', 'lead'));
+    var covRows = [];
+    var cats = a.coverage.categories;
+    var presentCats = {};
+    for (var pci = 0; pci < cats.length; pci++) { if (cats[pci] && cats[pci].category) presentCats[cats[pci].category] = true; }
+    var allCatKeys = ['authz', 'sqli', 'xss', 'path_traversal', 'dependency_cve', 'unknown'];
+    for (var aci = 0; aci < allCatKeys.length; aci++) {
+      if (!presentCats[allCatKeys[aci]]) cats = cats.concat([{ category: allCatKeys[aci], status: 'not_executed' }]);
+    }
+    for (var ci = 0; ci < cats.length; ci++) {
+      var cat = cats[ci];
+      if (!cat) continue;
+      var catLabel = ASSESS_CATEGORY_LABELS[cat.category] || cat.category || '不明';
+      var st = ASSESS_COVERAGE_STATUS[cat.status];
+      var stCell = st ? badge(st.label, st.tone, '○') : badge('未確認', 'warn', '○');
+      covRows.push([text('span', catLabel), stCell, orUnrecorded(cat.reason), orUnrecorded(a.target_version)]);
+    }
+    p.appendChild(makeTable(['類型', '実施状態', '理由', '対象版'], covRows, '検査範囲'));
+    // B. Findings
+    p.appendChild(text('h3', '検知の評価'));
+    p.appendChild(text('p', '同じ原因の問題は1件として数え、試行回数は別に表示します。'));
+    var findings = a.findings;
+    if (!findings || findings.length === 0) {
+      p.appendChild(text('p', '記録された検知はありません。未実施の範囲は判断できません。', 'muted'));
+    } else {
+      var cvssById = {};
+      var biById = {};
+      var cvi;
+      for (cvi = 0; cvi < (a.cvss || []).length; cvi++) { if (a.cvss[cvi] && a.cvss[cvi].finding_id) cvssById[a.cvss[cvi].finding_id] = a.cvss[cvi]; }
+      for (cvi = 0; cvi < (a.business_impact || []).length; cvi++) { if (a.business_impact[cvi] && a.business_impact[cvi].finding_id) biById[a.business_impact[cvi].finding_id] = a.business_impact[cvi]; }
+      for (var fi = 0; fi < findings.length; fi++) {
+        var f = findings[fi];
+        if (!f) continue;
+        var fkey = f.finding_id || ('idx-' + fi);
+        var det = document.createElement('details');
+        det.className = 'details-block';
+        det.setAttribute('data-key', 'assess-finding-' + fkey);
+        var sum = document.createElement('summary');
+        var fStatus = deriveFindingStatus(f, a.historical);
+        sum.appendChild(document.createTextNode((f.title || '未記録') + ' '));
+        sum.appendChild(assessStatusBadge(ASSESS_FINDING_STATUS, fStatus));
+        var cv = cvssById[f.finding_id];
+        var cvTxt = (cv && cv.status === 'scored' && typeof cv.score === 'number') ? (' CVSS ' + cv.score) : (cv && cv.status === 'invalid' ? ' CVSS 入力不正' : ' CVSS 未評価');
+        sum.appendChild(document.createTextNode(cvTxt));
+        det.appendChild(sum);
+        var content = document.createElement('div');
+        content.className = 'content';
+        content.appendChild(text('h3', '問題とは'));
+        content.appendChild(text('p', f.title || '未記録'));
+        content.appendChild(text('p', '原因1件・試行' + (typeof f.attempts === 'number' && isFinite(f.attempts) ? f.attempts : '未記録') + '回', 'muted'));
+        content.appendChild(text('h3', '根拠'));
+        var claims = Array.isArray(f.claims) ? f.claims : [];
+        if (claims.length === 0) content.appendChild(text('p', '根拠は未確認です。', 'muted'));
+        else {
+          var cul = document.createElement('ul');
+          for (var cli = 0; cli < claims.length; cli++) {
+            var cl = claims[cli];
+            if (!cl) continue;
+            var cli2 = document.createElement('li');
+            cli2.setAttribute('data-key', 'claim-' + fkey + '-' + cli);
+            cli2.textContent = (cl.statement || '未記録') + '（' + assessLabel(ASSESS_FINDING_STATUS, cl.status) + '）';
+            var refs = Array.isArray(cl.basis_refs) ? cl.basis_refs : [];
+            for (var ri = 0; ri < refs.length; ri++) {
+              var sh = shortHash(refs[ri]);
+              if (sh) cli2.appendChild(document.createTextNode(' ' + sh));
+            }
+            cul.appendChild(cli2);
+          }
+          content.appendChild(cul);
+        }
+        content.appendChild(text('h3', '対策'));
+        var rem = f.remediation;
+        if (!rem) content.appendChild(text('p', '修正提案はありません。', 'muted'));
+        else {
+          content.appendChild(text('p', rem.applied === true ? '修正案は適用済みです。' : '修正案は未適用です。'));
+          if (Array.isArray(rem.side_effects) && rem.side_effects.length > 0) content.appendChild(text('p', '副作用: ' + rem.side_effects.join('、'), 'muted'));
+        }
+        content.appendChild(text('h3', '次の行動'));
+        content.appendChild(text('p', nextActionFor(fStatus)));
+        // Technical details (nested)
+        var tech = document.createElement('details');
+        tech.className = 'details-block';
+        tech.setAttribute('data-key', 'assess-tech-' + fkey);
+        tech.appendChild(text('summary', '技術詳細'));
+        var tc = document.createElement('div');
+        tc.className = 'content';
+        var cls = f.classification || {};
+        tc.appendChild(text('h3', '分類'));
+        var cwe = cls.cwe || {};
+        var cve = cls.cve || {};
+        var owasp = cls.owasp || {};
+        var attack = cls.attack || {};
+        var clRows = [
+          [text('span', 'CWE'), text('span', assessLabel(ASSESS_CLASS_STATUS, cwe.status)), orUnrecorded((cwe.ids || []).join(', '))],
+          [text('span', 'CVE'), text('span', assessLabel(ASSESS_CLASS_STATUS, cve.status)), orUnrecorded((cve.ids || []).join(', '))],
+          [text('span', 'OWASP'), text('span', (owasp.ids || []).length > 0 ? '候補' : '未確認'), orUnrecorded((owasp.ids || []).join(', '))],
+          [text('span', 'ATT&CK'), text('span', assessLabel(ASSESS_CLASS_STATUS, attack.status)), orUnrecorded((attack.techniques || []).join(', '))]
+        ];
+        tc.appendChild(makeTable(['分類', '状態', 'ID'], clRows, '技術分類'));
+        tc.appendChild(text('h3', 'CVSS（技術的な重大度）'));
+        if (!cv) tc.appendChild(text('p', 'CVSSは未評価です。', 'muted'));
+        else if (cv.status === 'invalid') tc.appendChild(text('p', 'CVSSは入力不正です。', 'muted'));
+        else if (cv.status !== 'scored') tc.appendChild(text('p', 'CVSSは未評価です。', 'muted'));
+        else {
+          tc.appendChild(text('p', 'スコア: ' + (typeof cv.score === 'number' ? cv.score : '未評価')));
+          if (cv.vector) tc.appendChild(text('p', 'ベクター: ' + cv.vector, 'muted'));
+          if (cv.nomenclature) tc.appendChild(text('p', 'nomenclature: ' + cv.nomenclature, 'muted'));
+          if (cv.calculator) tc.appendChild(text('p', '計算器: ' + cv.calculator, 'muted'));
+          if (cv.reason) tc.appendChild(text('p', '理由: ' + cv.reason, 'muted'));
+        }
+        tc.appendChild(text('h3', '業務影響（担当者の判断）'));
+        var bi = biById[f.finding_id];
+        if (!bi) tc.appendChild(text('p', '業務影響は未確認です。', 'muted'));
+        else {
+          var biAxisLabels = { unknown: '不明', low: '低', medium: '中', high: '高', critical: '重大', none: 'なし' };
+          var biAxis = function (v) { if (!v) return '未確認'; return biAxisLabels[v] || v; };
+          tc.appendChild(text('p', 'データ重要度: ' + biAxis(bi.data_importance)));
+          tc.appendChild(text('p', '外部露出: ' + biAxis(bi.external_exposure)));
+          tc.appendChild(text('p', '業務停止影響: ' + biAxis(bi.business_stop_impact)));
+          if (bi.reasons) tc.appendChild(text('p', '理由: ' + bi.reasons, 'muted'));
+          var ua = Array.isArray(bi.unverified_axes) ? bi.unverified_axes : [];
+          if (ua.length) tc.appendChild(text('p', '未確認軸: ' + ua.join(', '), 'muted'));
+        }
+        tc.appendChild(text('p', 'CVSSは技術的な重大度、業務影響は担当者の判断であり、片方から自動決定されません。', 'muted'));
+        tc.appendChild(renderEnrichmentBlock(a.enrichment, f.finding_id, fkey));
+        tc.appendChild(text('h3', '修復'));
+        if (!rem) tc.appendChild(text('p', '修正提案はありません。', 'muted'));
+        else {
+          tc.appendChild(text('p', '適用: ' + (rem.applied === true ? '適用済み' : '未適用')));
+          if (rem.applied_env) tc.appendChild(text('p', '環境: ' + rem.applied_env, 'muted'));
+          if (rem.applied_version) tc.appendChild(text('p', '版: ' + rem.applied_version, 'muted'));
+          if (Array.isArray(rem.side_effects) && rem.side_effects.length > 0) tc.appendChild(text('p', '副作用: ' + rem.side_effects.join('、'), 'muted'));
+        }
+        tc.appendChild(text('h3', '再検証'));
+        var val = f.validation;
+        if (!val) tc.appendChild(text('p', '再検証は未確認です。', 'muted'));
+        else {
+          var vc = val.checks || {};
+          var checks = [
+            ['攻撃遮断', vc.attack_blocked],
+            ['正常動作継続', vc.benign_continued],
+            ['関連テスト', vc.related_tests_passed],
+            ['Oracle証跡', vc.oracle_evidence_ref],
+            ['版の記録', vc.version_recorded],
+            ['未検証範囲の記録', vc.unverified_scope_recorded]
+          ];
+          var vrows = [];
+          for (var vi = 0; vi < checks.length; vi++) {
+            var cv2 = checks[vi][1];
+            var vtxt;
+            if (checks[vi][0] === 'Oracle証跡') {
+              var shv = shortHash(cv2);
+              vtxt = shv ? shv : '未確認';
+            } else {
+              vtxt = cv2 === true ? '確認済み' : '未確認';
+            }
+            vrows.push([text('span', checks[vi][0]), text('span', vtxt)]);
+          }
+          tc.appendChild(makeTable(['チェック', '結果'], vrows, '再検証チェック'));
+          tc.appendChild(text('p', '判定: ' + assessLabel(ASSESS_VALIDATION_RESULT, val.result)));
+          if (val.oracle_verdict) tc.appendChild(text('p', 'Oracle判定: ' + val.oracle_verdict, 'muted'));
+        }
+        tech.appendChild(tc);
+        content.appendChild(tech);
+        det.appendChild(content);
+        p.appendChild(det);
+      }
+    }
+    // C. Limits
+    p.appendChild(text('h3', '測定の限界'));
+    p.appendChild(text('p', '5類型は今回の評価対象です。表にない種類を検査できるとは限りません。', 'muted'));
+    // Glossary
+    var gl = document.createElement('details');
+    gl.className = 'details-block';
+    gl.setAttribute('data-key', 'assess-glossary');
+    gl.appendChild(text('summary', '用語の説明'));
+    var gc = document.createElement('div');
+    gc.className = 'content';
+    var gul = document.createElement('ul');
+    for (var gi = 0; gi < ASSESS_GLOSSARY.length; gi++) {
+      var gli = document.createElement('li');
+      gli.setAttribute('data-key', 'glossary-' + gi);
+      gli.textContent = ASSESS_GLOSSARY[gi][0] + ': ' + ASSESS_GLOSSARY[gi][1];
+      gul.appendChild(gli);
+    }
+    gc.appendChild(gul);
+    gl.appendChild(gc);
+    p.appendChild(gl);
+    return p;
+  }
+
+  function renderRunDetail() {
+    var frag = document.createDocumentFragment();
+    var id = state.route.params.id;
+    var p = document.createElement('section');
+    p.className = 'panel';
+    p.appendChild(text('h2', 'Run: ' + id));
+    if (state.detailLoading) {
+      var oDr = document.createElement('output');
+      oDr.textContent = '読み込み中…';
+      oDr.className = 'muted';
+      p.appendChild(oDr);
+      frag.appendChild(p);
+      return frag;
+    }
+    if (state.detailError && !state.detail) {
+      p.appendChild(text('p', '取得に失敗しました: ' + state.detailError, 'muted'));
+      frag.appendChild(p);
+      return frag;
+    }
+    if (!state.detail || state.detail.kind !== 'run') {
+      p.appendChild(text('p', 'データがありません。', 'muted'));
+      frag.appendChild(p);
+      return frag;
+    }
+    var run = state.detail.data.run || {};
+    var dl = document.createElement('dl');
+    dl.className = 'detail-meta';
+    var fields = [
+      ['run_id', run.run_id],
+      ['campaign_id', run.campaign_id],
+      ['phase', run.phase],
+      ['status', run.status],
+      ['completion', run.completion],
+      ['cause', run.cause],
+      ['started_at', fmtTime(run.started_at)],
+      ['ended_at', fmtTime(run.ended_at)],
+      ['sealed_at', fmtTime(run.sealed_at)],
+      ['last_sequence', run.last_sequence],
+      ['last_event_hash', run.last_event_hash]
+    ];
+    for (var i = 0; i < fields.length; i++) {
+      var pair = document.createElement('div');
+      pair.setAttribute('data-key', 'run-meta-' + fields[i][0]);
+      var dt = document.createElement('dt'); dt.textContent = fieldLabel(fields[i][0]);
+      var dd = document.createElement('dd');
+      if (fields[i][1] === null || fields[i][1] === undefined) dd.appendChild(orUnrecorded(null));
+      else dd.textContent = String(fields[i][1]);
+      pair.appendChild(dt); pair.appendChild(dd);
+      dl.appendChild(pair);
+    }
+    p.appendChild(dl);
+    frag.appendChild(p);
+
+    var pEv = document.createElement('section');
+    pEv.className = 'panel';
+    pEv.appendChild(text('h2', '公開イベント履歴'));
+    if (state.detail.events === null) {
+      pEv.appendChild(text('p', 'イベント履歴APIが未提供です。', 'muted'));
+    } else if (!state.detail.events) {
+      pEv.appendChild(text('p', '読み込み中…', 'muted'));
+    } else {
+      var evRows = [];
+      for (var ei = 0; ei < state.detail.events.length; ei++) {
+        var ev = state.detail.events[ei];
+        if (!ev) continue;
+        var refsText = (ev.evidence_count === null || ev.evidence_count === undefined) ? '未記録' : (ev.evidence_count + ' 件');
+        evRows.push([orUnrecorded(ev.sequence), orUnrecorded(ev.event_type || ev.type), orUnrecorded(fmtTime(ev.timestamp)), refsText]);
+      }
+      pEv.appendChild(makeTable(['sequence', 'event_type', 'timestamp', 'evidence_count'], evRows, '公開イベント履歴'));
+    }
+    frag.appendChild(pEv);
+
+    var pV = document.createElement('section');
+    pV.className = 'panel';
+    pV.appendChild(text('h2', '証跡verify結果'));
+    if (state.detail.verify === null) {
+      pV.appendChild(text('p', 'verify APIが未提供です。', 'muted'));
+    } else if (!state.detail.verify) {
+      pV.appendChild(text('p', '読み込み中…', 'muted'));
+    } else {
+      var v = state.detail.verify;
+      var vlist = Array.isArray(v.verification) ? v.verification : [];
+      var vrows = [];
+      for (var vi = 0; vi < vlist.length; vi++) {
+        var vr = vlist[vi];
+        if (!vr) continue;
+        var vbadge;
+        if (vr.result === 'PASS') vbadge = badge('成功', 'ok', '●');
+        else if (vr.result === 'FAIL') vbadge = badge('失敗', 'error', '○');
+        else if (vr.result === null || vr.result === undefined || vr.result === '') vbadge = badge('未検証', 'warn', '○');
+        else vbadge = badge('未検証（' + String(vr.result) + '）', 'warn', '○');
+        vrows.push([
+          orUnrecorded(vr.verify_id),
+          vbadge,
+          orUnrecorded(vr.reason_code),
+          orUnrecorded(vr.checked_at ? fmtTime(vr.checked_at) : null)
+        ]);
+      }
+      pV.appendChild(makeTable(['verify_id', 'result', 'reason_code', 'checked_at'], vrows, '検証履歴'));
+    }
+    frag.appendChild(pV);
+
+    return frag;
+  }
+
+  function captureFocusKey() {
+    var a = document.activeElement;
+    if (!a || a === document.body) return null;
+    if (a.getAttribute && a.getAttribute('data-key')) return a.getAttribute('data-key');
+    return null;
+  }
+
+  function restoreFocusKey(key) {
+    if (!key) return;
+    var matches = document.querySelectorAll('[data-key]');
+    var target = null;
+    for (var mi = 0; mi < matches.length; mi++) {
+      if (matches[mi].getAttribute('data-key') !== key) continue;
+      var r = matches[mi].getClientRects();
+      if (r && r.length > 0) { target = matches[mi]; break; }
+    }
+    if (target && typeof target.focus === 'function') {
+      try { target.focus({ preventScroll: true }); } catch (e) { target.focus(); }
+      return;
+    }
+    var heading = el.viewRoot.querySelector('h2');
+    if (heading) {
+      if (!heading.hasAttribute('tabindex')) heading.setAttribute('tabindex', '-1');
+      try { heading.focus({ preventScroll: true }); } catch (e) { heading.focus(); }
+    }
+    var live = document.createElement('div');
+    live.setAttribute('role', 'status');
+    live.setAttribute('aria-live', 'polite');
+    live.className = 'muted';
+    live.textContent = '表示中の項目が更新されました。フォーカスは見出しへ移動しました。';
+    el.bannerArea.appendChild(live);
+  }
+
+  function render() {
+    var activeBefore = document.activeElement;
+    var fk = captureFocusKey();
+    renderNav();
+    renderStatus();
+    setBanners(buildBanners());
+    var frag;
+    if (state.route.name === 'campaign') frag = renderCampaignDetail();
+    else if (state.route.name === 'run') frag = renderRunDetail();
+    else frag = renderList();
+    // Apply saved campaign view to the fragment BEFORE reconciliation so the live DOM
+    // is not mutated (hidden/aria-pressed) on every poll.
+    if (state.route.name === 'campaign' && state.detail && state.detail.kind === 'campaign') {
+      applyCampaignView(frag, state.route.params.id);
+    }
+    reconcileChildren(el.viewRoot, frag.childNodes);
+    // Only restore focus if the previously focused node was lost from the DOM.
+    if (fk && activeBefore && activeBefore !== document.body && !document.contains(activeBefore)) {
+      restoreFocusKey(fk);
+    }
+  }
+
+  var autoTimer = null;
+  var refreshInProgress = null;
+
+  function runRefresh(manual) {
+    if (refreshInProgress) return refreshInProgress;
+    setBusy(true);
+    if (manual === true) el.refreshBtn.setAttribute('data-manual-busy', '');
+    var p = loadCore();
+    if (state.route.name !== 'list') p = p.then(function () { return loadDetail(); });
+    refreshInProgress = p.then(function () {
+      refreshInProgress = null;
+      setBusy(false);
+      el.refreshBtn.removeAttribute('data-manual-busy');
+    }, function () {
+      refreshInProgress = null;
+      setBusy(false);
+      el.refreshBtn.removeAttribute('data-manual-busy');
+    });
+    return refreshInProgress;
+  }
+
+  function startAuto() {
+    stopAuto();
+    autoTimer = setInterval(function () {
+      if (document.hidden) return;
+      if (refreshInProgress) return;
+      runRefresh();
+    }, AUTO_REFRESH_MS);
+  }
+  function stopAuto() {
+    if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+  }
+
+  el.refreshBtn.addEventListener('click', function () {
+    if (refreshInProgress) return;
+    runRefresh(true);
+  });
+
+  el.viewRoot.addEventListener('click', onViewRootClick);
+
+  window.addEventListener('hashchange', navigate);
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) stopAuto();
+    else {
+      startAuto();
+      if (!refreshInProgress) runRefresh();
+    }
+  });
+
+  state.route = parseHash();
+  render();
+  runRefresh();
+  startAuto();
+})();
+</script>
+</body>
+</html>

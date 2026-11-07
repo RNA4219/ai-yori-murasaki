@@ -1,0 +1,26 @@
+{
+  "id": "docs/requirements/REQUIREMENTS.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "原レポートとユーザー要求から50件のv1要件を定義し、必須・推奨・根拠・受入・依存を区別する。",
+  "deps_out": [
+    "docs/PRODUCT-ACCEPTANCE.md"
+  ],
+  "deps_in": [
+    "BLUEPRINT.md",
+    "README.md",
+    "docs/requirements/COMPACTION-01.md",
+    "docs/reviews/REVIEW-INTAKE-20261107.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "3d8f8e404ffef595cba2543214de6d97911bd21b19741aff1c2d789ca79ecba9",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T23:49:11.901048+00:00",
+    "reviewed_by": "GLM",
+    "source_sha256": "3d8f8e404ffef595cba2543214de6d97911bd21b19741aff1c2d789ca79ecba9",
+    "summary_sha256": "814c5117b44c8e7fbfb52a14e87317947cfcc3a5842b602fdf7d3494bbb8a834",
+    "scope": "GLMが原文全文と要約・依存を照合して確定。文書・要約・リンク整合の確認であり、製品実測や検収の実証ではない。"
+  }
+}

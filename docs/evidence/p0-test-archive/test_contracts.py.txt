@@ -1,0 +1,107 @@
+import unittest
+
+from ai_yori_murasaki.contracts import KINDS, validate, validate_campaign_runs
+from ai_yori_murasaki.jsonio import DataError, canonical, loads
+from .helpers import example
+
+
+class ContractTests(unittest.TestCase):
+    def test_eight_normal_contracts(self):
+        self.assertEqual(len(KINDS), 8)
+        for kind in KINDS:
+            with self.subTest(kind=kind):
+                validate(kind, example(kind))
+
+    def test_missing_unknown_and_wrong_type_are_rejected(self):
+        for kind in KINDS:
+            for mutation in ("missing", "unknown", "type"):
+                with self.subTest(kind=kind, mutation=mutation):
+                    data = example(kind)
+                    if mutation == "missing":
+                        data.pop("schema_version")
+                    elif mutation == "unknown":
+                        data["unexpected"] = "value"
+                    else:
+                        data["schema_version"] = 1
+                    with self.assertRaises(DataError):
+                        validate(kind, data)
+
+    def test_production_scope_rejected(self):
+        data = example("campaign")
+        data["targets"][0]["environment"] = "production"
+        with self.assertRaises(DataError):
+            validate("campaign", data)
+
+    def test_invalid_role_mode_and_model_rejected(self):
+        for role, mode, model in (("red", "blue-blind", "fixture"),
+                                  ("oracle", "oracle", "an-llm")):
+            data = example("run")
+            data.update(role=role, mode=mode, model=model)
+            with self.assertRaises(DataError):
+                validate("run", data)
+
+    def test_cross_role_context_and_credentials_must_differ(self):
+        campaign = example("campaign")
+        blue, red = example("run"), example("run")
+        red.update(run_id="red-fixture", role="red", mode="red-eval",
+                   context_namespace="red-context", credential_namespace="red-credentials")
+        validate_campaign_runs(campaign, [blue, red])
+        for field in ("context_namespace", "credential_namespace"):
+            data = dict(red)
+            data[field] = blue[field]
+            with self.assertRaises(DataError):
+                validate_campaign_runs(campaign, [blue, data])
+
+    def test_campaign_scope_and_duplicate_ids(self):
+        for field in ("campaign_id", "target_id"):
+            run = example("run")
+            run[field] = "unknown"
+            with self.assertRaises(DataError):
+                validate_campaign_runs(example("campaign"), [run])
+        with self.assertRaises(DataError):
+            validate_campaign_runs(example("campaign"), [example("run"), example("run")])
+
+    def test_completed_remediation_requires_all_regressions(self):
+        data = example("remediation")
+        data["status"] = "validated"
+        with self.assertRaises(DataError):
+            validate("remediation", data)
+        data["validation"] = dict.fromkeys(data["validation"], "pass")
+        validate("remediation", data)
+        data["production_apply"] = True
+        with self.assertRaises(DataError):
+            validate("remediation", data)
+
+    def test_deployment_approval_requires_human_and_valid_expiry(self):
+        data = example("approval")
+        data.update(action="deployment", decision="approved")
+        with self.assertRaises(DataError):
+            validate("approval", data)
+        data["reviewer_kind"] = "human"
+        validate("approval", data)
+        data["expires_at"] = "2026-11-05T00:00:00+09:00"
+        with self.assertRaises(DataError):
+            validate("approval", data)
+
+    def test_empty_success_and_invalid_datetime_rejected(self):
+        data = example("final_verdict")
+        data["decision"] = "pass"
+        with self.assertRaises(DataError):
+            validate("final_verdict", data)
+        for stamp in ("2026-02-30T00:00:00Z", "2026-11-06T00:00:00+09:99"):
+            data = example("run")
+            data["started_at"] = stamp
+            with self.assertRaises(DataError):
+                validate("run", data)
+
+    def test_ambiguous_json_and_nonfinite_values_rejected(self):
+        for raw in ('{"a":1,"a":2}', 'NaN', 'Infinity', '1e9999', '{'):
+            with self.subTest(raw=raw), self.assertRaises(DataError):
+                loads(raw)
+        for value in ({1: "value"}, {"x": float("inf")}, (1, 2)):
+            with self.assertRaises(DataError):
+                canonical(value)
+
+    def test_unknown_contract_rejected(self):
+        with self.assertRaises(DataError):
+            validate("shell", {"command": "not executed"})

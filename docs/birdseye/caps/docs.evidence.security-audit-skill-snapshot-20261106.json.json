@@ -1,0 +1,19 @@
+{
+  "id": "docs/evidence/security-audit-skill-snapshot-20261106.json",
+  "role": "evidence",
+  "public_api": [],
+  "summary": "上流の版、ローカル最適化元、配置した23ファイルのhash・サイズ・LICENSEと先行検証を記録する。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "cf71851faa1f0195b176df249827dbb42ce51f18438eb9d4ef417bfca7594f5c",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T07:54:28.763350+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "cf71851faa1f0195b176df249827dbb42ce51f18438eb9d4ef417bfca7594f5c",
+    "summary_sha256": "97b7a08cd619138f3a1f64acbd7aa22dd2a8e54fa6713c6c78f82e3b456d29f9",
+    "scope": "原文・要約・参照の整合。別Taskの状態・判定は変更せず、製品の動作・診断精度は評価していない。"
+  }
+}

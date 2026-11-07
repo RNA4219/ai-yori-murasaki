@@ -1,0 +1,143 @@
+{
+  "scope": "製品HTML monitor",
+  "designer": "glm-5.3:cloud",
+  "implementer": "deepseek-v4.1-flash:cloud",
+  "supervisor": "Codex",
+  "html_sha256": "93ce557e9c5e65c8ce9dde6064d5cdbfb5044c3ee39a1a1dcc08b09ffd777e81",
+  "skill_manifest": {
+    "files": [
+      {
+        "path": "C:\\Users\\ryo-n\\.codex\\skills\\ai-instructions-frontend\\SKILL.md",
+        "sha256": "87c0a7f0a835c9e8522ba419cbd618b2287a631fa5fa9f048a05ae9ca91ac73d"
+      },
+      {
+        "path": "C:\\Users\\ryo-n\\.codex\\skills\\ai-instructions-frontend\\references\\layout-code.md",
+        "sha256": "011e4b9f7a4958bb6c44670a37c8f414116fada4baa86d1dffd0491c9194b503"
+      },
+      {
+        "path": "C:\\Users\\ryo-n\\.codex\\skills\\ai-instructions-frontend\\references\\interaction.md",
+        "sha256": "6c20af66c422f0ae6d38c2e37dc071200c5b108ab0642d97493366c2a6873123"
+      },
+      {
+        "path": "C:\\Users\\ryo-n\\.codex\\skills\\ai-instructions-frontend\\references\\delivery-quality.md",
+        "sha256": "3ad7555beaf64b99b5c5bf28dc4fc4f449bc28e884de8172a372a954a92194ef"
+      }
+    ]
+  },
+  "reviews": [
+    {
+      "job": "glm-frontend-final-20261107",
+      "result": {
+        "verdict": "REVISE",
+        "issues": [
+          {
+            "severity": "medium",
+            "file": "ai_yori_murasaki/web/index.html",
+            "issue": "makeTable() は全テーブルのスクロール領域に aria-label=\"KPI測定結果\" を固定で付ける。Campaign一覧・モデル状態・承認・Run・verify等のテーブルもすべて同じアクセシブルネームになり、支援技術利用者が表の内容を区別できない（I01/I02のアクセシブルネーム条件）。",
+            "fix": "makeTable にラベル引数を追加し、呼び出し元から各表の内容に対応する日本語ラベル（例: 「Campaign一覧」「承認一覧」「公開イベント履歴」）を渡す。"
+          },
+          {
+            "severity": "medium",
+            "file": "ai_yori_murasaki/web/index.html",
+            "issue": "可視の列見出しが英語API内部名のまま（finding_id, severity, remediation_id, run_id, phase, completion, approval_id, decision, applied, checked_at, reason_code, candidate_id, freeze_id, content_digest 等）。日本語ラベル要求と、補足情報の「API内部名は本補足に集約し、通常UI文言からは排除」という記述と矛盾する（I28/I29）。",
+            "fix": "列見出しを日本語ラベルに置換え（例: 検知ID、重要度、修復ID、実行ID、段階、承認ID、決定、反映、確認日時、理由コード）。API内部名は補足情報側に集約するか、code要素で併記する。"
+          },
+          {
+            "severity": "low",
+            "file": "ai_yori_murasaki/web/index.html",
+            "issue": "parseHash() の decodeURIComponent は不正なエスケープ（例: #/campaign/%E0%A）で例外を投げ、ハッシュ変更ごとにスクリプト全体が停止する。",
+            "fix": "decodeURIComponent を try/catch で囲み、失敗時は list ルートへフォールバックする。"
+          },
+          {
+            "severity": "low",
+            "file": "ai_yori_murasaki/web/index.html",
+            "issue": "restoreFocusKey() の属性セレクタ組み立ては二重引用符のみエスケープし、バックスラッシュや属性セレクタ構文文字が data-key（API由来の campaign_id/run_id を含む）に含まれると、querySelector が例外を投げるか誤照合する可能性がある。",
+            "fix": "CSS.escape() を使用するか、data-key を保持する要素を再描画前に参照で保持して DOM 再取得を避ける。"
+          },
+          {
+            "severity": "low",
+            "file": "ai_yori_murasaki/web/index.html",
+            "issue": "kpiValueCell() は比率系KPI（KPI_RATIO_KEYS）の値範囲を検証せず、APIが 1.5 や -0.2 を返すと「150%」「-20%」をそのまま表示する。外部入力の上限検査（L11）が値の妥当性検証に届いていない。",
+            "fix": "比率系は 0〜1 の範囲外を「形式不正」として表示する検証を追加する。"
+          }
+        ]
+      },
+      "request_sha256": "b53c12304347dcf73b5aed44e2001a185cc32f58db89af0a9730974e0ef0adb0",
+      "response_sha256": "ac6572bc65fbd8e4f52bf0497a88019f6d44d6c2273161bbed3f22af0df5d45e"
+    },
+    {
+      "job": "glm-frontend-closure-20261107",
+      "result": {
+        "verdict": "REVISE",
+        "issues": [
+          {
+            "severity": "medium",
+            "file": "ai_yori_murasaki/web/index.html",
+            "issue": "renderApprovals内の4つのテーブル（レビュー待ち・承認済み・反映済み・その他）がすべて同じアクセシブルネーム「承認一覧」でmakeTableを呼んでいる。一覧画面を開くと同名のregion/テーブルが4つ並び、「すべてのテーブルが固有の日本語名を持つ」という修正主張に反する。スクリーンリーダー利用者が同名領域を区別できない。",
+            "fix": "section呼び出しのタイトルをmakeTableのラベルへ渡し、例えば「承認一覧（レビュー待ち）」「承認一覧（承認済み）」「承認一覧（反映済み）」「承認一覧（その他）」のようにセクション名を含めた固有名にする。"
+          },
+          {
+            "severity": "medium",
+            "file": "ai_yori_murasaki/web/index.html",
+            "issue": "renderRunDetailの定義リストでfieldLabelに'cause'と'campaign_id'を渡しているが、COLUMN_LABELSにこの2キーの定義がなく、fieldLabelは生の英語キーをそのまま返す。Run詳細画面を開くと<dt>に「cause」「campaign_id」という英語ラベルが表示され、「すべての列が日本語ラベル」という修正主張に反する。",
+            "fix": "COLUMN_LABELSへ cause: '原因'、campaign_id: 'Campaign ID'（または案件既定の日本語名）を追加する。"
+          },
+          {
+            "severity": "low",
+            "file": "ai_yori_murasaki/web/index.html",
+            "issue": "banner-areaはaria-live=\"polite\"だが、その内部にrole=\"alert\"（assertive相当）のエラーバナーを追加している。親のpoliteと子のalertでlive意味が競合し、支援技術によってはエラー通知がpolite扱いに引き下げられる。I05の「エラーアラートはassertive」条件と矛盾する実装。",
+            "fix": "banner-areaからaria-live/aria-atomicを外し、各バナー要素側でrole=\"status\"（info/warn/ok）とrole=\"alert\"（error）を完結させる。"
+          },
+          {
+            "severity": "low",
+            "file": "ai_yori_murasaki/web/index.html",
+            "issue": "fetchJSONのストリーム未対応フォールバック経路（res.body.getReaderが取れない環境）ではres.text()を無制限に読み込み、1MiB上限検査が実行されない。補足情報の「1MiBを超える応答は破棄」記述と実装が一致しない。",
+            "fix": "フォールバック経路でもtext()結果の長さ（またはJSON化後のサイズ）を検査し、上限超過時に同じエラーで破棄する。"
+          }
+        ]
+      },
+      "request_sha256": "81bc0530589a306a3a9771c2360f0031af85287b861c528265c2846122bbdb1a",
+      "response_sha256": "203e87ee29438a4b622898dca0d4edfcd9e43f694ba6aa3d4c0bdc6b90cc4721"
+    },
+    {
+      "job": "glm-frontend-disposition-20261107",
+      "result": {
+        "verdict": "PASS",
+        "issues": []
+      },
+      "request_sha256": "e5ad4a4bd59882e9500ce2d01c9770eebdfa8c35d7d1c5dcef2c13805514960e",
+      "response_sha256": "b42f5660b216c699de9451fd9ec8ea86646197acaca1105456979ffc33e8ac4c"
+    }
+  ],
+  "final_review": {
+    "verdict": "PASS",
+    "issues": []
+  },
+  "verification": {
+    "desktop": [
+      1440,
+      1000
+    ],
+    "mobile": [
+      390,
+      844
+    ],
+    "mobile_document_width": 375,
+    "keyboard_table_focus": true,
+    "kpi_rows": 11,
+    "new_page_errors": [],
+    "null": "未測定、古い数値を表示しない",
+    "HOLD": "検証保留、古い数値を表示しない",
+    "invalid_ratio_2": "形式不正",
+    "response_order": "初回詳細応答が遅い場合もrunsとrsiを保持（前段で検証）",
+    "screenshots": [
+      ".ga\\goal-20261106\\product-monitor-desktop-final-20261107.png",
+      ".ga\\goal-20261106\\product-monitor-mobile-final-20261107.png"
+    ]
+  },
+  "limitations": [
+    "read-only loopback",
+    "cloud alias is unpinned",
+    "mocked responses used for error-state browser checks"
+  ]
+}

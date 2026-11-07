@@ -1,0 +1,14 @@
+{
+  "stage": "要件",
+  "index": 1,
+  "recorded_at": "2026-11-06T22:32:47.766034+00:00",
+  "source": "docs/requirements/REQUIREMENTS-EXTENSION.md",
+  "sha256": "ddf4369828f6c7a4c2920e1af31b9131873bdbc28ff58d400ed81777059879ed",
+  "review": "C:\\Users\\ryo-n\\Codex_dev\\ai-yori-murasaki\\.ga\\goal-20261106\\v2-requirements-final-metadata.json",
+  "decisions": [
+    "R051〜063を既存要件へ追加、完成条件は緩和しない",
+    "追加3項目は承認済み。人数・正答率は未確定",
+    "実利用者の代わりにAIを用いて完成判定しない"
+  ],
+  "remaining": "実装・実測は別工程。監督要約による文脈整理でありシステム強制compactionではない。"
+}

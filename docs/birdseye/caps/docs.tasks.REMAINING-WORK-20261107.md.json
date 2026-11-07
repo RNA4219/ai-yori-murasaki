@@ -1,0 +1,19 @@
+{
+  "id": "docs/tasks/REMAINING-WORK-20261107.md",
+  "role": "task",
+  "public_api": [],
+  "summary": "2026-11-07時点の残件作業表。実ラボ画面確認・holdout来歴追補・配布一致（dist-finished-20261107再ビルド後の不一致0件）・最終同期の4項目がすべて完了し表は閉じた。RSI候補の実行器反映と公開承認は範囲外。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "757ed6756a198ea930a9ca00f2ca6c426da086f68f4b7513fe79d1ffe9710834",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-07T18:40:00+09:00",
+    "reviewed_by": "GLM",
+    "source_sha256": "757ed6756a198ea930a9ca00f2ca6c426da086f68f4b7513fe79d1ffe9710834",
+    "summary_sha256": "57abed24837556a81229a8f9b553ac7406b278c6ebaf1c47ead6a8e6cb6d9e1a",
+    "scope": "原文全文と要約・リンクを照合した。dist-finished-20261107再ビルド・収録文書/metadata比較・monitor_url訂正を反映した。"
+  }
+}

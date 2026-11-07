@@ -1,0 +1,805 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aym.local/schemas/v1/assessment.schema.json",
+  "title": "Assessment Report v1.0.0",
+  "description": "Closed nested assessment report schema (SPEC-ASSESSMENT). Unknown fields are rejected; extensions must be an empty object.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "assessment_version",
+    "report_id",
+    "campaign_id",
+    "run_id",
+    "target",
+    "target_version",
+    "previous_report_ref",
+    "created_at",
+    "actor",
+    "coverage",
+    "findings",
+    "cvss",
+    "business_impact",
+    "manifest_ref",
+    "extensions"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "assessment_version": { "const": "1.0.0" },
+    "report_id": { "$ref": "#/$defs/reportId" },
+    "campaign_id": { "$ref": "#/$defs/nonEmptyString" },
+    "run_id": { "$ref": "#/$defs/nonEmptyString" },
+    "target": { "$ref": "#/$defs/nonEmptyString" },
+    "target_version": { "$ref": "#/$defs/nonEmptyString" },
+    "previous_report_ref": {
+      "oneOf": [
+        { "$ref": "#/$defs/casRef" },
+        { "type": "null" }
+      ]
+    },
+    "created_at": { "$ref": "#/$defs/iso8601" },
+    "actor": { "$ref": "#/$defs/nonEmptyString" },
+    "coverage": { "$ref": "#/$defs/coverage" },
+    "findings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/findingAssessment" }
+    },
+    "cvss": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/cvssRecord" }
+    },
+    "business_impact": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/businessImpactRecord" }
+    },
+    "manifest_ref": {
+      "oneOf": [
+        { "$ref": "#/$defs/casRef" },
+        { "type": "null" }
+      ]
+    },
+    "extensions": { "$ref": "#/$defs/emptyExtensions" },
+    "enrichment": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/enrichmentRecord" }
+    }
+  },
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "casRef": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "reportId": {
+      "type": "string",
+      "pattern": "^asc-[0-9a-f]{32}$"
+    },
+    "causeId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "iso8601": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?(Z|[+-][0-9]{2}:[0-9]{2})$"
+    },
+    "emptyExtensions": {
+      "type": "object",
+      "maxProperties": 0,
+      "additionalProperties": false
+    },
+    "casRefList": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/casRef" }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["categories", "created_at"],
+      "properties": {
+        "categories": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/coverageCategory" }
+        },
+        "created_at": { "$ref": "#/$defs/iso8601" }
+      }
+    },
+    "coverageCategory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["category", "status", "reason", "evidence_refs"],
+      "properties": {
+        "category": { "$ref": "#/$defs/nonEmptyString" },
+        "status": {
+          "enum": ["executed", "not_executed", "failed"]
+        },
+        "reason": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "null" }
+          ]
+        },
+        "evidence_refs": { "$ref": "#/$defs/casRefList" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "enum": ["not_executed", "failed"] } },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "reason": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      ]
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["observation_id", "finding_id", "kind", "payload_ref", "captured_at"],
+      "properties": {
+        "observation_id": { "$ref": "#/$defs/nonEmptyString" },
+        "finding_id": { "$ref": "#/$defs/nonEmptyString" },
+        "kind": {
+          "enum": ["http_response", "file_state", "scanner_output", "dependency_version"]
+        },
+        "payload_ref": { "$ref": "#/$defs/casRef" },
+        "captured_at": { "$ref": "#/$defs/iso8601" }
+      }
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claim_id",
+        "finding_id",
+        "cause_statement",
+        "confidence_axis",
+        "status",
+        "basis_refs",
+        "refuted_by"
+      ],
+      "properties": {
+        "claim_id": { "$ref": "#/$defs/nonEmptyString" },
+        "finding_id": { "$ref": "#/$defs/nonEmptyString" },
+        "cause_statement": { "$ref": "#/$defs/nonEmptyString" },
+        "confidence_axis": {
+          "enum": ["detection", "cause", "impact", "severity"]
+        },
+        "status": {
+          "enum": ["confirmed", "hypothesis", "refuted"]
+        },
+        "basis_refs": { "$ref": "#/$defs/casRefList" },
+        "refuted_by": {
+          "oneOf": [
+            { "$ref": "#/$defs/casRef" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "const": "confirmed" } },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "basis_refs": { "minItems": 1 },
+              "refuted_by": { "type": "null" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "status": { "const": "refuted" } },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "refuted_by": { "$ref": "#/$defs/casRef" }
+            }
+          }
+        }
+      ]
+    },
+    "classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["classification_id", "finding_id", "cwe", "cve", "owasp", "attack"],
+      "properties": {
+        "classification_id": { "$ref": "#/$defs/nonEmptyString" },
+        "finding_id": { "$ref": "#/$defs/nonEmptyString" },
+        "cwe": { "$ref": "#/$defs/cweClassification" },
+        "cve": { "$ref": "#/$defs/cveClassification" },
+        "owasp": { "$ref": "#/$defs/owaspClassification" },
+        "attack": { "$ref": "#/$defs/attackClassification" }
+      }
+    },
+    "cweClassification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "ids", "basis_refs"],
+      "properties": {
+        "status": { "enum": ["confirmed", "candidate", "unknown"] },
+        "ids": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^CWE-[0-9]+$" }
+        },
+        "basis_refs": { "$ref": "#/$defs/casRefList" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "const": "confirmed" } },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "ids": { "minItems": 1 },
+              "basis_refs": { "minItems": 1 }
+            }
+          }
+        }
+      ]
+    },
+    "cveClassification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "ids", "applicability"],
+      "properties": {
+        "status": { "enum": ["confirmed", "candidate", "not_applicable", "unknown"] },
+        "ids": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^CVE-[0-9]{4}-[0-9]{4,}$" }
+        },
+        "applicability": { "$ref": "#/$defs/cveApplicability" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "const": "confirmed" } },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "ids": { "minItems": 1 },
+              "applicability": {
+                "properties": {
+                  "product": { "type": "string", "minLength": 1 },
+                  "version": { "type": "string", "minLength": 1 },
+                  "condition": { "type": "string", "minLength": 1 },
+                  "basis_refs": { "minItems": 1 }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "cveApplicability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["product", "version", "condition", "basis_refs"],
+      "properties": {
+        "product": {
+          "oneOf": [
+            { "type": "string", "minLength": 1 },
+            { "type": "null" }
+          ]
+        },
+        "version": {
+          "oneOf": [
+            { "type": "string", "minLength": 1 },
+            { "type": "null" }
+          ]
+        },
+        "condition": {
+          "oneOf": [
+            { "type": "string", "minLength": 1 },
+            { "type": "null" }
+          ]
+        },
+        "basis_refs": { "$ref": "#/$defs/casRefList" }
+      }
+    },
+    "owaspClassification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ids", "basis_refs"],
+      "properties": {
+        "ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonEmptyString" }
+        },
+        "basis_refs": { "$ref": "#/$defs/casRefList" }
+      }
+    },
+    "attackClassification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "techniques", "observation_refs"],
+      "properties": {
+        "status": { "enum": ["observed", "unknown"] },
+        "techniques": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^T[0-9]{4}(\\.[0-9]{3})?$" }
+        },
+        "observation_refs": { "$ref": "#/$defs/casRefList" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "const": "observed" } },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "techniques": { "minItems": 1 },
+              "observation_refs": { "minItems": 1 }
+            }
+          }
+        }
+      ]
+    },
+    "remediation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "remediation_id",
+        "finding_id",
+        "proposal_ref",
+        "applied",
+        "applied_env",
+        "applied_version",
+        "diff_ref",
+        "side_effects"
+      ],
+      "properties": {
+        "remediation_id": { "$ref": "#/$defs/nonEmptyString" },
+        "finding_id": { "$ref": "#/$defs/nonEmptyString" },
+        "proposal_ref": { "$ref": "#/$defs/casRef" },
+        "applied": { "type": "boolean" },
+        "applied_env": {
+          "oneOf": [
+            { "type": "string", "minLength": 1 },
+            { "type": "null" }
+          ]
+        },
+        "applied_version": {
+          "oneOf": [
+            { "type": "string", "minLength": 1 },
+            { "type": "null" }
+          ]
+        },
+        "diff_ref": {
+          "oneOf": [
+            { "$ref": "#/$defs/casRef" },
+            { "type": "null" }
+          ]
+        },
+        "side_effects": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonEmptyString" }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "applied": { "const": true } },
+            "required": ["applied"]
+          },
+          "then": {
+            "properties": {
+              "applied_env": { "type": "string", "minLength": 1 },
+              "applied_version": { "type": "string", "minLength": 1 },
+              "diff_ref": { "$ref": "#/$defs/casRef" }
+            }
+          }
+        }
+      ]
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["validation_id", "remediation_id", "checks", "oracle_verdict", "result"],
+      "properties": {
+        "validation_id": { "$ref": "#/$defs/nonEmptyString" },
+        "remediation_id": { "$ref": "#/$defs/nonEmptyString" },
+        "checks": { "$ref": "#/$defs/validationChecks" },
+        "oracle_verdict": { "enum": ["PASS", "FAIL", "undetermined"] },
+        "result": { "enum": ["success", "failed", "undetermined"] }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "oracle_verdict": { "const": "undetermined" } },
+            "required": ["oracle_verdict"]
+          },
+          "then": {
+            "properties": { "result": { "const": "undetermined" } }
+          }
+        },
+        {
+          "if": {
+            "properties": { "result": { "const": "success" } },
+            "required": ["result"]
+          },
+          "then": {
+            "properties": {
+              "oracle_verdict": { "const": "PASS" },
+              "checks": {
+                "properties": {
+                  "attack_blocked": { "const": true },
+                  "benign_continued": { "const": true },
+                  "related_tests_passed": { "const": true },
+                  "version_recorded": { "const": true },
+                  "unverified_scope_recorded": { "const": true }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "validationChecks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attack_blocked",
+        "benign_continued",
+        "related_tests_passed",
+        "oracle_evidence_ref",
+        "version_recorded",
+        "unverified_scope_recorded"
+      ],
+      "properties": {
+        "attack_blocked": { "type": "boolean" },
+        "benign_continued": { "type": "boolean" },
+        "related_tests_passed": { "type": "boolean" },
+        "oracle_evidence_ref": { "$ref": "#/$defs/casRef" },
+        "version_recorded": { "type": "boolean" },
+        "unverified_scope_recorded": { "type": "boolean" }
+      }
+    },
+    "findingAssessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "finding_id",
+        "finding_ref",
+        "cause_id",
+        "category",
+        "title",
+        "attempts",
+        "observations",
+        "claims",
+        "classification",
+        "remediation",
+        "validation"
+      ],
+      "properties": {
+        "finding_id": { "$ref": "#/$defs/nonEmptyString" },
+        "finding_ref": { "$ref": "#/$defs/casRef" },
+        "cause_id": { "$ref": "#/$defs/causeId" },
+        "category": {
+          "enum": [
+            "authz",
+            "sqli",
+            "xss",
+            "path_traversal",
+            "dependency_cve",
+            "unknown"
+          ]
+        },
+        "title": { "$ref": "#/$defs/nonEmptyString" },
+        "attempts": { "type": "integer", "minimum": 1 },
+        "observations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/observation" }
+        },
+        "claims": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/claim" }
+        },
+        "classification": { "$ref": "#/$defs/classification" },
+        "remediation": {
+          "oneOf": [
+            { "$ref": "#/$defs/remediation" },
+            { "type": "null" }
+          ]
+        },
+        "validation": {
+          "oneOf": [
+            { "$ref": "#/$defs/validation" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "cvssRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "finding_id",
+        "status",
+        "vector",
+        "score",
+        "nomenclature",
+        "calculator",
+        "metric_basis",
+        "reason"
+      ],
+      "properties": {
+        "finding_id": { "$ref": "#/$defs/nonEmptyString" },
+        "status": { "enum": ["scored", "invalid", "unevaluated"] },
+        "vector": {
+          "oneOf": [
+            { "type": "string", "minLength": 1 },
+            { "type": "null" }
+          ]
+        },
+        "score": {
+          "oneOf": [
+            { "type": "number", "minimum": 0.0, "maximum": 10.0 },
+            { "type": "null" }
+          ]
+        },
+        "nomenclature": {
+          "oneOf": [
+            { "enum": ["CVSS-B", "CVSS-BT", "CVSS-BE", "CVSS-BTE"] },
+            { "type": "null" }
+          ]
+        },
+        "calculator": { "const": "cvss/3.6" },
+        "metric_basis": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/casRefList" }
+        },
+        "reason": { "type": "string" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "const": "scored" } },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "vector": { "type": "string", "minLength": 1 },
+              "score": { "type": "number", "minimum": 0.0, "maximum": 10.0 },
+              "nomenclature": { "enum": ["CVSS-B", "CVSS-BT", "CVSS-BE", "CVSS-BTE"] },
+              "reason": { "const": "" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "status": { "enum": ["invalid", "unevaluated"] } },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "vector": { "type": "null" },
+              "score": { "type": "null" },
+              "nomenclature": { "type": "null" },
+              "reason": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      ]
+    },
+    "businessImpactRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "finding_id",
+        "data_importance",
+        "external_exposure",
+        "business_stop_impact",
+        "reasons",
+        "author",
+        "recorded_at",
+        "unverified_axes"
+      ],
+      "properties": {
+        "finding_id": { "$ref": "#/$defs/nonEmptyString" },
+        "data_importance": { "$ref": "#/$defs/impactLevel" },
+        "external_exposure": { "$ref": "#/$defs/impactLevel" },
+        "business_stop_impact": { "$ref": "#/$defs/impactLevel" },
+        "reasons": { "type": "string" },
+        "author": { "$ref": "#/$defs/nonEmptyString" },
+        "recorded_at": { "$ref": "#/$defs/iso8601" },
+        "unverified_axes": {
+          "type": "array",
+          "items": {
+            "enum": ["data_importance", "external_exposure", "business_stop_impact"]
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "impactLevel": {
+      "enum": ["high", "medium", "low", "unknown"]
+    },
+    "enrichmentRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "finding_id",
+        "kind",
+        "cve",
+        "status",
+        "epss",
+        "percentile",
+        "source_url",
+        "source_version",
+        "fetched_at",
+        "as_of",
+        "expires_at",
+        "raw_sha256",
+        "content_digest",
+        "reason"
+      ],
+      "properties": {
+        "finding_id": { "$ref": "#/$defs/nonEmptyString" },
+        "kind": { "enum": ["kev", "epss"] },
+        "cve": {
+          "oneOf": [
+            { "type": "string", "pattern": "^CVE-[0-9]{4}-[0-9]{4,}$" },
+            { "type": "null" }
+          ]
+        },
+        "status": {
+          "enum": [
+            "listed",
+            "scored",
+            "not_listed",
+            "expired",
+            "missing",
+            "corrupt",
+            "not_applicable",
+            "not_tested"
+          ]
+        },
+        "epss": {
+          "oneOf": [
+            { "type": "number", "minimum": 0, "maximum": 1 },
+            { "type": "null" }
+          ]
+        },
+        "percentile": {
+          "oneOf": [
+            { "type": "number", "minimum": 0, "maximum": 1 },
+            { "type": "null" }
+          ]
+        },
+        "source_url": {
+          "oneOf": [
+            { "type": "string", "minLength": 1 },
+            { "type": "null" }
+          ]
+        },
+        "source_version": {
+          "oneOf": [
+            { "type": "string", "minLength": 1 },
+            { "type": "null" }
+          ]
+        },
+        "fetched_at": {
+          "oneOf": [
+            { "$ref": "#/$defs/iso8601" },
+            { "type": "null" }
+          ]
+        },
+        "as_of": {
+          "oneOf": [
+            { "$ref": "#/$defs/iso8601" },
+            { "type": "null" }
+          ]
+        },
+        "expires_at": {
+          "oneOf": [
+            { "type": "number" },
+            { "type": "null" }
+          ]
+        },
+        "raw_sha256": {
+          "oneOf": [
+            { "$ref": "#/$defs/casRef" },
+            { "type": "null" }
+          ]
+        },
+        "content_digest": {
+          "oneOf": [
+            { "$ref": "#/$defs/casRef" },
+            { "type": "null" }
+          ]
+        },
+        "reason": { "type": "string" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "enum": ["listed", "scored"] } },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": { "reason": { "const": "" } }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "not_listed",
+                  "expired",
+                  "missing",
+                  "corrupt",
+                  "not_applicable",
+                  "not_tested"
+                ]
+              }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "reason": { "minLength": 1 },
+              "epss": { "type": "null" },
+              "percentile": { "type": "null" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "kind": { "const": "kev" } },
+            "required": ["kind"]
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "listed",
+                  "not_listed",
+                  "expired",
+                  "missing",
+                  "corrupt",
+                  "not_applicable",
+                  "not_tested"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "kind": { "const": "epss" } },
+            "required": ["kind"]
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "scored",
+                  "not_listed",
+                  "expired",
+                  "missing",
+                  "corrupt",
+                  "not_applicable",
+                  "not_tested"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "campaign_id": "c8293880f3348466a",
+  "upstream_preflight": {
+    "exit_code": 0,
+    "output": "Evaluation identity manifest: ok",
+    "executed_before_comparison": true
+  },
+  "cli": [
+    {
+      "exit_code": 2,
+      "response": {
+        "campaign_id": null,
+        "command": "rsi freeze",
+        "data": {
+          "message": "内部エラーが発生しました"
+        },
+        "reason_code": "internal_error",
+        "run_id": null,
+        "schema_version": "1.0.0",
+        "status": "fail"
+      }
+    }
+  ],
+  "seconds": 0.953
+}

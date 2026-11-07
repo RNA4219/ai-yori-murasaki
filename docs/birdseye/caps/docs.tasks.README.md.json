@@ -1,0 +1,46 @@
+{
+  "id": "docs/tasks/README.md",
+  "role": "operations",
+  "public_api": [],
+  "summary": "Taskの命名・状態遷移・検収への接続規則と、外部レビュー整理を含む作業一覧。",
+  "deps_out": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "TASK.codex.md",
+    "docs/acceptance/AC-20261106-01.md",
+    "docs/acceptance/AC-20261106-02.md",
+    "docs/acceptance/AC-20261106-03.md",
+    "docs/acceptance/AC-20261106-05.md",
+    "docs/acceptance/AC-20261106-06.md",
+    "docs/acceptance/AC-20261107-01.md",
+    "docs/acceptance/AC-20261107-02.md",
+    "docs/acceptance/README.md",
+    "docs/releases/README.md",
+    "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
+    "docs/tasks/TASK.product-completion-11-06-2026.md",
+    "docs/tasks/TASK.review-intake-11-07-2026.md",
+    "docs/tasks/TASK.rsi-naming-11-06-2026.md",
+    "docs/tasks/TASK.rsi-policy-11-06-2026.md",
+    "docs/tasks/TASK.security-audit-skill-11-06-2026.md",
+    "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
+  ],
+  "deps_in": [
+    "AGENTS.md",
+    "HUB.codex.md",
+    "README.md",
+    "RUNBOOK.md",
+    "TASK.codex.md",
+    "docs/workflow-adoption.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "2b65a8bbb98a098804bb6cfa38cc9263f7e6cb1e03eae737443e757ff733b2d7",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T23:49:11.901048+00:00",
+    "reviewed_by": "GLM",
+    "source_sha256": "2b65a8bbb98a098804bb6cfa38cc9263f7e6cb1e03eae737443e757ff733b2d7",
+    "summary_sha256": "05b57ea0e2144637db8330273c220873cc18d3501a12cd33f925036fe1eb2f59",
+    "scope": "GLMが原文全文と要約・依存を照合して確定。文書・要約・リンク整合の確認であり、製品実測や検収の実証ではない。"
+  }
+}

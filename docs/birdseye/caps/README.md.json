@@ -1,0 +1,45 @@
+{
+  "id": "README.md",
+  "role": "overview",
+  "public_api": [],
+  "summary": "隔離ラボの起動と製品文書の入口。製品要件の不足と完成判定の撤回、承認済み追加2項目と実利用者試験の撤回を明記する。",
+  "deps_out": [
+    "BLUEPRINT.md",
+    "CHANGELOG.md",
+    "EVALUATION.md",
+    "GUARDRAILS.md",
+    "HUB.codex.md",
+    "RUNBOOK.md",
+    "docs/ADR/deep-research-report (16).md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/RSI.md",
+    "docs/acceptance/AC-20261106-06.md",
+    "docs/acceptance/INDEX.md",
+    "docs/requirements/API-CONTRACTS.md",
+    "docs/requirements/DECISIONS.md",
+    "docs/requirements/REQUIREMENTS.md",
+    "docs/requirements/SPEC-CORE.md",
+    "docs/requirements/SPEC-EVALUATION.md",
+    "docs/reviews/REVIEW-INTAKE-20261107.md",
+    "docs/tasks/README.md",
+    "docs/workflow-adoption.md"
+  ],
+  "deps_in": [
+    "GUARDRAILS.md",
+    "HUB.codex.md",
+    "RUNBOOK.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/workflow-adoption.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "e39f0fc36e2640a27e0a23e392ce157d0a1af3b7758c3e941e4a791c7f9028c5",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-07T18:30:00+09:00",
+    "reviewed_by": "GLM",
+    "source_sha256": "e39f0fc36e2640a27e0a23e392ce157d0a1af3b7758c3e941e4a791c7f9028c5",
+    "summary_sha256": "4a7f999a4ae67b791c5c7def4a8cde923073045bc7a187db9956a36d28b2a61f",
+    "scope": "原文全文と要約・リンクを照合した。GitHub Public公開前の最終確定（公開記録RA-20261107-01、非公開原資料のリンク注記、codemap exclude、配布物hash）を反映した。"
+  }
+}

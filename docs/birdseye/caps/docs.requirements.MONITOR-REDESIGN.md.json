@@ -1,0 +1,26 @@
+{
+  "id": "docs/requirements/MONITOR-REDESIGN.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "LinearとVercelを参照したモニターの配置・配色・表示切替と、差分更新・通信失敗時の保持を定める。",
+  "deps_out": [
+    "docs/acceptance/AC-20261107-01.md",
+    "docs/tasks/TASK.monitor-redesign-11-07-2026.md"
+  ],
+  "deps_in": [
+    "HUB.codex.md",
+    "docs/acceptance/AC-20261107-01.md",
+    "docs/requirements/FRONTEND-DESIGN.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "552ca99790ff666974a684d11ac57d204774c5dda19581527551b7f10983cfae",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T20:01:26.138861+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "552ca99790ff666974a684d11ac57d204774c5dda19581527551b7f10983cfae",
+    "summary_sha256": "53814bce32d11a79738367008f5a35f912d696d82578e2d17c3712fb3e2279d3",
+    "scope": "原文と要約・実リンクを照合。モニターの変更と技術検収を確認し、見た目のユーザー承認を代行しない。"
+  }
+}

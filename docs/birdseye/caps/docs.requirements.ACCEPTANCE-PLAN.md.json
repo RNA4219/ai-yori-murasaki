@@ -1,0 +1,28 @@
+{
+  "id": "docs/requirements/ACCEPTANCE-PLAN.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "実動・契約・故障注入を分けたT01〜T20、RSI9項目、P2、API/UI、全50要件の受入計画。",
+  "deps_out": [
+    "docs/PRODUCT-ACCEPTANCE.md"
+  ],
+  "deps_in": [
+    "BLUEPRINT.md",
+    "EVALUATION.md",
+    "docs/PRODUCT-ACCEPTANCE.md",
+    "docs/requirements/COMPACTION-02.md",
+    "docs/requirements/COMPACTION-03.md",
+    "docs/workflow-adoption.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "4c28fda7030579b738cf31672251669c2f831f9b871abe26f333a77cbb287884",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T19:30:36.760596+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "4c28fda7030579b738cf31672251669c2f831f9b871abe26f333a77cbb287884",
+    "summary_sha256": "9f1f17b3c3884a105d72fe2e79495a2e06b5ec341612c0025e38af452c652661",
+    "scope": "原文と要約・導線を照合。製品の実測範囲と未検証の区別を維持。"
+  }
+}

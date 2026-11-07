@@ -1,0 +1,220 @@
+{
+  "status": "verified",
+  "checked_at": "2026-11-06T19:32:23.058251+00:00",
+  "skill": "C:/Users/ryo-n/.codex/skills/yomiyasu/SKILL.md",
+  "mode": "rewrite for existing documents; compose for new operational guide",
+  "scope": "日本語の操作・要件・検収文書。原レポートとコードの推敲は対象外。",
+  "meaning_review": {
+    "source_changes": "文書導入段階から承認済み製品Goalの実装・実測結果へ更新。Task/Acceptance状態は実試験とゲート成功後に変更。",
+    "numeric_evidence": [
+      "pytest-20261107.xml",
+      "product-lab-portable-20261107.json",
+      "product-boundaries-20261107.json",
+      "product-leakage-sigma-20261107.json",
+      "rsi-evaluation-20261107-02/execution.json",
+      "product-doc-gates-20261107.json"
+    ],
+    "retained_terms": {
+      "版": "ソフトウェアや資料のversionを指す定着した語。モデルの不変版との区別に必要。",
+      "入口": "CHANGELOGの過去記録で、診断スキルを開くための案内リンクを指す。抽象的な効果の主張ではない。"
+    },
+    "other_candidates": "手順の並列、初期設計の履歴、schema/CLI名、数値、必須条件は意味を優先して保持。資料にない識別子は実ソース・CLI・保存証跡と照合した。",
+    "claim_limit": "lint実行・hash一致は意味や読みやすさの自動合格ではない。"
+  },
+  "records": [
+    {
+      "path": "README.md",
+      "sha256": "0f3685576d3838698d77f240d26863f91e007af849c61bca83aa0699b84675e5",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T192049Z-5fb81f95 attempt=2 final=sha256:0f3685576d38 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=80",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T192049Z-5fb81f95 attempt=2 final=sha256:0f3685576d38 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=80 replay=skipped",
+      "retained_terms": []
+    },
+    {
+      "path": "BLUEPRINT.md",
+      "sha256": "2f764e98e4126663ba6a6691ceaf7852b47f070b2a67be4936ad34c0014b42c2",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T192050Z-bf8c6da1 attempt=2 final=sha256:2f764e98e412 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=68",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T192050Z-bf8c6da1 attempt=2 final=sha256:2f764e98e412 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=68 replay=skipped",
+      "retained_terms": [
+        "残した指摘の語: 版（直訳語。L31）。下の「■ 残した指摘の語」のとおり、書き直すか、尋ねるか、残す理由を書いてください。"
+      ]
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "ace82a6107135bbb1fbb4b647daf695cb2cfa54946a7744b9804512100bf3cc7",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T192052Z-e5da847b attempt=2 final=sha256:ace82a610713 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=3",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T192052Z-e5da847b attempt=2 final=sha256:ace82a610713 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=3 replay=skipped",
+      "retained_terms": []
+    },
+    {
+      "path": "HUB.codex.md",
+      "sha256": "194585a1cc87f940b8ffd1069009caa3d6304cf6e2ab57ed771de59d40abbc72",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T192053Z-1cef304e attempt=2 final=sha256:194585a1cc87 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=2",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T192053Z-1cef304e attempt=2 final=sha256:194585a1cc87 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=2 replay=skipped",
+      "retained_terms": [
+        "残した指摘の語: 版（直訳語。L17）。下の「■ 残した指摘の語」のとおり、書き直すか、尋ねるか、残す理由を書いてください。"
+      ]
+    },
+    {
+      "path": "GUARDRAILS.md",
+      "sha256": "27f5594d2053159e253e771d50f1791e72be15f495bbee9c399cd462d0f80458",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T192055Z-f774558f attempt=2 final=sha256:27f5594d2053 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=0",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T192055Z-f774558f attempt=2 final=sha256:27f5594d2053 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=0 replay=skipped",
+      "retained_terms": []
+    },
+    {
+      "path": "RUNBOOK.md",
+      "sha256": "861ef90d02b124c793c2d60ac1ec89731e916a4ecd2934a0e1e13260e419bdcc",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T192056Z-c1ca7d73 attempt=2 final=sha256:861ef90d02b1 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=27",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T192056Z-c1ca7d73 attempt=2 final=sha256:861ef90d02b1 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=27 replay=skipped",
+      "retained_terms": []
+    },
+    {
+      "path": "docs/RSI.md",
+      "sha256": "e6fb02186ec0aa4420b8ec522726dfb4b7c6589fdc8e9c8f78e1041633ad3692",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T192058Z-d3d19336 attempt=2 final=sha256:e6fb02186ec0 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=5",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T192058Z-d3d19336 attempt=2 final=sha256:e6fb02186ec0 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=5 replay=skipped",
+      "retained_terms": []
+    },
+    {
+      "path": "docs/CONTRACTS.md",
+      "sha256": "668b036acd18f21ae593d9edc3c230587066d05e332c9f7be79f059b3187e795",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T192059Z-6724f15f attempt=2 final=sha256:668b036acd18 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=12",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T192059Z-6724f15f attempt=2 final=sha256:668b036acd18 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=12 replay=skipped",
+      "retained_terms": [
+        "残した指摘の語: 版（直訳語。L22、L48、L49）。下の「■ 残した指摘の語」のとおり、書き直すか、尋ねるか、残す理由を書いてください。"
+      ]
+    },
+    {
+      "path": "docs/workflow-adoption.md",
+      "sha256": "6874541712371a19e29b35dbb88e7e8fa66a183950822bde868c00a0e07158f2",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T192100Z-f60785a6 attempt=2 final=sha256:687454171237 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=3",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T192100Z-f60785a6 attempt=2 final=sha256:687454171237 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=3 replay=skipped",
+      "retained_terms": [
+        "残した指摘の語: 版（直訳語。L23）。下の「■ 残した指摘の語」のとおり、書き直すか、尋ねるか、残す理由を書いてください。"
+      ]
+    },
+    {
+      "path": "EVALUATION.md",
+      "sha256": "5152d48166eef5545bfc38906fb22a81fa4506037a49f7ae53c565f0f63d65f1",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T192102Z-f2a12523 attempt=2 final=sha256:5152d48166ee mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=10",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T192102Z-f2a12523 attempt=2 final=sha256:5152d48166ee mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=10 replay=skipped",
+      "retained_terms": []
+    },
+    {
+      "path": "docs/PRODUCT-GUIDE.md",
+      "sha256": "faf39401dbe58a4b9e06ec8e017a6bf797cab5be803102c4933f0cebf39cfcb8",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T192736Z-5dc464f5 attempt=1 final=sha256:faf39401dbe5 mode=compose doc_type=manual checks=lint,materials meaning_risk=97",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T192736Z-5dc464f5 attempt=1 final=sha256:faf39401dbe5 mode=compose doc_type=manual checks=lint,materials meaning_risk=97 replay=skipped",
+      "retained_terms": [
+        "残した指摘の語: 版（直訳語。L72）。下の「■ 残した指摘の語」のとおり、書き直すか、尋ねるか、残す理由を書いてください。"
+      ]
+    },
+    {
+      "path": "docs/requirements/REQUIREMENTS.md",
+      "sha256": "084e78e8f67c01beb38a0f897803dc22941b1daace7da7579ff4487b34b7b8b6",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T192737Z-5ba99a82 attempt=1 final=sha256:084e78e8f67c mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=3",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T192737Z-5ba99a82 attempt=1 final=sha256:084e78e8f67c mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=3 replay=skipped",
+      "retained_terms": []
+    },
+    {
+      "path": "docs/requirements/DECISIONS.md",
+      "sha256": "99bf49a3316384b0430bd755dd665d1f47b1dfb28f80473f3c321b59e89c1ca7",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T192738Z-fee2716e attempt=1 final=sha256:99bf49a33163 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=3",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T192738Z-fee2716e attempt=1 final=sha256:99bf49a33163 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=3 replay=skipped",
+      "retained_terms": []
+    },
+    {
+      "path": "docs/requirements/SPEC-CORE.md",
+      "sha256": "eb16ab1c0715962295f8ec35f348acc53f6531e0d0328a1a2ea513e14fe070d7",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T192740Z-0e7dec61 attempt=1 final=sha256:eb16ab1c0715 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=4",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T192740Z-0e7dec61 attempt=1 final=sha256:eb16ab1c0715 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=4 replay=skipped",
+      "retained_terms": []
+    },
+    {
+      "path": "docs/requirements/SPEC-EVALUATION.md",
+      "sha256": "ba4f1c22af8eaa33ed8b9a4c1aa3949b80c882b714212ecddb5ace80ae652ebc",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T192741Z-89b62bcb attempt=1 final=sha256:ba4f1c22af8e mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=3",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T192741Z-89b62bcb attempt=1 final=sha256:ba4f1c22af8e mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=3 replay=skipped",
+      "retained_terms": []
+    },
+    {
+      "path": "docs/requirements/API-CONTRACTS.md",
+      "sha256": "58a1d3fa300a5ddd3dbfa62b3563ec2df06d9904ec6500592c54947f035b7351",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T192742Z-af05fc0f attempt=1 final=sha256:58a1d3fa300a mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=3",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T192742Z-af05fc0f attempt=1 final=sha256:58a1d3fa300a mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=3 replay=skipped",
+      "retained_terms": []
+    },
+    {
+      "path": "docs/requirements/IMPLEMENTATION-PLAN.md",
+      "sha256": "6ef4284027a280a03744c4e14665fb9cfde3966b5c922d54eddf23642e4bea4c",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T192744Z-cd52f1bd attempt=1 final=sha256:6ef4284027a2 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=3",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T192744Z-cd52f1bd attempt=1 final=sha256:6ef4284027a2 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=3 replay=skipped",
+      "retained_terms": []
+    },
+    {
+      "path": "docs/requirements/ACCEPTANCE-PLAN.md",
+      "sha256": "4c28fda7030579b738cf31672251669c2f831f9b871abe26f333a77cbb287884",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T192745Z-6f1a81c9 attempt=1 final=sha256:4c28fda70305 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=3",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T192745Z-6f1a81c9 attempt=1 final=sha256:4c28fda70305 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=3 replay=skipped",
+      "retained_terms": []
+    },
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "145011193e3ff98a8da9c7462cff122087e02cd260c4a500023de6bdb84c759d",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T192746Z-78cd435c attempt=1 final=sha256:145011193e3f mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=12",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T192746Z-78cd435c attempt=1 final=sha256:145011193e3f mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=12 replay=skipped",
+      "retained_terms": [
+        "残した指摘の語: 入口（直訳語。L20）。下の「■ 残した指摘の語」のとおり、書き直すか、尋ねるか、残す理由を書いてください。"
+      ]
+    },
+    {
+      "path": "docs/tasks/README.md",
+      "sha256": "cade9f0b4c57c40ae90c8f71802a55ed98d2757a99e77417828c5a2ae9b9fbf4",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T192748Z-b44d375b attempt=1 final=sha256:cade9f0b4c57 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=3",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T192748Z-b44d375b attempt=1 final=sha256:cade9f0b4c57 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=3 replay=skipped",
+      "retained_terms": []
+    },
+    {
+      "path": "docs/acceptance/INDEX.md",
+      "sha256": "0b25d7fbaa7cf2632f276b7fef210b8654b49032d2c367f15d5d4ff3215c069c",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T192749Z-dfb95c8f attempt=1 final=sha256:0b25d7fbaa7c mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=4",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T192749Z-dfb95c8f attempt=1 final=sha256:0b25d7fbaa7c mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=4 replay=skipped",
+      "retained_terms": []
+    },
+    {
+      "path": "docs/requirements/FRONTEND-DESIGN.md",
+      "sha256": "4cd8e90c7f43e5bfa306c647502d136199393e3879d8a7dfd68e07ce7f0b7e93",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T193108Z-7fef3793 attempt=1 final=sha256:4cd8e90c7f43 mode=compose doc_type=manual checks=lint,materials meaning_risk=124",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T193108Z-7fef3793 attempt=1 final=sha256:4cd8e90c7f43 mode=compose doc_type=manual checks=lint,materials meaning_risk=124 replay=skipped",
+      "retained_terms": []
+    },
+    {
+      "path": "docs/requirements/ENRICHMENT-FORMATS.md",
+      "sha256": "f18204fb1b031f73d2ea290fe5f8151026deafb8734cb41efb9f6dd93f5d9202",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T193109Z-25e05e84 attempt=1 final=sha256:f18204fb1b03 mode=compose doc_type=manual checks=lint,materials meaning_risk=74",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T193109Z-25e05e84 attempt=1 final=sha256:f18204fb1b03 mode=compose doc_type=manual checks=lint,materials meaning_risk=74 replay=skipped",
+      "retained_terms": []
+    },
+    {
+      "path": "docs/acceptance/AC-20261106-06.md",
+      "sha256": "0f5daecab4532965556b77ac6fa4a341ad630879c921a522ef5151f07146e340",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T192750Z-ba3c1154 attempt=2 final=sha256:0f5daecab453 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=41",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T192750Z-ba3c1154 attempt=2 final=sha256:0f5daecab453 mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=41 replay=skipped",
+      "retained_terms": []
+    },
+    {
+      "path": "docs/tasks/TASK.product-completion-11-06-2026.md",
+      "sha256": "0bab3c9a307c73545be0b0f22b9356d7e93e22e821ce48a4fc54aadeb7a3a790",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T192751Z-f4298020 attempt=2 final=sha256:0bab3c9a307c mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=16",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T192751Z-f4298020 attempt=2 final=sha256:0bab3c9a307c mode=rewrite doc_type=manual checks=lint,diff,materials meaning_risk=16 replay=skipped",
+      "retained_terms": []
+    },
+    {
+      "path": "docs/PRODUCT-ACCEPTANCE.md",
+      "sha256": "777eaa826df9fa7da782399759f0eeb9a8958f6ba23481b57afb6f85b4c845b8",
+      "run_status": "yomiyasu-check: executed via=run run=20261106T192753Z-e9a6091e attempt=2 final=sha256:777eaa826df9 mode=compose doc_type=manual checks=lint,materials meaning_risk=118",
+      "verify_status": "yomiyasu-check: executed via=verify run=20261106T192753Z-e9a6091e attempt=2 final=sha256:777eaa826df9 mode=compose doc_type=manual checks=lint,materials meaning_risk=118 replay=skipped",
+      "retained_terms": []
+    }
+  ]
+}

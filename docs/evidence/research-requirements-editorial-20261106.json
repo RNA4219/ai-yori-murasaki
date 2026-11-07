@@ -1,0 +1,18 @@
+{
+  "research": "原文照合14引用、詳細説明全引用照合OK。GLM7指摘を反映、監督が原典の主語を限定。",
+  "readability": {
+    "research": [
+      "この最終稿に必要な検査（lint、資料との照合）を実行した記録があり、最終稿のハッシュが記録と合いました。合格の判定ではありません。完了報告を付けるときは、この出力の2行目を写してください。",
+      "yomiyasu-check: executed via=verify run=20261105T233202Z-5ee1a696 attempt=2 final=sha256:bbb318e36e2b mode=compose doc_type=formal reader=expert checks=lint,materials meaning_risk=7 replay=skipped"
+    ],
+    "REQUIREMENTS": [
+      "この最終稿に必要な検査（lint、資料との照合）を実行した記録があり、最終稿のハッシュが記録と合いました。合格の判定ではありません。完了報告を付けるときは、この出力の2行目を写してください。",
+      "yomiyasu-check: executed via=verify run=20261105T233809Z-c611b9fb attempt=2 final=sha256:3491ab732cf4 mode=compose doc_type=formal reader=expert checks=lint,materials meaning_risk=259 replay=skipped"
+    ],
+    "DECISIONS": [
+      "この最終稿に必要な検査（lint、資料との照合）を実行した記録があり、最終稿のハッシュが記録と合いました。合格の判定ではありません。完了報告を付けるときは、この出力の2行目を写してください。",
+      "yomiyasu-check: executed via=verify run=20261105T233810Z-45f78b2c attempt=2 final=sha256:f1dd3b379e7e mode=compose doc_type=formal reader=expert checks=lint,materials meaning_risk=198 replay=skipped"
+    ]
+  },
+  "retained_candidates": "台帳は実際のEvidence ledger、ゲートは承認・評価条件、正本はcanonical sourceを指す技術語として保持。要件の並列属性を箇条書きで保ち、無意味な太字を整理。否定の対比は実証/未実証・権限/非権限の区別に必要。資料外のID・行番号・監督採用値は要件/判断台帳へ出典帰属を記録。規模例やGPUメモリ値は非拘束の原典想定として元資料に保持。"
+}

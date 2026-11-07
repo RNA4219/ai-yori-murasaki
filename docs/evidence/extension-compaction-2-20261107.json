@@ -1,0 +1,14 @@
+{
+  "stage": "仕様",
+  "index": 2,
+  "recorded_at": "2026-11-06T22:32:47.766034+00:00",
+  "source": "docs/requirements/SPEC-ASSESSMENT.md",
+  "sha256": "33670386e18a96cf57668d3701fe2e2e9b391afe6db4b1831112d52b41381007",
+  "review": "C:\\Users\\ryo-n\\Codex_dev\\ai-yori-murasaki\\.ga\\goal-20261106\\v2-spec-approved-glm-metadata.json",
+  "decisions": [
+    "既存8kindを維持。新assessment reportからFindingへ一方向CAS参照",
+    "CVSS4は11基本指標、業務影響と独立。版一致だけでCVE条件成立としない",
+    "Blue APIは件数も含め固定withheld。Oracle期待はコンテナへ渡さない"
+  ],
+  "remaining": "実装・実測は別工程。監督要約による文脈整理でありシステム強制compactionではない。"
+}

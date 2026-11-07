@@ -1,0 +1,137 @@
+{
+  "snapshot_id": "security-audit-skill-20261106",
+  "upstream_url": "https://github.com/cloudflare/security-audit-skill",
+  "upstream_commit": "c1c8a8c1471069fb0e188eeaff69b8e8db6564a8",
+  "local_source": "C:\\Users\\ryo-n\\Codex_dev\\security-audit-skill\\skills\\security-audit",
+  "optimization": "sankaiによる分解後、入口の日本語化・計画と実行条件の分離・完了条件の明確化を適用",
+  "installed_directory": ".agents/skills/security-audit",
+  "license": ".agents/skills/security-audit/LICENSE",
+  "files": [
+    {
+      "path": ".agents/skills/security-audit/AI-AND-LLM.md",
+      "sha256": "0d57a4d8b1ce05015e867bc89277aabf80f4a3031beba42df4481fc92027f83b",
+      "bytes": 10700
+    },
+    {
+      "path": ".agents/skills/security-audit/ATTACK-CLASSES.md",
+      "sha256": "fff6ce0269696d17bda38bfeb27410bdce820f2299cb68a7ceb81883204a3604",
+      "bytes": 15825
+    },
+    {
+      "path": ".agents/skills/security-audit/AUDIT-PLANNING.md",
+      "sha256": "e28b07020be6e3c1a4476aacdc79b62c1c544115f9faf497dcfc8709e58c8da5",
+      "bytes": 7172
+    },
+    {
+      "path": ".agents/skills/security-audit/CLIENT-SIDE.md",
+      "sha256": "e9098dc5da89a996e28c25e9e3e3e976ec777a19c4f05c9a04cd4c0d4a3ce120",
+      "bytes": 8677
+    },
+    {
+      "path": ".agents/skills/security-audit/CLOUD-AND-DEPLOYMENT.md",
+      "sha256": "29514d7c3a9e83d48f1f519e70e8b2fde4e1d1ac92d2500737b6c8be718c3b2d",
+      "bytes": 8377
+    },
+    {
+      "path": ".agents/skills/security-audit/DATA-ISOLATION-AND-LIFECYCLE.md",
+      "sha256": "5c546940150363cb4039038e2c00c080a8d302e7a2e50f72f3960e4c67801b5e",
+      "bytes": 7882
+    },
+    {
+      "path": ".agents/skills/security-audit/DESKTOP-MOBILE-AND-LOCAL-IPC.md",
+      "sha256": "055fec61e744d5ba434cbf0c1f2994b1f83d961f5e43d89cc0bb690d16a11f3b",
+      "bytes": 8828
+    },
+    {
+      "path": ".agents/skills/security-audit/EXECUTION-SAFETY.md",
+      "sha256": "5d673f83138ce6dd11734ac875653ccb4a91c984b0ea33caa221238dcb5009d7",
+      "bytes": 7489
+    },
+    {
+      "path": ".agents/skills/security-audit/HUNTING.md",
+      "sha256": "c39bebb0b02f80a5b89727f6178229cf29d12adb907c618014dbcca6376816fe",
+      "bytes": 22684
+    },
+    {
+      "path": ".agents/skills/security-audit/LICENSE",
+      "sha256": "c007a58f958f8a5b2870aa35d8a17aa72a546447aecee6d2b72e19fea530890b",
+      "bytes": 1099
+    },
+    {
+      "path": ".agents/skills/security-audit/MEMORY-SAFETY-AND-BINARY.md",
+      "sha256": "c88390b508fc86838b7b12889499fabf28acfe32ca34f2d4ff655a420264f44f",
+      "bytes": 10614
+    },
+    {
+      "path": ".agents/skills/security-audit/PROTOCOLS-RPC-AND-MESSAGING.md",
+      "sha256": "2bc534260d9842cc9a6bb15615e58c5350201008880083da78969bdeb657a7ce",
+      "bytes": 7564
+    },
+    {
+      "path": ".agents/skills/security-audit/RECONNAISSANCE.md",
+      "sha256": "16942ec2996d152e378e39e8be326903d0b6e156a73003d38b150e84f3b135fa",
+      "bytes": 16006
+    },
+    {
+      "path": ".agents/skills/security-audit/report-schema.json",
+      "sha256": "7bea150f30dcef07df1859d33d01406953cf600f6a08250e1e59e10f252e2c4c",
+      "bytes": 14955
+    },
+    {
+      "path": ".agents/skills/security-audit/RESOURCE-EXHAUSTION-AND-AVAILABILITY.md",
+      "sha256": "a9590f9966de194e51dd7c82f930bc910662f0275357e433e33758756755ec8d",
+      "bytes": 7554
+    },
+    {
+      "path": ".agents/skills/security-audit/SKILL.md",
+      "sha256": "af5d1c7a8a0abf476302a6271a827a545b6cac8387b074fb7efb5a8b298536ea",
+      "bytes": 8706
+    },
+    {
+      "path": ".agents/skills/security-audit/SUPPLY-CHAIN-AND-RELEASE.md",
+      "sha256": "c1eb0a8b9a6ab1e979b214ee70fd8fff4c173d4063fd82df82fc5269cb115c17",
+      "bytes": 7331
+    },
+    {
+      "path": ".agents/skills/security-audit/validate-coverage-ledger.cjs",
+      "sha256": "db2d1a36031ed1552e1d45cefe1da591ef4eebf2d3f3ee3b0298d07051e3a312",
+      "bytes": 34394
+    },
+    {
+      "path": ".agents/skills/security-audit/validate-coverage-ledger.test.cjs",
+      "sha256": "44dd5a6200952fb4f149a3f0dbabdbe116c402c63f0bd2858043207debe39bcc",
+      "bytes": 29223
+    },
+    {
+      "path": ".agents/skills/security-audit/validate-findings.cjs",
+      "sha256": "31dabfb5ed2454e4bfa5000fe0f2600df0df9f7ad1781a2fdb9a98a50f507963",
+      "bytes": 29579
+    },
+    {
+      "path": ".agents/skills/security-audit/validate-findings.test.cjs",
+      "sha256": "7c91656073b51cbb7e029e33804de97c1d8c0b52f3521fd60e3978133e8cb73a",
+      "bytes": 27036
+    },
+    {
+      "path": ".agents/skills/security-audit/VALIDATION-AND-REPORTING.md",
+      "sha256": "f4f044784080b4cb3b83adc24617ea7ad75f75301a8d31f1571e9110d5c77b95",
+      "bytes": 18334
+    },
+    {
+      "path": ".agents/skills/security-audit/WEB-PROTOCOL-AND-AUTH.md",
+      "sha256": "757c5191cc397ad7145ffe5b6ffa438bdd36fefd351da640267630d05f01bfae",
+      "bytes": 12405
+    }
+  ],
+  "prior_validation": {
+    "source": "security-audit-skill/docs/sankai/verification.json",
+    "linux": {
+      "tests": 65,
+      "pass": 65,
+      "fail": 0,
+      "skipped": 0
+    },
+    "windows_cli": "O_NOFOLLOW/O_NONBLOCKが使えない環境では入力を拒否する。保護を弱めない。"
+  },
+  "scope": "プロジェクト用スキルの配置と運用接続。製品の脆弱性診断や実行器・Finding契約への自動連携は未実施。"
+}

@@ -1,0 +1,252 @@
+{
+  "kind": "product-real-docker-lab",
+  "started_at": 1793991910.1561835,
+  "result": {
+    "campaign_id": "c7985ccfeca7342b9",
+    "baseline_statuses": [
+      200,
+      200,
+      200
+    ],
+    "blue_detections": 3,
+    "replay_statuses": [
+      403,
+      403,
+      403
+    ],
+    "benign_checks": [
+      {
+        "name": "health",
+        "expected": 200,
+        "actual": 200,
+        "passed": true
+      },
+      {
+        "name": "public",
+        "expected": 200,
+        "actual": 200,
+        "passed": true
+      },
+      {
+        "name": "admin_record",
+        "expected": 200,
+        "actual": 200,
+        "passed": true
+      },
+      {
+        "name": "unknown",
+        "expected": 404,
+        "actual": 404,
+        "passed": true
+      },
+      {
+        "name": "health_repeat",
+        "expected": 200,
+        "actual": 200,
+        "passed": true
+      }
+    ],
+    "final_verdict": {
+      "schema_version": "1.0.0",
+      "campaign_id": "c7985ccfeca7342b9",
+      "run_id": "r9b66a76ab8cd4df7",
+      "oracle_verdict": "FAIL",
+      "oracle_reason_code": "exploit_not_succeeded",
+      "run_completion": "completed",
+      "adapter_status": [],
+      "cancellation": null,
+      "remediation_success": true,
+      "benign_regression_passed": true,
+      "remediation_id": "rem-7543f905-c83b-4df7-bc32-3b18aec6464f",
+      "test_report_refs": [
+        "38507014618ddf6d63b3482f09b07536033fd23711613896c49e6e1f7a2f6fb5"
+      ],
+      "decided_at": "2026-11-06T19:05:27.874592Z"
+    },
+    "status": "review_pending",
+    "verification_journal_ref": "eb096ce9a4358bee8f6ec868fe9c28ae04416b9e8f8b922493ef81cc69f27448",
+    "metrics": {
+      "status": "measured",
+      "metrics": {
+        "evidence_completeness": {
+          "value": 1.0,
+          "numerator": 53,
+          "denominator": 53,
+          "unit": "ratio",
+          "invalid": 0,
+          "skipped": 0,
+          "pair_fail": 0,
+          "scope": "manifest event_counts"
+        },
+        "oracle_replay_match_rate": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1,
+          "unit": "ratio",
+          "invalid": 0,
+          "skipped": 15,
+          "pair_fail": 0,
+          "scope": "replayable runs"
+        },
+        "blue_recall": {
+          "value": 1.0,
+          "numerator": 3,
+          "denominator": 3,
+          "unit": "ratio",
+          "invalid": 0,
+          "skipped": 0,
+          "pair_fail": 0,
+          "scope": "attack fixtures"
+        },
+        "blue_precision": {
+          "value": 1.0,
+          "numerator": 3,
+          "denominator": 3,
+          "unit": "ratio",
+          "invalid": 0,
+          "skipped": 0,
+          "pair_fail": 0,
+          "scope": "stable finding_id dedup"
+        },
+        "remediation_success_rate": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1,
+          "unit": "ratio",
+          "invalid": 0,
+          "skipped": 0,
+          "pair_fail": 0,
+          "scope": "remediation attempts"
+        },
+        "over_remediation_rate": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 1,
+          "unit": "ratio",
+          "invalid": 0,
+          "skipped": 0,
+          "pair_fail": 0,
+          "scope": "applied remediations"
+        },
+        "evidence_missing_rate": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 53,
+          "unit": "ratio",
+          "invalid": 0,
+          "skipped": 0,
+          "pair_fail": 0,
+          "scope": "manifest event_counts"
+        },
+        "red_to_detection_time": {
+          "value": 1.7871919473012288,
+          "numerator": 3,
+          "denominator": 3,
+          "unit": "seconds",
+          "invalid": 0,
+          "skipped": 0,
+          "pair_fail": 0,
+          "scope": "detected pairs"
+        },
+        "undetected_attack_techniques": {
+          "value": null,
+          "numerator": 0,
+          "denominator": 0,
+          "unit": "ratio",
+          "invalid": 0,
+          "skipped": 0,
+          "pair_fail": 0,
+          "scope": "technique fixtures",
+          "undetected_ids": []
+        },
+        "production_auto_apply_count": {
+          "value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "unit": "count",
+          "invalid": 0,
+          "skipped": 0,
+          "pair_fail": 0,
+          "scope": "all runs"
+        },
+        "unauthorized_privileged_actions": {
+          "value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "unit": "count",
+          "invalid": 0,
+          "skipped": 0,
+          "pair_fail": 0,
+          "scope": "all runs"
+        },
+        "_aux": {
+          "pair_fail": 0,
+          "candidate_loss": 0,
+          "missing_expected_runs": [],
+          "observed_runs": 16,
+          "expected_runs": 16
+        }
+      },
+      "limitations": [
+        "ATT&CK mapping unobserved",
+        "local recorded events scope"
+      ],
+      "expected_manifest": {
+        "run_ids": [
+          "r056bc245a5fe4623",
+          "r0590d8b8155f47ea",
+          "r1a9d86e7f2b5462c",
+          "r1d21d96d697f408b",
+          "r3768d9a3625a4a07",
+          "r4515a3c30e714087",
+          "r6caa088c83524702",
+          "r926cdf37cc574773",
+          "r9b66a76ab8cd4df7",
+          "rb5f08f853dc24106",
+          "rbd2a043c559f43ad",
+          "rdda55c673f184869",
+          "rf8a72921d5164c72",
+          "attack-c7985ccfeca7342b9-attack-1",
+          "attack-c7985ccfeca7342b9-attack-2",
+          "attack-c7985ccfeca7342b9-attack-3"
+        ],
+        "event_counts": {
+          "r056bc245a5fe4623": 3,
+          "r0590d8b8155f47ea": 3,
+          "r1a9d86e7f2b5462c": 3,
+          "r1d21d96d697f408b": 4,
+          "r3768d9a3625a4a07": 6,
+          "r4515a3c30e714087": 3,
+          "r6caa088c83524702": 3,
+          "r926cdf37cc574773": 3,
+          "r9b66a76ab8cd4df7": 7,
+          "rb5f08f853dc24106": 6,
+          "rbd2a043c559f43ad": 5,
+          "rdda55c673f184869": 3,
+          "rf8a72921d5164c72": 4
+        },
+        "attack_ids": [
+          "attack-1",
+          "attack-2",
+          "attack-3"
+        ],
+        "technique_ids": []
+      },
+      "source_refs": {
+        "red_run_id": "r3768d9a3625a4a07",
+        "blue_run_id": "rb5f08f853dc24106",
+        "reevaluation_run_id": "r9b66a76ab8cd4df7",
+        "red_ref": "fc936f0b3141bebaaf2cd8eb9fe20f3aa33627366cf814a3ad00886b0f5d612c",
+        "blue_ref": "886e0003284ff9c29d81e53752522208ed832e3934fd76a47aeecbb52945473b",
+        "replay_predicate_ref": "7bd93af0a7ab58260b2a71b0eb69e04d40c0ee8f48a922531c2a6531dea2fa9c",
+        "benign_ref": "38507014618ddf6d63b3482f09b07536033fd23711613896c49e6e1f7a2f6fb5",
+        "remediation_ref": "0948f499a1ff9906f4f01ed2ec8135df3d4b0f5d9538bdcf1d430144e3f0f422",
+        "detected_at": 1793991914.9924755
+      }
+    },
+    "measurement_ref": "727704ba32c03f42ebec11361f7dcd7d4f0e53a855c48d7d20f80769e1c145c5",
+    "tuning_ref": "9849f1cb570ca3e669e6c6565e09d43d0d4ced9f275ad73bb5ddd2164eb4cc5c"
+  },
+  "status": "completed",
+  "seconds": 22.75
+}

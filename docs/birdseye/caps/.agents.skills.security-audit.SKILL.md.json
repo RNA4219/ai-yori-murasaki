@@ -1,0 +1,23 @@
+{
+  "id": ".agents/skills/security-audit/SKILL.md",
+  "role": "skill",
+  "public_api": [],
+  "summary": "ソースから信頼境界の違反を調べる。個別調査と完全監査の6工程を分け、判定・独立検証と必要な参照を定める。",
+  "deps_out": [],
+  "deps_in": [
+    "AGENTS.md",
+    "HUB.codex.md",
+    "RUNBOOK.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "af5d1c7a8a0abf476302a6271a827a545b6cac8387b074fb7efb5a8b298536ea",
+  "generated_at": "00021",
+  "review": {
+    "reviewed_at": "2026-11-06T19:29:53.143795+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "af5d1c7a8a0abf476302a6271a827a545b6cac8387b074fb7efb5a8b298536ea",
+    "summary_sha256": "307dfebf67d5be4a17a42f6da68c7a7989fd9cf484938eb874a9b59ca66aceb2",
+    "scope": "原文hashと既存の要約確認を維持し、変更文書からの逆参照だけを実リンクと照合。"
+  }
+}
