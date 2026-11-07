@@ -10,7 +10,7 @@ next_review_due: 2026-12-07
 
 ローカルの隔離ラボで、Redによる観測、Blueによる検知、修復、再検証を実行するPython製品です。証跡を保存し、LLMを使わないOracleで判定します。HTMLモニターから実行状態、検知、修復、KPI、RSI候補を確認できます。独自コードのライセンスは[MIT](LICENSE)です。
 
-2026-11-07に一度製品完成の判定を撤回しました（[再評価と追加提案](docs/reviews/REVIEW-INTAKE-20261107.md)）。その後、最低5類型の評価、根拠付き分類と修復・再検証の接続、CVSS・業務影響、KEV/EPSS、HTML表示を実装し、15runの正式採点で全splitが合格、評価identityを凍結しました。旧holdoutの順序来歴疑義は診断扱いとし、未使用seedで追補したholdout3runも全件合格、実ラボ画面の最終確認も実campaignで全ケース合格、配布物と現行コードの一致を確認しました。技術検収は[AC-20261107-03](docs/acceptance/AC-20261107-03.md)にまとめています。
+2026-11-07に、一度出していた製品完成の判定を撤回しました（[再評価と追加提案](docs/reviews/REVIEW-INTAKE-20261107.md)）。その後、最低5類型の評価、根拠付き分類と修復・再検証の接続、CVSS・業務影響、KEV/EPSS、HTML表示を実装しました。15runの正式採点では全splitが合格し、評価identityを凍結しました。旧holdoutの順序来歴疑義は診断扱いとし、未使用seedで追補したholdout3runも全件合格しました。実ラボ画面の最終確認でも、実campaignで全ケースが合格し、配布物と現行コードの一致を確認しました。技術検収は[AC-20261107-03](docs/acceptance/AC-20261107-03.md)にまとめています。
 
 追加項目のうちCVSS・業務影響と最低5類型の評価は承認済みです。実利用者試験は2026-11-07のユーザー訂正で必須条件から撤回しました（[追加要件](docs/requirements/REQUIREMENTS-EXTENSION.md)、[利用者試験計画](docs/requirements/USER-STUDY-PLAN.md)）。[実装仕様](docs/requirements/SPEC-ASSESSMENT.md)に従い、[Task 20261107-03](docs/tasks/TASK.product-clarity-11-07-2026.md)で対応しています。
 
@@ -44,7 +44,7 @@ aym monitor serve --bind 127.0.0.1:8765
 
 RSIではtrainから候補を作り、凍結した条件でvalidationとholdoutを比較しました。決定的なローカル認可方針の評価で採用準備完了となり、実行器への反映は行っていません。LLMの汎用性能向上を実証した結果ではありません。
 
-5類型の正式採点では、train/validation/holdoutの全splitでrecall 1.0・正常系保持1.0・判定不能0.0となり、評価identity（イメージdigest一致・ソース不変）を凍結しました。配布用のsdist/wheelをビルドし、MITライセンスと第三者表示を同梱、秘密情報検査は186ファイルで0件でした。配布物（sdist/wheel）と現行コード112ファイルのsha256比較で不一致0件、評価identityの13artifactも全件一致しました。
+5類型の正式採点ではtrain/validation/holdoutの全splitでrecall 1.0・正常系保持1.0・判定不能0.0となりました。これにより、評価identity（イメージdigest一致・ソース不変）を凍結しました。配布用のsdist/wheelをビルドし、MITライセンスと第三者表示を同梱しました。秘密情報検査は186ファイルで0件でした。配布物（sdist/wheel）と現行コード112ファイルのsha256比較で不一致0件、評価identityの13artifactも全件一致しました。
 
 [製品検収](docs/acceptance/AC-20261106-06.md)にテスト、画面、モデル呼び出し、比較評価の証跡をまとめています。外部Trivy、CodeQL、Wazuh、Sigma CLI、RustXNG、rdshは契約試験までです。ATT&CKの実ラボ対応付けは未測定です。cloudモデル名から固定版を保証しません。
 
