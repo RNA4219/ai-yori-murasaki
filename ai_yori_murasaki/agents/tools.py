@@ -196,11 +196,16 @@ class ToolBroker:
 
     # -- argument validators ------------------------------------------------
 
-    def _require_keys(self, args: Any, keys: Set[str]) -> None:
+    def _require_keys(self, args: Any, keys: Set[str],
+                      optional: Optional[Set[str]] = None) -> None:
         if not isinstance(args, dict):
             raise _ArgError("args must be object")
-        if set(args.keys()) != keys:
-            raise _ArgError("args keys invalid")
+        optional = optional or set()
+        expected = keys | optional
+        if not set(args.keys()) <= expected or not keys <= set(args.keys()):
+            raise _ArgError(
+                "args keys invalid: required={}, optional={}".format(
+                    sorted(keys), sorted(optional)))
 
     # -- execution ---------------------------------------------------------
 
@@ -387,7 +392,8 @@ class ToolBroker:
     # read_target_file ------------------------------------------------------------
 
     def _run_read_target_file(self, args: Any) -> Dict[str, Any]:
-        self._require_keys(args, {"path", "start_line", "end_line"})
+        self._require_keys(args, {"path"}, optional={"start_line",
+                                                    "end_line"})
         path = args["path"]
         start_line = args["start_line"]
         end_line = args["end_line"]
