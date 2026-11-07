@@ -908,6 +908,8 @@ td, th { font-variant-numeric: tabular-nums; }
         if (!isCurrent()) return;
         if (d && Array.isArray(d.rsi)) { aggregate.rsi = d.rsi; }
         else { aggregate.rsi = null; aggregate.rsiError = '応答形式が不正です'; }
+        if (d && Array.isArray(d.agent_rsi)) { aggregate.agentRsi = d.agent_rsi; }
+        else { aggregate.agentRsi = []; }
       }).catch(function (e) {
         if (!isCurrent()) return;
         var m = errMsg(e);
@@ -1119,6 +1121,7 @@ td, th { font-variant-numeric: tabular-nums; }
     event_type: 'イベント種別',
     timestamp: '記録日時',
     evidence_count: '証拠件数',
+    agent_summary: '内容',
     verify_id: '検証ID',
     result: '結果',
     reason_code: '理由コード',
@@ -1951,6 +1954,40 @@ td, th { font-variant-numeric: tabular-nums; }
       }
       pRsi.appendChild(makeTable(['candidate_id', 'freeze_id', 'content_digest', 'status', 'comparison', 'applied'], rsiRows, '改善候補一覧'));
     }
+    var agentRsiArr = Array.isArray(state.detail.agentRsi) ? state.detail.agentRsi : [];
+    var pAgentRsi = document.createElement('section');
+    pAgentRsi.className = 'panel';
+    pAgentRsi.appendChild(text('h2', 'エージェント方針のRSI（プロンプト・予算の改善候補）'));
+    pAgentRsi.appendChild(text('p', 'ラボで実際に動いたエージェントの方針bundle（プロンプト・ツール許可・予算）を改善対象としたRSIの候補一覧。モデルの固定版の証明ではありません。', 'muted'));
+    if (!agentRsiArr.length) {
+      pAgentRsi.appendChild(text('p', '対象campaignのエージェントRSI候補はまだありません。', 'muted'));
+    } else {
+      var agentRsiRows = [];
+      for (var ar = 0; ar < agentRsiArr.length; ar++) {
+        var cand = agentRsiArr[ar];
+        if (!cand) continue;
+        var s = cand.summary;
+        var cmpA = '未測定';
+        if (s) {
+          cmpA = '比較=' + (s.pairs === null || s.pairs === undefined ? '未記録' : s.pairs) + '組 validation=' + (s.validation_baseline === null || s.validation_baseline === undefined ? '未記録' : s.validation_baseline) + '→' + (s.validation_candidate === null || s.validation_candidate === undefined ? '未記録' : s.validation_candidate) + ' holdout=' + (s.holdout_baseline === null || s.holdout_baseline === undefined ? '未記録' : s.holdout_baseline) + '→' + (s.holdout_candidate === null || s.holdout_candidate === undefined ? '未記録' : s.holdout_candidate);
+        }
+        var readyA;
+        if (!cand.compared) readyA = badge('未比較', 'info', '○');
+        else if (s && s.ready === true) readyA = badge('採用条件を満たした', 'ok', '●');
+        else if (s && s.exploration_grade === true) readyA = badge('探索扱い（モデル版が未固定）', 'warn', '△');
+        else readyA = badge('採用条件を満たさない', 'warn', '△');
+        agentRsiRows.push([
+          orUnrecorded(cand.candidate_id),
+          orUnrecorded(cand.freeze_id),
+          cand.rules_applied && cand.rules_applied.length ? cand.rules_applied.join('、') : orUnrecorded(null),
+          cmpA,
+          readyA,
+          cand.applied === true ? badge('反映済み', 'ok', '●') : badge('未反映', 'info', '○')
+        ]);
+      }
+      pAgentRsi.appendChild(makeTable(['candidate_id', 'freeze_id', '適用した改善規則', '比較結果', '採用判断', '反映'], agentRsiRows, 'エージェントRSI候補一覧'));
+    }
+    pRsi.appendChild(pAgentRsi);
     secRsi.appendChild(pRsi);
     p.appendChild(secRsi);
 
@@ -2382,6 +2419,48 @@ td, th { font-variant-numeric: tabular-nums; }
     return p;
   }
 
+  function agentSummaryNode(ev) {
+    var agent = ev ? ev.agent : null;
+    if (!agent || typeof agent !== 'object' || Array.isArray(agent)) return document.createTextNode('');
+    var prefix = '';
+    if (ev.source === 'llm') prefix = '(LLMの判断・提案)';
+    else if (ev.source === 'orchestrator') prefix = '(orchestratorの実行)';
+    else if (ev.source === 'oracle') prefix = '(Oracleの判定)';
+    var rt = agent.record_type;
+    var body;
+    if (rt === 'agent_turn') {
+      var turnN = (agent.turn === null || agent.turn === undefined || agent.turn === '') ? '未記録' : String(agent.turn);
+      var modelM = (agent.model === null || agent.model === undefined || agent.model === '') ? '未記録' : String(agent.model);
+      var toolT = (agent.tool === null || agent.tool === undefined || agent.tool === '') ? '未記録' : String(agent.tool);
+      if (agent.llm_status === 'incomplete') body = 'LLM失敗: 応答が不完全または取得不能(成功とは扱いません)';
+      else if (agent.llm_status === 'empty') body = 'LLM失敗: 応答が空(成功とは扱いません)';
+      else if (agent.parse_error === true) body = 'ターン' + turnN + ': モデル(' + modelM + ')の出力をJSONとして解釈できず拒否';
+      else body = 'ターン' + turnN + ': モデル(' + modelM + ')が ' + toolT + ' を選択(判断・提案)';
+    } else if (rt === 'agent_tool') {
+      var toolT2 = (agent.tool === null || agent.tool === undefined || agent.tool === '') ? '未記録' : String(agent.tool);
+      body = 'ツール ' + toolT2 + ' を実行(orchestratorが実行)';
+      var extras = [];
+      if (agent.category !== null && agent.category !== undefined && agent.category !== '') extras.push(String(agent.category));
+      if (agent.path !== null && agent.path !== undefined && agent.path !== '') extras.push(String(agent.path));
+      if (extras.length > 0) body += '(' + extras.join('、') + ')';
+    } else if (rt === 'agent_tool_denied') {
+      var toolT3 = (agent.tool === null || agent.tool === undefined || agent.tool === '') ? '未記録' : String(agent.tool);
+      var reasonR = (agent.reason === null || agent.reason === undefined || agent.reason === '') ? '理由未記録' : String(agent.reason);
+      body = 'ツール要求を拒否: ' + toolT3 + '(' + reasonR + ')';
+    } else if (rt === 'agent_stopped') {
+      var reasonR2 = (agent.reason === null || agent.reason === undefined || agent.reason === '') ? '理由未記録' : String(agent.reason);
+      body = '停止: ' + reasonR2 + '(モデル自身の申告であり、Oracleの成功判定ではありません)';
+    } else if (rt === 'agent_hypothesis') {
+      body = '仮説を記録(LLMの提案)';
+    } else if (rt === 'patch_drafted' || rt === 'remediation_drafted') {
+      if (agent.unit_passed === true) body = '修正案を作成し単体検証に合格(モデル申告。Oracle判定は別)';
+      else body = '修正案を作成(単体検証未合格または未実施)';
+    } else {
+      body = 'エージェント記録(種別未記録)';
+    }
+    return text('span', prefix + body, '');
+  }
+
   function renderRunDetail() {
     var frag = document.createDocumentFragment();
     var id = state.route.params.id;
@@ -2448,9 +2527,9 @@ td, th { font-variant-numeric: tabular-nums; }
         var ev = state.detail.events[ei];
         if (!ev) continue;
         var refsText = (ev.evidence_count === null || ev.evidence_count === undefined) ? '未記録' : (ev.evidence_count + ' 件');
-        evRows.push([orUnrecorded(ev.sequence), orUnrecorded(ev.event_type || ev.type), orUnrecorded(fmtTime(ev.timestamp)), refsText]);
+        evRows.push([orUnrecorded(ev.sequence), orUnrecorded(ev.event_type || ev.type), orUnrecorded(fmtTime(ev.timestamp)), refsText, agentSummaryNode(ev)]);
       }
-      pEv.appendChild(makeTable(['sequence', 'event_type', 'timestamp', 'evidence_count'], evRows, '公開イベント履歴'));
+      pEv.appendChild(makeTable(['sequence', 'event_type', 'timestamp', 'evidence_count', 'agent_summary'], evRows, '公開イベント履歴'));
     }
     frag.appendChild(pEv);
 

@@ -203,6 +203,58 @@ class ServerContractTests(unittest.TestCase):
         return self.fx.runtime.create_campaign(
             intent_id, scope, self._auth(scope), idem)
 
+    def test_agent_event_projection_and_agent_rsi(self) -> None:
+        campaign = self._create_campaign("INT-4", "idem-4")
+        cid = campaign["campaign_id"]
+        self.fx.runtime.transition(cid, "running")
+        run = self.fx.runtime.start_run(cid, "red", 1, "idem-run-4")
+        rid = run["run_id"]
+        self.fx.runtime.record_event(
+            rid, "state_captured", "llm",
+            extensions={"record_type": "agent_turn", "turn": 1,
+                        "model": "test-model", "tool": "probe_endpoint"},
+        )
+        status, _, body = self.fx.get(f"/api/runs/{rid}/events?limit=10")
+        self.assertEqual(status, 200)
+        events = json.loads(body)["events"]
+        agent_events = [e for e in events if isinstance(e.get("agent"), dict)]
+        self.assertEqual(len(agent_events), 1)
+        agent = agent_events[0]["agent"]
+        self.assertEqual(agent["record_type"], "agent_turn")
+        self.assertEqual(agent["model"], "test-model")
+        self.assertEqual(agent["tool"], "probe_endpoint")
+        self.assertEqual(agent["turn"], 1)
+        # agent RSI state file projects through the campaign RSI endpoint
+        import json as _json
+        state_dir = self.fx.workspace / "agent_rsi"
+        state_dir.mkdir(parents=True, exist_ok=True)
+        candidate = {
+            "candidate_id": "agc-test01",
+            "freeze_id": "ag-test01",
+            "campaign_id": cid,
+            "bundle_digest": "b" * 64,
+            "baseline_digest": "a" * 64,
+            "rules_applied": ["blue_missed_detection"],
+            "compared": True,
+            "applied": False,
+            "summary": {"pairs": 2, "gain": 0.5, "ready": False,
+                        "exploration_grade": True, "model_pinned": False},
+        }
+        (state_dir / "state.json").write_text(
+            _json.dumps({"candidates": {"agc-test01": candidate},
+                         "freezes": {}, "reviews": {}, "memory": []}),
+            encoding="utf-8")
+        status, _, body = self.fx.get(f"/api/campaigns/{cid}/rsi")
+        self.assertEqual(status, 200)
+        doc = json.loads(body)
+        self.assertIn("rsi", doc)
+        agent_rsi = doc["agent_rsi"]
+        self.assertEqual(len(agent_rsi), 1)
+        self.assertEqual(agent_rsi[0]["candidate_id"], "agc-test01")
+        self.assertEqual(agent_rsi[0]["summary"]["gain"], 0.5)
+        self.assertTrue(agent_rsi[0]["summary"]["exploration_grade"])
+        self.assertFalse(agent_rsi[0]["summary"]["ready"])
+
     def test_campaign_flow(self) -> None:
         campaign = self._create_campaign("INT-1", "idem-1")
         cid = campaign["campaign_id"]

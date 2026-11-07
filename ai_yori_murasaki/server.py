@@ -49,6 +49,10 @@ ROUTES: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("adapters", re.compile(r"^/api/adapters$")),
 )
 
+_AGENT_RECORD_TYPES = ("agent_turn", "agent_tool", "agent_tool_denied",
+                       "agent_stopped", "agent_hypothesis", "patch_drafted",
+                       "remediation_drafted")
+
 
 # --------------------------------------------------------------------------- #
 # projection helpers
@@ -114,6 +118,29 @@ def project_event(event: dict, view: str = "operator") -> dict:
         out["evidence_count"] = len(refs)
     else:
         out["evidence_count"] = 0
+    extensions = event.get("extensions")
+    if isinstance(extensions, dict):
+        record_type = extensions.get("record_type")
+        if isinstance(record_type, str) and record_type in _AGENT_RECORD_TYPES:
+            agent: dict[str, Any] = {}
+            for key in ("record_type", "model", "tool", "llm_status",
+                        "generated_by"):
+                sv = _safe_str(extensions.get(key), 128)
+                if sv is not None:
+                    agent[key] = sv
+            turn = _safe_int(extensions.get("turn"))
+            if turn is not None:
+                agent["turn"] = turn
+            for key in ("parse_error", "unit_passed"):
+                value = extensions.get(key)
+                if isinstance(value, bool):
+                    agent[key] = value
+            if view != "blue":
+                for key in ("reason", "category", "path", "role"):
+                    sv = _safe_str(extensions.get(key), 128)
+                    if sv is not None:
+                        agent[key] = sv
+            out["agent"] = agent
     return out
 
 
@@ -410,6 +437,65 @@ def _project_rsi(store: Store, campaign_id: str) -> list[dict]:
             "status": status,
             "applied": applied,
             "comparison": comparison,
+        })
+    return out
+
+
+def _project_agent_rsi(store: Store, campaign_id: str) -> list[dict]:
+    """Project agent-RSI candidates (policy-bundle improvement) safely.
+
+    Reads the agent RSI state file only; digests and summaries are
+    reported as recorded, never recomputed into claims of improvement.
+    """
+    data = _read_workspace_json(store, "agent_rsi/state.json")
+    if data is None:
+        return []
+    candidates = data.get("candidates")
+    if not isinstance(candidates, dict):
+        return []
+    out: list[dict] = []
+    for item in candidates.values():
+        if not isinstance(item, dict):
+            continue
+        if item.get("campaign_id") != campaign_id:
+            continue
+        summary = item.get("summary")
+        summary_out = None
+        if isinstance(summary, dict):
+            gain = summary.get("gain")
+            summary_out = {
+                "pairs": _safe_int(summary.get("pairs")),
+                "gain": float(gain) if isinstance(gain, (int, float))
+                and not isinstance(gain, bool) else None,
+                "holdout_baseline": _safe_int(
+                    summary.get("holdout_baseline")),
+                "holdout_candidate": _safe_int(
+                    summary.get("holdout_candidate")),
+                "validation_baseline": _safe_int(
+                    summary.get("validation_baseline")),
+                "validation_candidate": _safe_int(
+                    summary.get("validation_candidate")),
+                "invalid_pairs": _safe_int(summary.get("invalid_pairs")),
+                "losses": _safe_int(summary.get("losses")),
+                "complete": summary.get("complete") is True,
+                "benign_ok": summary.get("benign_ok") is True,
+                "model_pinned": summary.get("model_pinned") is True,
+                "exploration_grade": summary.get("exploration_grade") is True,
+                "ready": summary.get("ready") is True,
+            }
+        rules = item.get("rules_applied")
+        rules_out = None
+        if isinstance(rules, list):
+            rules_out = [_safe_str(r, 64) for r in rules[:16]]
+        out.append({
+            "candidate_id": _safe_str(item.get("candidate_id")),
+            "freeze_id": _safe_str(item.get("freeze_id")),
+            "bundle_digest": _safe_str(item.get("bundle_digest")),
+            "baseline_digest": _safe_str(item.get("baseline_digest")),
+            "rules_applied": rules_out,
+            "compared": item.get("compared") is True,
+            "applied": item.get("applied") is True,
+            "summary": summary_out,
         })
     return out
 
@@ -715,7 +801,10 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
                 runtime.get_campaign(cid)
             except DataError:
                 return _error(404, "not_found")
-            return _json_response(200, {"rsi": _project_rsi(store, cid)})
+            return _json_response(200, {
+                "rsi": _project_rsi(store, cid),
+                "agent_rsi": _project_agent_rsi(store, cid),
+            })
 
         if name == "run":
             rid = groups[0]
