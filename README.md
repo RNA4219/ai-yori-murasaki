@@ -8,11 +8,10 @@ next_review_due: 2026-12-07
 
 # ai-yori-murasaki
 
-ローカルの隔離ラボで、Redによる観測、Blueによる検知、修復、再検証を実行するPython製品です。証跡を保存し、LLMを使わないOracleで判定します。HTMLモニターから実行状態、検知、修復、KPI、RSI候補を確認できます。独自コードのライセンスは[MIT](LICENSE)です。
+ローカルの隔離ラボで、レッドチームによる観測、ブルーチームによる検知、修復、再検証を実行するツールです。
+証跡を保存し、LLM不使用で判定します。HTMLモニターから実行状態、検知、修復、KPI、RSI候補を確認できます。独自コードのライセンスは[MIT](LICENSE)です。
 
-2026-11-07に、一度出していた製品完成の判定を撤回しました（[再評価と追加提案](docs/reviews/REVIEW-INTAKE-20261107.md)）。その後、最低5類型の評価、根拠付き分類と修復・再検証の接続、CVSS・業務影響、KEV/EPSS、HTML表示を実装しました。15runの正式採点では全splitが合格し、評価identityを凍結しました。旧holdoutの順序来歴疑義は診断扱いとし、未使用seedで追補したholdout3runも全件合格しました。実ラボ画面の最終確認でも、実campaignで全ケースが合格し、配布物と現行コードの一致を確認しました。技術検収は[AC-20261107-03](docs/acceptance/AC-20261107-03.md)にまとめています。
-
-追加項目のうちCVSS・業務影響と最低5類型の評価は承認済みです。実利用者試験は2026-11-07のユーザー訂正で必須条件から撤回しました（[追加要件](docs/requirements/REQUIREMENTS-EXTENSION.md)、[利用者試験計画](docs/requirements/USER-STUDY-PLAN.md)）。[実装仕様](docs/requirements/SPEC-ASSESSMENT.md)に従い、[Task 20261107-03](docs/tasks/TASK.product-clarity-11-07-2026.md)で対応しています。
+最低5類型の評価、根拠付き分類と修復・再検証の接続、CVSS・業務影響、KEV/EPSS、HTML表示があります。
 
 ## 起動
 
@@ -34,17 +33,19 @@ aym lab demo --staging-root $StagingRoot
 aym monitor serve --bind 127.0.0.1:8765
 ```
 
-[製品実行モニター](http://127.0.0.1:8765)を開きます。`workspace`、`trusted`、`staging`はリポジトリの外に、互いに重ならないディレクトリとして用意します。モニターは読み取り専用です。ラボを再実行する場合は、同じ環境変数を設定した別の端末を使います。
+[製品実行モニター](http://127.0.0.1:8765)を開きます。
+モニターは読み取り専用です。ラボを再実行する場合は、同じ環境変数を設定した別の端末を使います。
 
 詳細は[RUNBOOK](RUNBOOK.md)と[製品操作ガイド](docs/PRODUCT-GUIDE.md)を参照してください。
 
 ## 検証した範囲
 
-2026-11-07に、配布用DockerイメージとOllamaの実モデルで閉ループを実行しました。攻撃3件は修正前のHTTP 200から修正後の403に変わり、正常系5件はすべて通りました。証跡53件を検証し、実行はレビュー待ちで停止しています。
+配布用DockerイメージとOllamaの実モデルで閉ループを実行しています。
 
 RSIではtrainから候補を作り、凍結した条件でvalidationとholdoutを比較しました。決定的なローカル認可方針の評価で採用準備完了となり、実行器への反映は行っていません。LLMの汎用性能向上を実証した結果ではありません。
 
-5類型の正式採点ではtrain/validation/holdoutの全splitでrecall 1.0・正常系保持1.0・判定不能0.0となりました。これにより、評価identity（イメージdigest一致・ソース不変）を凍結しました。配布用のsdist/wheelをビルドし、MITライセンスと第三者表示を同梱しました。秘密情報検査は186ファイルで0件でした。配布物（sdist/wheel）と現行コード112ファイルのsha256比較で不一致0件、評価identityの13artifactも全件一致しました。
+5類型の正式採点ではtrain/validation/holdoutの全splitでrecall 1.0・正常系保持1.0・判定不能0.0となりました。これにより、評価identity（イメージdigest一致・ソース不変）を凍結しました。
+配布用のsdist/wheelをビルドし、秘密情報検査は186ファイルで0件でした。
 
 [製品検収](docs/acceptance/AC-20261106-06.md)にテスト、画面、モデル呼び出し、比較評価の証跡をまとめています。外部Trivy、CodeQL、Wazuh、Sigma CLI、RustXNG、rdshは契約試験までです。ATT&CKの実ラボ対応付けは未測定です。cloudモデル名から固定版を保証しません。
 
