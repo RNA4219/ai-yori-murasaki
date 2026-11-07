@@ -1,4 +1,23 @@
-"""Finite disposable local Docker lab orchestration for ai_yori_murasaki."""
+"""Agent-driven disposable local Docker lab orchestration.
+
+The normal execution path runs LLM agents through the brokered tool loop:
+
+- Red agent: probes the target from its own decisions and reports the
+  unauthorized access it reproduced (with evidence references).
+- Blue agent (blind): sees only sanitized telemetry and submits findings;
+  it never sees the red plan, the scenario answer or Oracle expectations.
+- Purple agent (collaborative, after the blind phase is closed): reads the
+  staged target code, identifies the root cause and proposes a full patch
+  which is validated immediately (syntax + post-fix behavior unit check).
+- The orchestrator applies the agent's patch in the disposable lab and the
+  non-LLM Oracle verifies the exploit is blocked and benign behavior is
+  preserved (fixed replay + benign regression), then the campaign stops at
+  the review gate.
+
+Failure semantics are fail-closed: LLM failures, budget exhaustion and
+invalid actions abort the campaign; there is no silent fallback to a
+fixed "correct answer" patch.
+"""
 from __future__ import annotations
 
 import ast
@@ -10,18 +29,32 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+from urllib.parse import parse_qs, urlsplit
 
 from .worker import DockerLab, stage_worker, ObservationBroker
 from .oracle import Oracle, build_final_verdict
-from .jsonio import digest, DataError
+from .jsonio import digest
 from .adapters.llm import LLMClient
 from .adapters.base import HttpBroker
 from . import lab_metrics
 from .p2 import route_model, purple_loop, tune_sigma
+from .agents import (AgentLoop, load_default_bundle, load_scenario,
+                     render_task, validate_bundle)
 
 _ASSETS = Path(__file__).resolve().parent / "lab_assets"
-_ANCHOR = "REQUIRE_ADMIN: bool = False"
-_REPLACEMENT = "REQUIRE_ADMIN: bool = True"
+_WORKER_ASSET = _ASSETS / "worker.py"
+
+_TELEMETRY_FIELDS = ("timestamp", "method", "path", "status", "role")
+
+
+class _LabFailure(Exception):
+    """Fail-closed lab outcome with phase and attribution."""
+
+    def __init__(self, phase: str, reason: str, attribution: str) -> None:
+        super().__init__("{}: {}".format(phase, reason))
+        self.phase = phase
+        self.reason = reason
+        self.attribution = attribution
 
 
 def _utc_now() -> str:
@@ -84,9 +117,149 @@ def _all_passed(checks: List[Dict[str, Any]]) -> bool:
     return bool(checks) and all(c.get("passed") is True for c in checks)
 
 
+def _is_unauthorized_row(row: Dict[str, Any]) -> bool:
+    """A successful access to the protected record by a non-admin role."""
+    if not isinstance(row, dict):
+        return False
+    if row.get("method") != "GET" or row.get("status") != 200:
+        return False
+    path = row.get("path")
+    role = row.get("role")
+    if not isinstance(path, str):
+        return False
+    return (path.split("?", 1)[0] == "/record"
+            and isinstance(role, str) and role != "admin")
+
+
+def _make_probe_executor(lab: Any, red_stage: Path, runtime: Any,
+                         red_rid: str):
+    """Build the broker-facing probe executor for the red agent.
+
+    The agent sees a sanitized observation (status, timing, requested
+    role); the protected record body (Oracle canary) is never returned to
+    the agent context. Each probe is submitted to the evidence chain via
+    the role-bound ObservationBroker.
+    """
+    broker = ObservationBroker(runtime, red_rid, "red")
+    rows: List[Dict[str, Any]] = []
+
+    def probe(path: str) -> Dict[str, Any]:
+        result = lab.run_worker(red_stage, "red", "probe_path",
+                                args=("--path", path))
+        obs_list = _extract_observations(result)
+        if not obs_list or not isinstance(obs_list[0], dict):
+            raise RuntimeError("probe_path returned no observation")
+        full = dict(obs_list[0])
+        sanitized = {k: v for k, v in full.items()
+                     if k in ("status", "method", "path", "timestamp",
+                              "elapsed", "error")}
+        query = parse_qs(urlsplit(path).query)
+        role_values = query.get("role", [])
+        sanitized["role"] = role_values[0] if role_values else ""
+        sub = broker.submit_observation({
+            "kind": "http_response", "data": sanitized,
+            "observed_at": _utc_now()})
+        rows.append({"ref": sub["data_ref"], "data": dict(sanitized)})
+        sanitized["observation_ref"] = sub["data_ref"]
+        return sanitized
+
+    return probe, rows
+
+
+def _telemetry_rows_with_refs(lab: Any, runtime: Any, rid: str,
+                              kind_role: str):
+    """Submit sanitized telemetry rows and return (rows, refs)."""
+    telemetry = lab.telemetry()
+    broker = ObservationBroker(runtime, rid, kind_role)
+    rows: List[Dict[str, Any]] = []
+    refs: List[str] = []
+    for row in telemetry:
+        if not isinstance(row, dict):
+            continue
+        data = {k: row.get(k) for k in _TELEMETRY_FIELDS if k in row}
+        sub = broker.submit_observation({
+            "kind": "telemetry", "data": data,
+            "observed_at": _utc_now()})
+        refs.append(sub["data_ref"])
+        rows.append({"ref": sub["data_ref"], "data": data})
+    return rows, refs
+
+
+def _unit_validator_factory(lab: Any, jobdir: Path):
+    """Validate a proposed patch against the post-fix behavior contract."""
+
+    def validate(new_content: str) -> Dict[str, Any]:
+        check_dir = jobdir / ("unitcheck-{}".format(_new_id("u")))
+        check_dir.mkdir(parents=False, exist_ok=False)
+        shutil.copy2(str(_WORKER_ASSET), str(check_dir / "worker.py"))
+        (check_dir / "target.py").write_text(new_content, encoding="utf-8")
+        static_ok = True
+        try:
+            ast.parse(new_content)
+        except SyntaxError:
+            static_ok = False
+        if not static_ok:
+            return {"static_passed": False, "unit_checks": [],
+                    "unit_passed": False}
+        try:
+            result = lab.run_worker(check_dir, "oracle", "unit_authz")
+        except Exception as exc:  # lab unavailable -> not verified
+            return {"static_passed": True, "unit_checks": [],
+                    "unit_passed": None,
+                    "error": "{}: {}".format(type(exc).__name__,
+                                              exc)[:200]}
+        checks = result.get("checks")
+        if not isinstance(checks, list) or not checks:
+            return {"static_passed": True, "unit_checks": [],
+                    "unit_passed": None}
+        passed = (result.get("status") == "ok"
+                  and all(isinstance(c, dict) and c.get("passed") is True
+                          for c in checks))
+        return {"static_passed": True, "unit_checks": checks,
+                "unit_passed": passed}
+
+    return validate
+
+
+def _findings_of_run(runtime: Any, cid: str, run_id: str) -> List[dict]:
+    findings: List[dict] = []
+    for ref in runtime.list_records(cid, "finding"):
+        try:
+            obj = runtime.store.get_object(ref)
+        except Exception:
+            continue
+        if isinstance(obj, dict) and obj.get("run_id") == run_id:
+            findings.append(obj)
+    return findings
+
+
+def _primary_finding(findings: List[dict],
+                     telemetry_rows: List[dict]) -> Optional[dict]:
+    unauthorized_refs = [row["ref"] for row in telemetry_rows
+                         if _is_unauthorized_row(row.get("data", {}))]
+    for finding in findings:
+        refs = finding.get("references")
+        if isinstance(refs, list) and any(r in refs
+                                          for r in unauthorized_refs):
+            return finding
+    return findings[0] if findings else None
+
+
 def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
              llm_client: Optional[LLMClient] = None,
-             routes: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+             routes: Optional[Dict[str, Any]] = None, *,
+             scenario_id: str = "authz-flag-false",
+             policy_bundle: Optional[Dict[str, Any]] = None,
+             lab_factory: Optional[Any] = None,
+             failure_mode: str = "raise") -> Dict[str, Any]:
+    """Run one agent-driven lab campaign end to end.
+
+    ``failure_mode="raise"`` (default) aborts the campaign on failure;
+    ``failure_mode="record"`` returns a structured failure result instead
+    (used by the agent RSI executor to measure failures as outcomes).
+    """
+    if failure_mode not in ("raise", "record"):
+        raise ValueError("failure_mode must be raise or record")
     if llm_client is None:
         llm_client = LLMClient(HttpBroker(runtime.policy), timeout_ms=90000,
                                retry_cap=0)
@@ -94,15 +267,20 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
     _require(staging_root.is_absolute(), "staging_root must be absolute")
     _require(staging_root.is_dir(), "staging_root must exist")
 
+    scenario = load_scenario(scenario_id)
+    bundle = policy_bundle if policy_bundle is not None else \
+        load_default_bundle()
+    validate_bundle(bundle)
+
     jobdir = staging_root / _new_id("job")
     jobdir.mkdir(parents=False, exist_ok=False)
     target_dir = jobdir / "target"
     target_dir.mkdir()
-    shutil.copy2(str(_ASSETS / "target.py"), str(target_dir / "target.py"))
-    shutil.copy2(str(_ASSETS / "worker.py"), str(target_dir / "worker.py"))
+    shutil.copy2(str(scenario["target_path"]), str(target_dir / "target.py"))
+    shutil.copy2(str(_WORKER_ASSET), str(target_dir / "worker.py"))
 
     scope = {"targets": [{"kind": "lab-target",
-                          "identifier": "local-http-lab"}],
+                           "identifier": "local-http-lab"}],
              "max_targets": 1}
     authorization = {"operator_id": "rna4219", "granted_at": _utc_now(),
                      "expires_at": _utc_plus(2),
@@ -116,176 +294,183 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
     lab: Optional[DockerLab] = None
     current_rid: Optional[str] = None
     try:
-        lab = DockerLab(jobdir.resolve())
+        lab = (lab_factory or DockerLab)(jobdir.resolve())
         lab.__enter__()
         lab.start_target(target_dir)
         _require(lab.wait_healthy() is True, "target must be healthy")
 
-        # ---- Red phase ----
+        # ---- Red phase (agent-driven) ----
         red_run = runtime.start_run(cid, "red", seed, str(uuid.uuid4()))
         red_rid = red_run["run_id"]
         current_rid = red_rid
         runs.append(red_rid)
         red_stage = stage_worker(jobdir, "red")
-        red_result = lab.run_worker(red_stage, "red", "red")
-        red_obs = _extract_observations(red_result)
-        red_checks = _extract_checks(red_result)
-        _require(len(red_obs) == 3, "red phase must yield 3 observations")
-        baseline_statuses = [o.get("status") for o in red_obs]
-        _require(baseline_statuses == [200, 200, 200],
-                 "red baseline statuses must be 200,200,200")
-        _require(_all_passed(red_checks), "red checks must all pass")
-        broker_red = ObservationBroker(runtime, red_rid, "red")
-        red_refs: List[str] = []
-        for obs in red_obs:
-            sub = broker_red.submit_observation({
-                "kind": "http_response", "data": obs, "observed_at": _utc_now()})
-            red_refs.append(sub["data_ref"])
-        red_raw_ref = runtime.store.put_object(red_result)
-        runtime.record_event(red_rid, "attack_executed", "orchestrator",
-                             evidence_refs=(red_raw_ref,),
-                             extensions={"observations": len(red_obs)})
+        probe_executor, probe_rows = _make_probe_executor(
+            lab, red_stage, runtime, red_rid)
+        red_task = render_task(bundle["roles"]["red"],
+                               {"surface": scenario["surface"]})
+        red_loop = AgentLoop(
+            llm_client=llm_client, runtime=runtime, campaign_id=cid,
+            run_id=red_rid, role="red", role_cfg=bundle["roles"]["red"],
+            routes=routes, seed=seed).run(
+                task=red_task, probe_executor=probe_executor)
+        if red_loop["status"] != "completed":
+            raise _LabFailure("red", "red agent loop status: {}".format(
+                red_loop["status"]), "candidate")
+        red_report = red_loop.get("report") or {}
+        if red_report.get("unauthorized_access") is not True:
+            raise _LabFailure("red", "red agent did not confirm "
+                              "unauthorized access", "candidate")
+        red_plan_ref = runtime.store.put_object({
+            "phase": "red", "report": red_report,
+            "loop": {k: red_loop[k] for k in
+                     ("status", "stop_reason", "turns", "llm_calls",
+                      "actions")},
+        })
+        runtime.record_event(red_rid, "red_plan", "llm",
+                             evidence_refs=(red_plan_ref,),
+                             extensions={"record_type": "agent_report",
+                                         "model": red_loop.get("model")})
         _finish(runtime, cid, red_rid)
         current_rid = None
 
-        # ---- Blue phase ----
-        blue_run = runtime.start_run(cid, "blue_blind", seed, str(uuid.uuid4()))
+        # ---- Exploit verification (non-LLM oracle) ----
+        # Telemetry is read orchestrator-side (the target's own request
+        # log). The blue phase later receives the same rows through the
+        # role-bound observation broker with fresh references.
+        red_telemetry = lab.telemetry()
+        unauthorized = [row for row in red_telemetry
+                        if _is_unauthorized_row(row)]
+        if not unauthorized:
+            raise _LabFailure("red", "no unauthorized access found in "
+                              "target telemetry", "candidate")
+        exploit_run = runtime.start_run(cid, "verify", seed, str(uuid.uuid4()))
+        exploit_rid = exploit_run["run_id"]
+        current_rid = exploit_rid
+        runs.append(exploit_rid)
+        telemetry_ref = runtime.store.put_object(
+            {"telemetry": red_telemetry})
+        runtime.record_event(exploit_rid, "state_captured", "orchestrator",
+                             evidence_refs=(telemetry_ref,),
+                             extensions={"record_type": "telemetry_snapshot"})
+        first_row = unauthorized[0]
+        actual_ref = runtime.store.put_object({
+            "method": "GET", "path": first_row.get("path"),
+            "status": first_row.get("status")})
+        exploit_predicate = Oracle().make_predicate(
+            "red-exploit", "http_status", actual_ref,
+            {"method": "GET", "path": first_row.get("path"),
+             "status": first_row.get("status")})
+        evaluated_exploit = runtime.record_oracle(exploit_rid,
+                                                  exploit_predicate)
+        _require(evaluated_exploit.get("verdict") == "PASS",
+                 "red exploit predicate must PASS (attack reproduced)")
+        _finish(runtime, cid, exploit_rid)
+        current_rid = None
+
+        # ---- Blue phase (blind, agent-driven) ----
+        blue_run = runtime.start_run(cid, "blue_blind", seed,
+                                      str(uuid.uuid4()))
         blue_rid = blue_run["run_id"]
         current_rid = blue_rid
         runs.append(blue_rid)
-        telemetry = lab.telemetry()
-        blue_stage = stage_worker(jobdir, "blue", telemetry)
-        blue_result = lab.run_worker(blue_stage, "blue", "blue")
+        blue_rows, blue_refs = _telemetry_rows_with_refs(
+            lab, runtime, blue_rid, "blue")
+        _require(blue_rows, "telemetry must not be empty for the blue phase")
+        blue_entries = [
+            {"ref": row["ref"], **row["data"]} for row in blue_rows]
+        blue_task = render_task(bundle["roles"]["blue"], {
+            "telemetry": json.dumps(blue_entries, ensure_ascii=False)})
+        blue_loop = AgentLoop(
+            llm_client=llm_client, runtime=runtime, campaign_id=cid,
+            run_id=blue_rid, role="blue", role_cfg=bundle["roles"]["blue"],
+            routes=routes, seed=seed).run(
+                task=blue_task, initial_refs=blue_refs)
         blue_detected_at = time.time()
-        detections = blue_result.get("detection_count")
-        _require(isinstance(detections, int), "blue detections must be int")
-        blue_obs = _extract_observations(blue_result)
-        broker_blue = ObservationBroker(runtime, blue_rid, "blue")
-        for obs in blue_obs:
-            data = {k: v for k, v in obs.items() if k != "source"}
-            broker_blue.submit_observation({
-                "kind": "detection", "data": data, "observed_at": _utc_now()})
-        blue_raw_ref = runtime.store.put_object(blue_result)
-
-        llm_resp = llm_client.chat(
-            url="http://localhost:11434/api/chat", role="blue", campaign=cid,
-            run=blue_rid, model=route_model("blue", routes),
-            messages=[
-                {"role": "system",
-                 "content": "Summarize observed suspicious access in one short Japanese sentence."},
-                {"role": "user",
-                 "content": json.dumps(blue_result, ensure_ascii=False,
-                                       sort_keys=True)},
-            ],
-            token_cap=512, native=True)
-        _require(bool(llm_resp.get("complete")), "llm response incomplete")
-        content = llm_resp.get("content")
-        _require(isinstance(content, str) and content.strip() != "",
-                 "llm content empty")
-        llm_ref = runtime.store.put_object(llm_resp)
-        finding_id = _new_id("f")
-        trigger = blue_obs[0] if blue_obs else None
-        _require(isinstance(trigger, dict), "blue trigger observation missing")
-        trigger_path = trigger.get("path")
-        _require(isinstance(trigger_path, str), "blue trigger path must be str")
-        if (trigger.get("status") == 200 and
-                trigger.get("role") == "guest" and
-                trigger_path.split("?", 1)[0] == "/record"):
-            severity = "high"
-        else:
-            severity = "info"
-        classification = {
-            "rule": "local-guest-record-access",
-            "severity": severity,
-            "path": trigger_path,
-            "observation_ref": blue_raw_ref,
-        }
-        classification_ref = runtime.store.put_object(classification)
-        finding = {
-            "schema_version": "1.0.0",
-            "finding_id": finding_id,
-            "campaign_id": cid,
-            "run_id": blue_rid,
-            "source": "llm",
-            "severity": severity,
-            "title": content[:512],
-            "location": {"path": trigger_path, "line": None,
-                         "column": None},
-            "references": [blue_raw_ref, llm_ref, classification_ref],
-        }
-        runtime.register_record("finding", finding, run_id=blue_rid)
+        if blue_loop["status"] != "completed":
+            raise _LabFailure("blue", "blue agent loop status: {}".format(
+                blue_loop["status"]), "candidate")
         _finish(runtime, cid, blue_rid)
         current_rid = None
         runtime.transition(cid, "blind_completed")
 
-        # ---- Verify run ----
-        verify_run = runtime.start_run(cid, "verify", seed, str(uuid.uuid4()))
-        verify_rid = verify_run["run_id"]
-        current_rid = verify_rid
-        runs.append(verify_rid)
-        blind = Oracle().blind_predicate(
-            "blue-detection", red_raw_ref, blue_raw_ref, runtime.store)
-        predicate = blind["predicate"]
-        runtime.record_event(verify_rid, "state_captured", "orchestrator",
-                             evidence_refs=(blind["report_ref"],))
-        evaluated = runtime.record_oracle(verify_rid, predicate,
-                                          evaluated_run_id=blue_rid)
-        _require(evaluated.get("verdict") == "PASS",
-                 "blue-detection predicate must PASS")
-        _finish(runtime, cid, verify_rid)
+        # ---- Blind detection verification (non-LLM oracle) ----
+        findings = _findings_of_run(runtime, cid, blue_rid)
+        blind_run = runtime.start_run(cid, "verify", seed, str(uuid.uuid4()))
+        blind_rid = blind_run["run_id"]
+        current_rid = blind_rid
+        runs.append(blind_rid)
+        blind = Oracle().blind_detection_check(blue_rows, findings,
+                                               runtime.store)
+        runtime.record_event(blind_rid, "state_captured", "orchestrator",
+                             evidence_refs=(blind["report_ref"],),
+                             extensions={"record_type": "blind_detection"})
+        evaluated_blind = runtime.record_oracle(
+            blind_rid, blind["predicate"], evaluated_run_id=blue_rid)
+        _require(evaluated_blind.get("verdict") == "PASS",
+                 "blue blind detection predicate must PASS")
+        _finish(runtime, cid, blind_rid)
         current_rid = None
         runtime.transition(cid, "purple_open")
 
-        # ---- Purple patch run ----
+        # ---- Purple phase (collaborative investigation + patch) ----
         purple_run = runtime.start_run(cid, "purple", seed, str(uuid.uuid4()))
         purple_rid = purple_run["run_id"]
         current_rid = purple_rid
         runs.append(purple_rid)
-        target_file = target_dir / "target.py"
-        before = target_file.read_text(encoding="utf-8")
-        _require(before.count(_ANCHOR) == 1, "anchor must occur exactly once")
-        after = before.replace(_ANCHOR, _REPLACEMENT)
-        patch_ref = runtime.store.put_object({
-            "path": "target.py", "before": before, "after": after})
-        runtime.record_event(purple_rid, "patch_drafted", "orchestrator",
-                             evidence_refs=(patch_ref,),
-                             extensions={"path": "target.py"})
-        purple_prompt = (
-            "次のパッチ差分を日本語で1文だけ説明してください。"
-            "コードは実行しないでください。\n"
-            "対象ファイル: target.py\n"
-            "変更前(抜粋):\n" + before[:2048] + "\n"
-            "変更後(抜粋):\n" + after[:2048])
-        purple_resp = llm_client.chat(
-            url="http://localhost:11434/api/chat", role="purple",
-            campaign=cid, run=purple_rid,
-            model=route_model("purple", routes),
-            messages=[
-                {"role": "system",
-                 "content": "あなたはセキュリティ修正の説明者です。"},
-                {"role": "user", "content": purple_prompt},
-            ],
-            token_cap=512, native=True)
-        _require(bool(purple_resp.get("complete")),
-                 "purple llm response incomplete")
-        purple_content = purple_resp.get("content")
-        _require(isinstance(purple_content, str) and
-                 purple_content.strip() != "", "purple llm content empty")
-        purple_llm_ref = runtime.store.put_object(purple_resp)
-        runtime.record_event(purple_rid, "remediation_drafted", "llm",
-                             evidence_refs=(patch_ref, purple_llm_ref),
-                             extensions={"path": "target.py",
-                                         "model": route_model("purple", routes)})
+        finding_summaries = [
+            {"finding_id": f.get("finding_id"),
+             "severity": f.get("severity"),
+             "title": f.get("title"),
+             "path": f.get("location", {}).get("path"),
+             "references": f.get("references")}
+            for f in findings]
+        purple_task = render_task(bundle["roles"]["purple"], {
+            "surface": scenario["surface"],
+            "findings": json.dumps(finding_summaries, ensure_ascii=False)})
+        finding_refs = [runtime.store.put_object(f) for f in findings]
+        unit_validator = _unit_validator_factory(lab, jobdir)
+        purple_loop = AgentLoop(
+            llm_client=llm_client, runtime=runtime, campaign_id=cid,
+            run_id=purple_rid, role="purple",
+            role_cfg=bundle["roles"]["purple"], routes=routes,
+            seed=seed).run(
+                task=purple_task, target_dir=target_dir,
+                unit_validator=unit_validator,
+                initial_refs=finding_refs + list(blue_refs))
+        if purple_loop["status"] != "completed":
+            raise _LabFailure("purple", "purple agent loop status: {}".format(
+                purple_loop["status"]), "candidate")
+        purple_report = purple_loop.get("report") or {}
+        proposal_ref = purple_report.get("proposal_ref")
+        proposal = runtime.store.get_object(proposal_ref)
+        _require(isinstance(proposal, dict), "patch proposal missing")
+        gap_ref = runtime.store.put_object({
+            "phase": "purple", "report": purple_report,
+            "root_cause": proposal.get("root_cause"),
+            "rationale": proposal.get("rationale"),
+            "loop": {k: purple_loop[k] for k in
+                     ("status", "stop_reason", "turns", "llm_calls",
+                      "actions")},
+        })
+        runtime.record_event(purple_rid, "gap_analyzed", "llm",
+                             evidence_refs=(gap_ref, proposal_ref),
+                             extensions={"record_type": "agent_report",
+                                         "model": purple_loop.get("model"),
+                                         "generated_by": "llm"})
         _finish(runtime, cid, purple_rid)
         current_rid = None
         runtime.transition(cid, "remediation_in_progress")
 
-        # ---- Remediation run ----
-        rem_run = runtime.start_run(cid, "remediation", seed, str(uuid.uuid4()))
+        # ---- Remediation phase (apply the agent's patch) ----
+        rem_run = runtime.start_run(cid, "remediation", seed,
+                                    str(uuid.uuid4()))
         rem_rid = rem_run["run_id"]
         current_rid = rem_rid
         runs.append(rem_rid)
         lab.stop_target()
+        target_file = target_dir / "target.py"
+        after = proposal["after"]
         target_file.write_text(after, encoding="utf-8")
         try:
             ast.parse(after)
@@ -298,13 +483,18 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
         }
         static_ref = runtime.store.put_object(static_report)
         _require(static_ok, "patched target failed ast.parse")
-        unit_result = lab.run_worker(target_dir.resolve(), "oracle", "unit")
+        lab.start_target(target_dir)
+        _require(lab.wait_healthy() is True, "patched target must be healthy")
+        unit_result = lab.run_worker(target_dir.resolve(), "oracle",
+                                     "unit_authz")
         unit_checks = _extract_checks(unit_result)
-        _require(_all_passed(unit_checks), "unit checks must all pass")
+        _require(_all_passed(unit_checks),
+                 "patched target failed post-fix behavior check")
         unit_ref = runtime.store.put_object(unit_result)
         runtime.record_event(rem_rid, "state_captured", "orchestrator",
-                             evidence_refs=(patch_ref,),
-                             extensions={"path": "target.py"})
+                             evidence_refs=(proposal_ref,),
+                             extensions={"path": "target.py",
+                                         "generated_by": "llm"})
         runtime.record_event(rem_rid, "static_scan_result", "orchestrator",
                              evidence_refs=(static_ref,),
                              extensions={"tool": "python-ast"})
@@ -314,14 +504,12 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
         _finish(runtime, cid, rem_rid)
         current_rid = None
 
-        # ---- Reevaluation run ----
+        # ---- Reevaluation phase (fixed replay + benign regression) ----
         reeval_run = runtime.start_run(cid, "reevaluation", seed,
                                        str(uuid.uuid4()))
         reeval_rid = reeval_run["run_id"]
         current_rid = reeval_rid
         runs.append(reeval_rid)
-        lab.start_target(target_dir)
-        _require(lab.wait_healthy() is True, "patched target must be healthy")
         replay_result = lab.run_worker(red_stage, "red", "red")
         replay_obs = _extract_observations(replay_result)
         _require(len(replay_obs) == 3, "replay must yield 3 observations")
@@ -377,14 +565,16 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
                  "replay reason_code must be exploit_not_succeeded")
         evaluated_ref = runtime.store.put_object(evaluated_replay)
 
+        primary = _primary_finding(findings, blue_rows)
+        _require(primary is not None, "no finding to remediate")
         remediation_id = _new_id("rem")
         remediation = {
             "schema_version": "1.0.0",
             "remediation_id": remediation_id,
-            "finding_id": finding_id,
+            "finding_id": primary.get("finding_id"),
             "campaign_id": cid,
             "run_id": blue_rid,
-            "patch_bundle_ref": patch_ref,
+            "patch_bundle_ref": proposal_ref,
             "static_scan_result": {"passed": static_ok, "ref": static_ref},
             "unit_result": {"passed": _all_passed(unit_checks),
                             "ref": unit_ref},
@@ -401,14 +591,23 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
         runtime.register_record("remediation", remediation, run_id=reeval_rid)
 
         verdict = build_final_verdict(cid, reeval_rid, evaluated_replay,
-                                      "completed", runtime.store,
-                                      remediation_id=remediation_id,
-                                      test_report_refs=(benign_ref,))
+                                       "completed", runtime.store,
+                                       remediation_id=remediation_id,
+                                       test_report_refs=(benign_ref,))
         runtime.register_record("final_verdict", verdict, run_id=reeval_rid,
                                 oracle_evaluation=evaluated_replay)
         # ---- Sigma tuning (train only, no external client) ----
-        benign_obs_rows: List[Dict[str, Any]] = []
+        red_obs_rows: List[Dict[str, Any]] = []
+        for row in blue_rows:
+            data = row.get("data", {})
+            if _is_unauthorized_row(data):
+                red_obs_rows.append({
+                    "status": data.get("status"),
+                    "path": data.get("path"),
+                    "expected_detection": True,
+                })
         benign_obs = benign_result.get("observations")
+        benign_obs_rows: List[Dict[str, Any]] = []
         if isinstance(benign_obs, list):
             for obs in benign_obs:
                 if isinstance(obs, dict):
@@ -417,14 +616,6 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
                         "path": obs.get("path"),
                         "expected_detection": False,
                     })
-        red_obs_rows: List[Dict[str, Any]] = []
-        for obs in red_obs:
-            if isinstance(obs, dict):
-                red_obs_rows.append({
-                    "status": obs.get("status"),
-                    "path": obs.get("path"),
-                    "expected_detection": True,
-                })
         tune_result = tune_sigma({
             "id": "local-authz", "title": "local authz",
             "logsource": {"category": "webserver"},
@@ -461,13 +652,17 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
         measure_rid = measure_run["run_id"]
         current_rid = measure_rid
         runs.append(measure_rid)
+        red_rows_ref = runtime.store.put_object({
+            "observations": [{"ref": row["ref"], **row["data"]}
+                            for row in blue_rows]})
+        blue_findings_ref = runtime.store.put_object({"findings": findings})
         remediation_ref = runtime.store.put_object(remediation)
         measurement = {
             "red_run_id": red_rid,
             "blue_run_id": blue_rid,
             "reevaluation_run_id": reeval_rid,
-            "red_ref": red_raw_ref,
-            "blue_ref": blue_raw_ref,
+            "red_ref": red_rows_ref,
+            "blue_ref": blue_findings_ref,
             "replay_predicate_ref": evaluated_ref,
             "benign_ref": benign_ref,
             "remediation_ref": remediation_ref,
@@ -484,16 +679,29 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
 
         return {
             "campaign_id": cid,
-            "baseline_statuses": baseline_statuses,
-            "blue_detections": detections,
+            "scenario_id": scenario_id,
+            "status": "review_pending",
+            "blue_detections": len(findings),
+            "finding_ids": [f.get("finding_id") for f in findings],
+            "proposal_ref": proposal_ref,
             "replay_statuses": replay_statuses,
             "benign_checks": benign_checks,
             "final_verdict": verdict,
-            "status": "review_pending",
             "verification_journal_ref": journal_ref,
             "metrics": metrics,
             "measurement_ref": measurement_ref,
             "tuning_ref": tune_ref,
+            "agent": {
+                "red": {k: red_loop[k] for k in
+                        ("status", "stop_reason", "turns", "llm_calls",
+                         "actions", "model")},
+                "blue": {k: blue_loop[k] for k in
+                         ("status", "stop_reason", "turns", "llm_calls",
+                          "actions", "model")},
+                "purple": {k: purple_loop[k] for k in
+                           ("status", "stop_reason", "turns", "llm_calls",
+                            "actions", "model")},
+            },
         }
     except Exception as exc:
         if current_rid is not None:
@@ -522,6 +730,24 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
             runtime.transition(cid, "incomplete")
         except Exception:
             pass
+        if failure_mode == "record":
+            if isinstance(exc, _LabFailure):
+                return {
+                    "status": "failed",
+                    "phase": exc.phase,
+                    "reason": exc.reason,
+                    "failure_attribution": exc.attribution,
+                    "campaign_id": cid,
+                    "scenario_id": scenario_id,
+                }
+            return {
+                "status": "failed",
+                "phase": "unknown",
+                "reason": "{}: {}".format(type(exc).__name__, exc)[:300],
+                "failure_attribution": "external",
+                "campaign_id": cid,
+                "scenario_id": scenario_id,
+            }
         raise
     finally:
         if lab is not None:
@@ -563,7 +789,10 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
 
 def run_iterations(runtime: Any, staging_root: Path, *, seed: int = 1,
                    max_iterations: int = 2, max_campaigns: int = 2,
-                   routes: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+                   routes: Optional[Dict[str, Any]] = None,
+                   scenario_id: str = "authz-flag-false",
+                   policy_bundle: Optional[Dict[str, Any]] = None,
+                   ) -> Dict[str, Any]:
     _require(isinstance(staging_root, Path), "staging_root must be a Path")
     _require(staging_root.is_absolute(), "staging_root must be absolute")
     _require(staging_root.is_dir(), "staging_root must exist")
@@ -575,7 +804,9 @@ def run_iterations(runtime: Any, staging_root: Path, *, seed: int = 1,
     campaigns = []
     def _callback(iteration: int, remaining: int) -> Dict[str, Any]:
         _require(remaining >= 1, "remaining budget must be >= 1")
-        result = run_demo(runtime, staging_root, seed, routes=routes)
+        result = run_demo(runtime, staging_root, seed, routes=routes,
+                          scenario_id=scenario_id,
+                          policy_bundle=policy_bundle)
         verdict = result.get("final_verdict") or {}
         success = verdict.get("remediation_success") is True
         summary = {

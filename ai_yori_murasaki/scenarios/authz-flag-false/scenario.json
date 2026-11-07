@@ -1,0 +1,6 @@
+{
+  "scenario_id": "authz-flag-false",
+  "split": "train",
+  "flaw_class": "authz",
+  "surface": "GET /health -> 200 {\"ok\": true}; GET /public -> 200 {\"public\": \"lab-public\"}; GET /record?role=<role> -> 200 {\"record\": \"lab-protected\"} 権限のあるroleのみ。権限がなければ403 {\"error\": \"forbidden\"}。"
+}

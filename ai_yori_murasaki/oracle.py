@@ -133,6 +133,87 @@ class Oracle:
                            "reason_code": "exploit_not_succeeded"})
         return result
 
+    def blind_detection_check(self, telemetry_rows: list,
+                              blue_findings: list,
+                              store: Store) -> dict:
+        """Deterministic detection-matching for the agent-driven blind phase.
+
+        ``telemetry_rows`` is a list of ``{"ref": sha256, "data": {...}}``
+        rows actually recorded during the red phase. ``blue_findings`` is
+        the list of Finding records the blue agent submitted. A row
+        requires detection when it shows a successful access to the
+        protected record by a role other than admin. Every such row must
+        be covered by at least one finding that cites the row's evidence
+        reference. No LLM, no self-claims: coverage is recomputed from
+        the CAS objects themselves.
+        """
+        if not isinstance(telemetry_rows, list):
+            raise ContractError("telemetry rows must be list", "input_invalid")
+        if not isinstance(blue_findings, list):
+            raise ContractError("findings must be list", "input_invalid")
+
+        def _is_unauthorized_success(row: dict) -> bool:
+            data = row.get("data") if isinstance(row, dict) else None
+            if not isinstance(data, dict):
+                return False
+            if data.get("status") != 200 or data.get("method") != "GET":
+                return False
+            path = data.get("path")
+            role = data.get("role")
+            if not isinstance(path, str):
+                return False
+            base = path.split("?", 1)[0]
+            return (base == "/record" and isinstance(role, str)
+                    and role != "admin")
+
+        requiring = [row for row in telemetry_rows
+                     if _is_unauthorized_success(row)]
+        uncovered: list = []
+        for row in requiring:
+            ref = row.get("ref")
+            data = row.get("data", {})
+            covered = False
+            for finding in blue_findings:
+                if not isinstance(finding, dict):
+                    continue
+                location = finding.get("location")
+                if not isinstance(location, dict):
+                    continue
+                if location.get("path") != "/record":
+                    continue
+                refs = finding.get("references")
+                if isinstance(refs, list) and ref in refs:
+                    covered = True
+                    break
+            if not covered:
+                uncovered.append({
+                    "ref": ref,
+                    "path": data.get("path"),
+                    "role": data.get("role"),
+                })
+
+        checks: list[dict] = []
+        checks.append({"name": "rows_requiring_detection",
+                       "passed": len(requiring) > 0})
+        checks.append({"name": "all_rows_covered",
+                       "passed": len(uncovered) == 0})
+        passed = bool(requiring) and not uncovered
+        report = {
+            "rows_checked": len(telemetry_rows),
+            "rows_requiring_detection": len(requiring),
+            "uncovered": uncovered,
+            "checks": checks,
+            "passed": passed,
+        }
+        report_ref = store.put_object(report)
+        actual = {"suite_id": "blue-agent-detection", "passed": passed}
+        actual_ref = store.put_object(actual)
+        predicate = self.make_predicate(
+            "blue-agent-detection", "test_pass", actual_ref,
+            {"suite_id": "blue-agent-detection", "passed": True})
+        return {"predicate": predicate, "report_ref": report_ref,
+                "report": report}
+
     def blind_predicate(self, predicate_id: str, red_ref: str, blue_ref: str,
                         store: Store) -> dict:
         """Independent non-LLM evaluator for blue detection.

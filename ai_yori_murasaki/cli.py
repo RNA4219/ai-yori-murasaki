@@ -159,12 +159,16 @@ def _build_parser() -> _Parser:
     d.add_argument("--staging-root", type=Path, required=True)
     d.add_argument("--seed", type=int, default=1)
     d.add_argument("--routes-file", type=Path, default=None)
+    d.add_argument("--scenario", default="authz-flag-false")
+    d.add_argument("--policy-bundle-file", type=Path, default=None)
     it = lab.add_parser("iterate")
     it.add_argument("--staging-root", type=Path, required=True)
     it.add_argument("--seed", type=int, default=1)
     it.add_argument("--max-iterations", type=int, default=2)
     it.add_argument("--max-campaigns", type=int, default=2)
     it.add_argument("--routes-file", type=Path, default=None)
+    it.add_argument("--scenario", default="authz-flag-false")
+    it.add_argument("--policy-bundle-file", type=Path, default=None)
 
     cli_rsi.add_parser(sub)
     cli_assessment.add_parser(sub)
@@ -177,6 +181,48 @@ def _command_name(args: argparse.Namespace) -> str:
     if action:
         parts.append(action)
     return " ".join(parts)
+
+
+def _resolve_routes(routes_file: Any) -> Any:
+    """Resolve and load the optional routes file (explicit path only)."""
+    if routes_file is None:
+        return None
+    path = Path(routes_file)
+    if not path.is_file():
+        raise DataError("routes ファイルが見つかりません: {}".format(path),
+                        "input_invalid")
+    routes = read_json(path)
+    if not isinstance(routes, dict):
+        raise DataError("routes はオブジェクトである必要があります",
+                        "input_invalid")
+    return routes
+
+
+def _resolve_bundle(bundle_file: Any) -> Any:
+    """Resolve the policy bundle: explicit file, else packaged default."""
+    from .agents import load_default_bundle, validate_bundle
+    if bundle_file is None:
+        return load_default_bundle()
+    path = Path(bundle_file)
+    if not path.is_file():
+        raise DataError("policy bundle ファイルが見つかりません: {}".format(
+            path), "input_invalid")
+    bundle = read_json(path)
+    return validate_bundle(bundle)
+
+
+def _resolve_scenario(scenario: Any) -> str:
+    """Resolve a scenario id against the packaged scenario catalog."""
+    from .agents import list_scenarios
+    if scenario is None:
+        scenario = "authz-flag-false"
+    if not isinstance(scenario, str) or not scenario:
+        raise DataError("scenario が不正です", "input_invalid")
+    known = {meta["scenario_id"] for meta in list_scenarios()}
+    if scenario not in known:
+        raise DataError("未知の scenario です: {}".format(scenario),
+                        "input_invalid")
+    return scenario
 
 
 def _make_runtime(args: argparse.Namespace) -> Runtime:
@@ -291,31 +337,26 @@ def _dispatch(args: argparse.Namespace, rt: Runtime) -> tuple[Any, Any, Any, int
 
     if group == "lab" and action == "demo":
         from . import lab
-        routes = None
-        routes_file = getattr(args, "routes_file", None)
-        if routes_file is not None:
-            routes = read_json(routes_file)
-            if not isinstance(routes, dict):
-                raise DataError("routes はオブジェクトである必要があります",
-                                "input_invalid")
-        data = lab.run_demo(rt, args.staging_root, args.seed, routes=routes)
+        routes = _resolve_routes(getattr(args, "routes_file", None))
+        bundle = _resolve_bundle(getattr(args, "policy_bundle_file", None))
+        scenario_id = _resolve_scenario(getattr(args, "scenario", None))
+        data = lab.run_demo(rt, args.staging_root, args.seed, routes=routes,
+                            scenario_id=scenario_id,
+                            policy_bundle=bundle)
         cid = data.get("campaign_id") if isinstance(data, dict) else None
         rid = data.get("run_id") if isinstance(data, dict) else None
         return cid, rid, data, 0
 
     if group == "lab" and action == "iterate":
         from . import lab
-        routes = None
-        routes_file = getattr(args, "routes_file", None)
-        if routes_file is not None:
-            routes = read_json(routes_file)
-            if not isinstance(routes, dict):
-                raise DataError("routes はオブジェクトである必要があります",
-                                "input_invalid")
+        routes = _resolve_routes(getattr(args, "routes_file", None))
+        bundle = _resolve_bundle(getattr(args, "policy_bundle_file", None))
+        scenario_id = _resolve_scenario(getattr(args, "scenario", None))
         data = lab.run_iterations(
             rt, args.staging_root, seed=args.seed,
             max_iterations=args.max_iterations,
-            max_campaigns=args.max_campaigns, routes=routes)
+            max_campaigns=args.max_campaigns, routes=routes,
+            scenario_id=scenario_id, policy_bundle=bundle)
         cid = None
         rid = None
         return cid, rid, data, 0

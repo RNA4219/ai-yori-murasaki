@@ -52,8 +52,8 @@ _MAX_BYTES = 1048576
 
 _ROLE_MODES: Dict[str, Tuple[str, ...]] = {
     "blue": ("blue",),
-    "red": ("red", "probe"),
-    "oracle": ("benign", "probe", "unit"),
+    "red": ("red", "probe", "probe_path"),
+    "oracle": ("benign", "probe", "unit", "unit_authz"),
 }
 
 _OBS_KINDS = {"http_response", "detection", "telemetry", "test_result"}
@@ -493,11 +493,15 @@ class DockerLab:
             raise ValueError("mode {!r} not allowed for role {!r}".format(mode, role))
         if not isinstance(args, tuple):
             raise ValueError("args must be a tuple")
-        if args:
-            raise ValueError("args must be empty")
         for a in args:
             if not isinstance(a, str) or "\x00" in a:
                 raise ValueError("args entries must be strings")
+            if len(a) > 512:
+                raise ValueError("args entries must be at most 512 chars")
+        if args and mode != "probe_path":
+            raise ValueError("args only allowed for probe_path mode")
+        if mode == "probe_path" and len(args) != 2:
+            raise ValueError("probe_path requires --path flag and value")
         if not isinstance(source_dir, Path):
             raise ValueError("source_dir must be a pathlib.Path")
         raw = str(source_dir)
@@ -515,7 +519,7 @@ class DockerLab:
         if not os.path.isdir(real):
             raise ValueError("source_dir does not exist")
         worker_args: List[str] = [mode]
-        if mode in ("probe", "red", "benign"):
+        if mode in ("probe", "red", "benign", "probe_path"):
             if self._target_host is None:
                 raise RuntimeError("target not started")
             worker_args.extend(["--host", self._target_host])
@@ -540,7 +544,7 @@ class DockerLab:
             if actual != expected:
                 raise ValueError("blue worker.py hash mismatch")
             network = "none"
-        elif mode in ("probe", "red", "benign"):
+        elif mode in ("probe", "red", "benign", "probe_path"):
             network = self._network
         else:
             network = "none"

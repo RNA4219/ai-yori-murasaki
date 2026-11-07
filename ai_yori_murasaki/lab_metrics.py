@@ -5,11 +5,24 @@ measure(runtime, campaign_id, measurement) -> dict
 All inputs are actual CAS references; nothing is fabricated. Evidence is
 trusted only when every run in the campaign passes verify_chain AND
 verify_checkpoint. Otherwise a HOLD is returned (never a 0-success metric).
+
+Input shapes for the agent-driven lab:
+
+- ``red_ref``: CAS ``{"observations": [row, ...]}`` where each row is a
+  sanitized telemetry row of the target (``ref``, ``method``, ``path``,
+  ``status``, ``role``, ``timestamp``). Attack rows are the successful
+  accesses to the protected record by a non-admin role.
+- ``blue_ref``: CAS ``{"findings": [finding, ...]}`` where each finding is
+  the Finding record the blue agent submitted (``finding_id``,
+  ``location.path``, ``references``).
+
+Detection matching is deterministic and reference-based: an attack row is
+detected when a finding cites the row's evidence reference and points at
+the protected record path.
 """
 from __future__ import annotations
 
 import math
-from collections import Counter
 from typing import Any, Dict, List, Optional
 
 from . import kpi
@@ -28,33 +41,6 @@ def _norm_path(p: Any) -> Any:
     if len(p) > 1 and p.endswith("/"):
         p = p.rstrip("/")
     return p
-
-
-def _obs_key(obs: Dict[str, Any]) -> tuple:
-    return (
-        obs.get("method"),
-        _norm_path(obs.get("path")),
-        obs.get("status"),
-    )
-
-
-def _is_guest(obs: Dict[str, Any]) -> bool:
-    return obs.get("role") == "guest"
-
-
-def _match_blue(red_obs: List[Dict[str, Any]],
-                blue_obs: List[Dict[str, Any]]) -> int:
-    """Strict Counter matching of (method, path, status)."""
-    red_counter: Counter = Counter()
-    for o in red_obs:
-        red_counter[_obs_key(o)] += 1
-    blue_counter: Counter = Counter()
-    for o in blue_obs:
-        blue_counter[_obs_key(o)] += 1
-    total = 0
-    for k, rc in red_counter.items():
-        total += min(rc, blue_counter.get(k, 0))
-    return total
 
 
 def _audit_scan(runtime: Any, run_id: str) -> Dict[str, int]:
@@ -121,6 +107,32 @@ def _check_report(runtime: Any, report: Any) -> bool:
         if c.get("passed") is not True:
             return False
     return True
+
+
+def _is_attack_row(row: Dict[str, Any]) -> bool:
+    """A successful access to the protected record by a non-admin role."""
+    if not isinstance(row, dict):
+        return False
+    if row.get("status") != 200 or row.get("method") != "GET":
+        return False
+    path = row.get("path")
+    role = row.get("role")
+    if not isinstance(path, str) or _norm_path(path) != "/record":
+        return False
+    return isinstance(role, str) and role != "admin"
+
+
+def _finding_covers(finding: Dict[str, Any], row: Dict[str, Any]) -> bool:
+    if not isinstance(finding, dict):
+        return False
+    location = finding.get("location")
+    if not isinstance(location, dict) or location.get("path") != "/record":
+        return False
+    refs = finding.get("references")
+    row_ref = row.get("ref")
+    if not isinstance(refs, list) or not isinstance(row_ref, str):
+        return False
+    return row_ref in refs
 
 
 def measure(runtime: Any, campaign_id: str,
@@ -208,50 +220,52 @@ def measure(runtime: Any, campaign_id: str,
     except (KeyError, ValueError, OSError):
         return _hold("evidence_missing")
 
-    red_obs = red_obj.get("observations")
-    blue_obs = blue_obj.get("observations")
-    if not isinstance(red_obs, list) or not isinstance(blue_obs, list):
+    red_rows = red_obj.get("observations")
+    findings = blue_obj.get("findings")
+    if not isinstance(red_rows, list) or not isinstance(findings, list):
         return _hold("evidence_missing")
 
-    # --- red case ids (actual) ---
-    red_case_ids: List[str] = []
-    for o in red_obs:
-        if not isinstance(o, dict):
+    # --- red observations must be valid GETs ---
+    for row in red_rows:
+        if not isinstance(row, dict):
             return _hold("evidence_missing")
-        cid = o.get("case")
-        if not isinstance(cid, str) or not cid:
+        if row.get("method") != "GET":
             return _hold("evidence_missing")
-        if cid not in red_case_ids:
-            red_case_ids.append(cid)
-
-    # --- blue observations must be valid guest GETs with status 200 ---
-    for o in blue_obs:
-        if not isinstance(o, dict):
-            return _hold("evidence_missing")
-        if o.get("method") != "GET":
-            return _hold("evidence_missing")
-        if o.get("status") != 200:
-            return _hold("evidence_missing")
-        if not _is_guest(o):
+        status = row.get("status")
+        if isinstance(status, bool) or not isinstance(status, int):
             return _hold("evidence_missing")
 
-    # --- red observations must be valid GETs with status 200 ---
-    for o in red_obs:
-        if o.get("method") != "GET":
+    # --- attacks: successful unauthorized accesses to the record ---
+    attack_rows = [row for row in red_rows if _is_attack_row(row)]
+
+    # --- findings coverage (deterministic, reference-based) ---
+    for finding in findings:
+        if not isinstance(finding, dict):
             return _hold("evidence_missing")
-        if o.get("status") != 200:
+        location = finding.get("location")
+        if not isinstance(location, dict):
+            return _hold("evidence_missing")
+        if not isinstance(finding.get("references"), list):
             return _hold("evidence_missing")
 
-    # --- red case uniqueness: exactly 3 distinct cases ---
-    if len(red_case_ids) != 3:
-        return _hold("evidence_missing")
-
-    # --- blue matching (strict Counter) ---
-    matched = _match_blue(red_obs, blue_obs)
-    blue_total = len(blue_obs)
-    fp_count = blue_total - matched
-    if fp_count < 0:
-        fp_count = 0
+    tp_by_row: Dict[int, List[Dict[str, Any]]] = {}
+    covered: Dict[int, bool] = {idx: False for idx in range(len(attack_rows))}
+    fp_findings: List[Dict[str, Any]] = []
+    for finding in findings:
+        is_tp = False
+        for idx, row in enumerate(attack_rows):
+            if _finding_covers(finding, row):
+                is_tp = True
+                covered[idx] = True
+                tp_by_row.setdefault(idx, []).append({
+                    "finding_id": finding.get("finding_id"),
+                    "label": "tp",
+                })
+        if not is_tp:
+            fp_findings.append({
+                "finding_id": finding.get("finding_id"),
+                "label": "fp",
+            })
 
     # --- completion of red run ---
     try:
@@ -355,57 +369,36 @@ def measure(runtime: Any, campaign_id: str,
             )
         records.append(rec)
 
-    # --- attack measurement rows per red case ---
-    remaining = Counter()
-    for o in red_obs:
-        remaining[_obs_key(o)] += 1
-    blue_remaining = Counter()
-    for o in blue_obs:
-        blue_remaining[_obs_key(o)] += 1
-
+    # --- attack measurement rows (one per unauthorized success row) ---
     attack_ids: List[str] = []
-    for case in red_case_ids:
-        attack_id = f"attack-{campaign_id}-{case}"
+    for idx, row in enumerate(attack_rows):
+        attack_id = "row-{}".format(idx)
         attack_ids.append(attack_id)
-        case_obs = [o for o in red_obs if o.get("case") == case]
-        case_matched = 0
-        for o in case_obs:
-            k = _obs_key(o)
-            if remaining.get(k, 0) > 0 and blue_remaining.get(k, 0) > 0:
-                remaining[k] -= 1
-                blue_remaining[k] -= 1
-                case_matched += 1
-        case_detected = case_matched > 0
-        case_findings = []
-        if case_detected:
-            case_findings.append({
-                "finding_id": f"{campaign_id}:{case}",
-                "label": "tp",
-            })
-        case_red_at: Optional[float] = None
-        for o in case_obs:
-            ts = o.get("timestamp")
-            if isinstance(ts, (int, float)) and not isinstance(ts, bool):
-                if math.isfinite(float(ts)):
-                    case_red_at = float(ts) if case_red_at is None else min(case_red_at, float(ts))
+        red_at: Optional[float] = None
+        ts = row.get("timestamp")
+        if isinstance(ts, (int, float)) and not isinstance(ts, bool):
+            if math.isfinite(float(ts)):
+                red_at = float(ts)
+        is_detected = covered.get(idx, False)
+        row_findings = tp_by_row.get(idx, [])
         records.append({
-            "run_id": attack_id,
+            "run_id": "attack-{}-{}".format(campaign_id, attack_id),
             "completion": completion,
             "cause": None,
             "failure_attribution": None,
             "events_expected": None,
             "events_verified": None,
             "oracle_replay_match": None,
-            "attack_id": case,
+            "attack_id": attack_id,
             "technique_id": None,
-            "detected": case_detected,
-            "red_at": case_red_at,
-            "detected_at": detected_at if case_detected else None,
+            "detected": is_detected,
+            "red_at": red_at,
+            "detected_at": detected_at if is_detected else None,
             "remediation_attempted": None,
             "remediation_applied": None,
             "remediation_success": None,
             "benign_passed": None,
-            "findings": case_findings,
+            "findings": row_findings,
             "production_applies": 0,
             "unauthorized_privileged_actions": 0,
             "tokens": None,
@@ -413,16 +406,10 @@ def measure(runtime: Any, campaign_id: str,
             "external_pair_invalid": False,
         })
 
-    # --- extra FP metric row only if extras exist ---
-    if fp_count > 0:
-        fp_findings = []
-        for i in range(fp_count):
-            fp_findings.append({
-                "finding_id": f"{campaign_id}:fp:{i}",
-                "label": "fp",
-            })
+    # --- extra FP metric row only if uncovered findings exist ---
+    if fp_findings:
         records.append({
-            "run_id": f"fp-{campaign_id}",
+            "run_id": "fp-{}".format(campaign_id),
             "completion": completion,
             "cause": None,
             "failure_attribution": None,
@@ -447,9 +434,10 @@ def measure(runtime: Any, campaign_id: str,
         })
 
     expected_manifest = {
-        "run_ids": list(run_ids) + attack_ids,
+        "run_ids": list(run_ids) + [
+            "attack-{}-{}".format(campaign_id, aid) for aid in attack_ids],
         "event_counts": {rid: verified_seq[rid] for rid in run_ids},
-        "attack_ids": list(red_case_ids),
+        "attack_ids": list(attack_ids),
         "technique_ids": [],
     }
 

@@ -2,17 +2,25 @@
 """Finite local lab worker for the ai-yori-murasaki disposable Docker lab.
 
 Modes (positional):
-  probe   GET /health against the fixed target host.
-  red     Three fixed guest attempts against /record with case ids
-          attack-1..attack-3. Only the fixed query role=guest is used.
-  benign  Five actual checks: /health, /public, admin /record, unknown 404,
-          /health repeat. Returns measured expected/actual/passed rows.
-  blue    Network-none mode. Reads ONLY /app/telemetry.json and reports
-          guest-200 /record events as detection objects with source row
-          counts. No answer key, no candidate patch, no red prompts, no
-          oracle canary.
-  unit    Imports the local target module (only when present in the staged
-          source) and exercises the pure ``authorize(role)`` function.
+  probe       GET /health against the fixed target host.
+  red         Three fixed guest attempts against /record with case ids
+              attack-1..attack-3. Only the fixed query role=guest is used.
+  probe_path  One agent-chosen GET (validated: bounded, printable, no dot
+              segments) against the fixed target host. Used by the Red
+              agent loop; the response is returned as one observation.
+  benign      Five actual checks: /health, /public, admin /record, unknown 404,
+              /health repeat. Returns measured expected/actual/passed rows.
+  blue        Network-none mode. Reads ONLY /app/telemetry.json and reports
+              guest-200 /record events as detection objects with source row
+              counts. No answer key, no candidate patch, no red prompts, no
+              oracle canary.
+  unit        Imports the local target module (only when present in the staged
+              source) and exercises the pure ``authorize(role)`` function
+              against the flag-dependent expectation table.
+  unit_authz  Imports the local target module and checks the post-fix
+              authorization contract (admin allowed; guest and empty role
+              denied). This is the Oracle's ground-truth expectation and is
+              only meaningful for remediated targets.
 
 CLI is intentionally narrow: --host must match a fixed aym-* hostname and
 port is fixed at 8080. No arbitrary URLs, no redirects, no external network.
@@ -45,6 +53,20 @@ def _validate_host(host: str) -> str:
     if not isinstance(host, str) or not HOST_RE.match(host):
         raise ValueError("host must match fixed aym-* lab hostname")
     return host
+
+
+def _validate_probe_path(path: str) -> str:
+    """Validate an agent-chosen probe path (bounded, printable, no dots)."""
+    if not isinstance(path, str) or not path.startswith("/"):
+        raise ValueError("path must start with /")
+    if len(path) > 512:
+        raise ValueError("path too long")
+    if ".." in path:
+        raise ValueError("path must not contain dot segments")
+    for ch in path:
+        if not (33 <= ord(ch) <= 126):
+            raise ValueError("path must be printable ASCII without spaces")
+    return path
 
 
 def _http_get(host: str, path: str, timeout: float = 5.0) -> Dict[str, Any]:
@@ -125,6 +147,30 @@ def mode_red(host: str) -> Dict[str, Any]:
     return {"mode": "red", "status": "ok", "checks": checks, "observations": observations}
 
 
+def mode_probe_path(host: str, path: str) -> Dict[str, Any]:
+    """Probe one agent-chosen path against the fixed target host:8080."""
+    host = _validate_host(host)
+    path = _validate_probe_path(path)
+    result = _http_get(host, path)
+    observation = {
+        "status": result.get("status"),
+        "body": result.get("body"),
+        "method": "GET",
+        "path": path,
+        "timestamp": result.get("timestamp"),
+        "elapsed": result.get("elapsed"),
+    }
+    if result.get("error"):
+        observation["error"] = result["error"]
+    return {
+        "mode": "probe_path",
+        "status": "ok",
+        "checks": [{"name": "probe_path", "expected": "completed",
+                    "actual": "completed", "passed": True}],
+        "observations": [observation],
+    }
+
+
 def mode_benign(host: str) -> Dict[str, Any]:
     plan: List[Tuple[str, str, int]] = [
         ("health", "/health", 200),
@@ -197,28 +243,42 @@ def mode_blue(telemetry_path: str = TELEMETRY_PATH) -> Dict[str, Any]:
     }
 
 
-def mode_unit(source_dir: Optional[str] = None) -> Dict[str, Any]:
-    """Import local target module (only if present) and test authorize()."""
+def _import_target(source_dir: Optional[str] = None):
+    """Import the local target module; returns (module, error_name|None)."""
     if source_dir is None:
         source_dir = os.path.dirname(os.path.abspath(__file__))
     target_path = os.path.join(source_dir, "target.py")
     if not os.path.isfile(target_path):
+        return None, "target_missing"
+    spec = importlib.util.spec_from_file_location(
+        "aym_lab_target_under_test", target_path)
+    if spec is None or spec.loader is None:
+        return None, "target_import_failed"
+    module = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(module)
+    except Exception:
+        return None, "target_import_failed"
+    return module, None
+
+
+def mode_unit(source_dir: Optional[str] = None) -> Dict[str, Any]:
+    """Import local target module (only if present) and test authorize()."""
+    module, error = _import_target(source_dir)
+    if error == "target_missing":
         return {
             "mode": "unit",
             "status": "fail",
             "checks": [{"name": "target_present", "expected": True, "actual": False, "passed": False}],
             "observations": [],
         }
-    spec = importlib.util.spec_from_file_location("aym_lab_target_under_test", target_path)
-    if spec is None or spec.loader is None:
+    if module is None:
         return {
             "mode": "unit",
             "status": "fail",
             "checks": [{"name": "target_importable", "expected": True, "actual": False, "passed": False}],
             "observations": [],
         }
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
     authorize = getattr(module, "authorize", None)
     if not callable(authorize):
         return {
@@ -250,7 +310,56 @@ def mode_unit(source_dir: Optional[str] = None) -> Dict[str, Any]:
     }
 
 
-def run(mode: str, host: Optional[str] = None, telemetry: str = TELEMETRY_PATH) -> Dict[str, Any]:
+def mode_unit_authz(source_dir: Optional[str] = None) -> Dict[str, Any]:
+    """Check the post-fix authorization contract on the staged target.
+
+    Expected behavior after a correct fix: admin may read the protected
+    record; guest and the empty role must be denied. This is the Oracle's
+    ground-truth expectation and is only run against remediated targets.
+    """
+    module, error = _import_target(source_dir)
+    if error == "target_missing":
+        return {
+            "mode": "unit_authz",
+            "status": "fail",
+            "checks": [{"name": "target_present", "expected": True, "actual": False, "passed": False}],
+            "observations": [],
+        }
+    if module is None:
+        return {
+            "mode": "unit_authz",
+            "status": "fail",
+            "checks": [{"name": "target_importable", "expected": True, "actual": False, "passed": False}],
+            "observations": [],
+        }
+    authorize = getattr(module, "authorize", None)
+    if not callable(authorize):
+        return {
+            "mode": "unit_authz",
+            "status": "fail",
+            "checks": [{"name": "authorize_callable", "expected": True, "actual": False, "passed": False}],
+            "observations": [],
+        }
+    checks: List[Dict[str, Any]] = []
+    for role, expected in (("admin", True), ("guest", False), ("", False)):
+        actual = bool(authorize(role))
+        checks.append({
+            "name": "authorize[{}]".format(role or "empty"),
+            "expected": expected,
+            "actual": actual,
+            "passed": actual == expected,
+        })
+    all_passed = all(c["passed"] for c in checks)
+    return {
+        "mode": "unit_authz",
+        "status": "ok" if all_passed else "fail",
+        "checks": checks,
+        "observations": [{"scenario_check": "post_fix"}],
+    }
+
+
+def run(mode: str, host: Optional[str] = None, telemetry: str = TELEMETRY_PATH,
+        path: Optional[str] = None) -> Dict[str, Any]:
     if mode == "probe":
         if host is None:
             raise ValueError("probe requires --host")
@@ -259,6 +368,12 @@ def run(mode: str, host: Optional[str] = None, telemetry: str = TELEMETRY_PATH) 
         if host is None:
             raise ValueError("red requires --host")
         return mode_red(_validate_host(host))
+    if mode == "probe_path":
+        if host is None:
+            raise ValueError("probe_path requires --host")
+        if path is None:
+            raise ValueError("probe_path requires --path")
+        return mode_probe_path(host, path)
     if mode == "benign":
         if host is None:
             raise ValueError("benign requires --host")
@@ -267,17 +382,23 @@ def run(mode: str, host: Optional[str] = None, telemetry: str = TELEMETRY_PATH) 
         return mode_blue(telemetry)
     if mode == "unit":
         return mode_unit()
+    if mode == "unit_authz":
+        return mode_unit_authz()
     raise ValueError("unknown mode: {}".format(mode))
 
 
 def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(prog="worker.py", add_help=True)
-    parser.add_argument("mode", choices=["probe", "red", "benign", "blue", "unit"])
+    parser.add_argument("mode", choices=["probe", "red", "probe_path",
+                                         "benign", "blue", "unit",
+                                         "unit_authz"])
     parser.add_argument("--host", default=None)
     parser.add_argument("--telemetry", default=TELEMETRY_PATH)
+    parser.add_argument("--path", default=None)
     args = parser.parse_args(argv)
     try:
-        result = run(args.mode, host=args.host, telemetry=args.telemetry)
+        result = run(args.mode, host=args.host, telemetry=args.telemetry,
+                     path=args.path)
     except Exception as exc:
         result = {
             "mode": args.mode,
