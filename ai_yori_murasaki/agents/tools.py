@@ -43,8 +43,28 @@ def _now() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def build_tool_schemas(grants: Optional[List[str]] = None) -> Dict[str, Any]:
-    """Return the tool catalog serialized into agent system prompts."""
+def build_tool_schemas(grants: Optional[List[str]] = None,
+                      role: Optional[str] = None) -> Dict[str, Any]:
+    """Return the tool catalog serialized into agent system prompts.
+
+    ``grants`` filters the catalog to the tools the role may actually
+    call; ``role`` narrows the stop-report description to this role's
+    report format so the model cannot pick another role's shape.
+    """
+    if role == "red":
+        stop_report = ("報告オブジェクト。redの報告はこの形式のみ: "
+                       "{\"unauthorized_access\": <true|false>, "
+                       "\"evidence_refs\": [<観測したプローブ結果のref>...]}")
+    elif role == "blue":
+        stop_report = ("報告オブジェクト。blueの報告はこの形式のみ: "
+                       "{\"findings_submitted\": <submit_findingで報告した件数(整数)>}")
+    elif role == "purple":
+        stop_report = ("報告オブジェクト。purpleの報告はこの形式のみ: "
+                       "{\"proposal_ref\": <propose_patchの結果で受け取ったref>}")
+    else:
+        stop_report = ("役割別の報告オブジェクト。red: {\"unauthorized_access\": <bool>, "
+                       "\"evidence_refs\": [<観測ref>...]} / blue: {\"findings_submitted\": <数> } / "
+                       "purple: {\"proposal_ref\": <propose_patchで受け取ったref>}")
     catalog: Dict[str, Any] = {
         "probe_endpoint": {
             "description": "対象ホストの固定ポート8080へGETでプローブする。",
@@ -92,7 +112,7 @@ def build_tool_schemas(grants: Optional[List[str]] = None) -> Dict[str, Any]:
             "description": "調査を終了し、報告する。",
             "args": {
                 "reason": "理由(日本語、512文字まで)",
-                "report": "役割別の報告オブジェクト。red: {\"unauthorized_access\": <bool>, \"evidence_refs\": [<観測ref>...]} / blue: {\"findings_submitted\": <数> } / purple: {\"proposal_ref\": <propose_patchで受け取ったref>}",
+                "report": stop_report,
             },
         },
     }
@@ -297,7 +317,10 @@ class ToolBroker:
                     "finding_id") == finding_id:
                 return {"type": "tool_result", "tool": "submit_finding",
                         "result": {"finding_id": finding_id,
-                                   "duplicate": True}}
+                                   "duplicate": True,
+                                   "message": "この内容はすでに報告済みです。"
+                                   "重複した再報告は不要です。次の行動へ"
+                                   "進んでください。"}}
         finding = {
             "schema_version": "1.0.0",
             "finding_id": finding_id,
