@@ -14,6 +14,9 @@ Keep a Changelog の区分で管理する。記録には既存最大番号 +1 �
 
 ### Added
 
+- 0010 — 2026-11-08: エージェント実行基盤とエージェントRSIの中核機能を実装。`aym lab demo`の通常経路で、Redが観測からプローブを決定し、BlueがBlindでtelemetryのみから検知を報告し、Purpleが対象コードの原因特定から修正案を生成し、非LLM Oracleが攻撃不成立と正常系回帰を再検証する閉ループを実Docker・実モデルで確認した。policy bundle（プロンプト・権限・予算）を改善対象とするRSI（freeze/train/compare/ready/review/apply）を接続し、train 2campaign・比較4campaignの実行と不採用判断（gain 0、未pinモデルは探索扱い）を記録した。モニターにagent活動・帰属・RSI候補の表示を追加した。pytest 593件緑。
+  [Task 20261108-01](docs/tasks/TASK.agent-core-11-08-2026.md) / [AC-20261108-01](docs/acceptance/AC-20261108-01.md)。5類型のうち4類型へのエージェント拡張、Experience Memoryのagent経路接続、promotion-ready・反映、Birdseye同期は含まない。
+
 - 0005 — 2026-11-07: 3段階の要件・仕様レビューを経て、ローカルDockerラボ、証跡・独立Oracle、RSI、P2、HTMLモニター、MITのwheelを実装。GLMが画面設計とレビュー、DeepSeekが実装を担当。
   [Task 20261106-06](docs/tasks/TASK.product-completion-11-06-2026.md) / [AC-20261106-06](docs/acceptance/AC-20261106-06.md)。外部公開・本番変更は含まない。
 

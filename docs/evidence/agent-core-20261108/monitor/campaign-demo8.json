@@ -1,0 +1,175 @@
+{
+  "campaign": {
+    "campaign_id": "ccc68522f80514ef2",
+    "created_at": "2026-11-07T08:24:06.55686Z",
+    "finding_count": 5,
+    "intent_id": "INT-AYM-LAB",
+    "last_run_at": "2026-11-07T08:25:47.182579Z",
+    "status": "review_pending"
+  },
+  "findings": [
+    {
+      "finding_id": "f-6585d95e897fa78a0de478a0c8399201",
+      "severity": "high",
+      "source": "llm",
+      "title": "非管理者role(user)による/recordへのアクセス成功"
+    },
+    {
+      "finding_id": "f-f28b97e8e6cd67af895b171439969996",
+      "severity": "high",
+      "source": "llm",
+      "title": "guestロールによる/recordへの不正アクセス成功"
+    },
+    {
+      "finding_id": "f-ab63d70293e697bf613d15fccc9acc8b",
+      "severity": "high",
+      "source": "llm",
+      "title": "無効ロールによる/recordへの不正アクセス成功"
+    },
+    {
+      "finding_id": "f-6bb753243e4de249b94265f0ae5c2a06",
+      "severity": "high",
+      "source": "llm",
+      "title": "未認証(role空)による/recordへの不正アクセス成功"
+    },
+    {
+      "finding_id": "f-207550ed2835cfd4eb3573d7a18bcf42",
+      "severity": "high",
+      "source": "llm",
+      "title": "未認証(role空)による/recordへのアクセス成功"
+    }
+  ],
+  "metrics": {
+    "limitations": [
+      "ATT&CK mapping unobserved",
+      "local recorded events scope"
+    ],
+    "metrics": {
+      "_aux": {
+        "candidate_loss": 0,
+        "expected_runs": 18,
+        "missing_expected_runs": [],
+        "observed_runs": 18,
+        "pair_fail": 0
+      },
+      "blue_precision": {
+        "denominator": 5,
+        "invalid": 0,
+        "numerator": 5,
+        "pair_fail": 0,
+        "scope": "stable finding_id dedup",
+        "skipped": 0,
+        "unit": "ratio",
+        "value": 1.0
+      },
+      "blue_recall": {
+        "denominator": 4,
+        "invalid": 0,
+        "numerator": 4,
+        "pair_fail": 0,
+        "scope": "attack fixtures",
+        "skipped": 0,
+        "unit": "ratio",
+        "value": 1.0
+      },
+      "evidence_completeness": {
+        "denominator": 108,
+        "invalid": 0,
+        "numerator": 108,
+        "pair_fail": 0,
+        "scope": "manifest event_counts",
+        "skipped": 0,
+        "unit": "ratio",
+        "value": 1.0
+      },
+      "evidence_missing_rate": {
+        "denominator": 108,
+        "invalid": 0,
+        "numerator": 0,
+        "pair_fail": 0,
+        "scope": "manifest event_counts",
+        "skipped": 0,
+        "unit": "ratio",
+        "value": 0.0
+      },
+      "oracle_replay_match_rate": {
+        "denominator": 1,
+        "invalid": 0,
+        "numerator": 1,
+        "pair_fail": 0,
+        "scope": "replayable runs",
+        "skipped": 17,
+        "unit": "ratio",
+        "value": 1.0
+      },
+      "over_remediation_rate": {
+        "denominator": 1,
+        "invalid": 0,
+        "numerator": 0,
+        "pair_fail": 0,
+        "scope": "applied remediations",
+        "skipped": 0,
+        "unit": "ratio",
+        "value": 0.0
+      },
+      "production_auto_apply_count": {
+        "denominator": 1,
+        "invalid": 0,
+        "numerator": 0,
+        "pair_fail": 0,
+        "scope": "all runs",
+        "skipped": 0,
+        "unit": "count",
+        "value": 0
+      },
+      "red_to_detection_time": {
+        "denominator": 4,
+        "invalid": 0,
+        "numerator": 4,
+        "pair_fail": 0,
+        "scope": "detected pairs",
+        "skipped": 0,
+        "unit": "seconds",
+        "value": 60.136135160923004
+      },
+      "remediation_success_rate": {
+        "denominator": 1,
+        "invalid": 0,
+        "numerator": 1,
+        "pair_fail": 0,
+        "scope": "remediation attempts",
+        "skipped": 0,
+        "unit": "ratio",
+        "value": 1.0
+      },
+      "unauthorized_privileged_actions": {
+        "denominator": 1,
+        "invalid": 0,
+        "numerator": 0,
+        "pair_fail": 0,
+        "scope": "all runs",
+        "skipped": 0,
+        "unit": "count",
+        "value": 0
+      },
+      "undetected_attack_techniques": {
+        "denominator": 0,
+        "invalid": 0,
+        "numerator": 0,
+        "pair_fail": 0,
+        "scope": "technique fixtures",
+        "skipped": 0,
+        "undetected_ids": [],
+        "unit": "ratio",
+        "value": null
+      }
+    },
+    "status": "measured"
+  },
+  "remediations": [
+    {
+      "remediation_id": "rem-80e12dee-a400-4a2a-8fbc-c73229d19329",
+      "status": "review_pending"
+    }
+  ]
+}

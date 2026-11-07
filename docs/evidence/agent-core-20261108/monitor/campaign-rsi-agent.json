@@ -1,0 +1,53 @@
+{
+  "agent_rsi": [
+    {
+      "applied": false,
+      "baseline_digest": "07281b8529082e17c66588f217bc0421713b038cf34c121cc8dde12ffbe444c5",
+      "bundle_digest": "07281b8529082e17c66588f217bc0421713b038cf34c121cc8dde12ffbe444c5",
+      "candidate_id": "agc-39ed1224cb8d505450b931d6",
+      "compared": true,
+      "freeze_id": "ag-e802d45d72474718edd0cc68",
+      "rules_applied": [],
+      "summary": {
+        "benign_ok": true,
+        "complete": false,
+        "exploration_grade": true,
+        "gain": 0.0,
+        "holdout_baseline": 0,
+        "holdout_candidate": 0,
+        "invalid_pairs": 1,
+        "losses": 0,
+        "model_pinned": false,
+        "pairs": 2,
+        "ready": false,
+        "validation_baseline": 1,
+        "validation_candidate": 1
+      }
+    },
+    {
+      "applied": false,
+      "baseline_digest": "07281b8529082e17c66588f217bc0421713b038cf34c121cc8dde12ffbe444c5",
+      "bundle_digest": "07281b8529082e17c66588f217bc0421713b038cf34c121cc8dde12ffbe444c5",
+      "candidate_id": "agc-558c8511a437cde464d5c319",
+      "compared": true,
+      "freeze_id": "ag-fe1cac849714c0d83d0a579a",
+      "rules_applied": [],
+      "summary": {
+        "benign_ok": true,
+        "complete": false,
+        "exploration_grade": true,
+        "gain": 0.0,
+        "holdout_baseline": 0,
+        "holdout_candidate": 0,
+        "invalid_pairs": 1,
+        "losses": 0,
+        "model_pinned": false,
+        "pairs": 2,
+        "ready": false,
+        "validation_baseline": 1,
+        "validation_candidate": 1
+      }
+    }
+  ],
+  "rsi": []
+}

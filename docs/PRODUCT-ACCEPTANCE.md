@@ -2,13 +2,13 @@
 intent_id: INT-AYM-PRODUCT-20261106
 owner: RNA4219
 status: reviewed
-last_reviewed_at: 2026-11-07
-next_review_due: 2026-12-07
+last_reviewed_at: 2026-11-08
+next_review_due: 2026-12-08
 ---
 
 # 製品検収の対応表
 
-現在の判定は**未完成**。2026-11-07に[製品完成の検収](acceptance/AC-20261106-06.md)を撤回した。以下は過去の実行記録と実装の対応表であり、全要件の充足一覧ではない。R-046の通常経路への統合などが不足している。[受領レビューの整理・必要性評価](reviews/REVIEW-INTAKE-20261107.md)で不足と追加提案を分ける。
+現在の判定は**未完成**。2026-11-07に[製品完成の検収](acceptance/AC-20261106-06.md)を撤回した。2026-11-08に原要求の中核であるエージェント実行基盤とエージェントRSIを実装し、実Docker・実モデルでの閉ループを[AC-20261108-01](acceptance/AC-20261108-01.md)に検収した。エージェント経路は認可不備の類型で実証済みであり、SQLi・XSS・パストラバーサル・依存関係CVEの4類型はassessment系の固定fixture評価・分類・CVSS・修復validation契約の範囲にとどまる。以下は実行記録と実装の対応表であり、全要件の充足一覧ではない。
 
 要件50件と[受入計画](requirements/ACCEPTANCE-PLAN.md)を、実装・試験・実行証跡へ対応させる。実Docker、実HTTP、実モデル呼び出し、fixtureによる契約試験、故障注入を区別する。
 
@@ -16,7 +16,10 @@ next_review_due: 2026-12-07
 
 | 確認 | 結果 | 証跡 |
 | --- | --- | --- |
-| 全pytest | 401 passed、2 skipped、22 subtests、43.03秒 | [JUnit](evidence/pytest-20261107.xml) |
+| エージェント駆動の実ラボ（認可不備・旗標） | Red 9呼び出し・Blue 10呼び出し・Purple 4呼び出し。blue_recall 1.0・blue_precision 1.0・replay 403×3・正常系5件・remediation_success true | [実行](evidence/agent-core-20261108/demo8-authz-flag-false-out.json)、[証跡抽出](evidence/agent-core-20261108/evidence-demo8-success.json) |
+| エージェント駆動の実ラボ（比較反転・未見形状） | Purpleが比較反転を原因特定し`REQUIRE_ADMIN`なしの形状へ修正案を生成。blue_recall 1.0 | [実行](evidence/agent-core-20261108/demo11-authz-role-mismatch-out.json)、[証跡抽出](evidence/agent-core-20261108/evidence-demo11-rolemismatch-success.json) |
+| エージェントRSI | 事前固定preflight合格、train 2campaign・比較4campaignの実行、gain 0で不採用、未pinモデルは探索扱い | [freeze資産](evidence/agent-core-20261108/freeze-artifacts/)、[train](evidence/agent-core-20261108/agent-train-v2-out.json)、[compare](evidence/agent-core-20261108/agent-compare-v2-out.json) |
+| 全pytest | 593 passed、2 skipped、22 subtests | 2026-11-08実施（AC-20261108-01） |
 | 配布用イメージでの実ラボ | 22.75秒。同一認可不備への3試行が200→403、正常5件成功、証跡53件検証、レビュー待ち | [実行結果](evidence/product-lab-portable-20261107.json) |
 | 製品のモデル接続 | Ollama経由でGLM/DeepSeekを実呼び出し | [接続記録](evidence/product-model-connection-20261106.json)、上記ラボの台帳 |
 | 隔離・異常終了・通信故障 | 31項目を確認。実Dockerのmount/read-only/SIGKILLと、ネットワーク故障注入を区別 | [境界検証](evidence/product-boundaries-20261107.json) |
@@ -76,11 +79,11 @@ pytestの2件のスキップはWindowsでシンボリックリンクを作成で
 | R-049 | model_status、接続記録、HTML | 指定・登録・開発呼出・製品接続・pinを区別 |
 | R-050 | GLMのSkill入力と画面レビュー、DeepSeek実装 | frontend-design-review-20261107.json |
 
-RSIはfreeze、候補の識別、実行証跡、train由来候補、上限付き方針更新、seed対比較、未見分離、経験の固定、レビューと反映の分離を実装した。applyのatomicな反映、拒否、rollback照合、再試行は一時環境で検証し、実証候補のregistryには反映していない。
+RSIはfreeze、候補の識別、実行証跡、train由来候補、上限付き方針更新、seed対比較、未見分離、経験の固定、レビューと反映の分離を実装した。applyのatomicな反映、拒否、rollback照合、再試行は一時環境で検証し、実証候補のregistryには反映していない。2026-11-08に、このRSI機構を製品エージェントのpolicy bundle（プロンプト・権限・予算）に接続した（[AC-20261108-01](acceptance/AC-20261108-01.md)）。エージェントRSIのExperience Memoryのカード保存はRSI側のtrain報告契約との形状不一致のため未接続（任意機能）であり、記録上は`memory_refs: []`として残す。
 
 ## レビューと限界
 
-Codexが監督・統合、Ollama登録名deepseek-v4.1-flash:cloudが実装、glm-5.3:cloudが設計・レビューを担当した。モデルの生成物はAPI照合と実行検証で修正した。原応答と適用前のファイルは.ga/goal-20261106に保持する。1017の固定版を使ったという主張はしない。
+Codexが監督・統合、Ollama登録名deepseek-v4.1-flash:cloudが実装、glm-5.3:cloudが設計・レビューを担当した。2026-11-08のエージェント中核実装では、DeepSeekサブエージェントが3回連続で実产出なしに終了し1回は並行書き込みで競合したため、中核実装の大部分を監督が直接行い、DeepSeekに権限一致化の限定修正を委任した（経緯は[AC-20261108-01](acceptance/AC-20261108-01.md)）。開発にLLMを使った事実を、製品本体がLLMエージェントとして動く証拠には使わない。モデルの生成物はAPI照合と実行検証で修正した。1017の固定版を使ったという主張はしない。
 
 GLMのRSIレビューは実証との照合後にPASS、画面レビューも修正確認でPASS。KPIレビューの指摘に従い、HOLD理由の保持と各Runの一度のaudit読み取りへ修正した。未使用の集計変数が一つ残るが、数値の重複加算には使われず、結果への影響はない。
 

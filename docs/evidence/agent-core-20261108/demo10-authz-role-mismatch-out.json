@@ -1,0 +1,1 @@
+{"campaign_id": null, "command": "lab demo", "data": {"message": "内部エラーが発生しました"}, "reason_code": "internal_error", "run_id": null, "schema_version": "1.0.0", "status": "fail"}

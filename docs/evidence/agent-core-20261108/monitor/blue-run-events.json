@@ -1,0 +1,354 @@
+{
+  "events": [
+    {
+      "event_type": "telemetry_ingested",
+      "evidence_count": 1,
+      "sequence": 1,
+      "source": "orchestrator",
+      "timestamp": "2026-11-07T08:24:27.805065Z"
+    },
+    {
+      "event_type": "telemetry_ingested",
+      "evidence_count": 1,
+      "sequence": 2,
+      "source": "orchestrator",
+      "timestamp": "2026-11-07T08:24:27.819457Z"
+    },
+    {
+      "event_type": "telemetry_ingested",
+      "evidence_count": 1,
+      "sequence": 3,
+      "source": "orchestrator",
+      "timestamp": "2026-11-07T08:24:27.842621Z"
+    },
+    {
+      "event_type": "telemetry_ingested",
+      "evidence_count": 1,
+      "sequence": 4,
+      "source": "orchestrator",
+      "timestamp": "2026-11-07T08:24:27.873884Z"
+    },
+    {
+      "event_type": "telemetry_ingested",
+      "evidence_count": 1,
+      "sequence": 5,
+      "source": "orchestrator",
+      "timestamp": "2026-11-07T08:24:27.903376Z"
+    },
+    {
+      "event_type": "telemetry_ingested",
+      "evidence_count": 1,
+      "sequence": 6,
+      "source": "orchestrator",
+      "timestamp": "2026-11-07T08:24:27.927881Z"
+    },
+    {
+      "event_type": "telemetry_ingested",
+      "evidence_count": 1,
+      "sequence": 7,
+      "source": "orchestrator",
+      "timestamp": "2026-11-07T08:24:27.958713Z"
+    },
+    {
+      "agent": {
+        "model": "glm-5.3:cloud",
+        "record_type": "agent_turn",
+        "tool": "submit_finding",
+        "turn": 1
+      },
+      "event_type": "state_captured",
+      "evidence_count": 1,
+      "sequence": 8,
+      "source": "llm",
+      "timestamp": "2026-11-07T08:24:30.966965Z"
+    },
+    {
+      "event_type": "state_captured",
+      "evidence_count": 1,
+      "sequence": 9,
+      "source": "orchestrator",
+      "timestamp": "2026-11-07T08:24:31.642608Z"
+    },
+    {
+      "agent": {
+        "category": "authz",
+        "generated_by": "llm",
+        "path": "/record",
+        "record_type": "agent_tool",
+        "role": "user",
+        "tool": "submit_finding"
+      },
+      "event_type": "prioritized",
+      "evidence_count": 1,
+      "sequence": 10,
+      "severity": "high",
+      "source": "llm",
+      "timestamp": "2026-11-07T08:24:31.657191Z",
+      "title": "非管理者role(user)による/recordへのアクセス成功"
+    },
+    {
+      "agent": {
+        "model": "glm-5.3:cloud",
+        "record_type": "agent_turn",
+        "tool": "submit_finding",
+        "turn": 2
+      },
+      "event_type": "state_captured",
+      "evidence_count": 1,
+      "sequence": 11,
+      "source": "llm",
+      "timestamp": "2026-11-07T08:24:33.975667Z"
+    },
+    {
+      "agent": {
+        "model": "glm-5.3:cloud",
+        "record_type": "agent_turn",
+        "tool": "submit_finding",
+        "turn": 3
+      },
+      "event_type": "state_captured",
+      "evidence_count": 1,
+      "sequence": 12,
+      "source": "llm",
+      "timestamp": "2026-11-07T08:24:38.133475Z"
+    },
+    {
+      "event_type": "state_captured",
+      "evidence_count": 1,
+      "sequence": 13,
+      "source": "orchestrator",
+      "timestamp": "2026-11-07T08:24:38.791713Z"
+    },
+    {
+      "agent": {
+        "category": "authz",
+        "generated_by": "llm",
+        "path": "/record",
+        "record_type": "agent_tool",
+        "role": "guest",
+        "tool": "submit_finding"
+      },
+      "event_type": "prioritized",
+      "evidence_count": 1,
+      "sequence": 14,
+      "severity": "high",
+      "source": "llm",
+      "timestamp": "2026-11-07T08:24:38.807879Z",
+      "title": "guestロールによる/recordへの不正アクセス成功"
+    },
+    {
+      "agent": {
+        "model": "glm-5.3:cloud",
+        "record_type": "agent_turn",
+        "tool": "submit_finding",
+        "turn": 4
+      },
+      "event_type": "state_captured",
+      "evidence_count": 1,
+      "sequence": 15,
+      "source": "llm",
+      "timestamp": "2026-11-07T08:24:42.74358Z"
+    },
+    {
+      "event_type": "state_captured",
+      "evidence_count": 1,
+      "sequence": 16,
+      "source": "orchestrator",
+      "timestamp": "2026-11-07T08:24:43.414646Z"
+    },
+    {
+      "agent": {
+        "category": "authz",
+        "generated_by": "llm",
+        "path": "/record",
+        "record_type": "agent_tool",
+        "role": "invalid",
+        "tool": "submit_finding"
+      },
+      "event_type": "prioritized",
+      "evidence_count": 1,
+      "sequence": 17,
+      "severity": "high",
+      "source": "llm",
+      "timestamp": "2026-11-07T08:24:43.433067Z",
+      "title": "無効ロールによる/recordへの不正アクセス成功"
+    },
+    {
+      "agent": {
+        "model": "glm-5.3:cloud",
+        "record_type": "agent_turn",
+        "tool": "submit_finding",
+        "turn": 5
+      },
+      "event_type": "state_captured",
+      "evidence_count": 1,
+      "sequence": 18,
+      "source": "llm",
+      "timestamp": "2026-11-07T08:24:46.825384Z"
+    },
+    {
+      "agent": {
+        "reason": "invalid_role",
+        "record_type": "agent_tool_denied",
+        "tool": "submit_finding"
+      },
+      "event_type": "state_captured",
+      "evidence_count": 0,
+      "sequence": 19,
+      "source": "llm",
+      "timestamp": "2026-11-07T08:24:46.858641Z"
+    },
+    {
+      "agent": {
+        "model": "glm-5.3:cloud",
+        "record_type": "agent_turn",
+        "tool": "read_evidence",
+        "turn": 6
+      },
+      "event_type": "state_captured",
+      "evidence_count": 1,
+      "sequence": 20,
+      "source": "llm",
+      "timestamp": "2026-11-07T08:24:49.878774Z"
+    },
+    {
+      "agent": {
+        "model": "glm-5.3:cloud",
+        "record_type": "agent_turn",
+        "tool": "submit_finding",
+        "turn": 7
+      },
+      "event_type": "state_captured",
+      "evidence_count": 1,
+      "sequence": 21,
+      "source": "llm",
+      "timestamp": "2026-11-07T08:24:55.36371Z"
+    },
+    {
+      "agent": {
+        "reason": "invalid_role",
+        "record_type": "agent_tool_denied",
+        "tool": "submit_finding"
+      },
+      "event_type": "state_captured",
+      "evidence_count": 0,
+      "sequence": 22,
+      "source": "llm",
+      "timestamp": "2026-11-07T08:24:55.392706Z"
+    },
+    {
+      "agent": {
+        "model": "glm-5.3:cloud",
+        "record_type": "agent_turn",
+        "tool": "submit_finding",
+        "turn": 8
+      },
+      "event_type": "state_captured",
+      "evidence_count": 1,
+      "sequence": 23,
+      "source": "llm",
+      "timestamp": "2026-11-07T08:24:59.241091Z"
+    },
+    {
+      "event_type": "state_captured",
+      "evidence_count": 1,
+      "sequence": 24,
+      "source": "orchestrator",
+      "timestamp": "2026-11-07T08:25:00.081532Z"
+    },
+    {
+      "agent": {
+        "category": "authz",
+        "generated_by": "llm",
+        "path": "/record",
+        "record_type": "agent_tool",
+        "role": "unauthenticated",
+        "tool": "submit_finding"
+      },
+      "event_type": "prioritized",
+      "evidence_count": 1,
+      "sequence": 25,
+      "severity": "high",
+      "source": "llm",
+      "timestamp": "2026-11-07T08:25:00.1042Z",
+      "title": "未認証(role空)による/recordへの不正アクセス成功"
+    },
+    {
+      "agent": {
+        "model": "glm-5.3:cloud",
+        "record_type": "agent_turn",
+        "tool": "submit_finding",
+        "turn": 9
+      },
+      "event_type": "state_captured",
+      "evidence_count": 1,
+      "sequence": 26,
+      "source": "llm",
+      "timestamp": "2026-11-07T08:25:05.897521Z"
+    },
+    {
+      "event_type": "state_captured",
+      "evidence_count": 1,
+      "sequence": 27,
+      "source": "orchestrator",
+      "timestamp": "2026-11-07T08:25:06.556748Z"
+    },
+    {
+      "agent": {
+        "category": "authz",
+        "generated_by": "llm",
+        "path": "/record",
+        "record_type": "agent_tool",
+        "role": "unknown",
+        "tool": "submit_finding"
+      },
+      "event_type": "prioritized",
+      "evidence_count": 1,
+      "sequence": 28,
+      "severity": "high",
+      "source": "llm",
+      "timestamp": "2026-11-07T08:25:06.580612Z",
+      "title": "未認証(role空)による/recordへのアクセス成功"
+    },
+    {
+      "agent": {
+        "model": "glm-5.3:cloud",
+        "record_type": "agent_turn",
+        "tool": "stop",
+        "turn": 10
+      },
+      "event_type": "state_captured",
+      "evidence_count": 1,
+      "sequence": 29,
+      "source": "llm",
+      "timestamp": "2026-11-07T08:25:19.886037Z"
+    },
+    {
+      "agent": {
+        "model": "glm-5.3:cloud",
+        "reason": "/recordへの200成功アクセスのうちroleがadmin以外の4行(user、guest、invalid、role空)を1行ずつ報告した。adminの正当アクセスと/healthは方針により報告対象外。全検知の報告が完了したため終了する。",
+        "record_type": "agent_stopped",
+        "turn": 10
+      },
+      "event_type": "state_captured",
+      "evidence_count": 0,
+      "sequence": 30,
+      "source": "llm",
+      "timestamp": "2026-11-07T08:25:19.923673Z"
+    },
+    {
+      "event_type": "state_captured",
+      "evidence_count": 0,
+      "sequence": 31,
+      "source": "orchestrator",
+      "timestamp": "2026-11-07T08:25:19.959987Z"
+    },
+    {
+      "event_type": "chain_sealed",
+      "evidence_count": 0,
+      "sequence": 32,
+      "source": "orchestrator",
+      "timestamp": "2026-11-07T08:25:20.012669Z"
+    }
+  ]
+}
