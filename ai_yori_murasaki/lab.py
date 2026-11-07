@@ -363,8 +363,9 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
              "status": first_row.get("status")})
         evaluated_exploit = runtime.record_oracle(exploit_rid,
                                                   exploit_predicate)
-        _require(evaluated_exploit.get("verdict") == "PASS",
-                 "red exploit predicate must PASS (attack reproduced)")
+        if evaluated_exploit.get("verdict") != "PASS":
+            raise _LabFailure("red", "exploit predicate must PASS "
+                              "(attack reproduced)", "candidate")
         _finish(runtime, cid, exploit_rid)
         current_rid = None
 
@@ -407,8 +408,11 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
                              extensions={"record_type": "blind_detection"})
         evaluated_blind = runtime.record_oracle(
             blind_rid, blind["predicate"], evaluated_run_id=blue_rid)
-        _require(evaluated_blind.get("verdict") == "PASS",
-                 "blue blind detection predicate must PASS")
+        if evaluated_blind.get("verdict") != "PASS":
+            uncovered = blind["report"].get("uncovered") or []
+            raise _LabFailure("blue", "blind detection incomplete: "
+                              "{} uncovered row(s)".format(len(uncovered)),
+                              "candidate")
         _finish(runtime, cid, blind_rid)
         current_rid = None
         runtime.transition(cid, "purple_open")
@@ -482,14 +486,18 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
             "checks": [{"name": "python-ast", "passed": static_ok}],
         }
         static_ref = runtime.store.put_object(static_report)
-        _require(static_ok, "patched target failed ast.parse")
+        if not static_ok:
+            raise _LabFailure("purple", "patched target failed ast.parse",
+                              "candidate")
         lab.start_target(target_dir)
         _require(lab.wait_healthy() is True, "patched target must be healthy")
         unit_result = lab.run_worker(target_dir.resolve(), "oracle",
                                      "unit_authz")
         unit_checks = _extract_checks(unit_result)
-        _require(_all_passed(unit_checks),
-                 "patched target failed post-fix behavior check")
+        if not _all_passed(unit_checks):
+            raise _LabFailure("purple",
+                              "patched target failed post-fix behavior "
+                              "check", "candidate")
         unit_ref = runtime.store.put_object(unit_result)
         runtime.record_event(rem_rid, "state_captured", "orchestrator",
                              evidence_refs=(proposal_ref,),
@@ -512,12 +520,18 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
         runs.append(reeval_rid)
         replay_result = lab.run_worker(red_stage, "red", "red")
         replay_obs = _extract_observations(replay_result)
-        _require(len(replay_obs) == 3, "replay must yield 3 observations")
+        if len(replay_obs) != 3:
+            raise _LabFailure("purple", "replay must yield 3 observations",
+                              "candidate")
         replay_statuses = [o.get("status") for o in replay_obs]
-        _require(replay_statuses == [403, 403, 403],
-                 "replay statuses must be 403,403,403")
+        if replay_statuses != [403, 403, 403]:
+            raise _LabFailure("purple", "replay statuses must be "
+                              "403,403,403 but were {}".format(
+                                  replay_statuses), "candidate")
         replay_checks = _extract_checks(replay_result)
-        _require(len(replay_checks) == 3, "replay must yield 3 checks")
+        if len(replay_checks) != 3:
+            raise _LabFailure("purple", "replay must yield 3 checks",
+                              "candidate")
         replay_raw_ref = runtime.store.put_object(replay_result)
 
         benign_stage = stage_worker(jobdir, "oracle")
@@ -559,14 +573,16 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
         replay_predicate = Oracle().make_predicate(
             "replay", "http_status", actual_obs_ref, expected)
         evaluated_replay = runtime.record_oracle(reeval_rid, replay_predicate)
-        _require(evaluated_replay.get("verdict") == "FAIL",
-                 "replay predicate must FAIL (exploit not succeeded)")
-        _require(evaluated_replay.get("reason_code") == "exploit_not_succeeded",
-                 "replay reason_code must be exploit_not_succeeded")
+        if (evaluated_replay.get("verdict") != "FAIL"
+                or evaluated_replay.get("reason_code")
+                != "exploit_not_succeeded"):
+            raise _LabFailure("purple", "replay predicate must FAIL with "
+                              "exploit_not_succeeded", "candidate")
         evaluated_ref = runtime.store.put_object(evaluated_replay)
 
         primary = _primary_finding(findings, blue_rows)
-        _require(primary is not None, "no finding to remediate")
+        if primary is None:
+            raise _LabFailure("blue", "no finding to remediate", "candidate")
         remediation_id = _new_id("rem")
         remediation = {
             "schema_version": "1.0.0",

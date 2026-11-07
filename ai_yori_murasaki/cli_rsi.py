@@ -471,8 +471,8 @@ def dispatch(args, rt):
                     evidence_refs=(audit_ref,),
                     extensions={"record_type": "holdout_access",
                                 "policy_operation": "holdout_access"})
-            return rsi_agent.compare(args.candidate_id, executor,
-                                      on_holdout=on_holdout)
+            return rsi_agent.compare(cand["freeze_id"], args.candidate_id,
+                                     executor, on_holdout=on_holdout)
 
         def ev(res):
             refs = []
