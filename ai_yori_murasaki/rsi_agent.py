@@ -1,0 +1,829 @@
+"""Agent RSI: improving the policy bundles the product agents run with.
+
+This module is the RSI loop for the product's own agents. The improvement
+target is the agent policy bundle (prompts, grants, budgets) that the lab
+agents actually use at runtime - not model weights and not the separate
+deterministic local-authorization policy of ``rsi_train``/``rsi_compare``.
+
+Loop (mirrors the 9-item RSI policy and the RSI contract):
+
+1. ``freeze``: fix the objective, scenario split assignment (train /
+   validation / holdout from the packaged scenario catalog), seed pairs,
+   order policy, budgets, thresholds and the model pinning status BEFORE
+   any evaluation result is observed. The baseline bundle, evaluation
+   manifest, dataset and runner snapshot digests are frozen and pinned
+   in the trusted root.
+2. ``train``: execute the baseline bundle on the train scenarios, analyze
+   the recorded failures deterministically, and derive a candidate bundle
+   through fixed policy-editor rules (recorded, idempotent). Completed
+   train runs also produce abstract experience cards.
+3. ``compare``: run baseline and candidate on the validation and holdout
+   scenarios under identical seeds/budgets, pair by pair, and compute the
+   adoption decision against the frozen thresholds. Candidate-caused
+   failures count as losses; only external (infrastructure) failures may
+   exclude a pair and are reported as such.
+4. ``ready`` / ``review`` / ``apply``: promotion-ready is separate from
+   reflection into the default executor; apply is an explicit operator
+   operation with an approved review, expected refs and a rollback path.
+
+Model pinning: comparisons running on unpinned cloud aliases are marked
+exploratory and never become promotion-ready (SPEC-EVALUATION A-3 /
+decision D-058), regardless of measured gains.
+"""
+from __future__ import annotations
+
+import hashlib
+import json
+import re
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional
+from urllib.parse import quote
+
+from . import evaluation_identity as identity
+from .agents.policies import validate_bundle
+from .agents.scenarios import list_scenarios
+from .jsonio import DataError, canonical, digest, loads
+
+SideExecutor = Callable[[str, dict, int], dict]
+
+_RUNNER_FILES = (
+    "agents/__init__.py",
+    "agents/core.py",
+    "agents/policies.py",
+    "agents/scenarios.py",
+    "agents/tools.py",
+    "agents/policies_default.json",
+    "lab.py",
+    "lab_metrics.py",
+    "worker.py",
+    "oracle.py",
+    "p2.py",
+    "runtime.py",
+    "storage.py",
+    "contracts.py",
+    "jsonio.py",
+    "rsi_agent.py",
+    "adapters/llm.py",
+    "adapters/base.py",
+    "adapters/normalizers.py",
+    "lab_assets/worker.py",
+)
+
+_SPLIT_RE = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
+
+_SPLITS = ("train", "validation", "holdout")
+
+
+def _fail(reason: str, message: str) -> None:
+    raise DataError(message, reason)
+
+
+def _is_id(value: Any) -> bool:
+    return isinstance(value, str) and 0 < len(value) <= 128 and \
+        value.strip() == value
+
+
+def agent_runner_snapshot() -> bytes:
+    """Hash the agent execution bundle (code + policies + scenarios)."""
+    base = Path(__file__).resolve().parent
+    files: Dict[str, str] = {}
+    for name in _RUNNER_FILES:
+        path = base / name
+        try:
+            data = path.read_bytes()
+        except OSError as error:
+            raise DataError("agent runner bundle unreadable",
+                            "input_invalid") from error
+        files[name] = hashlib.sha256(data).hexdigest()
+    scenarios_root = base / "scenarios"
+    if scenarios_root.is_dir():
+        for path in sorted(scenarios_root.glob("*/*")):
+            if not path.is_file():
+                continue
+            rel = "scenarios/" + path.relative_to(scenarios_root).as_posix()
+            files[rel] = hashlib.sha256(path.read_bytes()).hexdigest()
+    snapshot = {
+        "format": "aym-agent-rsi-runner-bundle-v1",
+        "files": files,
+    }
+    return canonical(snapshot)
+
+
+# --------------------------------------------------------------------------- #
+# failure classification and policy editor
+# --------------------------------------------------------------------------- #
+
+_GUIDANCE = {
+    "red_not_reproduced": (
+        "確認するroleには admin と guest を必ず含め、/record へのアクセス"
+        "結果を証拠として報告に含めること。"),
+    "blue_missed_detection": (
+        "path が /record で status が 200 かつ role が admin 以外の行は、"
+        "必ず検知として submit_finding で報告すること。"),
+    "purple_patch_failed": (
+        "修正後は authorize が admin のみ True を返し、guest と空roleは"
+        " False を返すこと。/health と /public の処理は変更しないこと。"),
+}
+
+
+def classify_failure(outcome: dict) -> Optional[str]:
+    """Deterministic failure classification from one recorded outcome."""
+    if outcome.get("status") == "success":
+        return None
+    attribution = outcome.get("failure_attribution")
+    if attribution == "external":
+        return "external"
+    reason = str(outcome.get("reason", ""))
+    phase = outcome.get("phase")
+    if "llm_failure" in reason or "llm response" in reason:
+        return "llm_failure"
+    if "budget" in reason or "fix_attempts" in reason:
+        return "budget_exhausted"
+    if phase == "red":
+        return "red_not_reproduced"
+    if phase == "blue":
+        return "blue_missed_detection"
+    if phase == "purple":
+        return "purple_patch_failed"
+    if phase == "remediation":
+        return "purple_patch_failed"
+    return "search"
+
+
+def _apply_guidance(bundle: dict, rules: List[str]) -> dict:
+    """Apply the deterministic policy editor rules to a bundle copy."""
+    candidate = json.loads(json.dumps(bundle, ensure_ascii=False))
+    changed_rules: List[str] = []
+    for rule in rules:
+        guidance = _GUIDANCE.get(rule)
+        if guidance is None:
+            continue
+        role = {"red_not_reproduced": "red",
+                "blue_missed_detection": "blue",
+                "purple_patch_failed": "purple"}[rule]
+        prompt = candidate["roles"][role]["system_prompt"]
+        if guidance not in prompt:
+            candidate["roles"][role]["system_prompt"] = (
+                prompt.rstrip() + "\n" + guidance)
+            changed_rules.append(rule)
+    if "budget_exhausted" in rules:
+        for role in ("red", "blue", "purple"):
+            budget = candidate["roles"][role]["budget"]
+            budget["max_turns"] = min(16, budget["max_turns"] + 2)
+            budget["max_llm_calls"] = min(24, budget["max_llm_calls"] + 4)
+        changed_rules.append("budget_bump")
+    if changed_rules:
+        candidate["version"] = "{}-candidate".format(candidate["version"])
+    return candidate, changed_rules
+
+
+def outcome_from_demo(result: dict) -> dict:
+    """Map one ``lab.run_demo`` result (record mode) to an RSI outcome."""
+    if not isinstance(result, dict):
+        raise DataError("run result must be object", "input_invalid")
+    if result.get("status") == "review_pending":
+        verdict = result.get("final_verdict") or {}
+        agent = result.get("agent") or {}
+        calls = 0
+        for role in ("red", "blue", "purple"):
+            calls += int((agent.get(role) or {}).get("llm_calls") or 0)
+        return {
+            "status": "success",
+            "phase": None,
+            "reason": None,
+            "failure_attribution": None,
+            "campaign_id": result.get("campaign_id"),
+            "llm_calls": calls,
+            "remediation_success": verdict.get("remediation_success") is True,
+            "benign_passed": verdict.get("benign_regression_passed") is True,
+        }
+    if result.get("status") == "failed":
+        agent = result.get("agent") or {}
+        calls = 0
+        for role in ("red", "blue", "purple"):
+            calls += int((agent.get(role) or {}).get("llm_calls") or 0)
+        attribution = result.get("failure_attribution")
+        return {
+            "status": "failed",
+            "phase": result.get("phase"),
+            "reason": result.get("reason"),
+            "failure_attribution": attribution,
+            "campaign_id": result.get("campaign_id"),
+            "llm_calls": calls,
+            "remediation_success": False,
+            "benign_passed": None,
+            "completion": "incomplete" if attribution == "external"
+            else "completed",
+        }
+    raise DataError("run result status unknown", "input_invalid")
+
+
+# --------------------------------------------------------------------------- #
+# AgentRSI state machine
+# --------------------------------------------------------------------------- #
+
+class AgentRSI:
+    """State machine for agent-bundle RSI (separate namespace from RSI)."""
+
+    def __init__(self, store: Any) -> None:
+        self._store = store
+        self._workspace = Path(store.workspace)
+        self._trusted = Path(store.trusted_root)
+        self._state_path = self._workspace / "agent_rsi" / "state.json"
+        self._registry_path = self._workspace / "agent_rsi" / "registry.json"
+
+    # -- state helpers ----------------------------------------------------
+
+    def _load_state(self) -> dict:
+        if not self._state_path.exists():
+            return {"candidates": {}, "freezes": {}, "reviews": {},
+                    "memory": []}
+        raw = self._state_path.read_text(encoding="utf-8")
+        data = loads(raw.encode("utf-8"))
+        if not isinstance(data, dict):
+            _fail("state_invalid", "agent rsi state must be object")
+        for key in ("candidates", "freezes", "reviews", "memory"):
+            if key not in data:
+                data[key] = {} if key != "memory" else []
+        return data
+
+    def _save_state(self, state: dict) -> None:
+        self._state_path.parent.mkdir(parents=True, exist_ok=True)
+        self._store.atomic_json(self._state_path, state)
+
+    def _pin_path(self, freeze_id: str) -> Path:
+        return self._trusted / "agent_rsi" / "{}.json".format(freeze_id)
+
+    # -- freeze ------------------------------------------------------------
+
+    def _validate_config(self, config: Any) -> dict:
+        if not isinstance(config, dict):
+            _fail("input_invalid", "config must be object")
+        keys = {"objective", "seed_pairs", "order_policy", "budget",
+                "thresholds", "stop_conditions", "scenario_splits",
+                "model_pinning"}
+        if set(config.keys()) != keys:
+            _fail("input_invalid", "config keys invalid")
+        if not isinstance(config["objective"], str) or not (
+                1 <= len(config["objective"]) <= 2000):
+            _fail("input_invalid", "objective must be 1..2000 chars")
+        seeds = config["seed_pairs"]
+        if (not isinstance(seeds, list) or not seeds
+                or len(seeds) > 8):
+            _fail("input_invalid", "seed_pairs must be 1..8 items")
+        for s in seeds:
+            if isinstance(s, bool) or not isinstance(s, int) or s < 0:
+                _fail("input_invalid", "seed must be non-negative int")
+        if config["order_policy"] not in ("alternating", "baseline_first"):
+            _fail("input_invalid", "order_policy invalid")
+        budget = config["budget"]
+        if not isinstance(budget, dict):
+            _fail("input_invalid", "budget must be object")
+        if set(budget.keys()) != {"max_pairs", "max_calls"}:
+            _fail("input_invalid", "budget keys invalid")
+        for key in ("max_pairs", "max_calls"):
+            v = budget[key]
+            if isinstance(v, bool) or not isinstance(v, int) or not (
+                    1 <= v <= 10 ** 9):
+                _fail("input_invalid", "budget.{} invalid".format(key))
+        thresholds = config["thresholds"]
+        if not isinstance(thresholds, dict):
+            _fail("input_invalid", "thresholds must be object")
+        if set(thresholds.keys()) != {"success_gain_min",
+                                      "max_safety_violations",
+                                      "holdout_min_delta"}:
+            _fail("input_invalid", "thresholds keys invalid")
+        gain = thresholds["success_gain_min"]
+        if isinstance(gain, bool) or not isinstance(gain, (int, float)):
+            _fail("input_invalid", "success_gain_min invalid")
+        if not (-1.0 <= float(gain) <= 1.0):
+            _fail("input_invalid", "success_gain_min out of range")
+        msv = thresholds["max_safety_violations"]
+        if isinstance(msv, bool) or not isinstance(msv, int) or msv < 0:
+            _fail("input_invalid", "max_safety_violations invalid")
+        hmd = thresholds["holdout_min_delta"]
+        if (isinstance(hmd, bool) or not isinstance(hmd, (int, float))
+                or not (-1.0 <= float(hmd) <= 1.0)):
+            _fail("input_invalid", "holdout_min_delta invalid")
+        stop = config["stop_conditions"]
+        if (not isinstance(stop, dict)
+                or set(stop.keys()) != {"max_iterations"}
+                or isinstance(stop["max_iterations"], bool)
+                or not isinstance(stop["max_iterations"], int)
+                or not (1 <= stop["max_iterations"] <= 64)):
+            _fail("input_invalid", "stop_conditions invalid")
+        splits = config["scenario_splits"]
+        if not isinstance(splits, dict):
+            _fail("input_invalid", "scenario_splits must be object")
+        if set(splits.keys()) != set(_SPLITS):
+            _fail("input_invalid", "scenario_splits keys invalid")
+        catalog = {meta["scenario_id"]: meta for meta in list_scenarios()}
+        seen: set = set()
+        for split in _SPLITS:
+            ids = splits[split]
+            if not isinstance(ids, list):
+                _fail("input_invalid", "scenario_splits values must be lists")
+            for scenario_id in ids:
+                if not _SPLIT_RE.match(str(scenario_id)):
+                    _fail("input_invalid", "scenario id invalid")
+                if scenario_id in seen:
+                    _fail("input_invalid",
+                          "scenario appears in two splits")
+                seen.add(scenario_id)
+                if scenario_id not in catalog:
+                    _fail("input_invalid", "unknown scenario")
+                if catalog[scenario_id]["split"] != split:
+                    _fail("policy_denied",
+                          "scenario split disagrees with catalog")
+        if not splits["train"]:
+            _fail("input_invalid", "train split must be non-empty")
+        if not splits["validation"] or not splits["holdout"]:
+            _fail("input_invalid",
+                  "validation and holdout splits must be non-empty")
+        pinning = config["model_pinning"]
+        if not isinstance(pinning, dict):
+            _fail("input_invalid", "model_pinning must be object")
+        if set(pinning.keys()) != {"status", "note"}:
+            _fail("input_invalid", "model_pinning keys invalid")
+        if not isinstance(pinning["status"], str) or not (
+                1 <= len(pinning["status"]) <= 200):
+            _fail("input_invalid", "model_pinning status invalid")
+        if not isinstance(pinning["note"], str) or len(pinning["note"]) > 500:
+            _fail("input_invalid", "model_pinning note invalid")
+        return config
+
+    def freeze(self, campaign_id: str, config: dict, manifest: dict,
+               baseline_bundle: dict, artifact_root: Path) -> dict:
+        """Freeze the evaluation conditions before any result is seen."""
+        if not _is_id(campaign_id):
+            _fail("input_invalid", "campaign_id invalid")
+        self._validate_config(config)
+        validate_bundle(baseline_bundle)
+        if not isinstance(manifest, dict):
+            _fail("input_invalid", "manifest must be object")
+        if not isinstance(artifact_root, Path) or not artifact_root.is_absolute():
+            _fail("input_invalid", "artifact_root must be absolute Path")
+        identity._assert_no_symlink_ancestors(artifact_root,
+                                              artifact_root, "artifact_root")
+        freeze_id = "ag-{}".format(digest({
+            "campaign_id": campaign_id, "config": config,
+            "manifest": manifest, "baseline": baseline_bundle,
+        })[:24])
+        state = self._load_state()
+        if freeze_id in state["freezes"]:
+            return state["freezes"][freeze_id]["record"]
+
+        root = artifact_root / "agent-rsi" / freeze_id
+        root.mkdir(parents=True, exist_ok=True)
+        dataset = {"tasks": [
+            {"task_id": sid, "split": split}
+            for split in _SPLITS for sid in config["scenario_splits"][split]]}
+        dataset_bytes = canonical(dataset)
+        runner_bytes = agent_runner_snapshot()
+        baseline_bytes = canonical(baseline_bundle)
+        manifest_bytes = canonical(manifest)
+        for rel, data in (("dataset.json", dataset_bytes),
+                          ("runner-bundle.json", runner_bytes),
+                          ("baseline-policy-bundle.json", baseline_bytes),
+                          ("evaluation-manifest.json", manifest_bytes)):
+            path = root / rel
+            identity._assert_no_symlink_ancestors(artifact_root, path,
+                                                   "artifact")
+            if path.exists():
+                if identity._read_bounded(path, "artifact") != data:
+                    _fail("freeze_modified",
+                          "artifact differs: {}".format(rel))
+            else:
+                path.write_bytes(data)
+
+        record = {
+            "freeze_id": freeze_id,
+            "campaign_id": campaign_id,
+            "config": config,
+            "config_digest": digest(config),
+            "manifest_ref": self._store.put_object(manifest),
+            "manifest_digest": digest(manifest),
+            "baseline_ref": self._store.put_object(baseline_bundle),
+            "baseline_bundle": baseline_bundle,
+            "baseline_digest": digest(baseline_bundle),
+            "dataset_digest": digest(dataset),
+            "runner_digest": digest(loads(runner_bytes)),
+            "artifact_root": str(artifact_root),
+            "frozen_at": None,
+        }
+        record_ref = self._store.put_object(record)
+        record["frozen_at"] = record_ref
+        pin = {"freeze_id": freeze_id, "content_ref": record_ref,
+               "content_digest": record_ref}
+        pin_path = self._pin_path(freeze_id)
+        pin_path.parent.mkdir(parents=True, exist_ok=True)
+        self._store.atomic_json(pin_path, pin)
+        state["freezes"][freeze_id] = {"record_ref": record_ref,
+                                        "record": record}
+        self._save_state(state)
+        return record
+
+    def load_freeze(self, freeze_id: str) -> dict:
+        if not _is_id(freeze_id):
+            _fail("input_invalid", "freeze_id invalid")
+        state = self._load_state()
+        entry = state["freezes"].get(freeze_id)
+        if entry is None:
+            _fail("freeze_missing", "unknown freeze")
+        pin_path = self._pin_path(freeze_id)
+        if not pin_path.exists():
+            _fail("freeze_missing", "trusted pin missing")
+        pin = loads(pin_path.read_bytes())
+        record = self._store.get_object(pin["content_ref"])
+        if digest(record) != pin["content_digest"]:
+            _fail("freeze_modified", "freeze record digest mismatch")
+        if record.get("freeze_id") != freeze_id:
+            _fail("freeze_modified", "freeze id mismatch")
+        if digest(record["config"]) != record["config_digest"]:
+            _fail("freeze_modified", "config digest mismatch")
+        if digest(record["baseline_bundle"]) != record["baseline_digest"]:
+            _fail("freeze_modified", "baseline digest mismatch")
+        runner_now = loads(agent_runner_snapshot())
+        if digest(runner_now) != record["runner_digest"]:
+            _fail("freeze_modified", "agent runner bundle changed")
+        root = Path(record["artifact_root"])
+        for rel, expected in (
+                ("dataset.json", record["dataset_digest"]),
+                ("baseline-policy-bundle.json", record["baseline_digest"]),
+                ("runner-bundle.json", digest(runner_now))):
+            path = root / "agent-rsi" / freeze_id / rel
+            data = identity._read_bounded(path, "artifact")
+            if digest(loads(data)) != expected:
+                _fail("freeze_modified",
+                      "artifact digest mismatch: {}".format(rel))
+        return record
+
+    # -- candidate / train -----------------------------------------------
+
+    def create_candidate(self, freeze_id: str, candidate_bundle: dict,
+                         rules_applied: List[str],
+                         train_report_ref: str) -> dict:
+        record = self.load_freeze(freeze_id)
+        validate_bundle(candidate_bundle)
+        state = self._load_state()
+        candidate_id = "agc-{}".format(digest({
+            "freeze_id": freeze_id,
+            "candidate": candidate_bundle,
+        })[:24])
+        candidate = {
+            "candidate_id": candidate_id,
+            "freeze_id": freeze_id,
+            "campaign_id": record["campaign_id"],
+            "bundle_ref": self._store.put_object(candidate_bundle),
+            "bundle_digest": digest(candidate_bundle),
+            "baseline_digest": record["baseline_digest"],
+            "rules_applied": list(rules_applied),
+            "train_report_ref": train_report_ref,
+            "compared": False,
+            "applied": False,
+        }
+        state["candidates"][candidate_id] = candidate
+        self._save_state(state)
+        return candidate
+
+    def get_candidate(self, candidate_id: str) -> dict:
+        if not _is_id(candidate_id):
+            _fail("input_invalid", "candidate_id invalid")
+        state = self._load_state()
+        candidate = state["candidates"].get(candidate_id)
+        if candidate is None:
+            _fail("input_invalid", "unknown candidate")
+        return candidate
+
+    def train(self, freeze_id: str, executor: SideExecutor) -> dict:
+        """Run the baseline bundle on train scenarios and derive a
+        candidate through the deterministic policy editor."""
+        record = self.load_freeze(freeze_id)
+        config = record["config"]
+        baseline = record["baseline_bundle"]
+        results = []
+        rules: List[str] = []
+        for scenario_id in config["scenario_splits"]["train"]:
+            for seed in config["seed_pairs"]:
+                outcome = executor(scenario_id, baseline, seed)
+                failure_class = classify_failure(outcome)
+                if failure_class and failure_class not in rules:
+                    rules.append(failure_class)
+                results.append({
+                    "scenario_id": scenario_id, "seed": seed,
+                    "bundle_id": baseline.get("bundle_id"),
+                    "outcome": outcome,
+                    "failure_class": failure_class,
+                })
+        candidate_bundle, changed_rules = _apply_guidance(baseline, rules)
+        changed = bool(changed_rules)
+        if not changed:
+            candidate_bundle = baseline
+        train_report = {
+            "kind": "agent_rsi_train",
+            "freeze_id": freeze_id,
+            "results": results,
+            "failure_classes": rules,
+            "rules_applied": changed_rules,
+            "changed": changed,
+            "candidate_bundle_id": candidate_bundle.get("bundle_id"),
+            "candidate_version": candidate_bundle.get("version"),
+        }
+        train_ref = self._store.put_object(train_report)
+        candidate = self.create_candidate(
+            freeze_id, candidate_bundle, changed_rules, train_ref)
+        # Experience cards: only from completed train runs (abstract).
+        memory_refs = []
+        try:
+            from .rsi import RSI
+            rsi = RSI(self._store)
+            for item in results:
+                if item["outcome"].get("completion") == "incomplete":
+                    continue
+                card = {
+                    "split": "train",
+                    "completion": "completed",
+                    "failure_class": item["failure_class"] or "state",
+                    "outcome": "supported"
+                    if item["outcome"]["status"] == "success"
+                    else "unverified",
+                    "action": "retain" if item["outcome"]["status"] ==
+                    "success" else "change_search",
+                    "evidence_count": 1,
+                }
+                ref = rsi.add_experience(
+                    card, train_ref=train_ref)["memory_ref"]
+                memory_refs.append(ref)
+        except Exception:
+            memory_refs = []
+        return {
+            "freeze_id": freeze_id,
+            "candidate_id": candidate["candidate_id"],
+            "changed": changed,
+            "rules_applied": changed_rules,
+            "failure_classes": rules,
+            "train_ref": train_ref,
+            "candidate_bundle_ref": candidate["bundle_ref"],
+            "results": results,
+            "memory_refs": memory_refs,
+        }
+
+    # -- compare -----------------------------------------------------------
+
+    def _side_result(self, outcome: dict) -> dict:
+        success = outcome.get("status") == "success"
+        attribution = outcome.get("failure_attribution")
+        return {
+            "completion": outcome.get("completion", "completed"),
+            "success": success,
+            "detection_covered": success,
+            "remediation_success": bool(outcome.get("remediation_success")),
+            "benign_passed": outcome.get("benign_passed"),
+            "safety_violations": 0,
+            "calls": int(outcome.get("llm_calls") or 0),
+            "failure_attribution": attribution if attribution in
+            ("candidate", "external") else
+            ("candidate" if not success else None),
+        }
+
+    def compare(self, freeze_id: str, candidate_id: str,
+                executor: SideExecutor,
+                on_holdout: Optional[Callable[[dict], None]] = None) -> dict:
+        record = self.load_freeze(freeze_id)
+        candidate = self.get_candidate(candidate_id)
+        if candidate["freeze_id"] != freeze_id:
+            _fail("input_invalid", "candidate freeze mismatch")
+        if candidate["compared"]:
+            _fail("policy_denied", "candidate already compared")
+        config = record["config"]
+        baseline = record["baseline_bundle"]
+        candidate_bundle = self._store.get_object(candidate["bundle_ref"])
+        tasks = [(sid, "validation") for sid in
+                 config["scenario_splits"]["validation"]]
+        tasks += [(sid, "holdout") for sid in
+                  config["scenario_splits"]["holdout"]]
+        seeds = config["seed_pairs"]
+        planned_pairs = len(tasks) * len(seeds)
+        if planned_pairs > config["budget"]["max_pairs"]:
+            _fail("policy_denied", "planned pairs exceed frozen budget")
+
+        audit = {
+            "candidate_id": candidate_id,
+            "holdout_task_ids": [sid for sid, _ in tasks if _ == "holdout"],
+            "accessed_at": digest({"candidate": candidate_id}),
+        }
+        audit_ref = self._store.put_object(audit)
+        if on_holdout is not None:
+            on_holdout(audit)
+
+        pairs = []
+        for scenario_id, split in tasks:
+            for seed in seeds:
+                order = ["baseline", "candidate"]
+                if (config["order_policy"] == "alternating"
+                        and len(pairs) % 2 == 1):
+                    order = ["candidate", "baseline"]
+                sides = {}
+                for side_name in order:
+                    bundle = baseline if side_name == "baseline" \
+                        else candidate_bundle
+                    outcome = executor(scenario_id, bundle, seed)
+                    sides[side_name] = self._side_result(outcome)
+                excluded = None
+                if any(sides[s]["failure_attribution"] == "external"
+                       for s in sides):
+                    excluded = "external_failure"
+                pairs.append({
+                    "task_id": scenario_id,
+                    "split": split,
+                    "seed": seed,
+                    "order": order,
+                    "baseline": sides["baseline"],
+                    "candidate": sides["candidate"],
+                    "excluded_reason": excluded,
+                })
+
+        summary = self._evaluate_pairs(pairs, config, candidate)
+        comparison = {
+            "kind": "agent_rsi_compare",
+            "freeze_id": freeze_id,
+            "candidate_id": candidate_id,
+            "config_digest": record["config_digest"],
+            "model_pinning": config["model_pinning"],
+            "pairs": pairs,
+        }
+        comparison_ref = self._store.put_object(comparison)
+        state = self._load_state()
+        cand = state["candidates"][candidate_id]
+        cand["compared"] = True
+        cand["comparison_ref"] = comparison_ref
+        cand["summary"] = summary
+        self._save_state(state)
+        return {
+            "candidate_id": candidate_id,
+            "freeze_id": freeze_id,
+            "comparison_ref": comparison_ref,
+            "holdout_access_ref": audit_ref,
+            "summary": summary,
+        }
+
+    def _evaluate_pairs(self, pairs: List[dict], config: dict,
+                        candidate: dict) -> dict:
+        thresholds = config["thresholds"]
+        invalid_pairs = 0
+        losses = 0
+        total_calls = 0
+        val_den = val_b = val_c = hold_den = hold_b = hold_c = 0
+        complete = True
+        benign_ok = True
+        for pair in pairs:
+            b = pair["baseline"]
+            c = pair["candidate"]
+            total_calls += b["calls"] + c["calls"]
+            if pair["excluded_reason"] == "external_failure":
+                invalid_pairs += 1
+                complete = False
+                continue
+            if b["completion"] != "completed" or c["completion"] != "completed":
+                complete = False
+            if c["completion"] == "completed" and not c["success"]:
+                losses += 1
+            if b["completion"] == "completed" and c["completion"] == "completed":
+                if b["success"] and not c["success"]:
+                    losses += 1
+            if c["benign_passed"] is False or c["safety_violations"] > 0:
+                benign_ok = False
+            if pair["split"] == "validation":
+                val_den += 1
+                val_b += 1 if b["success"] else 0
+                val_c += 1 if c["success"] else 0
+            else:
+                hold_den += 1
+                hold_b += 1 if b["success"] else 0
+                hold_c += 1 if c["success"] else 0
+        val_rate_b = val_b / val_den if val_den else 0.0
+        val_rate_c = val_c / val_den if val_den else 0.0
+        hold_rate_b = hold_b / hold_den if hold_den else 0.0
+        hold_rate_c = hold_c / hold_den if hold_den else 0.0
+        gain = val_rate_c - val_rate_b
+        pinned = config["model_pinning"]["status"].startswith("pinned")
+        ready = (
+            complete
+            and invalid_pairs == 0
+            and gain > max(0.0, float(thresholds["success_gain_min"]))
+            and hold_rate_c >= hold_rate_b - float(thresholds["holdout_min_delta"])
+            and benign_ok
+            and pinned
+        )
+        return {
+            "pairs": len(pairs),
+            "validation_baseline": val_b,
+            "validation_candidate": val_c,
+            "validation_denominator": val_den,
+            "gain": gain,
+            "holdout_baseline": hold_b,
+            "holdout_candidate": hold_c,
+            "holdout_denominator": hold_den,
+            "invalid_pairs": invalid_pairs,
+            "losses": losses,
+            "complete": complete,
+            "benign_ok": benign_ok,
+            "total_calls": total_calls,
+            "model_pinned": pinned,
+            "exploration_grade": not pinned,
+            "ready": ready,
+            "thresholds": thresholds,
+            "candidate_bundle_digest": candidate.get("bundle_digest"),
+            "baseline_bundle_digest": candidate.get("baseline_digest"),
+        }
+
+    # -- ready / review / apply --------------------------------------------
+
+    def ready(self, candidate_id: str) -> dict:
+        candidate = self.get_candidate(candidate_id)
+        if not candidate.get("compared"):
+            _fail("hold", "candidate not compared yet")
+        summary = candidate.get("summary") or {}
+        if summary.get("ready") is True:
+            status = "promotion-ready"
+        elif summary.get("exploration_grade") is True:
+            status = "exploratory-unpinned-model"
+        else:
+            status = "not-ready"
+        return {"status": status, "candidate_id": candidate_id,
+                "summary": summary}
+
+    def record_review(self, candidate_id: str, reviewer: str,
+                      decision: str) -> dict:
+        candidate = self.get_candidate(candidate_id)
+        if not _is_id(reviewer):
+            _fail("input_invalid", "reviewer invalid")
+        if decision not in ("approved", "rejected"):
+            _fail("input_invalid", "decision invalid")
+        state = self._load_state()
+        review_id = "agr-{}".format(digest({
+            "candidate_id": candidate_id, "reviewer": reviewer,
+            "decision": decision,
+        })[:24])
+        review = {
+            "review_id": review_id,
+            "candidate_id": candidate_id,
+            "freeze_id": candidate["freeze_id"],
+            "reviewer": reviewer,
+            "decision": decision,
+        }
+        state["reviews"][review_id] = review
+        self._save_state(state)
+        return review
+
+    def initialize_registry(self, baseline_ref: str) -> dict:
+        if not re.fullmatch(r"[0-9a-f]{64}", str(baseline_ref)):
+            _fail("input_invalid", "baseline ref must be sha256")
+        self._store.get_object(baseline_ref)
+        registry = {"current_bundle_ref": baseline_ref, "history": []}
+        self._registry_path.parent.mkdir(parents=True, exist_ok=True)
+        self._store.atomic_json(self._registry_path, registry)
+        return registry
+
+    def apply(self, review_id: str, expected_baseline: str,
+              expected_candidate: str, rollback: str) -> dict:
+        state = self._load_state()
+        review = state["reviews"].get(review_id)
+        if not isinstance(review, dict):
+            _fail("input_invalid", "review not found")
+        candidate = self.get_candidate(review["candidate_id"])
+        if review["decision"] != "approved":
+            _fail("not_approved", "review not approved")
+        if candidate.get("applied"):
+            _fail("policy_denied", "candidate already applied")
+        if not candidate.get("compared"):
+            _fail("hold", "candidate not compared")
+        summary = candidate.get("summary") or {}
+        if summary.get("ready") is not True:
+            _fail("not_ready", "candidate is not promotion-ready")
+        if expected_baseline != candidate["baseline_digest"]:
+            _fail("review_mismatch", "baseline digest mismatch")
+        if expected_candidate != candidate["bundle_digest"]:
+            _fail("review_mismatch", "candidate digest mismatch")
+        if not _is_id(rollback):
+            _fail("input_invalid", "rollback description required")
+        if not self._registry_path.exists():
+            _fail("checkpoint_missing", "registry not initialized")
+        registry = loads(self._registry_path.read_bytes())
+        previous = registry["current_bundle_ref"]
+        registry["history"].append({
+            "candidate_id": candidate["candidate_id"],
+            "review_id": review_id,
+            "from_ref": previous,
+            "to_ref": candidate["bundle_ref"],
+            "rollback": rollback,
+        })
+        registry["current_bundle_ref"] = candidate["bundle_ref"]
+        self._store.atomic_json(self._registry_path, registry)
+        candidate["applied"] = True
+        state["candidates"][candidate["candidate_id"]] = candidate
+        self._save_state(state)
+        return {"applied": True,
+                "candidate_id": candidate["candidate_id"],
+                "current_bundle_ref": candidate["bundle_ref"],
+                "rollback": rollback}

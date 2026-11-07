@@ -71,6 +71,24 @@ def _run_verify(rt, campaign_id, op, event_type, evidence_fn, extensions,
         raise exc
 
 
+def _agent_executor(rt, staging_root, routes):
+    """Build the real lab executor for agent RSI (record-mode outcomes)."""
+    from pathlib import Path as _Path
+    from . import lab
+    from .adapters.llm import LLMClient
+    from .adapters.base import HttpBroker
+    from .rsi_agent import outcome_from_demo
+    llm = LLMClient(HttpBroker(rt.policy), timeout_ms=90000, retry_cap=0)
+
+    def executor(scenario_id, bundle, seed):
+        result = lab.run_demo(rt, _Path(staging_root), seed,
+                              llm_client=llm, routes=routes,
+                              scenario_id=scenario_id,
+                              policy_bundle=bundle, failure_mode="record")
+        return outcome_from_demo(result)
+    return executor
+
+
 def add_parser(subparsers):
     p = subparsers.add_parser("rsi", help="RSI operations")
     p.set_defaults(group="rsi")
@@ -122,6 +140,40 @@ def add_parser(subparsers):
     pr = sub.add_parser("propose")
     pr.add_argument("--campaign-id", required=True)
     pr.add_argument("--train-ref", required=True)
+
+    # ---- agent RSI (policy-bundle improvement for the lab agents) ----
+    af = sub.add_parser("agent-freeze")
+    af.add_argument("--campaign-id", required=True)
+    af.add_argument("--freeze-file", required=True)
+    af.add_argument("--baseline-bundle-file", default=None)
+
+    at = sub.add_parser("agent-train")
+    at.add_argument("--freeze-id", required=True)
+    at.add_argument("--staging-root", required=True)
+    at.add_argument("--routes-file", default=None)
+
+    ac = sub.add_parser("agent-compare")
+    ac.add_argument("--candidate-id", required=True)
+    ac.add_argument("--staging-root", required=True)
+    ac.add_argument("--routes-file", default=None)
+
+    ar = sub.add_parser("agent-ready")
+    ar.add_argument("--candidate-id", required=True)
+
+    arv = sub.add_parser("agent-review")
+    arv.add_argument("--candidate-id", required=True)
+    arv.add_argument("--reviewer", required=True)
+    arv.add_argument("--decision", required=True,
+                     choices=["approved", "rejected"])
+
+    aap = sub.add_parser("agent-apply")
+    aap.add_argument("--review-id", required=True)
+    aap.add_argument("--expected-baseline", required=True)
+    aap.add_argument("--expected-candidate", required=True)
+    aap.add_argument("--rollback", required=True)
+
+    ash = sub.add_parser("agent-show")
+    ash.add_argument("--candidate-id", required=True)
 
     return p
 
@@ -346,5 +398,150 @@ def dispatch(args, rt):
 
         return _run_verify(rt, cid, op, "state_captured", ev,
                            {"record_type": "rsi_propose", "phase": "verify"})
+
+    if action == "agent-freeze":
+        cid = args.campaign_id
+        rt.get_campaign(cid)
+        bundle_doc = _read_json(args.freeze_file)
+        if not isinstance(bundle_doc, dict) or set(
+                bundle_doc.keys()) != {"config", "manifest", "artifact_root"}:
+            raise PolicyDataError("agent_freeze_bundle_invalid")
+        from pathlib import Path as _P
+        artifact_root = _P(bundle_doc["artifact_root"])
+        if not artifact_root.is_absolute():
+            raise PolicyDataError("artifact_root_must_be_absolute")
+        from .agents import load_default_bundle
+        from .rsi_agent import AgentRSI
+        baseline = load_default_bundle()
+        if args.baseline_bundle_file is not None:
+            baseline = _read_json(args.baseline_bundle_file)
+
+        def op():
+            return AgentRSI(rt.store).freeze(
+                cid, bundle_doc["config"], bundle_doc["manifest"],
+                baseline, artifact_root)
+
+        def ev(res):
+            return [res["manifest_ref"], res["baseline_ref"]]
+
+        return _run_verify(rt, cid, op, "state_captured", ev,
+                           {"record_type": "agent_rsi_freeze",
+                            "phase": "verify"})
+
+    if action == "agent-train":
+        from .rsi_agent import AgentRSI
+        rsi_agent = AgentRSI(rt.store)
+        record = rsi_agent.load_freeze(args.freeze_id)
+        cid = record["campaign_id"]
+        routes = None
+        if args.routes_file is not None:
+            routes = _read_json(args.routes_file)
+        executor = _agent_executor(rt, args.staging_root, routes)
+
+        def op():
+            return rsi_agent.train(args.freeze_id, executor)
+
+        def ev(res):
+            refs = []
+            for key in ("train_ref", "candidate_bundle_ref"):
+                val = res.get(key)
+                if isinstance(val, str) and val:
+                    refs.append(val)
+            return refs
+
+        return _run_verify(rt, cid, op, "state_captured", ev,
+                           {"record_type": "agent_rsi_train",
+                            "phase": "verify"})
+
+    if action == "agent-compare":
+        from .rsi_agent import AgentRSI
+        rsi_agent = AgentRSI(rt.store)
+        cand = rsi_agent.get_candidate(args.candidate_id)
+        cid = cand.get("campaign_id")
+        routes = None
+        if args.routes_file is not None:
+            routes = _read_json(args.routes_file)
+        executor = _agent_executor(rt, args.staging_root, routes)
+
+        def op(run_id):
+            def on_holdout(audit):
+                audit_ref = rt.store.put_object(audit)
+                rt.record_event(
+                    run_id, "state_captured", "orchestrator",
+                    evidence_refs=(audit_ref,),
+                    extensions={"record_type": "holdout_access",
+                                "policy_operation": "holdout_access"})
+            return rsi_agent.compare(args.candidate_id, executor,
+                                      on_holdout=on_holdout)
+
+        def ev(res):
+            refs = []
+            for key in ("comparison_ref", "holdout_access_ref"):
+                val = res.get(key)
+                if isinstance(val, str) and val:
+                    refs.append(val)
+            return refs
+
+        return _run_verify(rt, cid, op, "rsi_compared", ev,
+                           {"record_type": "agent_rsi_compare",
+                            "phase": "verify"}, op_takes_run=True)
+
+    if action == "agent-ready":
+        from .rsi_agent import AgentRSI
+        rsi_agent = AgentRSI(rt.store)
+        cand = rsi_agent.get_candidate(args.candidate_id)
+        cid = cand.get("campaign_id")
+
+        def op():
+            return rsi_agent.ready(args.candidate_id)
+
+        def ev(res):
+            return []
+
+        return _run_verify(rt, cid, op, "rsi_ready", ev,
+                           {"record_type": "agent_rsi_ready",
+                            "phase": "verify"})
+
+    if action == "agent-review":
+        from .rsi_agent import AgentRSI
+        rsi_agent = AgentRSI(rt.store)
+        cand = rsi_agent.get_candidate(args.candidate_id)
+        cid = cand.get("campaign_id")
+
+        def op():
+            return rsi_agent.record_review(args.candidate_id, args.reviewer,
+                                            args.decision)
+
+        def ev(res):
+            return [cand["bundle_ref"]]
+
+        return _run_verify(rt, cid, op, "state_captured", ev,
+                           {"record_type": "agent_rsi_review",
+                            "phase": "verify"})
+
+    if action == "agent-apply":
+        from .rsi_agent import AgentRSI
+        rsi_agent = AgentRSI(rt.store)
+        state = rsi_agent._load_state()
+        review = state["reviews"].get(args.review_id)
+        if not isinstance(review, dict):
+            raise PolicyDataError("review_not_found")
+        cand = rsi_agent.get_candidate(review["candidate_id"])
+        cid = cand.get("campaign_id")
+
+        def op():
+            return rsi_agent.apply(args.review_id, args.expected_baseline,
+                                   args.expected_candidate, args.rollback)
+
+        def ev(res):
+            return [cand["bundle_ref"]]
+
+        return _run_verify(rt, cid, op, "rsi_applied", ev,
+                           {"record_type": "agent_rsi_apply",
+                            "phase": "verify"})
+
+    if action == "agent-show":
+        from .rsi_agent import AgentRSI
+        return AgentRSI(rt.store).get_candidate(args.candidate_id)
 
     raise ValueError(f"unknown rsi action: {action}")
