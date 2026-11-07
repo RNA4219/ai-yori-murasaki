@@ -83,7 +83,7 @@ def build_tool_schemas(grants: Optional[List[str]] = None,
                      "title": "標題(日本語、512文字まで)",
                      "path": "対象パス",
                      "method": "GET|POST",
-                     "role": "この行のrole（行のrole値をそのまま）",
+                     "role": "この行のrole（行のrole値をそのまま。roleが空の行は空文字のまま）",
                      "evidence_ref": "この行のevidence ref",
                      "rationale": "根拠(日本語、2000文字まで)"}
                 ],
@@ -299,8 +299,7 @@ class ToolBroker:
             raise _ArgError("findings[{}]: invalid_path".format(index))
         if item["method"] not in _METHODS:
             raise _ArgError("findings[{}]: invalid_method".format(index))
-        if not isinstance(item["role"], str) or not (
-                1 <= len(item["role"]) <= 64):
+        if not isinstance(item["role"], str) or len(item["role"]) > 64:
             raise _ArgError("findings[{}]: invalid_role".format(index))
         if not isinstance(item["rationale"], str) or not (
                 1 <= len(item["rationale"]) <= _TEXT_MAX):
