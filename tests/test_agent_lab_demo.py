@@ -399,8 +399,10 @@ class RunDemoTest(unittest.TestCase):
                         report={"findings_submitted": 0}))
                 return super().chat(**kwargs)
 
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(lab_mod._LabFailure) as ctx:
             self._run(MissingBlueLLM(scenario_dir))
+        self.assertEqual(ctx.exception.phase, "blue")
+        self.assertEqual(ctx.exception.attribution, "candidate")
         campaigns = self.rt.list_campaigns()
         self.assertEqual(campaigns[-1]["status"], "incomplete")
 
