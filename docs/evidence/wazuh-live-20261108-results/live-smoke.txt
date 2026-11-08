@@ -1,0 +1,4 @@
+tcp_reachable: pass
+authenticate: pass (token len=398)
+query_alerts: skipped (HTTP 404: manager API does not expose /alerts; indexer search not verified)
+alerts_json_import: pass (events=187 rows=187 skipped=0)

@@ -21,7 +21,8 @@ acceptance_id: AC-20261108-01
 ## Scope
 
 - In: エージェントループ（AgentLoop・ToolBroker・policy bundle）、lab.py通常経路のエージェント化、シナリオfixture（train/validation/holdout分離）、blind検知照合、エージェントRSI（freeze/train/compare/ready/review/apply）、モニターのagent表示、帰属是正。
-- Out: Redの新規汎用攻撃エンジン、完全自律SOC、本番接続、5類型のうち4類型へのエージェント拡張（追加シナリオfixtureとして将来課題）、公開物の更新。
+- In: P1/P2軽量拡張として、Sigma draft・Advisory検索・ATT&CKマッピングをBlueツールへ追加し、シナリオを5類型へ拡張（SQLi/XSS/Path Traversal/依存CVE）。あわせてWazuh実接続（API認証・alert取り込み・テレメトリ変換）をliveで確認した。
+- Out: Redの新規汎用攻撃エンジン、完全自律SOC、本番接続、エージェントRSIの自動昇格（未採用）、新規タグ・Release・配備。Wazuh追補のソース更新はユーザー承認済みのcommit・push対象。
 
 ## Plan
 
@@ -29,12 +30,19 @@ acceptance_id: AC-20261108-01
 
 ## Responsibilities
 
-監督はCodex。設計・レビューは`glm-5.3:cloud`。実装の基本分担は`deepseek-v4.1-flash:cloud`だが、同サブエージェントが3回連続で実产出なしに終了し1回は並行書き込みで競合したため、中核実装の大部分を監督が直接行い、DeepSeekには権限一致化の限定修正を委任した。経緯は[AC-20261108-01](../acceptance/AC-20261108-01.md)に記録する。
+監督はCodex。設計・レビューは`glm-5.3:cloud`。実装の基本分担は`deepseek-v4.1-flash:cloud`だが、同サブエージェントが3回連続で実产出なしに終了し1回は並行書き込みで競合したため、中核実装の大部分を監督が直接行い、DeepSeekには権限一致化の限定修正を委任した。Wazuh追補ではGLM・DeepSeekの利用枠超過（429）とサブエージェントの利用不可を受け、ユーザー承認によりCodexが最小修正・検証・記録・commit/pushを直接担当する。経緯は[AC-20261108-01](../acceptance/AC-20261108-01.md)に記録する。
 
 ## Deliverables
 
-`ai_yori_murasaki/agents/`（ループ・broker・bundle・シナリオ）、`rsi_agent.py`、lab.pyのagent駆動通常経路、workerの`probe_path`/`unit_authz`モード、`blind_detection_check`、CLIの`aym lab demo --scenario`と`aym rsi agent-*`、モニターのagent活動・RSI候補表示、[AC-20261108-01](../acceptance/AC-20261108-01.md)。
+`ai_yori_murasaki/agents/`（ループ・broker・bundle・シナリオ）、`rsi_agent.py`、lab.pyのagent駆動通常経路、workerの`probe_path`/`unit_authz`モード、`blind_detection_check`、`wazuh_ingest.py`、CLIの`aym lab demo --scenario`と`aym rsi agent-*`、モニターのagent活動・RSI候補表示、[AC-20261108-01](../acceptance/AC-20261108-01.md)。
 
 ## Tests
 
-偽LLM・偽ラボによる単体・統合試験（593件緑）、実機でのRed/Blue/Purple実動作、失敗時fail-closed、Oracleの独立再検証、RSIの事前固定・比較・不採用判断、モニターAPI投影の一致。
+偽LLM・偽ラボによる単体・統合試験、実機でのRed/Blue/Purple実動作、失敗時fail-closed、Oracleの独立再検証、RSIの事前固定・比較・不採用判断、モニターAPI投影の一致。
+
+- 全体回帰は604 passed / 2 skipped / 22 subtests passed（80.70秒）。P1/P2・RSI・ATT&CK追加分も含む。
+- Wazuh取り込みは[test_wazuh_live.py](../../tests/test_wazuh_live.py)の7件、スモーク判定は[test_wazuh_smoke.py](../../tests/test_wazuh_smoke.py)の4件が成功。認証・クエリ形状・limit境界・リトライ上限・全行不正時の例外・5項目への変換・許可外キー拒否を確認し、404のスキップが401・500・取り込み失敗を隠さないことも検証した。実接続は認証成功、manager状態取得200、保存済み実アラート187件の取り込み成功。API検索は404で`skipped`。出力・初回失敗・修正は[実行記録](../evidence/wazuh-live-20261108.md)を参照する。
+
+## Birdseye更新対象
+
+今回の7文書（README、CHANGELOG、検収一覧、検収本文、Task一覧、Task本文、Wazuh証跡）を対象に、本文とCapsuleの要約・依存を照合する。[Birdseye手順](../BIRDSEYE.md)に従って対象を限定して生成し、原文hashとreview hashを確定する。全体の既存文書に対する再レビューは今回の範囲に含めない。

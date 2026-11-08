@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "TaskとAcceptanceを結ぶ通番付き履歴。0009に5類型評価・CVSS・業務影響・KEV/EPSS・HTML表示の実装、15run採点全split合格とidentity凍結、holdout追補、実ラボ画面確認、配布一致（dist-finished-20261107再ビルド後、コード/assets・収録文書/metadata比較とも不一致0件）によるAC-20261107-03技術検収合格とTask 20261107-03完了を記録する。",
+  "summary": "TaskとAcceptanceを結ぶ履歴。0011にP1/P2拡張、Wazuh取り込みと判定修正、7件と追加4件の成功、全体604 passed、実ログ187件の取り込み、API検索404による未検証を記録する。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -11,7 +11,12 @@
     "docs/acceptance/AC-20261106-06.md",
     "docs/acceptance/AC-20261107-01.md",
     "docs/acceptance/AC-20261107-02.md",
+    "docs/acceptance/AC-20261107-03.md",
+    "docs/acceptance/AC-20261108-01.md",
+    "docs/evidence/wazuh-live-20261108.md",
+    "docs/tasks/TASK.agent-core-11-08-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
+    "docs/tasks/TASK.product-clarity-11-07-2026.md",
     "docs/tasks/TASK.product-completion-11-06-2026.md",
     "docs/tasks/TASK.review-intake-11-07-2026.md",
     "docs/tasks/TASK.rsi-naming-11-06-2026.md",
@@ -35,14 +40,17 @@
     "docs/workflow-adoption.md"
   ],
   "risks": [],
-  "tests": [],
-  "source_sha256": "3447a0cdcead70d18d6dda7321c0520d52a140a9e8aa702f0ba046454ae01b99",
-  "generated_at": "00021",
+  "tests": [
+    "tests/test_wazuh_live.py",
+    "tests/test_wazuh_smoke.py"
+  ],
+  "source_sha256": "6656b78a2f95207858e416abb50c9396c1706337243d83786620b2d34cf8445d",
+  "generated_at": "00023",
   "review": {
-    "reviewed_at": "2026-11-07T18:40:00+09:00",
-    "reviewed_by": "GLM",
-    "source_sha256": "3447a0cdcead70d18d6dda7321c0520d52a140a9e8aa702f0ba046454ae01b99",
-    "summary_sha256": "72a905ad68b2f624fe09789f8c154ed029004a08ba377c8b8c77c0348019fad1",
-    "scope": "原文全文と要約・リンクを照合した。dist-finished-20261107再ビルド・収録文書/metadata比較・monitor_url訂正を反映した。"
+    "reviewed_at": "2026-11-08T01:06:38.570186+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "6656b78a2f95207858e416abb50c9396c1706337243d83786620b2d34cf8445d",
+    "summary_sha256": "ff7618ccb7017a131526e86942c94f0e04c72c06693c624c10c397aed1c7bc87",
+    "scope": "今回変更した原文全文と要約・依存・検証出力を照合した。Wazuh検索のskippedと失敗記録、実ログ187件、関連11件と全体604件の結果を区別した。既存の他文書の再検収は含まない。"
   }
 }

@@ -1,0 +1,41 @@
+{
+  "fullSuite": {
+    "command": ".venv/Scripts/python.exe -m pytest tests -q",
+    "exitCode": 0,
+    "startedAt": "2026-11-08T09:55:24.1453274+09:00",
+    "endedAt": "2026-11-08T09:56:45.4663109+09:00",
+    "elapsedSeconds": 81.321
+  },
+  "wazuh": {
+    "command": ".venv/Scripts/python.exe -m pytest tests/test_wazuh_live.py -q",
+    "exitCode": 0,
+    "startedAt": "2026-11-08T09:49:39.3030968+09:00",
+    "endedAt": "2026-11-08T09:49:40.3657744+09:00",
+    "elapsedSeconds": 1.063
+  },
+  "liveSmoke": {
+    "command": ".venv/Scripts/python.exe scripts/wazuh_live_smoke.py --host localhost --port 55000 --allow-default-creds --alerts-file <read-only rotated alerts capture>",
+    "source": "/var/ossec/logs/alerts/2026/Nov/ossec-alerts-07.json.gz",
+    "exitCode": 0,
+    "startedAt": "2026-11-08T09:55:24.1484852+09:00",
+    "endedAt": "2026-11-08T09:55:24.7386538+09:00",
+    "elapsedSeconds": 0.59
+  },
+  "initialWazuh": {
+    "passed": 6,
+    "failed": 1,
+    "failure": "all-lines-unparseable did not raise ValueError",
+    "fixed": "events == 0 -> not events"
+  },
+  "results": {
+    "passed": 604,
+    "skipped": 2,
+    "subtestsPassed": 22,
+    "wazuhPassed": 7,
+    "smokePassed": 4,
+    "realEvents": 187,
+    "realRows": 187,
+    "badLines": 0,
+    "apiSearch": "skipped: HTTP 404; indexer search not verified"
+  }
+}

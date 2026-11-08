@@ -129,23 +129,65 @@ class WazuhClient:
         self._retry_cap = _check_budget("retry_cap", retry_cap, 0, 2)
         self._response_cap = _check_budget("response_cap", response_cap, 1, 52428800)
 
+    def _request(self, method: str, url: str, *, headers: dict | None = None,
+                 body: bytes | None = None, max_bytes: int | None = None) -> dict:
+        last_err: Exception | None = None
+        for _ in range(self._retry_cap + 1):
+            try:
+                return self._broker.request(
+                    method, url, body=body, headers=headers,
+                    timeout=self._timeout_ms / 1000.0,
+                    max_bytes=max_bytes or self._response_cap)
+            except base.AdapterUnavailable as exc:
+                last_err = exc
+                continue
+        raise base.AdapterUnavailable(
+            str(last_err) if last_err else "wazuh request failed")
+
     def import_alert(self, raw: bytes) -> dict:
         return normalize_wazuh(raw)
 
     def fetch_alert(self, alert_id: str) -> dict:
         from urllib.parse import quote
         url = f"{self._base_url}/alerts/{quote(alert_id, safe='')}"
-        last_err: Exception | None = None
-        for _ in range(self._retry_cap + 1):
-            try:
-                resp = self._broker.request(
-                    "GET", url, timeout=self._timeout_ms / 1000.0,
-                    max_bytes=self._response_cap)
-                if resp["status"] != 200:
-                    raise base.AdapterUnavailable(
-                        f"wazuh status {resp['status']}")
-                return normalize_wazuh(resp["body"])
-            except base.AdapterUnavailable as exc:
-                last_err = exc
-                continue
-        raise base.AdapterUnavailable(str(last_err) if last_err else "wazuh failed")
+        resp = self._request("GET", url)
+        if resp["status"] != 200:
+            raise base.AdapterUnavailable(f"wazuh http status {resp['status']}")
+        return normalize_wazuh(resp["body"])
+
+    def health(self) -> dict:
+        url = f"{self._base_url}/"
+        resp = self._request("GET", url, max_bytes=65536)
+        return {"status": "ok" if resp["status"] in (200, 401, 403) else "fail",
+                "http_status": resp["status"]}
+
+    def authenticate(self, *, username: str, password: str) -> dict:
+        """Obtain a JWT token from the Wazuh API (POST /security/user/authenticate)."""
+        import base64
+        url = f"{self._base_url}/security/user/authenticate"
+        creds = base64.b64encode(f"{username}:{password}".encode()).decode()
+        resp = self._request(
+            "POST", url, headers={"Authorization": f"Basic {creds}"},
+            body=b"", max_bytes=65536)
+        if resp["status"] != 200:
+            raise base.AdapterUnavailable(
+                f"wazuh auth failed: http {resp['status']}")
+        import json as _json
+        doc = _json.loads(resp["body"])
+        token = doc.get("data", {}).get("token")
+        if not isinstance(token, str) or not token:
+            raise base.AdapterUnavailable("wazuh auth: no token in response")
+        return {"token": token}
+
+    def query_alerts(self, *, token: str, limit: int = 10) -> dict:
+        """Query an /alerts-compatible gateway, not the standard manager API."""
+        if not isinstance(limit, int) or limit <= 0 or limit > 1000:
+            raise jsonio.DataError("limit must be 1..1000")
+        url = f"{self._base_url}/alerts?limit={limit}&pretty=true"
+        resp = self._request(
+            "GET", url, headers={"Authorization": f"Bearer {token}"})
+        if resp["status"] != 200:
+            raise base.AdapterUnavailable(
+                f"wazuh alerts query failed: http {resp['status']}")
+        import json as _json
+        return _json.loads(resp["body"])

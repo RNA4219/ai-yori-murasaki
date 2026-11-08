@@ -1,0 +1,24 @@
+[
+  {
+    "path": "/manager/status?pretty=true",
+    "httpStatus": 200,
+    "topKeys": [
+      "data",
+      "error",
+      "message"
+    ],
+    "runningServices": 10
+  },
+  {
+    "path": "/alerts?limit=3&pretty=true",
+    "httpStatus": 404,
+    "topKeys": [
+      "detail",
+      "title"
+    ],
+    "detail": {
+      "title": "Not Found",
+      "detail": "404: Not Found"
+    }
+  }
+]

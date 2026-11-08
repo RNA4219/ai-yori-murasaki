@@ -1,0 +1,31 @@
+{
+  "id": "docs/evidence/wazuh-live-20261108.md",
+  "role": "provenance",
+  "public_api": [],
+  "summary": "認可ローカルWazuh manager 4.9.2への読み取り専用検証。初回テスト失敗と空リスト修正、関連11件・全体604件の成功、認証・状態取得・実アラート187件取り込み成功、標準APIの/alerts 404によるskippedを記録し、生ログとJWTを公開しない。",
+  "deps_out": [
+    "docs/acceptance/AC-20261108-01.md"
+  ],
+  "deps_in": [
+    "CHANGELOG.md",
+    "README.md",
+    "docs/acceptance/AC-20261108-01.md",
+    "docs/tasks/TASK.agent-core-11-08-2026.md"
+  ],
+  "risks": [
+    "標準manager APIの/alertsは404。Indexer検索と今回のBlue実モデル評価は未実施。"
+  ],
+  "tests": [
+    "tests/test_wazuh_live.py",
+    "tests/test_wazuh_smoke.py"
+  ],
+  "generated_at": "00023",
+  "review": {
+    "reviewed_at": "2026-11-08T01:06:38.570186+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "a38a9e7fe2867a1f8a00bbab3d1bec379ca410ae6167cd4e4b6d95d6c314bed0",
+    "summary_sha256": "7be328fac6a7fd53b4ee7cc292dfedf1f5c2a7662796412c161425ce98638614",
+    "scope": "今回変更した原文全文と要約・依存・検証出力を照合した。Wazuh検索のskippedと失敗記録、実ログ187件、関連11件と全体604件の結果を区別した。既存の他文書の再検収は含まない。"
+  },
+  "source_sha256": "a38a9e7fe2867a1f8a00bbab3d1bec379ca410ae6167cd4e4b6d95d6c314bed0"
+}

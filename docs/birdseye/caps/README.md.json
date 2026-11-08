@@ -2,7 +2,7 @@
   "id": "README.md",
   "role": "overview",
   "public_api": [],
-  "summary": "隔離ラボの起動と製品文書の入口。製品要件の不足と完成判定の撤回、承認済み追加2項目と実利用者試験の撤回を明記する。",
+  "summary": "隔離ラボの起動と製品の案内。エージェント実動作の既存証跡、Wazuh実ログ187件のファイル取り込み、全体604 passedとAPI検索未検証の範囲を記録する。",
   "deps_out": [
     "BLUEPRINT.md",
     "CHANGELOG.md",
@@ -10,17 +10,18 @@
     "GUARDRAILS.md",
     "HUB.codex.md",
     "RUNBOOK.md",
-    "docs/ADR/deep-research-report (16).md",
     "docs/PRODUCT-GUIDE.md",
     "docs/RSI.md",
-    "docs/acceptance/AC-20261106-06.md",
+    "docs/acceptance/AC-20261107-03.md",
+    "docs/acceptance/AC-20261108-01.md",
     "docs/acceptance/INDEX.md",
+    "docs/evidence/wazuh-live-20261108.md",
+    "docs/releases/README.md",
     "docs/requirements/API-CONTRACTS.md",
     "docs/requirements/DECISIONS.md",
     "docs/requirements/REQUIREMENTS.md",
     "docs/requirements/SPEC-CORE.md",
     "docs/requirements/SPEC-EVALUATION.md",
-    "docs/reviews/REVIEW-INTAKE-20261107.md",
     "docs/tasks/README.md",
     "docs/workflow-adoption.md"
   ],
@@ -31,15 +32,20 @@
     "docs/PRODUCT-GUIDE.md",
     "docs/workflow-adoption.md"
   ],
-  "risks": [],
-  "tests": [],
-  "source_sha256": "e39f0fc36e2640a27e0a23e392ce157d0a1af3b7758c3e941e4a791c7f9028c5",
-  "generated_at": "00021",
+  "risks": [
+    "標準manager APIの/alertsは404。Indexer検索と今回のBlue実モデル評価は未実施。"
+  ],
+  "tests": [
+    "tests/test_wazuh_live.py",
+    "tests/test_wazuh_smoke.py"
+  ],
+  "source_sha256": "9f9595a074971b84fc402518535d16d462bbbefe8d5ca3aad3af786885f50510",
+  "generated_at": "00023",
   "review": {
-    "reviewed_at": "2026-11-07T18:30:00+09:00",
-    "reviewed_by": "GLM",
-    "source_sha256": "e39f0fc36e2640a27e0a23e392ce157d0a1af3b7758c3e941e4a791c7f9028c5",
-    "summary_sha256": "4a7f999a4ae67b791c5c7def4a8cde923073045bc7a187db9956a36d28b2a61f",
-    "scope": "原文全文と要約・リンクを照合した。GitHub Public公開前の最終確定（公開記録RA-20261107-01、非公開原資料のリンク注記、codemap exclude、配布物hash）を反映した。"
+    "reviewed_at": "2026-11-08T01:06:38.570186+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "9f9595a074971b84fc402518535d16d462bbbefe8d5ca3aad3af786885f50510",
+    "summary_sha256": "1797f5a88eb7cc29679c2e33fbb5dccfdccffafe23d717bb585f714f6c3d7212",
+    "scope": "今回変更した原文全文と要約・依存・検証出力を照合した。Wazuh検索のskippedと失敗記録、実ログ187件、関連11件と全体604件の結果を区別した。既存の他文書の再検収は含まない。"
   }
 }

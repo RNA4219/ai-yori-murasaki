@@ -1,5 +1,5 @@
 {
-  "generated_at": "00021",
+  "generated_at": "00023",
   "index_snapshot": "docs/birdseye/index.json",
   "refresh_command": "RUNBOOK.md#execute と docs/BIRDSEYE.md の PowerShell 手順を参照",
   "curation_notes": "ローカル製品、要件、検収、文書運用の入口。生成世代と原文・要約の内容確認を区別する。",
@@ -7,7 +7,7 @@
     {
       "id": "README.md",
       "role": "overview",
-      "reason": "隔離ラボの起動と製品文書の入口。製品要件の不足と完成判定の撤回を明記する。",
+      "reason": "隔離ラボの起動、エージェント実動作とWazuh追補の確認範囲への案内。",
       "caps": "docs/birdseye/caps/README.md.json",
       "edges": [
         "BLUEPRINT.md",
@@ -18,14 +18,16 @@
         "RUNBOOK.md",
         "docs/PRODUCT-GUIDE.md",
         "docs/RSI.md",
-        "docs/acceptance/AC-20261106-06.md",
+        "docs/acceptance/AC-20261107-03.md",
+        "docs/acceptance/AC-20261108-01.md",
         "docs/acceptance/INDEX.md",
+        "docs/evidence/wazuh-live-20261108.md",
+        "docs/releases/README.md",
         "docs/requirements/API-CONTRACTS.md",
         "docs/requirements/DECISIONS.md",
         "docs/requirements/REQUIREMENTS.md",
         "docs/requirements/SPEC-CORE.md",
         "docs/requirements/SPEC-EVALUATION.md",
-        "docs/reviews/REVIEW-INTAKE-20261107.md",
         "docs/tasks/README.md",
         "docs/workflow-adoption.md"
       ],
@@ -174,9 +176,13 @@
         "docs/acceptance/AC-20261106-06.md",
         "docs/acceptance/AC-20261107-01.md",
         "docs/acceptance/AC-20261107-02.md",
+        "docs/acceptance/AC-20261107-03.md",
+        "docs/acceptance/AC-20261108-01.md",
         "docs/acceptance/README.md",
         "docs/releases/README.md",
+        "docs/tasks/TASK.agent-core-11-08-2026.md",
         "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
+        "docs/tasks/TASK.product-clarity-11-07-2026.md",
         "docs/tasks/TASK.product-completion-11-06-2026.md",
         "docs/tasks/TASK.review-intake-11-07-2026.md",
         "docs/tasks/TASK.rsi-naming-11-06-2026.md",
@@ -199,7 +205,11 @@
         "docs/acceptance/AC-20261106-06.md",
         "docs/acceptance/AC-20261107-01.md",
         "docs/acceptance/AC-20261107-02.md",
+        "docs/acceptance/AC-20261107-03.md",
+        "docs/acceptance/AC-20261108-01.md",
+        "docs/tasks/TASK.agent-core-11-08-2026.md",
         "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
+        "docs/tasks/TASK.product-clarity-11-07-2026.md",
         "docs/tasks/TASK.product-completion-11-06-2026.md",
         "docs/tasks/TASK.review-intake-11-07-2026.md",
         "docs/tasks/TASK.rsi-naming-11-06-2026.md",
@@ -250,6 +260,39 @@
         "docs/reviews/REVIEW-INTAKE-20261107.md"
       ],
       "last_verified_at": "2026-11-06T21:40:29.654233+00:00"
+    },
+    {
+      "id": "docs/acceptance/AC-20261108-01.md",
+      "role": "acceptance",
+      "reason": "エージェント実行基盤・エージェントRSIの中核機能とWazuh実接続追補の技術検収。実機成功2campaignとfail-closed記録、実行未了の区別を保持する。",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261108-01.md.json",
+      "edges": [
+        "docs/evidence/wazuh-live-20261108.md",
+        "docs/tasks/TASK.agent-core-11-08-2026.md"
+      ],
+      "last_verified_at": "2026-11-08T06:55:00+09:00"
+    },
+    {
+      "id": "docs/tasks/TASK.agent-core-11-08-2026.md",
+      "role": "task",
+      "reason": "原要求と実装の食い違い是正Task（done）。エージェントループ・RSI・Wazuh実接続の範囲と実行未了の残り作業を示す。",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.agent-core-11-08-2026.md.json",
+      "edges": [
+        "docs/BIRDSEYE.md",
+        "docs/acceptance/AC-20261108-01.md",
+        "docs/evidence/wazuh-live-20261108.md"
+      ],
+      "last_verified_at": "2026-11-08T06:55:00+09:00"
+    },
+    {
+      "id": "docs/evidence/wazuh-live-20261108.md",
+      "role": "provenance",
+      "reason": "認可ローカル環境のWazuh managerへの読み取り専用スモーク実測記録。indexer停止時のfail-closedとテスト実行未了を区別する。",
+      "caps": "docs/birdseye/caps/docs.evidence.wazuh-live-20261108.md.json",
+      "edges": [
+        "docs/acceptance/AC-20261108-01.md"
+      ],
+      "last_verified_at": "2026-11-08T06:55:00+09:00"
     }
   ]
 }

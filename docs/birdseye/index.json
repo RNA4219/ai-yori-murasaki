@@ -1,5 +1,5 @@
 {
-  "generated_at": "00021",
+  "generated_at": "00023",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -16,7 +16,7 @@
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
       "mtime": "00003",
-      "source_sha256": "3447a0cdcead70d18d6dda7321c0520d52a140a9e8aa702f0ba046454ae01b99"
+      "source_sha256": "6656b78a2f95207858e416abb50c9396c1706337243d83786620b2d34cf8445d"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -43,7 +43,7 @@
       "role": "overview",
       "caps": "docs/birdseye/caps/README.md.json",
       "mtime": "00008",
-      "source_sha256": "e39f0fc36e2640a27e0a23e392ce157d0a1af3b7758c3e941e4a791c7f9028c5"
+      "source_sha256": "9f9595a074971b84fc402518535d16d462bbbefe8d5ca3aad3af786885f50510"
     },
     "RUNBOOK.md": {
       "role": "operations",
@@ -70,7 +70,8 @@
     "docs/acceptance/INDEX.md": {
       "role": "index",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
-      "mtime": "00013"
+      "mtime": "00013",
+      "source_sha256": "ee31e20fc9555d75417cd2fecc76bdb6312f9db65d1f65fb16e687064bbb8634"
     },
     "docs/acceptance/README.md": {
       "role": "guide",
@@ -112,7 +113,8 @@
     "docs/tasks/README.md": {
       "role": "guide",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
-      "mtime": "00022"
+      "mtime": "00022",
+      "source_sha256": "1fdd5454a9e7198a721504cdd8cae45d8d8a0eb5a5f7181dbf4dfec152236242"
     },
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md": {
       "role": "task",
@@ -154,6 +156,24 @@
       "role": "template",
       "caps": "docs/birdseye/caps/.github.ISSUE_TEMPLATE.bug.yml.json",
       "mtime": "00030"
+    },
+    "docs/tasks/TASK.agent-core-11-08-2026.md": {
+      "role": "task",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.agent-core-11-08-2026.md.json",
+      "mtime": "00080",
+      "source_sha256": "992bc0cdcf5223d0ac7fc55bd68225a8da248752a43747478db624336c4264d9"
+    },
+    "docs/acceptance/AC-20261108-01.md": {
+      "role": "acceptance",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261108-01.md.json",
+      "mtime": "00081",
+      "source_sha256": "370f572fab1acf5bf55d02c8e6fbc7c6ebe67cf188fefb9882f12ee27b91c574"
+    },
+    "docs/evidence/wazuh-live-20261108.md": {
+      "role": "provenance",
+      "caps": "docs/birdseye/caps/docs.evidence.wazuh-live-20261108.md.json",
+      "mtime": "00082",
+      "source_sha256": "a38a9e7fe2867a1f8a00bbab3d1bec379ca410ae6167cd4e4b6d95d6c314bed0"
     },
     "docs/upstream-snapshot.json": {
       "role": "provenance",
@@ -510,7 +530,27 @@
     ],
     [
       "CHANGELOG.md",
+      "docs/acceptance/AC-20261107-03.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/acceptance/AC-20261108-01.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/evidence/wazuh-live-20261108.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.agent-core-11-08-2026.md"
+    ],
+    [
+      "CHANGELOG.md",
       "docs/tasks/TASK.monitor-redesign-11-07-2026.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.product-clarity-11-07-2026.md"
     ],
     [
       "CHANGELOG.md",
@@ -798,11 +838,23 @@
     ],
     [
       "README.md",
-      "docs/acceptance/AC-20261106-06.md"
+      "docs/acceptance/AC-20261107-03.md"
+    ],
+    [
+      "README.md",
+      "docs/acceptance/AC-20261108-01.md"
     ],
     [
       "README.md",
       "docs/acceptance/INDEX.md"
+    ],
+    [
+      "README.md",
+      "docs/evidence/wazuh-live-20261108.md"
+    ],
+    [
+      "README.md",
+      "docs/releases/README.md"
     ],
     [
       "README.md",
@@ -823,10 +875,6 @@
     [
       "README.md",
       "docs/requirements/SPEC-EVALUATION.md"
-    ],
-    [
-      "README.md",
-      "docs/reviews/REVIEW-INTAKE-20261107.md"
     ],
     [
       "README.md",
@@ -1173,6 +1221,14 @@
       "docs/tasks/TASK.review-intake-11-07-2026.md"
     ],
     [
+      "docs/acceptance/AC-20261108-01.md",
+      "docs/evidence/wazuh-live-20261108.md"
+    ],
+    [
+      "docs/acceptance/AC-20261108-01.md",
+      "docs/tasks/TASK.agent-core-11-08-2026.md"
+    ],
+    [
       "docs/acceptance/ACCEPTANCE_TEMPLATE.md",
       "docs/releases/README.md"
     ],
@@ -1206,7 +1262,23 @@
     ],
     [
       "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261107-03.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261108-01.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.agent-core-11-08-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
       "docs/tasks/TASK.monitor-redesign-11-07-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.product-clarity-11-07-2026.md"
     ],
     [
       "docs/acceptance/INDEX.md",
@@ -1247,6 +1319,10 @@
     [
       "docs/acceptance/README.md",
       "docs/acceptance/INDEX.md"
+    ],
+    [
+      "docs/evidence/wazuh-live-20261108.md",
+      "docs/acceptance/AC-20261108-01.md"
     ],
     [
       "docs/releases/README.md",
@@ -1394,6 +1470,14 @@
     ],
     [
       "docs/tasks/README.md",
+      "docs/acceptance/AC-20261107-03.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261108-01.md"
+    ],
+    [
+      "docs/tasks/README.md",
       "docs/acceptance/README.md"
     ],
     [
@@ -1402,7 +1486,15 @@
     ],
     [
       "docs/tasks/README.md",
+      "docs/tasks/TASK.agent-core-11-08-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
       "docs/tasks/TASK.monitor-redesign-11-07-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.product-clarity-11-07-2026.md"
     ],
     [
       "docs/tasks/README.md",
@@ -1427,6 +1519,18 @@
     [
       "docs/tasks/README.md",
       "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
+    ],
+    [
+      "docs/tasks/TASK.agent-core-11-08-2026.md",
+      "docs/BIRDSEYE.md"
+    ],
+    [
+      "docs/tasks/TASK.agent-core-11-08-2026.md",
+      "docs/acceptance/AC-20261108-01.md"
+    ],
+    [
+      "docs/tasks/TASK.agent-core-11-08-2026.md",
+      "docs/evidence/wazuh-live-20261108.md"
     ],
     [
       "docs/tasks/TASK.monitor-redesign-11-07-2026.md",

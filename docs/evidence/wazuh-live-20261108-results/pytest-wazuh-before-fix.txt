@@ -1,0 +1,18 @@
+.....F.                                                                  [100%]
+================================== FAILURES ===================================
+____________ test_wazuh_ingest_all_lines_unparseable_fails_closed _____________
+
+tmp_path = WindowsPath('C:/Users/ryo-n/AppData/Local/Temp/pytest-of-ryo-n/pytest-92/test_wazuh_ingest_all_lines_un0')
+
+    def test_wazuh_ingest_all_lines_unparseable_fails_closed(tmp_path) -> None:
+        alerts = tmp_path / "alerts.json"
+        alerts.write_text("not json\nalso not json\n", encoding="utf-8")
+
+>       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests\test_wazuh_live.py:134: Failed
+=========================== short test summary info ===========================
+FAILED tests/test_wazuh_live.py::test_wazuh_ingest_all_lines_unparseable_fails_closed
+1 failed, 6 passed in 0.33s

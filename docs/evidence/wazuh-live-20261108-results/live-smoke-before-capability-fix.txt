@@ -1,0 +1,4 @@
+tcp_reachable: pass
+authenticate: pass (token len=398)
+query_alerts: fail (wazuh alerts query failed: http 404)
+alerts_json_import: skipped (no --alerts-file given)
