@@ -45,6 +45,23 @@ AIが不審なアクセスを見落とす、作業が時間切れになる等の
 
 証跡の一覧は[検収一覧](docs/acceptance/INDEX.md)と[実行記録](docs/evidence/)にあります。
 
+## クイックスタート
+
+前提は Python 3.11以上、Docker（Linuxコンテナ実行環境）、Ollama（`glm-5.3:cloud`と`deepseek-v4.1-flash:cloud`を登録し、cloudモデルを利用できる状態）です。cloneしたリポジトリのルートで実行します。
+
+```powershell
+py -3 -m pip install .
+docker build -t ai-yori-murasaki-lab:1 ai_yori_murasaki/lab_assets
+$RuntimeRoot = '<リポジトリ外の作業用ルート>'
+$env:AYM_WORKSPACE = Join-Path $RuntimeRoot 'workspace'
+$env:AYM_TRUSTED_ROOT = Join-Path $RuntimeRoot 'trusted'
+New-Item -ItemType Directory -Force -Path $env:AYM_WORKSPACE,$env:AYM_TRUSTED_ROOT,(Join-Path $RuntimeRoot 'staging') | Out-Null
+aym lab demo --staging-root (Join-Path $RuntimeRoot 'staging')
+aym monitor serve --bind 127.0.0.1:8765
+```
+
+モニターは http://127.0.0.1:8765 で開きます。作業用ディレクトリの考え方など、詳しい手順は次の「起動」と[RUNBOOK](RUNBOOK.md)にあります。
+
 ## 起動
 
 Python 3.11以上、DockerのLinuxコンテナ実行環境、Ollamaを使用します。Ollamaには`glm-5.3:cloud`と`deepseek-v4.1-flash:cloud`を登録し、cloudモデルを利用できる状態にします。
@@ -70,6 +87,17 @@ aym monitor serve --bind 127.0.0.1:8765
 
 詳細は[RUNBOOK](RUNBOOK.md)と[製品操作ガイド](docs/PRODUCT-GUIDE.md)を参照してください。
 
+## モニター
+
+実行の様子は、ブラウザーのHTMLモニター（http://127.0.0.1:8765、読み取り専用）で確認できます。
+
+- 主要な指標と詳細を分けて表示し、実行の進み具合、見つけた問題（深刻度やCVSSなど）、修復と再検証の結果を追えます
+- agentごとの活動と、失敗がどの候補・手順に属するか（帰属）も表示されます
+- RSIの改善候補と、採用・不採用の判断材料も確認できます
+- 自動更新されても、見ている場所やスクロール位置は保持されます
+
+画面の見方は[製品操作ガイド](docs/PRODUCT-GUIDE.md)にあります。
+
 ## 文書と要件
 
 Workflow CookbookのTier 3（Full）を採用しています。[導入対応表](docs/workflow-adoption.md)に適用範囲とテンプレート版を記録しています。
@@ -91,4 +119,4 @@ Workflow CookbookのTier 3（Full）を採用しています。[導入対応表]
 
 ## 公開状態
 
-このリポジトリはGitHub Publicで公開しています（https://github.com/RNA4219/ai-yori-murasaki ）。リモートCIは設定しておらず、CIバッジ等は表示しません。本番環境は対象外です。公開の承認と実行状態は[公開記録](docs/releases/README.md)（RA-20261107-01）に残します。
+このリポジトリはGitHub Publicで公開しています（https://github.com/RNA4219/ai-yori-murasaki ）。版v0.1.0の[GitHub Release](https://github.com/RNA4219/ai-yori-murasaki/releases/tag/v0.1.0)を作成しました。リモートCIは設定しておらず、CIバッジ等は表示しません。本番環境は対象外です。公開の承認と実行状態は[公開記録](docs/releases/README.md)（RA-20261107-01、RA-20261108-01）に残します。

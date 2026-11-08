@@ -12,7 +12,12 @@ Keep a Changelog の区分で管理する。記録には既存最大番号 +1 �
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-11-08
+
 ### Added
+
+- 0013 — 2026-11-08: README整備とGitHub Release v0.1.0の作成（ユーザーの実施指示による）。READMEにクイックスタート節とモニター節を追加し、「公開状態」にReleaseへの参照を追記した。CHANGELOGの[Unreleased]蓄積分（0001–0012）を[0.1.0] - 2026-11-08として確定し、空の[Unreleased]を新設した。GitHubにタグv0.1.0とReleaseを作成し、公開記録RA-20261108-01と検収AC-20261108-02に残した。製品コード・テストは変更していない。モニターのスクリーンショットは実データ（state.json）がリポジトリに無いため付けていない。Birdseyeカプセルの再生成は生成基盤が本環境に無く未実施。
+  [Task 20261108-02](docs/tasks/TASK.readme-release-11-08-2026.md) / [AC-20261108-02](docs/acceptance/AC-20261108-02.md)。
 
 - 0012 — 2026-11-08: Wazuh取り込みの意味保持（外部レビュー対応）。`wazuh_ingest.ingest_alerts_file`の既定出力を、正規化イベント（`kind`/`stable_id`/`timestamp`/`rule_id`/`rule_level`/`agent_id`/`agent_name`/`data`）をそのまま残すJSONLへ変更した（R-008「正規化event」）。従来の5項目telemetry行（`rule_level>=3→200`、`agent_id→role`）は実測HTTPではない擬似観測値のため、`compat_rows=True`かつ`out_compat_jsonl`指定のオプトインへ格下げし、labデモのリプレイ専用と明記した。読み戻しは意味保持側`normalized_events_from_jsonl`（`kind=wazuh_alert`でない行、`method`/`path`/`status`/`role`を搬入する行を拒否）とlab互換側`rows_from_jsonl`（5フィールド外を拒否）へ分離し、相互に誤流用できないことをテストで固定した。スモークは既定で意味保持取り込みを行い、`--compat-rows --compat-out-jsonl`でのみ擬似行を出す。テストは実行済み（2026-11-08 10:42–10:44 JST、関連14 passed in 0.24s、全体607 passed / 2 skipped / 22 subtests in 79.79s、従来の604件に回帰なし）。実WazuhデータでのBlue検知性能の測定は今回の範囲外で未実施のまま。[docs/evidence/wazuh-live-20261108.md](docs/evidence/wazuh-live-20261108.md)
   [Task 20261108-01](docs/tasks/TASK.agent-core-11-08-2026.md) / [AC-20261108-01](docs/acceptance/AC-20261108-01.md)。Wazuh専用イベント型のBlue入力schema新設と未知パターン検知評価は含まない（別課題）。
