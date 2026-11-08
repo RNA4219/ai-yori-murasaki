@@ -52,7 +52,7 @@ next_review_due: 2026-12-06
 - 対象Task / Acceptance: [AC-20261108-03](../acceptance/AC-20261108-03.md)（[Task 20261108-03](../tasks/TASK.version-011-11-08-2026.md)）
 - 除外: 製品コードの変更（版文字列を除く）、v0.1.0 の Release・タグの変更、CI の追加
 - approval状態: approved（承認済み）
-- 公開実行: pending（ビルド・タグ・Release の実施後に RA-20261108-02 へ結果を追記する）
+- 公開実行: done（2026-11-08、https://github.com/RNA4219/ai-yori-murasaki/releases/tag/v0.1.1 。成果物 hash は RA-20261108-02）
 - CI: なし（新規CI基盤は追加しない）
 - 復旧方法: `gh release delete v0.1.1` と `git push origin :refs/tags/v0.1.1` で Release とタグを取り消す
 - 検証根拠: AC-20261108-03（配布物の版確認、秘密検査、テスト結果）
