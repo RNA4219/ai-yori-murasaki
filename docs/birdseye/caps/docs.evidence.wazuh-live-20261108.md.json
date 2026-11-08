@@ -2,7 +2,7 @@
   "id": "docs/evidence/wazuh-live-20261108.md",
   "role": "provenance",
   "public_api": [],
-  "summary": "認可ローカルWazuh manager 4.9.2への読み取り専用検証。初回テスト失敗と空リスト修正、関連11件・全体604件の成功、認証・状態取得・実アラート187件取り込み成功、標準APIの/alerts 404によるskippedを記録し、生ログとJWTを公開しない。",
+  "summary": "認可ローカルWazuhの変更前スモーク（187件取り込み、認証・状態取得、検索404）と、意味保持追補後の関連14件・全体607 passedを区別する。正規化イベントが既定で、擬似HTTP行はlab専用の明示選択。新たな実データでのBlue検知性能は未評価。",
   "deps_out": [
     "docs/acceptance/AC-20261108-01.md"
   ],
@@ -13,19 +13,19 @@
     "docs/tasks/TASK.agent-core-11-08-2026.md"
   ],
   "risks": [
-    "標準manager APIの/alertsは404。Indexer検索と今回のBlue実モデル評価は未実施。"
+    "標準manager APIの/alertsは404。Indexer検索、Wazuh専用Blue入力schemaと実データでの検知性能評価は今回の範囲外。"
   ],
   "tests": [
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "generated_at": "00023",
+  "generated_at": "00024",
   "review": {
-    "reviewed_at": "2026-11-08T01:06:38.570186+00:00",
+    "reviewed_at": "2026-11-08T02:06:10.203342+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "a38a9e7fe2867a1f8a00bbab3d1bec379ca410ae6167cd4e4b6d95d6c314bed0",
-    "summary_sha256": "7be328fac6a7fd53b4ee7cc292dfedf1f5c2a7662796412c161425ce98638614",
-    "scope": "今回変更した原文全文と要約・依存・検証出力を照合した。Wazuh検索のskippedと失敗記録、実ログ187件、関連11件と全体604件の結果を区別した。既存の他文書の再検収は含まない。"
+    "source_sha256": "e9e14d45018c381e4e1df95a0e228866956339673e0f94d21e54c050f82e232e",
+    "summary_sha256": "155805647e34f78be74d4b6fa060e6bebab3df7a11037b23d2c7520174d091b7",
+    "scope": "今回の5文書の本文・要約・依存と検証記録を照合した。意味保持追補の関連14件と全体607件の成功、変更前の実ログ187件取り込み、実WazuhのBlue検知性能未評価を区別した。他文書の再検収は含まない。"
   },
-  "source_sha256": "a38a9e7fe2867a1f8a00bbab3d1bec379ca410ae6167cd4e4b6d95d6c314bed0"
+  "source_sha256": "e9e14d45018c381e4e1df95a0e228866956339673e0f94d21e54c050f82e232e"
 }

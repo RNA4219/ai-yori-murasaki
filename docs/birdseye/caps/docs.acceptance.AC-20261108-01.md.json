@@ -2,7 +2,7 @@
   "id": "docs/acceptance/AC-20261108-01.md",
   "role": "acceptance",
   "public_api": [],
-  "summary": "エージェント実行基盤とRSIの中核機能の技術検収。従来の実Docker・実モデル証跡を保持し、Wazuh追補の認証・状態取得・実ログ187件取り込みと関連11件・全体604件の成功、API検索未検証、ユーザー承認によるCodex直接対応を区別する。",
+  "summary": "エージェント基盤とRSIの技術検収。既存証跡を保持し、Wazuh意味保持追補で正規化イベントを既定とし、lab擬似行を明示選択へ変更。関連14件・全体607 passedを記録し、実WazuhのBlue検知性能とIndexer検索は未検証とする。",
   "deps_out": [
     "docs/evidence/wazuh-live-20261108.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md"
@@ -16,7 +16,7 @@
     "docs/tasks/TASK.agent-core-11-08-2026.md"
   ],
   "risks": [
-    "標準manager APIの/alertsは404。Indexer検索と今回のBlue実モデル評価は未実施。",
+    "標準manager APIの/alertsは404。Indexer検索、Wazuh専用Blue入力schemaと実データでの検知性能評価は今回の範囲外。",
     "未pin cloudモデルの比較は探索扱いでpromotion-readyではない。"
   ],
   "tests": [
@@ -24,13 +24,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "generated_at": "00023",
+  "generated_at": "00024",
   "review": {
-    "reviewed_at": "2026-11-08T01:06:38.570186+00:00",
+    "reviewed_at": "2026-11-08T02:06:10.190669+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "370f572fab1acf5bf55d02c8e6fbc7c6ebe67cf188fefb9882f12ee27b91c574",
-    "summary_sha256": "322aa547a929c577bbf5c7bbb9e11c3001f4526b7869b6632413098382b0ddd6",
-    "scope": "今回変更した原文全文と要約・依存・検証出力を照合した。Wazuh検索のskippedと失敗記録、実ログ187件、関連11件と全体604件の結果を区別した。既存の他文書の再検収は含まない。"
+    "source_sha256": "581ab06e8fec8cd7ffa0f43448a823dd8100037697b79eefe5eab44a17c941a7",
+    "summary_sha256": "dbcb8c05044aca74169ec6812ba2432310b1531241ee28dd60dab5fbafb54bc3",
+    "scope": "今回の5文書の本文・要約・依存と検証記録を照合した。意味保持追補の関連14件と全体607件の成功、変更前の実ログ187件取り込み、実WazuhのBlue検知性能未評価を区別した。他文書の再検収は含まない。"
   },
-  "source_sha256": "370f572fab1acf5bf55d02c8e6fbc7c6ebe67cf188fefb9882f12ee27b91c574"
+  "source_sha256": "581ab06e8fec8cd7ffa0f43448a823dd8100037697b79eefe5eab44a17c941a7"
 }

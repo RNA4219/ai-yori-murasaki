@@ -1,0 +1,37 @@
+{
+  "change": "wazuh-ingest-meaning-preserving (0012, 2026-11-08 external review)",
+  "implemented": {
+    "wazuh_ingest.py": "ingest_alerts_file default output is meaning-preserving normalized wazuh_alert JSONL; legacy five-field lab rows are opt-in via compat_rows=True + out_compat_jsonl; loaders split (normalized_events_from_jsonl rejects lab pseudo-fields, rows_from_jsonl rejects non-telemetry keys).",
+    "scripts/wazuh_live_smoke.py": "default import is meaning-preserving; pseudo rows only with --compat-rows --compat-out-jsonl.",
+    "tests/test_wazuh_live.py": "rewrote ingest tests; added compat opt-in, normalize_alert_lines, loader split, and cross-misuse rejection tests."
+  },
+  "testExecution": {
+    "status": "executed",
+    "executedBy": "Codex shell execution in the shared local workspace; published output copies match the original logs after CRLF/LF normalization",
+    "executedAtRange": {
+      "targeted": "2026-11-08T10:42:56+09:00 - 10:42:57+09:00",
+      "full": "2026-11-08T10:43:06+09:00 - 10:44:27+09:00"
+    },
+    "targeted": {
+      "command": ".venv/Scripts/python.exe -m pytest tests/test_wazuh_live.py tests/test_wazuh_smoke.py -q",
+      "result": "14 passed in 0.24s",
+      "exitCode": 0,
+      "output": "pytest-wazuh-meaning-preserving.txt"
+    },
+    "full": {
+      "command": ".venv/Scripts/python.exe -m pytest tests -q",
+      "result": "607 passed, 2 skipped, 22 subtests passed in 79.79s",
+      "exitCode": 0,
+      "output": "pytest-all-meaning-preserving.txt",
+      "baseline": "previous full run on the same environment: 604 passed / 2 skipped / 22 subtests. +3 is the ingest test growth 7->10 in test_wazuh_live.py; not a performance comparison."
+    },
+    "sourceHashesMatch": true,
+    "gitHeadDuringRun": "804bddfb859d89c91fdb130ca6a9036f208fca0c",
+    "testedSourceSha256": {
+      "ai_yori_murasaki/wazuh_ingest.py": "fea2c4298de4ecfa4eb74b9a3b0d7dcd267f858fe6b751f93121288c931a256a",
+      "scripts/wazuh_live_smoke.py": "e97c993624bdd250dbd280c9676ced38ae5cbbd0ae88e0f5e2d9df4ad6fead6a",
+      "tests/test_wazuh_live.py": "1c25bb05c142a7d6f9092601ddee9d119a3d258b617f0b1442875cac1addf6a7",
+      "tests/test_wazuh_smoke.py": "8829d79d96dd84f09ed499c1b7ed347b3e3b3ab6a4199bcc5eb922a18f3b0dde"
+    }
+  }
+}

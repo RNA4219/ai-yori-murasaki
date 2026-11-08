@@ -2,7 +2,7 @@
   "id": "docs/tasks/TASK.agent-core-11-08-2026.md",
   "role": "task",
   "public_api": [],
-  "summary": "原要求と実装の食い違いを是正する完了Task。エージェント基盤・RSI・モニター・P1/P2とWazuh追補を扱い、604 passed、実ログ187件取り込み、API検索404による未検証、今回のCodex担当例外と7文書のBirdseye確認範囲を記録する。",
+  "summary": "原要求と実装の食い違いを是正する完了Task。Wazuh意味保持追補で正規化イベントを既定、擬似行をオプトインとし、loaderの相互誤流用拒否を確認。関連14件・全体607 passedと変更前の実接続履歴を区別する。",
   "deps_out": [
     "docs/BIRDSEYE.md",
     "docs/acceptance/AC-20261108-01.md",
@@ -15,20 +15,20 @@
     "docs/tasks/README.md"
   ],
   "risks": [
-    "標準manager APIの/alertsは404。Indexer検索と今回のBlue実モデル評価は未実施。"
+    "標準manager APIの/alertsは404。Indexer検索、Wazuh専用Blue入力schemaと実データでの検知性能評価は今回の範囲外。"
   ],
   "tests": [
     "tests/test_agent_scenarios.py",
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "generated_at": "00023",
+  "generated_at": "00024",
   "review": {
-    "reviewed_at": "2026-11-08T01:06:38.570186+00:00",
+    "reviewed_at": "2026-11-08T02:06:10.196078+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "992bc0cdcf5223d0ac7fc55bd68225a8da248752a43747478db624336c4264d9",
-    "summary_sha256": "b8aba1a6cebe7f9a8af60af66fcd4559bd1b6e09a4af6827f348e1fd6947af17",
-    "scope": "今回変更した原文全文と要約・依存・検証出力を照合した。Wazuh検索のskippedと失敗記録、実ログ187件、関連11件と全体604件の結果を区別した。既存の他文書の再検収は含まない。"
+    "source_sha256": "daad73a5c5c335153a2cc01dbb2f069b217c2774d4f3f4e271dd8813beb627e3",
+    "summary_sha256": "78b646863a70e9429477e32357fb55096976eb97bbeab1a7fef29c811830d7cf",
+    "scope": "今回の5文書の本文・要約・依存と検証記録を照合した。意味保持追補の関連14件と全体607件の成功、変更前の実ログ187件取り込み、実WazuhのBlue検知性能未評価を区別した。他文書の再検収は含まない。"
   },
-  "source_sha256": "992bc0cdcf5223d0ac7fc55bd68225a8da248752a43747478db624336c4264d9"
+  "source_sha256": "daad73a5c5c335153a2cc01dbb2f069b217c2774d4f3f4e271dd8813beb627e3"
 }

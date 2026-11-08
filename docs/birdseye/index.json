@@ -1,5 +1,5 @@
 {
-  "generated_at": "00023",
+  "generated_at": "00024",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -16,7 +16,7 @@
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
       "mtime": "00003",
-      "source_sha256": "6656b78a2f95207858e416abb50c9396c1706337243d83786620b2d34cf8445d"
+      "source_sha256": "335e7b3fe63b5c086b27d04f08a2a43422c651f6103996ae40c32e3bd544fe06"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -43,7 +43,7 @@
       "role": "overview",
       "caps": "docs/birdseye/caps/README.md.json",
       "mtime": "00008",
-      "source_sha256": "9f9595a074971b84fc402518535d16d462bbbefe8d5ca3aad3af786885f50510"
+      "source_sha256": "a71d817166c7a445dad7c8102701d0bc17028bf284772d1dac949c14a0f07336"
     },
     "RUNBOOK.md": {
       "role": "operations",
@@ -161,19 +161,19 @@
       "role": "task",
       "caps": "docs/birdseye/caps/docs.tasks.TASK.agent-core-11-08-2026.md.json",
       "mtime": "00080",
-      "source_sha256": "992bc0cdcf5223d0ac7fc55bd68225a8da248752a43747478db624336c4264d9"
+      "source_sha256": "daad73a5c5c335153a2cc01dbb2f069b217c2774d4f3f4e271dd8813beb627e3"
     },
     "docs/acceptance/AC-20261108-01.md": {
       "role": "acceptance",
       "caps": "docs/birdseye/caps/docs.acceptance.AC-20261108-01.md.json",
       "mtime": "00081",
-      "source_sha256": "370f572fab1acf5bf55d02c8e6fbc7c6ebe67cf188fefb9882f12ee27b91c574"
+      "source_sha256": "581ab06e8fec8cd7ffa0f43448a823dd8100037697b79eefe5eab44a17c941a7"
     },
     "docs/evidence/wazuh-live-20261108.md": {
       "role": "provenance",
       "caps": "docs/birdseye/caps/docs.evidence.wazuh-live-20261108.md.json",
       "mtime": "00082",
-      "source_sha256": "a38a9e7fe2867a1f8a00bbab3d1bec379ca410ae6167cd4e4b6d95d6c314bed0"
+      "source_sha256": "e9e14d45018c381e4e1df95a0e228866956339673e0f94d21e54c050f82e232e"
     },
     "docs/upstream-snapshot.json": {
       "role": "provenance",

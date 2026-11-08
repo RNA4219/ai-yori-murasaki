@@ -1,0 +1,27 @@
+[
+  {
+    "path": "README.md",
+    "sha256": "a71d817166c7a445dad7c8102701d0bc17028bf284772d1dac949c14a0f07336",
+    "verification": "yomiyasu-check: executed via=verify run=20261108T020420Z-180927b3 attempt=1 final=sha256:a71d817166c7 mode=rewrite doc_type=manual reader=expert checks=lint,diff,materials meaning_risk=6 replay=skipped"
+  },
+  {
+    "path": "CHANGELOG.md",
+    "sha256": "335e7b3fe63b5c086b27d04f08a2a43422c651f6103996ae40c32e3bd544fe06",
+    "verification": "yomiyasu-check: executed via=verify run=20261108T020421Z-d07f6731 attempt=1 final=sha256:335e7b3fe63b mode=rewrite doc_type=pr reader=expert checks=lint,diff,materials meaning_risk=18 replay=skipped"
+  },
+  {
+    "path": "docs/acceptance/AC-20261108-01.md",
+    "sha256": "581ab06e8fec8cd7ffa0f43448a823dd8100037697b79eefe5eab44a17c941a7",
+    "verification": "yomiyasu-check: executed via=verify run=20261108T020422Z-0091464b attempt=1 final=sha256:581ab06e8fec mode=rewrite doc_type=formal reader=expert checks=lint,diff,materials meaning_risk=13 replay=skipped"
+  },
+  {
+    "path": "docs/tasks/TASK.agent-core-11-08-2026.md",
+    "sha256": "daad73a5c5c335153a2cc01dbb2f069b217c2774d4f3f4e271dd8813beb627e3",
+    "verification": "yomiyasu-check: executed via=verify run=20261108T020424Z-b377eed6 attempt=1 final=sha256:daad73a5c5c3 mode=rewrite doc_type=formal reader=expert checks=lint,diff,materials meaning_risk=7 replay=skipped"
+  },
+  {
+    "path": "docs/evidence/wazuh-live-20261108.md",
+    "sha256": "e9e14d45018c381e4e1df95a0e228866956339673e0f94d21e54c050f82e232e",
+    "verification": "yomiyasu-check: executed via=verify run=20261108T020425Z-1a40974c attempt=1 final=sha256:e9e14d45018c mode=rewrite doc_type=incident reader=expert checks=lint,diff,materials meaning_risk=15 replay=skipped"
+  }
+]

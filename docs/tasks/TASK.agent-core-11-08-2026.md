@@ -40,8 +40,9 @@ acceptance_id: AC-20261108-01
 
 偽LLM・偽ラボによる単体・統合試験、実機でのRed/Blue/Purple実動作、失敗時fail-closed、Oracleの独立再検証、RSIの事前固定・比較・不採用判断、モニターAPI投影の一致。
 
-- 全体回帰は604 passed / 2 skipped / 22 subtests passed（80.70秒）。P1/P2・RSI・ATT&CK追加分も含む。
-- Wazuh取り込みは[test_wazuh_live.py](../../tests/test_wazuh_live.py)の7件、スモーク判定は[test_wazuh_smoke.py](../../tests/test_wazuh_smoke.py)の4件が成功。認証・クエリ形状・limit境界・リトライ上限・全行不正時の例外・5項目への変換・許可外キー拒否を確認し、404のスキップが401・500・取り込み失敗を隠さないことも検証した。実接続は認証成功、manager状態取得200、保存済み実アラート187件の取り込み成功。API検索は404で`skipped`。出力・初回失敗・修正は[実行記録](../evidence/wazuh-live-20261108.md)を参照する。
+- 意味保持変更前の全体回帰は604 passed / 2 skipped / 22 subtests passed（80.70秒）。P1/P2・RSI・ATT&CK追加分も含む。
+- 意味保持変更前のWazuh取り込みは[test_wazuh_live.py](../../tests/test_wazuh_live.py)の7件、スモーク判定は[test_wazuh_smoke.py](../../tests/test_wazuh_smoke.py)の4件が成功。認証・クエリ形状・limit境界・リトライ上限・全行不正時の例外・5項目への変換・許可外キー拒否を確認し、404のスキップが401・500・取り込み失敗を隠さないことも検証した。実接続は認証成功、manager状態取得200、保存済み実アラート187件の取り込み成功。API検索は404で`skipped`。出力・初回失敗・修正は[実行記録](../evidence/wazuh-live-20261108.md)を参照する。
+- 意味保持追補（外部レビュー対応・通番0012）: `ingest_alerts_file`の既定を正規化イベントJSONLへ変更し、擬似5項目行を`compat_rows`オプトインへ格下げ。テストは[test_wazuh_live.py](../../tests/test_wazuh_live.py)へ拡張（意味保持イベントの観測フィールド保持と擬似フィールド不在、compat行のオプトインと相互誤流用禁止、`normalize_alert_lines`のlevel保持、loaderのkind/擬似キー拒否）。実行済み（2026-11-08 10:42–10:44 JST、終了コード0: 関連14 passed in 0.24s、全体607 passed / 2 skipped / 22 subtests in 79.79s、従来の604件に回帰なし。[検証記録](../evidence/wazuh-live-20261108-results/meaning-preserving-verification.json)）。
 
 ## Birdseye更新対象
 

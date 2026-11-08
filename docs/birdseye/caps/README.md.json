@@ -2,7 +2,7 @@
   "id": "README.md",
   "role": "overview",
   "public_api": [],
-  "summary": "隔離ラボの起動と製品の案内。エージェント実動作の既存証跡、Wazuh実ログ187件のファイル取り込み、全体604 passedとAPI検索未検証の範囲を記録する。",
+  "summary": "隔離ラボの起動と製品の案内。既存の実動作証跡とWazuh意味保持追補を区別し、正規化イベントを既定、擬似HTTP行を明示選択とする。関連14件と全体607 passed、実WazuhのBlue検知性能とIndexer検索は未検証。",
   "deps_out": [
     "BLUEPRINT.md",
     "CHANGELOG.md",
@@ -33,19 +33,19 @@
     "docs/workflow-adoption.md"
   ],
   "risks": [
-    "標準manager APIの/alertsは404。Indexer検索と今回のBlue実モデル評価は未実施。"
+    "標準manager APIの/alertsは404。Indexer検索、Wazuh専用Blue入力schemaと実データでの検知性能評価は今回の範囲外。"
   ],
   "tests": [
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "9f9595a074971b84fc402518535d16d462bbbefe8d5ca3aad3af786885f50510",
-  "generated_at": "00023",
+  "source_sha256": "a71d817166c7a445dad7c8102701d0bc17028bf284772d1dac949c14a0f07336",
+  "generated_at": "00024",
   "review": {
-    "reviewed_at": "2026-11-08T01:06:38.570186+00:00",
+    "reviewed_at": "2026-11-08T02:06:10.177843+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "9f9595a074971b84fc402518535d16d462bbbefe8d5ca3aad3af786885f50510",
-    "summary_sha256": "1797f5a88eb7cc29679c2e33fbb5dccfdccffafe23d717bb585f714f6c3d7212",
-    "scope": "今回変更した原文全文と要約・依存・検証出力を照合した。Wazuh検索のskippedと失敗記録、実ログ187件、関連11件と全体604件の結果を区別した。既存の他文書の再検収は含まない。"
+    "source_sha256": "a71d817166c7a445dad7c8102701d0bc17028bf284772d1dac949c14a0f07336",
+    "summary_sha256": "aa0d937e9a54c00846c0c523930a15c3ce7e02fdb54c945a571311616eeac871",
+    "scope": "今回の5文書の本文・要約・依存と検証記録を照合した。意味保持追補の関連14件と全体607件の成功、変更前の実ログ187件取り込み、実WazuhのBlue検知性能未評価を区別した。他文書の再検収は含まない。"
   }
 }

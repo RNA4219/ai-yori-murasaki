@@ -1,7 +1,8 @@
 """Small test for the new Wazuh live connection pieces.
 
 - WazuhClient.authenticate/query_alerts/health against a fake broker
-- wazuh_ingest alerts.json -> telemetry rows (sanitized)
+- wazuh_ingest alerts.json -> meaning-preserving normalized events (default)
+  and the opt-in legacy lab access-log compat rows
 """
 from __future__ import annotations
 
@@ -97,24 +98,103 @@ def test_wazuh_request_retries_then_fails_closed() -> None:
     assert len(broker.calls) == 3
 
 
-def test_wazuh_ingest_converts_alerts_to_sanitized_rows(tmp_path) -> None:
+def test_wazuh_ingest_converts_alerts_to_normalized_events(tmp_path) -> None:
+    """Default ingest is meaning-preserving (no invented HTTP fields)."""
     alerts = tmp_path / "alerts.json"
     alerts.write_text("\n".join([_wazuh_alert_line(), _wazuh_alert_line(rule_id="5715", level=10)]) + "\n", encoding="utf-8")
-    out = tmp_path / "telemetry.jsonl"
+    out = tmp_path / "alerts-normalized.jsonl"
 
     summary = wazuh_ingest.ingest_alerts_file(alerts, out_jsonl=out)
     assert summary["ok"] is True
     assert summary["events"] == 2
     assert summary["rows"] == 2
     assert summary["skipped"] == 0
+    assert summary["compat_rows"] is False
 
     lines = out.read_text(encoding="utf-8").splitlines()
     assert len(lines) == 2
-    row = json.loads(lines[0])
-    assert set(row.keys()) <= {"timestamp", "method", "path", "status", "role"}
-    assert row["method"] == "GET"
-    assert row["path"].startswith("/wazuh/alert/")
-    assert row["role"].startswith("agent:")
+    ev = json.loads(lines[0])
+    # Observed alert fields are kept...
+    assert ev["kind"] == "wazuh_alert"
+    assert ev["rule_id"] == "5710"
+    assert ev["rule_level"] == 3
+    assert ev["agent_id"] == "001"
+    assert ev["agent_name"] == "agent-1"
+    assert ev["timestamp"] == "2026-11-08T01:00:00.000+0000"
+    assert ev["stable_id"]
+    # ...and no pseudo telemetry fields are invented.
+    for pseudo in ("method", "path", "status", "role"):
+        assert pseudo not in ev
+
+    # The normalized file reads back through the meaning-preserving loader.
+    events = wazuh_ingest.normalized_events_from_jsonl(out)
+    assert len(events) == 2
+
+
+def test_wazuh_ingest_compat_rows_is_opt_in(tmp_path) -> None:
+    """The legacy five-field lab rows require compat_rows=True + an out path."""
+    alerts = tmp_path / "alerts.json"
+    alerts.write_text(_wazuh_alert_line() + "\n", encoding="utf-8")
+
+    # Default: no compat output at all.
+    summary = wazuh_ingest.ingest_alerts_file(alerts)
+    assert summary["compat_rows"] is False
+
+    # compat_rows without out_compat_jsonl is a usage error, not silent skip.
+    with pytest.raises(ValueError):
+        wazuh_ingest.ingest_alerts_file(alerts, compat_rows=True)
+
+    compat = tmp_path / "telemetry.jsonl"
+    summary = wazuh_ingest.ingest_alerts_file(
+        alerts, compat_rows=True, out_compat_jsonl=compat)
+    assert summary["compat_rows"] is True
+    rows = wazuh_ingest.rows_from_jsonl(compat)
+    assert len(rows) == 1
+    # Documented pseudo-mapping: level>=3 -> 200, agent -> role. Pseudo-data,
+    # not observed HTTP values (see _rule_to_telemetry_row).
+    assert rows[0]["method"] == "GET"
+    assert rows[0]["path"].startswith("/wazuh/alert/")
+    assert rows[0]["role"].startswith("agent:")
+
+
+def test_normalize_alert_lines_keeps_meaning(tmp_path) -> None:
+    text = _wazuh_alert_line(rule_id="550", level=0) + "\nnot json\n"
+    events, skipped = wazuh_ingest.normalize_alert_lines(text)
+    assert skipped == 1
+    assert len(events) == 1
+    ev = events[0]
+    assert ev["rule_id"] == "550"
+    assert ev["rule_level"] == 0
+    # level 0 does NOT become a synthetic 403: there is no status field.
+    assert "status" not in ev
+
+
+def test_normalized_events_from_jsonl_rejects_pseudo_fields(tmp_path) -> None:
+    good = tmp_path / "good.jsonl"
+    good.write_text(json.dumps({
+        "schema_version": "1.0.0", "kind": "wazuh_alert",
+        "stable_id": "x", "timestamp": "t", "rule_id": "5710",
+        "rule_level": 3, "agent_id": "001", "agent_name": "a1",
+    }, separators=(",", ":")) + "\n", encoding="utf-8")
+    events = wazuh_ingest.normalized_events_from_jsonl(good)
+    assert len(events) == 1
+
+    bad = tmp_path / "bad.jsonl"
+    bad.write_text(json.dumps({
+        "kind": "wazuh_alert", "rule_id": "5710", "status": 200,
+    }, separators=(",", ":")) + "\n", encoding="utf-8")
+    with pytest.raises(ValueError):
+        wazuh_ingest.normalized_events_from_jsonl(bad)
+
+    wrong_kind = tmp_path / "wrong.jsonl"
+    wrong_kind.write_text(json.dumps({"kind": "other"},
+                                     separators=(",", ":")) + "\n",
+                          encoding="utf-8")
+    with pytest.raises(ValueError):
+        wazuh_ingest.normalized_events_from_jsonl(wrong_kind)
+
+    with pytest.raises(FileNotFoundError):
+        wazuh_ingest.normalized_events_from_jsonl(tmp_path / "missing.jsonl")
 
 
 def test_wazuh_ingest_skips_unparseable_lines(tmp_path) -> None:
@@ -151,3 +231,12 @@ def test_rows_from_jsonl_validates_shape(tmp_path) -> None:
 
     with pytest.raises(FileNotFoundError):
         wazuh_ingest.rows_from_jsonl(tmp_path / "missing.jsonl")
+
+    # A normalized (meaning-preserving) file must NOT be loadable as lab
+    # compat telemetry rows: its keys are not the five-field telemetry shape.
+    normalized = tmp_path / "normalized.jsonl"
+    alerts = tmp_path / "alerts.json"
+    alerts.write_text(_wazuh_alert_line() + "\n", encoding="utf-8")
+    wazuh_ingest.ingest_alerts_file(alerts, out_jsonl=normalized)
+    with pytest.raises(ValueError):
+        wazuh_ingest.rows_from_jsonl(normalized)

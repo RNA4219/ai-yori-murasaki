@@ -146,6 +146,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--limit", type=int, default=5)
     parser.add_argument("--alerts-file", default=None,
                         help="optional captured /var/ossec/logs/alerts/alerts.json")
+    parser.add_argument("--compat-rows", action="store_true",
+                        help="also write legacy lab access-log compat rows "
+                             "(pseudo HTTP fields; demo lab replay only)")
+    parser.add_argument("--compat-out-jsonl", default=None,
+                        help="output path for --compat-rows (required with it)")
     parser.add_argument("--allow-default-creds", action="store_true")
     args = parser.parse_args(argv)
 
@@ -218,14 +223,20 @@ def main(argv: list[str] | None = None) -> int:
     # 4. alerts.json import path
     if args.alerts_file:
         try:
-            summary = wazuh_ingest.ingest_alerts_file(args.alerts_file)
+            # 既定は意味保持の正規化イベント取り込み（HTTP擬似フィールドを
+            # 作らない）。lab access-log 互換行が必要な場合のみ --compat-rows。
+            summary = wazuh_ingest.ingest_alerts_file(
+                args.alerts_file,
+                compat_rows=args.compat_rows,
+                out_compat_jsonl=args.compat_out_jsonl if args.compat_rows else None)
         except Exception as exc:  # noqa: BLE001
             # 取り込み失敗（全行不正など）は fail として透過し、成功にしない。
             results.append(("alerts_json_import", "fail", str(exc)))
         else:
             results.append(("alerts_json_import", "pass",
                             f"events={summary['events']} rows={summary['rows']} "
-                            f"skipped={summary['skipped']}"))
+                            f"skipped={summary['skipped']} "
+                            f"compat_rows={summary['compat_rows']}"))
     else:
         results.append(("alerts_json_import", "skipped",
                         "no --alerts-file given"))

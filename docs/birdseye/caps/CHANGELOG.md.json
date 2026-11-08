@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "TaskとAcceptanceを結ぶ履歴。0011にP1/P2拡張、Wazuh取り込みと判定修正、7件と追加4件の成功、全体604 passed、実ログ187件の取り込み、API検索404による未検証を記録する。",
+  "summary": "TaskとAcceptanceを結ぶ履歴。0012にWazuhの意味保持JSONL、lab専用擬似行のオプトイン、loaderの相互誤流用拒否、関連14件と全体607 passedを記録する。0011以前の検証履歴も保持する。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -44,13 +44,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "6656b78a2f95207858e416abb50c9396c1706337243d83786620b2d34cf8445d",
-  "generated_at": "00023",
+  "source_sha256": "335e7b3fe63b5c086b27d04f08a2a43422c651f6103996ae40c32e3bd544fe06",
+  "generated_at": "00024",
   "review": {
-    "reviewed_at": "2026-11-08T01:06:38.570186+00:00",
+    "reviewed_at": "2026-11-08T02:06:10.183386+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "6656b78a2f95207858e416abb50c9396c1706337243d83786620b2d34cf8445d",
-    "summary_sha256": "ff7618ccb7017a131526e86942c94f0e04c72c06693c624c10c397aed1c7bc87",
-    "scope": "今回変更した原文全文と要約・依存・検証出力を照合した。Wazuh検索のskippedと失敗記録、実ログ187件、関連11件と全体604件の結果を区別した。既存の他文書の再検収は含まない。"
+    "source_sha256": "335e7b3fe63b5c086b27d04f08a2a43422c651f6103996ae40c32e3bd544fe06",
+    "summary_sha256": "4f46492dd306471d8217da24355e66050305351ed60220132aff368947fd290b",
+    "scope": "今回の5文書の本文・要約・依存と検証記録を照合した。意味保持追補の関連14件と全体607件の成功、変更前の実ログ187件取り込み、実WazuhのBlue検知性能未評価を区別した。他文書の再検収は含まない。"
   }
 }

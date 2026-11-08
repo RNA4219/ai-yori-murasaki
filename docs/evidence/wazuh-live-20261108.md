@@ -34,7 +34,7 @@ docker exec aym-wazuh-manager gzip -dc /var/ossec/logs/alerts/2026/Nov/ossec-ale
 
 最終回帰は2026-11-08 09:55:24〜09:56:45 JSTに実行し、終了コード0。pytestの表示時間は80.70秒、プロセスの経過時間は81.321秒だった。スモーク変更前の回帰は600 passed / 2 skipped / 22 subtests passed、80.89秒。追加4件を含む再実行であり、性能改善の比較ではない。[最終出力](wazuh-live-20261108-results/pytest-all.txt)、[関連11件の出力](wazuh-live-20261108-results/pytest-wazuh-smoke.txt)、[実行時刻](wazuh-live-20261108-results/verification.json)
 
-## 実接続結果
+## 意味保持変更前の実接続結果
 
 スモークは2026-11-08 09:55:24 JSTに実行し、終了コード0、経過0.590秒だった。
 
@@ -54,7 +54,9 @@ docker exec aym-wazuh-manager gzip -dc /var/ossec/logs/alerts/2026/Nov/ossec-ale
 
 ## Blue経路と制限
 
-`ingest_alerts_file`は正規化したアラートを`timestamp`・`method`・`path`・`status`・`role`の5項目へ変換する。`rows_from_jsonl`で許可外キーを拒否し、既存の`stage_worker(root, role="blue", telemetry=rows)`へ渡す経路を使える。今回の実接続スモークは取り込みと行生成までで、新たなBlueの実モデル実行や検知性能の評価は行っていない。
+2026-11-08追補（外部レビュー対応・意味保持）: `ingest_alerts_file`の既定出力は、正規化イベント（`kind`/`stable_id`/`timestamp`/`rule_id`/`rule_level`/`agent_id`/`agent_name`/`data`）をそのまま残すJSONLである。HTTP風の5項目（`timestamp`/`method`/`path`/`status`/`role`）への旧変換は、`rule_level>=3→status 200`、`agent_id→role`という**実測していない擬似値の生成**であり、レビューで意味の捏造として指摘された。これを受け、5項目行は`compat_rows=True`かつ`out_compat_jsonl`指定のオプトインへ格下げし、labデモのaccess-logリプレイ専用とした。意味保持側は`normalized_events_from_jsonl`が`kind=wazuh_alert`でない行と`method`/`path`/`status`/`role`を搬入する行を拒否し、lab互換側`rows_from_jsonl`は5フィールド以外を拒否する。両者は相互に読み込めないことをテストで固定している。Blueに本物のWazuhデータを渡す評価は、Wazuh専用イベント型の入力schema新設が前提で、今回の範囲外（別課題）。今回の実接続スモークは取り込みと行生成までで、新たなBlueの実モデル実行や検知性能の評価は行っていない。
+
+上記の追補前は`ingest_alerts_file`が既定で5項目行を生成していた。当時の記述「正規化したアラートを5項目へ変換する」は、既定出力を意味保持へ変更した追補（通番0012）で置き換えた。意味保持追補のテストは2026-11-08 10:42–10:44 JSTに実行済みで、関連14 passed in 0.24s、全体607 passed / 2 skipped / 22 subtests in 79.79s（終了コード0、従来の604件に回帰なし、実行前後のテスト対象ハッシュ一致）。[検証記録](wazuh-live-20261108-results/meaning-preserving-verification.json)。
 
 APIクエリの失敗からファイル取り込みへの自動切り替えはない。ファイルは操作者が`--alerts-file`で明示指定する。製品の`query_alerts`は404でも例外を返し、固定値へ置き換えない。
 

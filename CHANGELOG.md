@@ -14,6 +14,9 @@ Keep a Changelog の区分で管理する。記録には既存最大番号 +1 �
 
 ### Added
 
+- 0012 — 2026-11-08: Wazuh取り込みの意味保持（外部レビュー対応）。`wazuh_ingest.ingest_alerts_file`の既定出力を、正規化イベント（`kind`/`stable_id`/`timestamp`/`rule_id`/`rule_level`/`agent_id`/`agent_name`/`data`）をそのまま残すJSONLへ変更した（R-008「正規化event」）。従来の5項目telemetry行（`rule_level>=3→200`、`agent_id→role`）は実測HTTPではない擬似観測値のため、`compat_rows=True`かつ`out_compat_jsonl`指定のオプトインへ格下げし、labデモのリプレイ専用と明記した。読み戻しは意味保持側`normalized_events_from_jsonl`（`kind=wazuh_alert`でない行、`method`/`path`/`status`/`role`を搬入する行を拒否）とlab互換側`rows_from_jsonl`（5フィールド外を拒否）へ分離し、相互に誤流用できないことをテストで固定した。スモークは既定で意味保持取り込みを行い、`--compat-rows --compat-out-jsonl`でのみ擬似行を出す。テストは実行済み（2026-11-08 10:42–10:44 JST、関連14 passed in 0.24s、全体607 passed / 2 skipped / 22 subtests in 79.79s、従来の604件に回帰なし）。実WazuhデータでのBlue検知性能の測定は今回の範囲外で未実施のまま。[docs/evidence/wazuh-live-20261108.md](docs/evidence/wazuh-live-20261108.md)
+  [Task 20261108-01](docs/tasks/TASK.agent-core-11-08-2026.md) / [AC-20261108-01](docs/acceptance/AC-20261108-01.md)。Wazuh専用イベント型のBlue入力schema新設と未知パターン検知評価は含まない（別課題）。
+
 - 0011 — 2026-11-08: P1/P2軽量拡張とWazuh実接続。BlueツールへSigma draft rule生成・Advisory検索（クエリ秘匿）を追加し、ATT&CKマッピングをfindingへ接続、シナリオを8本（権限3類型＋SQLi/XSS/Path Traversal/依存CVE＋benign）へ拡張した。エージェントRSIのExperience Memoryはtrain完了カードの検証を通る形状へ修正し trusted memory への追記を確認。Wazuh追補では`_request()`へリトライ処理を統一し、クエリの`limit`を検証する。`wazuh_ingest.py`はJSONLから5項目のsanitized telemetry行を生成し、全行不正なら例外とする。初回テストで見つかった空リスト判定を修正後、取り込み7件とスモーク判定4件が成功し、全体は604 passed / 2 skipped / 22 subtests passed（80.70秒）。認可ローカルラボのmanager 4.9.2で認証と状態取得が成功し、ローテーション済み実アラート187件の取り込みを確認した。標準manager APIの`/alerts`は404のためスモークでは`skipped`と記録し、Indexer検索は未検証。製品側は例外を返し、フォールバックは追加していない。[実行記録](docs/evidence/wazuh-live-20261108.md)
   [Task 20261108-01](docs/tasks/TASK.agent-core-11-08-2026.md) / [AC-20261108-01](docs/acceptance/AC-20261108-01.md)。Indexer側運用・本番接続・新規タグ・Release・配備は含まない。ユーザー承認済みのソース更新としてcommit・pushを行う。
 

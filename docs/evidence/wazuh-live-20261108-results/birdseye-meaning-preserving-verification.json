@@ -1,0 +1,14 @@
+{
+  "scope": [
+    "README.md",
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261108-01.md",
+    "docs/tasks/TASK.agent-core-11-08-2026.md",
+    "docs/evidence/wazuh-live-20261108.md"
+  ],
+  "requireReviewed": true,
+  "failures": [],
+  "warnings": [],
+  "verifiedAt": "2026-11-08T02:06:37.169082+00:00",
+  "globalReview": "not run"
+}
