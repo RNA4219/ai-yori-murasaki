@@ -7,7 +7,7 @@ last_reviewed_at: 2026-11-08
 next_review_due: 2026-12-08
 ---
 
-# Task — README整備とGitHub Release v0.1.0の作成
+# Task — README整備とv0.1.0まわりの文書整合
 
 ## メタデータ
 
@@ -16,13 +16,13 @@ next_review_due: 2026-12-08
 
 ## Objective
 
-公開リポジトリの外面を仕上げる。READMEから最短で起動へ進めるようにし、モニターの内容を文章で伝える。CHANGELOGの蓄積分を版として確定し、GitHub Release v0.1.0を作成する。あわせて公開記録（RA）と検収（AC）を残す。
+公開リポジトリの外面を仕上げる。READMEから最短で起動へ進めるようにし、モニターの内容を文章で伝える。CHANGELOGの蓄積分を版として確定し、GitHub Release v0.1.0まわりを整える。あわせて公開記録（RA）と検収（AC）を残す。
 
 依頼根拠：2026-11-08、ユーザー（RNA4219）から「代わりにその辺り仕上げてもらえたら嬉しいですね」と、READMEまわり（クイックスタート、モニター紹介）とリリース整備の実施指示があった。
 
 ## Scope
 
-- In: README.md（クイックスタート節、モニター節、公開状態の追記）、CHANGELOG.md（[0.1.0] 節の新設と通番0013）、docs/releases/RA-20261108-01.md の新規作成と docs/releases/README.md の同期、docs/tasks/README.md と docs/acceptance/INDEX.md の索引同期、GitHub のタグ v0.1.0 と Release の作成。
+- In: README.md（クイックスタート節、モニター節、公開状態の追記）、CHANGELOG.md（[0.1.0] 節の新設と通番0013）、docs/releases/RA-20261108-01.md の新規作成と docs/releases/README.md の同期、docs/tasks/README.md と docs/acceptance/INDEX.md の索引同期、GitHub のタグ v0.1.0 と Release の確認とノート整備（実施時に既存と判明したため新規作成はしていない。Notes 参照）。
 - Out: 製品コード・テストの変更、モニターのスクリーンショット（実データの state.json がリポジトリに無く、空画面や擬似データの画像は証跡として不適切なため付けない）、CI の追加、Birdseye カプセルの再生成（生成基盤が本環境に無いため未実施として記録する）。
 
 ## Requirements
@@ -64,7 +64,7 @@ next_review_due: 2026-12-08
 
 ## Deliverables
 
-本書、AC-20261108-02、CHANGELOG 通番0013、RA-20261108-01、GitHub Release v0.1.0。
+本書、AC-20261108-02、CHANGELOG 通番0013、RA-20261108-01、既存 GitHub Release v0.1.0 のノート整備。
 
 ## Plan
 
@@ -86,3 +86,4 @@ next_review_due: 2026-12-08
 
 - Birdseye カプセル（docs/birdseye/caps/）の再生成は本環境に生成基盤がなく未実施。次回、通常の Codex 環境で作業する際に同期が必要。
 - スクリーンショットは、実ラボ実行時の state.json を使ってモニターを表示した状態で撮るのが適切。実データが用意できた時点で別 Task とする。
+- 実施時の訂正（2026-11-08）: タグ v0.1.0 と GitHub Release は初回公開時（2026-11-07、RA-20261107-01 の実行、タグ対象 commit 8f38777）に作成済みだった。作業開始前の確認が不足していた。新規作成は行わず、Release ノート本文の整備と文書整合のみを実施した。経緯は RA-20261108-01 に記録した。

@@ -29,16 +29,16 @@ next_review_due: 2026-12-06
 - 成果物: バージョン0.1.0のsdist/wheel（`.ga/publication-20261107/dist/`、非公開の作業領域）。README.md確定後にビルドした。sha256: sdist `3b5f5c10105bfa730857aa6b97b62f6270f93b35998c7946f5f2cd37e4fb96cb`（267613 bytes）、wheel `c219919db9adcee3b2c6bcc00c3417fa1ac3c089d8edf8ae002aec2f7a7b6c4b`（234445 bytes）。配布一致比較（package 112ファイル、sdistルート文書、PKG-INFO/METADATA Description、LICENSE/THIRD_PARTY_NOTICES.md）は不一致0件・欠落0件、readme_in_sdist=true。秘密検査はsdist 110ファイル・wheel 76ファイルとも0件（`.ga/publication-20261107/public-dist-compare-result.json`、`public-secret-scan-sdist.json`、`public-secret-scan-wheel.json`、非公開）
 - 検証根拠: [AC-20261107-03](../acceptance/AC-20261107-03.md)の技術検収（合格済み、再実行しない）と、公開treeに対する `tools/ci/check_release_secrets.py` による秘密検査（公開実行時に実施）
 
-## RA-20261108-01 — GitHub Release v0.1.0 の作成
+## RA-20261108-01 — v0.1.0 の存在確認と文書整合
 
 正式な承認記録は [RA-20261108-01.md](RA-20261108-01.md) を参照。以下は要約である。
 
 - 承認者: RNA4219（ユーザー、2026-11-08「代わりにその辺り仕上げてもらえたら嬉しいですね」＝ README整備とリリース作成の実施指示）
-- 対象: GitHub Release `v0.1.0`（タグ `v0.1.0`）と、その前提となる README・CHANGELOG の整備。初回公開そのものの承認は RA-20261107-01
+- 対象: 既存の GitHub Release `v0.1.0`（タグ `v0.1.0`、初回公開時に作成済み）の存在確認と、README・CHANGELOG・Release ノートの文書整合。新規の版付けは行わない。初回公開そのものの承認は RA-20261107-01
 - 対象Task / Acceptance: [AC-20261108-02](../acceptance/AC-20261108-02.md)（[Task 20261108-02](../tasks/TASK.readme-release-11-08-2026.md)）
 - 除外: 配布物（sdist/wheel）の再ビルド、Birdseye カプセルの再生成、モニターのスクリーンショット
 - approval状態: approved（承認済み）
-- 公開実行: pending（タグと Release の作成後に RA-20261108-01 へ結果を追記する）
+- 公開実行: done（新規のタグ・Release の作成はなし。Release ノート本文の整備のみ）
 - CI: なし（新規CI基盤は追加しない）
-- 復旧方法: `gh release delete v0.1.0` と `git push origin :refs/tags/v0.1.0` で Release とタグを取り消す
+- 復旧方法: ノート本文は Release 編集で戻し、文書変更は revert commit で戻す
 - 検証根拠: AC-20261108-02（相対リンク検査 0 件、変更差分の秘密情報パターン検査 0 件）
