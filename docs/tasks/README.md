@@ -22,6 +22,7 @@ Task、[Acceptance](../acceptance/README.md)、[CHANGELOG](../../CHANGELOG.md)�
 
 | task_id | 作業 | 検収 |
 | --- | --- | --- |
+| 20261108-03 | [v0.1.1 リリース（版上げと配布物の再ビルド）](TASK.version-011-11-08-2026.md) | [AC-20261108-03](../acceptance/AC-20261108-03.md) |
 | 20261108-02 | [README整備とv0.1.0まわりの文書整合](TASK.readme-release-11-08-2026.md) | [AC-20261108-02](../acceptance/AC-20261108-02.md) |
 | 20261108-01 | [エージェント実行基盤・RSI・Wazuh追補](TASK.agent-core-11-08-2026.md) | [AC-20261108-01](../acceptance/AC-20261108-01.md) |
 | 20261107-03 | [分類・判断支援・追加検証](TASK.product-clarity-11-07-2026.md) | [AC-20261107-03](../acceptance/AC-20261107-03.md) |

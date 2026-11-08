@@ -8,7 +8,7 @@ next_review_due: 2026-12-06
 
 # 公開記録
 
-現在の公開版は v0.1.0（[GitHub Release](https://github.com/RNA4219/ai-yori-murasaki/releases/tag/v0.1.0)、RA-20261108-01）。文書導入の技術検収をリリースとして数えない。
+現在の公開版は v0.1.1（[GitHub Release](https://github.com/RNA4219/ai-yori-murasaki/releases/tag/v0.1.1)、RA-20261108-02。配布物の sdist/wheel を添付）。文書導入の技術検収をリリースとして数えない。
 今後、ユーザーから公開を依頼された場合は版、対象 Task / Acceptance、成果物 hash、検証結果、承認者、復旧方法を公開記録へ残す。
 公開判断が必要なときは `RA-YYYYMMDD-xx` を採番し、Acceptance の `release_approval_id` と相互参照する。承認記録は [RA-20261107-01](RA-20261107-01.md) を参照。
 比較評価を含む場合は [評価 identity](../CONTRACTS.md#evaluation-identity) の postrun を先に通す。
@@ -42,3 +42,17 @@ next_review_due: 2026-12-06
 - CI: なし（新規CI基盤は追加しない）
 - 復旧方法: ノート本文は Release 編集で戻し、文書変更は revert commit で戻す
 - 検証根拠: AC-20261108-02（相対リンク検査 0 件、変更差分の秘密情報パターン検査 0 件）
+
+## RA-20261108-02 — v0.1.1 リリース（配布物の再ビルド）
+
+正式な承認記録は [RA-20261108-02.md](RA-20261108-02.md) を参照。以下は要約である。
+
+- 承認者: RNA4219（ユーザー、2026-11-08「リリースパッケージ結構変えたから v0.1.1にして」＝版上げとリリースの実施指示）
+- 対象: 版 0.1.1（pyproject.toml と __init__.py）、配布物（sdist/wheel）の再ビルド、タグ `v0.1.1` と GitHub Release（配布物を添付）
+- 対象Task / Acceptance: [AC-20261108-03](../acceptance/AC-20261108-03.md)（[Task 20261108-03](../tasks/TASK.version-011-11-08-2026.md)）
+- 除外: 製品コードの変更（版文字列を除く）、v0.1.0 の Release・タグの変更、CI の追加
+- approval状態: approved（承認済み）
+- 公開実行: pending（ビルド・タグ・Release の実施後に RA-20261108-02 へ結果を追記する）
+- CI: なし（新規CI基盤は追加しない）
+- 復旧方法: `gh release delete v0.1.1` と `git push origin :refs/tags/v0.1.1` で Release とタグを取り消す
+- 検証根拠: AC-20261108-03（配布物の版確認、秘密検査、テスト結果）

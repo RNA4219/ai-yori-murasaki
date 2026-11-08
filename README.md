@@ -125,4 +125,4 @@ Workflow CookbookのTier 3（Full）を採用しています。[導入対応表]
 
 ## 公開状態
 
-このリポジトリはGitHub Publicで公開しています（https://github.com/RNA4219/ai-yori-murasaki ）。版v0.1.0の[GitHub Release](https://github.com/RNA4219/ai-yori-murasaki/releases/tag/v0.1.0)があります（初回公開時に作成）。リモートCIは設定しておらず、CIバッジ等は表示しません。本番環境は対象外です。公開の承認と実行状態は[公開記録](docs/releases/README.md)（RA-20261107-01、RA-20261108-01）に残します。
+このリポジトリはGitHub Publicで公開しています（https://github.com/RNA4219/ai-yori-murasaki ）。現在の公開版は v0.1.1 の[GitHub Release](https://github.com/RNA4219/ai-yori-murasaki/releases/tag/v0.1.1)です（配布物のsdist/wheelを添付）。初回公開は v0.1.0 です。リモートCIは設定しておらず、CIバッジ等は表示しません。本番環境は対象外です。公開の承認と実行状態は[公開記録](docs/releases/README.md)（RA-20261107-01、RA-20261108-01、RA-20261108-02）に残します。
