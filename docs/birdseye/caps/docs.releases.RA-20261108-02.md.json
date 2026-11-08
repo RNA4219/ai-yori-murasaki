@@ -1,0 +1,19 @@
+{
+  "id": "docs/releases/RA-20261108-02.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "v0.1.1 の公開承認記録。ユーザーの実施指示を承認根拠とし、版上げ（pyproject と __init__ の 0.1.1）と配布物の再ビルド、タグ v0.1.1（commit 30548da）と GitHub Release（配布物2点の添付）の実行結果、成果物 hash、復旧方法（Release とタグの取り消し）を記録する。CI は未設定のため実施しない。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "51975183277592ee77220f6095f1062f478979e3f879d6b913a652ecc897967d",
+  "generated_at": "00027",
+  "review": {
+    "reviewed_at": "2026-11-08T04:57:07.145218+00:00",
+    "reviewed_by": "Muse",
+    "source_sha256": "51975183277592ee77220f6095f1062f478979e3f879d6b913a652ecc897967d",
+    "summary_sha256": "6b4798b5be93da313048ba2b62046ea439a4847fc63575081cfb680898dac60c",
+    "scope": "生成00027。v0.1.1 リリースに伴い、本文・要約・依存を照合した。"
+  }
+}

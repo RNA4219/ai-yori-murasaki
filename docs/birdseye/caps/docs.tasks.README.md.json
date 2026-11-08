@@ -2,7 +2,7 @@
   "id": "docs/tasks/README.md",
   "role": "operations",
   "public_api": [],
-  "summary": "Taskの命名・状態遷移・検収への接続規則と作業一覧。README整備とv0.1.0まわりの文書整合のTask 20261108-02、エージェント基盤・RSI・Wazuh追補のTask 20261108-01から検収記録へ案内する。",
+  "summary": "20261030-01から20261108-03までのTask索引。各行は対象Acceptanceへのリンクを持ち、20261108-02でREADME整備とv0.1.0まわりの文書整合、20261108-03でv0.1.1リリース（版上げと配布物の再ビルド）の作業範囲を示す。",
   "deps_out": [
     "CHANGELOG.md",
     "HUB.codex.md",
@@ -38,13 +38,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "23c8f9cb77d68cdbd87a46c783fd987b507672babb02077458e6fb39ada8ce7b",
-  "generated_at": "00025",
+  "source_sha256": "57d5ccf524d5d227dcfcfb5c08fd3a8d84f0ac89512e37148e941992ce06b178",
+  "generated_at": "00027",
   "review": {
-    "reviewed_at": "2026-11-08T04:47:20.151229+00:00",
+    "reviewed_at": "2026-11-08T04:57:07.145218+00:00",
     "reviewed_by": "Muse",
-    "source_sha256": "23c8f9cb77d68cdbd87a46c783fd987b507672babb02077458e6fb39ada8ce7b",
-    "summary_sha256": "eeac0905ff109045f0e104b7f322e3d6f144b330cff47de6ac466aa24cf754e1",
-    "scope": "Task 20261108-02の変更に伴い、本文・要約・依存を照合した（生成00025）。"
+    "source_sha256": "57d5ccf524d5d227dcfcfb5c08fd3a8d84f0ac89512e37148e941992ce06b178",
+    "summary_sha256": "8048f33c649fe56f5adf93ae5b87bd1372c9b06408cd31e61819756746512d02",
+    "scope": "生成00027。v0.1.1 リリースに伴い、本文・要約・依存を照合した。"
   }
 }

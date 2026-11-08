@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "TaskとAcceptanceを結ぶ履歴。[0.1.0] - 2026-11-08に0001–0013を確定し、0013でREADME整備とv0.1.0まわりの文書整合、0012にWazuhの意味保持JSONLと全体607 passedを記録する。[Unreleased]に0014（モニター画面の追加とBirdseye再生成）と0015（画面の冒頭配置）を保持する。",
+  "summary": "TaskとAcceptanceを結ぶ履歴。[0.1.1] - 2026-11-08に0014–0016を確定し、0016でv0.1.1リリース（版上げと配布物の再ビルド、GitHub Releaseへの添付、Birdseye生成00027）を記録する。[0.1.0]節に0001–0013（0012にWazuhの意味保持JSONLと全体607 passed）を保持し、[Unreleased]は空。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -44,13 +44,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "3039c2e86f3d7c38b4b475f6f90943a6288f66305cb51f5ccd82b8dfab959d35",
-  "generated_at": "00026",
+  "source_sha256": "71919b6b85de90fd6d0f40e4ea9e0cdf94554ed4af45334c54d47534bb1530dc",
+  "generated_at": "00027",
   "review": {
-    "reviewed_at": "2026-11-08T04:50:22.697733+00:00",
+    "reviewed_at": "2026-11-08T04:57:07.145218+00:00",
     "reviewed_by": "Muse",
-    "source_sha256": "3039c2e86f3d7c38b4b475f6f90943a6288f66305cb51f5ccd82b8dfab959d35",
-    "summary_sha256": "82b398019f0ac0a8da40ba957191e3c5d3fc690f051a4eefd488c528d48e0bf3",
-    "scope": "生成00026。スクリーンショットの冒頭配置に伴い、本文・要約・依存を照合した。"
+    "source_sha256": "71919b6b85de90fd6d0f40e4ea9e0cdf94554ed4af45334c54d47534bb1530dc",
+    "summary_sha256": "9d0401fb0ca7022d51bb051c61e3010812d7847a220feba6ab12ae9b168d511a",
+    "scope": "生成00027。v0.1.1 リリースに伴い、本文・要約・依存を照合した。"
   }
 }

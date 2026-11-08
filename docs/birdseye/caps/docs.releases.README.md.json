@@ -2,7 +2,7 @@
   "id": "docs/releases/README.md",
   "role": "guide",
   "public_api": [],
-  "summary": "公開版はv0.1.0（GitHub Release）。RA-20261107-01（初回公開の承認）とRA-20261108-01（存在確認と文書整合）の要約を保持し、将来の公開でも版・成果物・承認ID・Task・検収・復旧を追跡する。",
+  "summary": "個別RAの人間向け要約インデックス。現在の公開版は v0.1.1（RA-20261108-02、配布物の sdist/wheel を添付し公開実行 done）。v0.1.0 の配布承認（RA-20261107-01）と文書整合（RA-20261108-01）の要約を持つ。公開ファイル選定の原本は非公開の .ga 記録で、この要約と混同しない。",
   "deps_out": [
     "docs/CONTRACTS.md"
   ],
@@ -16,13 +16,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "37a5663a6dbfd6015bb4f1f3066ab4815b07abff34b8aafddfb31c3d709ae31c",
-  "generated_at": "00025",
+  "source_sha256": "31ee76621011a13ceb57b60856392735e6832b78fb21e9b40687676acbc4f89f",
+  "generated_at": "00027",
   "review": {
-    "reviewed_at": "2026-11-08T04:47:20.151229+00:00",
+    "reviewed_at": "2026-11-08T04:57:07.145218+00:00",
     "reviewed_by": "Muse",
-    "source_sha256": "37a5663a6dbfd6015bb4f1f3066ab4815b07abff34b8aafddfb31c3d709ae31c",
-    "summary_sha256": "37b69c06ace01dad700ec388e0b079b47c5849d397008d79697dfe6f5d87dc92",
-    "scope": "Task 20261108-02の変更に伴い、本文・要約・依存を照合した（生成00025）。"
+    "source_sha256": "31ee76621011a13ceb57b60856392735e6832b78fb21e9b40687676acbc4f89f",
+    "summary_sha256": "1fbf18933c3bb769c0bf3e7c7c16cc4bcef4f2975fbd26f8e95b952d93400af8",
+    "scope": "生成00027。v0.1.1 リリースに伴い、本文・要約・依存を照合した。"
   }
 }

@@ -1,0 +1,19 @@
+{
+  "id": "docs/tasks/TASK.version-011-11-08-2026.md",
+  "role": "task",
+  "public_api": [],
+  "summary": "v0.1.1 リリースの作業記録。版上げ（pyproject と __init__ の 0.1.1）、配布物の再ビルドと秘密検査、タグと GitHub Release（配布物添付）の作成、RA-20261108-02 と AC-20261108-03 への記録、Birdseye 再生成までを範囲とし、製品コードの変更は版文字列のみ。Docker のない作業環境でのテスト限界を明記する。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "5ebcc5f52fce67e7b33ff4b2522853224cca08e26f2ac0d6d3fe6e0fa36eb69c",
+  "generated_at": "00027",
+  "review": {
+    "reviewed_at": "2026-11-08T04:57:07.145218+00:00",
+    "reviewed_by": "Muse",
+    "source_sha256": "5ebcc5f52fce67e7b33ff4b2522853224cca08e26f2ac0d6d3fe6e0fa36eb69c",
+    "summary_sha256": "399d516952e8624025f3c911baaea8efb1092523d197c6be0e8990934144ceea",
+    "scope": "生成00027。v0.1.1 リリースに伴い、本文・要約・依存を照合した。"
+  }
+}

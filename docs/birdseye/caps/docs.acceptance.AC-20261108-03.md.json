@@ -1,0 +1,19 @@
+{
+  "id": "docs/acceptance/AC-20261108-03.md",
+  "role": "acceptance",
+  "public_api": [],
+  "summary": "v0.1.1 リリースの検収記録。ビルド成果物（sdist 334,442 bytes / wheel 299,907 bytes）の sha256、PKG-INFO と METADATA の版 0.1.1、秘密検査 0 件（走査 242 ファイル）、作業環境でのテスト再実行 607 passed / 2 skipped / 22 subtests passed を証跡として記録し合格と判定する。Docker 依存検証は skip で、実ラボ実行は本環境では未実施と明記する。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "b34f1484b5c0aa5c73c3ebcae926d12d8fb17282a7d783d3711ea8dd58a10f6f",
+  "generated_at": "00027",
+  "review": {
+    "reviewed_at": "2026-11-08T04:57:07.145218+00:00",
+    "reviewed_by": "Muse",
+    "source_sha256": "b34f1484b5c0aa5c73c3ebcae926d12d8fb17282a7d783d3711ea8dd58a10f6f",
+    "summary_sha256": "c8b2d3407968c3f330f5c6e3bf62361fd12e6677bff07bb42bfe4bd4b1774dfd",
+    "scope": "生成00027。v0.1.1 リリースに伴い、本文・要約・依存を照合した。"
+  }
+}

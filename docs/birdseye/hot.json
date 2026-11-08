@@ -1,5 +1,5 @@
 {
-  "generated_at": "00026",
+  "generated_at": "00027",
   "index_snapshot": "docs/birdseye/index.json",
   "refresh_command": "RUNBOOK.md#execute と docs/BIRDSEYE.md の PowerShell 手順を参照",
   "curation_notes": "ローカル製品、要件、検収、文書運用の入口。生成世代と原文・要約の内容確認を区別する。",
