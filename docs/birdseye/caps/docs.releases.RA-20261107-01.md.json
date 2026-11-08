@@ -1,0 +1,19 @@
+{
+  "id": "docs/releases/RA-20261107-01.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "GitHub Public公開とv0.1.0配布の承認記録（approved、2026-11-07）。配布一致比較と秘密検査0件、sdist/wheelのsha256、CIなし、ステージ済みtreeでの復旧方法を保持する。本記録内の公開実行状態はpending表記のまま残る。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "11cb9713420a9a91828241c58ac94858aea097054a44e09534e5dfd29ec656bb",
+  "generated_at": "00025",
+  "review": {
+    "reviewed_at": "2026-11-08T04:47:20.151229+00:00",
+    "reviewed_by": "Muse",
+    "source_sha256": "11cb9713420a9a91828241c58ac94858aea097054a44e09534e5dfd29ec656bb",
+    "summary_sha256": "206d1c2e7a67e7d20f068c1eb09f0c1fae65ed2ce12b9ec0729b0d0e13a8632a",
+    "scope": "生成00025で新規登録。本文を読み、要約を作成して原文と照合した。"
+  }
+}

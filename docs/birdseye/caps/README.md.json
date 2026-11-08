@@ -2,7 +2,7 @@
   "id": "README.md",
   "role": "overview",
   "public_api": [],
-  "summary": "隔離ラボの起動と製品の案内。既存の実動作証跡とWazuh意味保持追補を区別し、正規化イベントを既定、擬似HTTP行を明示選択とする。関連14件と全体607 passed、実WazuhのBlue検知性能とIndexer検索は未検証。",
+  "summary": "隔離ラボの起動と製品の案内。クイックスタートとモニター節（実ラン証跡のAPI応答を再生した画面、docs/images/）を追加し、公開状態にv0.1.0のGitHub Releaseへの参照を明記。既存の実動作証跡とWazuh意味保持追補を区別し、正規化イベントを既定、擬似HTTP行を明示選択とする。関連14件と全体607 passed、実WazuhのBlue検知性能とIndexer検索は未検証。",
   "deps_out": [
     "BLUEPRINT.md",
     "CHANGELOG.md",
@@ -39,13 +39,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "a71d817166c7a445dad7c8102701d0bc17028bf284772d1dac949c14a0f07336",
-  "generated_at": "00024",
+  "source_sha256": "e7f76b88302c0be9217f8ca21f1eac1fc64f9ee9f8540370e5d907322482d365",
+  "generated_at": "00025",
   "review": {
-    "reviewed_at": "2026-11-08T02:06:10.177843+00:00",
-    "reviewed_by": "Codex",
-    "source_sha256": "a71d817166c7a445dad7c8102701d0bc17028bf284772d1dac949c14a0f07336",
-    "summary_sha256": "aa0d937e9a54c00846c0c523930a15c3ce7e02fdb54c945a571311616eeac871",
-    "scope": "今回の5文書の本文・要約・依存と検証記録を照合した。意味保持追補の関連14件と全体607件の成功、変更前の実ログ187件取り込み、実WazuhのBlue検知性能未評価を区別した。他文書の再検収は含まない。"
+    "reviewed_at": "2026-11-08T04:47:20.151229+00:00",
+    "reviewed_by": "Muse",
+    "source_sha256": "e7f76b88302c0be9217f8ca21f1eac1fc64f9ee9f8540370e5d907322482d365",
+    "summary_sha256": "ac159153c6c3e4a310060d8330e9932bc3cf07feece7a2b42d283c2858848bc0",
+    "scope": "Task 20261108-02の変更に伴い、本文・要約・依存を照合した（生成00025）。"
   }
 }

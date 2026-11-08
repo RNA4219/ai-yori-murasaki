@@ -13,7 +13,6 @@
     "CHANGELOG.md",
     "EVALUATION.md",
     "HUB.codex.md",
-    "README.md",
     "RUNBOOK.md",
     "docs/PRODUCT-ACCEPTANCE.md",
     "docs/PRODUCT-GUIDE.md",
@@ -26,12 +25,12 @@
   "risks": [],
   "tests": [],
   "source_sha256": "d393a7e13f7a6e9bdf4f5b3eb874a53063be1af29ae1be109e822776a2d3900f",
-  "generated_at": "00021",
+  "generated_at": "00025",
   "review": {
-    "reviewed_at": "2026-11-06T21:40:29.654233+00:00",
-    "reviewed_by": "Codex",
+    "reviewed_at": "2026-11-08T04:47:20.151229+00:00",
+    "reviewed_by": "Muse",
     "source_sha256": "d393a7e13f7a6e9bdf4f5b3eb874a53063be1af29ae1be109e822776a2d3900f",
-    "summary_sha256": "bebc19e9b16ebfc5a3084917be2d8ab6e8d375bdb0382ccca712d04792e981a4",
-    "scope": "原文・要約・実リンクを照合。外部レビュー整理と完成判定撤回を確認し、製品合格や追加要件の採用を代行しない。"
+    "summary_sha256": "6d5e2c9746f2d9c0627efc8a4922748c05992a73c04b287af64314361adeba9e",
+    "scope": "生成00025で依存（deps_in/deps_out）のみ更新。本文のhashは前回review時と一致し、要約に変更が不要なことを確認した。"
   }
 }

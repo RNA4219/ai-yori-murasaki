@@ -10,7 +10,6 @@
   ],
   "deps_in": [
     "HUB.codex.md",
-    "README.md",
     "docs/PRODUCT-ACCEPTANCE.md",
     "docs/acceptance/AC-20261106-06.md",
     "docs/acceptance/AC-20261107-02.md",
@@ -20,12 +19,12 @@
   "risks": [],
   "tests": [],
   "source_sha256": "1a5ed36513c6015fd8f7a06774503d76908e6c1347862f37250111a5d798b7d1",
-  "generated_at": "00021",
+  "generated_at": "00025",
   "review": {
-    "reviewed_at": "2026-11-07T18:30:00+09:00",
-    "reviewed_by": "GLM",
+    "reviewed_at": "2026-11-08T04:47:20.151229+00:00",
+    "reviewed_by": "Muse",
     "source_sha256": "1a5ed36513c6015fd8f7a06774503d76908e6c1347862f37250111a5d798b7d1",
-    "summary_sha256": "11fea8dee55b1a0c645b01ce422c4c9c204952944193391c61a0ab54a3e0f9b8",
-    "scope": "原文全文と要約・リンクを照合した。GitHub Public公開前の最終確定（公開記録RA-20261107-01、非公開原資料のリンク注記、codemap exclude、配布物hash）を反映した。"
+    "summary_sha256": "db2ca312259c6916691d3960fa51723d97e1fb6fd7d22bef261f6ce84e097311",
+    "scope": "生成00025で依存（deps_in/deps_out）のみ更新。本文のhashは前回review時と一致し、要約に変更が不要なことを確認した。"
   }
 }

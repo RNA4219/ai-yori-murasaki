@@ -5,7 +5,6 @@
   "summary": "隔離ラボ、証跡、独立Oracle、RSI、P2、HTMLの実装範囲と入出力、外部接続・公開の除外を定める。",
   "deps_out": [
     "RUNBOOK.md",
-    "docs/ADR/deep-research-report (16).md",
     "docs/CONTRACTS.md",
     "docs/PRODUCT-GUIDE.md",
     "docs/RSI.md",
@@ -27,12 +26,12 @@
   "risks": [],
   "tests": [],
   "source_sha256": "eba4c5e22e425deb958f98c53409c7371acd858955b7208e97b8719d945f6199",
-  "generated_at": "00021",
+  "generated_at": "00025",
   "review": {
-    "reviewed_at": "2026-11-07T18:30:00+09:00",
-    "reviewed_by": "GLM",
+    "reviewed_at": "2026-11-08T04:47:20.151229+00:00",
+    "reviewed_by": "Muse",
     "source_sha256": "eba4c5e22e425deb958f98c53409c7371acd858955b7208e97b8719d945f6199",
-    "summary_sha256": "7fccc8b894bfde5aec6be14c0fece19cb8ae3bd37d866e303128d5f12ff7724b",
-    "scope": "原文全文と要約・リンクを照合した。GitHub Public公開前の最終確定（公開記録RA-20261107-01、非公開原資料のリンク注記、codemap exclude、配布物hash）を反映した。"
+    "summary_sha256": "711b8635f880de2f50f7f85ff19ae9fcda274f33802fad7bd9e0b434e9d9314c",
+    "scope": "生成00025で依存（deps_in/deps_out）のみ更新。本文のhashは前回review時と一致し、要約に変更が不要なことを確認した。"
   }
 }

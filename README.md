@@ -98,6 +98,10 @@ aym monitor serve --bind 127.0.0.1:8765
 
 画面の見方は[製品操作ガイド](docs/PRODUCT-GUIDE.md)にあります。
 
+![製品モニターの画面（campaign詳細）](docs/images/monitor-campaign.png)
+
+上の画面は、2026-11-08の実ランの証跡として保存されたモニターAPI応答（[docs/evidence/agent-core-20261108/monitor/](docs/evidence/agent-core-20261108/monitor/) の campaign 詳細と RSI）を再生し、製品モニターで表示したものです。run一覧・モデル・アダプタ・評価は、再生に使える記録が保存されていないため空の表示になっています。画面全体は [monitor-campaign-full.png](docs/images/monitor-campaign-full.png) にあります。
+
 ## 文書と要件
 
 Workflow CookbookのTier 3（Full）を採用しています。[導入対応表](docs/workflow-adoption.md)に適用範囲とテンプレート版を記録しています。

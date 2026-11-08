@@ -1,0 +1,19 @@
+{
+  "id": "docs/tasks/TASK.readme-release-11-08-2026.md",
+  "role": "task",
+  "public_api": [],
+  "summary": "README整備とv0.1.0まわりの文書整合のTask（done）。クイックスタート・モニター節の追加、CHANGELOGの[0.1.0]確定、公開記録RA-20261108-01と検収AC-20261108-02の作成を担う。追補でモニター画面の追加とBirdseye再生成を実施した。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "19077eaceefc8b4207e2bfe08da555654b402ccba78edd0893355dd5a9b88886",
+  "generated_at": "00025",
+  "review": {
+    "reviewed_at": "2026-11-08T04:47:20.151229+00:00",
+    "reviewed_by": "Muse",
+    "source_sha256": "19077eaceefc8b4207e2bfe08da555654b402ccba78edd0893355dd5a9b88886",
+    "summary_sha256": "54c8cc1cbffc9f3a5caab4e71dac8fabe5a2b472b529acee2fdf5f587452b382",
+    "scope": "生成00025で新規登録。本文を読み、要約を作成して原文と照合した。"
+  }
+}

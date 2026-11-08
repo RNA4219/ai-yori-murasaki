@@ -1,0 +1,19 @@
+{
+  "id": "docs/acceptance/AC-20261108-02.md",
+  "role": "acceptance",
+  "public_api": [],
+  "summary": "Task 20261108-02の検収（合格）。READMEのクイックスタート・モニター節と公開状態、CHANGELOGの[0.1.0]確定、索引同期を確認する。追補で、実ラン証跡のAPI応答を再生したモニター画面の追加とBirdseye再生成（生成00025）を記録する。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "40160b590a5d05b6ff330d49bfe38f21f5708e05d114012542a484fb14107758",
+  "generated_at": "00025",
+  "review": {
+    "reviewed_at": "2026-11-08T04:47:20.151229+00:00",
+    "reviewed_by": "Muse",
+    "source_sha256": "40160b590a5d05b6ff330d49bfe38f21f5708e05d114012542a484fb14107758",
+    "summary_sha256": "f1fb6bc038e645f6f3042cf0c03bd56332d4b2e91ab846d48a646b3e1cac1852",
+    "scope": "生成00025で新規登録。本文を読み、要約を作成して原文と照合した。"
+  }
+}

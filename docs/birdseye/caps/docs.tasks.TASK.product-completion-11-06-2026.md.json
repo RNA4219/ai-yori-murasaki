@@ -4,7 +4,6 @@
   "public_api": [],
   "summary": "要件熟成から製品完成までのTask。完成判定を撤回しreviewingへ戻した経緯と残る不足、個別証跡を保持する。",
   "deps_out": [
-    "docs/ADR/deep-research-report (16).md",
     "docs/PRODUCT-ACCEPTANCE.md",
     "docs/acceptance/AC-20261106-06.md",
     "docs/reviews/REVIEW-INTAKE-20261107.md",
@@ -19,12 +18,12 @@
   "risks": [],
   "tests": [],
   "source_sha256": "dff5d8c0fa688327df271a663c797fd96537c6d3abd6e89d06e0f0fcfd6f3335",
-  "generated_at": "00021",
+  "generated_at": "00025",
   "review": {
-    "reviewed_at": "2026-11-07T18:30:00+09:00",
-    "reviewed_by": "GLM",
+    "reviewed_at": "2026-11-08T04:47:20.151229+00:00",
+    "reviewed_by": "Muse",
     "source_sha256": "dff5d8c0fa688327df271a663c797fd96537c6d3abd6e89d06e0f0fcfd6f3335",
-    "summary_sha256": "d26be2af0f9e44967270a2152fa32ddb185db458c9683720a9356311ecb2d647",
-    "scope": "原文全文と要約・リンクを照合した。GitHub Public公開前の最終確定（公開記録RA-20261107-01、非公開原資料のリンク注記、codemap exclude、配布物hash）を反映した。"
+    "summary_sha256": "293896076d4fef0481ac721d2fe9e544b1f5b462f5aa041d6ebc59748dc759e1",
+    "scope": "生成00025で依存（deps_in/deps_out）のみ更新。本文のhashは前回review時と一致し、要約に変更が不要なことを確認した。"
   }
 }

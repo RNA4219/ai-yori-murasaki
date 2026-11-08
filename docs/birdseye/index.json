@@ -1,5 +1,5 @@
 {
-  "generated_at": "00024",
+  "generated_at": "00025",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -425,6 +425,36 @@
       "caps": "docs/birdseye/caps/docs.tasks.TASK.product-clarity-11-07-2026.md.json",
       "mtime": "00078",
       "source_sha256": "385f51de541c1c1168437f684c81e8a2a29e161f3a905b7c53f6c4c8c6b0aee2"
+    },
+    "THIRD_PARTY_NOTICES.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/THIRD_PARTY_NOTICES.md.json",
+      "mtime": "00083"
+    },
+    "docs/acceptance/AC-20261108-02.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261108-02.md.json",
+      "mtime": "00084"
+    },
+    "docs/releases/RA-20261107-01.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.releases.RA-20261107-01.md.json",
+      "mtime": "00085"
+    },
+    "docs/releases/RA-20261108-01.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.releases.RA-20261108-01.md.json",
+      "mtime": "00086"
+    },
+    "docs/tasks/MANUAL-BB-BATCH-20261107.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.MANUAL-BB-BATCH-20261107.md.json",
+      "mtime": "00087"
+    },
+    "docs/tasks/TASK.readme-release-11-08-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.readme-release-11-08-2026.md.json",
+      "mtime": "00088"
     }
   },
   "edges": [

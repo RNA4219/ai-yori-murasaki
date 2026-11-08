@@ -1,0 +1,19 @@
+{
+  "id": "docs/releases/RA-20261108-01.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "v0.1.0のタグとGitHub Releaseが初回公開時に作成済みだったことの確認記録。新規の版付けは行わず、README・CHANGELOG・Releaseノートの文書整合のみを実施した経緯と、リンク検査・秘密パターン検査の結果を保持する。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "c7fa1cf94ee666d763adfc63ce91828a8774078333e2fccfa22232651376a167",
+  "generated_at": "00025",
+  "review": {
+    "reviewed_at": "2026-11-08T04:47:20.151229+00:00",
+    "reviewed_by": "Muse",
+    "source_sha256": "c7fa1cf94ee666d763adfc63ce91828a8774078333e2fccfa22232651376a167",
+    "summary_sha256": "f9e2c653dd7565791816357f631c8dbd3514cf8cd1cef2814d508cdead6dd310",
+    "scope": "生成00025で新規登録。本文を読み、要約を作成して原文と照合した。"
+  }
+}

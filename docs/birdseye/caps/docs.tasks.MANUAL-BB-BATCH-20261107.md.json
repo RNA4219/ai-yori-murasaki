@@ -1,0 +1,19 @@
+{
+  "id": "docs/tasks/MANUAL-BB-BATCH-20261107.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "manual-bbによる一括洗い出しから一括修正までのバッチの調査設計記録。洗い出し中は修正せず、GLMが集約してDeepSeekへ一括修正を指示する方針と役割（Codex・GLM・DeepSeek）を定める。実行・修正は未実施で、完了主張はない。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "072698a34725f9ef824eab47001f2de0bb47b7fe94cf942271ced48390c6e719",
+  "generated_at": "00025",
+  "review": {
+    "reviewed_at": "2026-11-08T04:47:20.151229+00:00",
+    "reviewed_by": "Muse",
+    "source_sha256": "072698a34725f9ef824eab47001f2de0bb47b7fe94cf942271ced48390c6e719",
+    "summary_sha256": "cffd1b05179d1884b8be70de0598e0790d3f4cc8dec92dc9855cd5f9b901d861",
+    "scope": "生成00025で新規登録。本文を読み、要約を作成して原文と照合した。"
+  }
+}

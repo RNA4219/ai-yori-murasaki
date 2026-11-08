@@ -16,7 +16,6 @@
     "TASK.codex.md",
     "codemap.config.json",
     "docs/ADR/README.md",
-    "docs/ADR/deep-research-report (16).md",
     "docs/CONTRACTS.md",
     "docs/INCIDENT_TEMPLATE.md",
     "docs/PRODUCT-GUIDE.md",
@@ -45,12 +44,12 @@
   "risks": [],
   "tests": [],
   "source_sha256": "ccdf8ba20bc7f45124907a28928ac84cfbf4594b0f1a5b2d75c475a94ae73631",
-  "generated_at": "00021",
+  "generated_at": "00025",
   "review": {
-    "reviewed_at": "2026-11-07T18:30:00+09:00",
-    "reviewed_by": "GLM",
+    "reviewed_at": "2026-11-08T04:47:20.151229+00:00",
+    "reviewed_by": "Muse",
     "source_sha256": "ccdf8ba20bc7f45124907a28928ac84cfbf4594b0f1a5b2d75c475a94ae73631",
-    "summary_sha256": "9aac7d297fe3ebdf2a30818296ebaff606839fddfa039d42726cd7a82cc923a3",
-    "scope": "原文全文と要約・リンクを照合した。GitHub Public公開前の最終確定（公開記録RA-20261107-01、非公開原資料のリンク注記、codemap exclude、配布物hash）を反映した。"
+    "summary_sha256": "144c09388bd4a15b6ac03387bbe3ed34f4c92989dbcc70f1b45e3540b2588601",
+    "scope": "生成00025で依存（deps_in/deps_out）のみ更新。本文のhashは前回review時と一致し、要約に変更が不要なことを確認した。"
   }
 }

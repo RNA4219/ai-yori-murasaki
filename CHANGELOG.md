@@ -12,6 +12,11 @@ Keep a Changelog の区分で管理する。記録には既存最大番号 +1 �
 
 ## [Unreleased]
 
+### Added
+
+- 0014 — 2026-11-08: 製品モニターのスクリーンショットを README へ追加し、Birdseye を再生成した（Task 20261108-02 の追補）。実ラボの実行はこの作業環境に Docker と Ollama が無いため行わず、2026-11-08 の実ランの証跡として保存されたモニター API 応答（campaign 詳細・RSI、[docs/evidence/agent-core-20261108/monitor/](docs/evidence/agent-core-20261108/monitor/)）をローカルで再生し、製品モニター（ai_yori_murasaki/web/index.html）の実画面を撮影した。run 一覧・モデル・アダプタ・評価は再生に使える記録が無く空表示で、その旨を README のキャプションに明記した。撮影は Chrome（headless）で実施し、接続エラー表示のない画面であることを目視で確認した。Birdseye は導入元の Codemap で再生成し、変更・新規ファイルの要約確認と review 更新を行い、鮮度検査（--require-reviewed）を通過した。
+  [Task 20261108-02](docs/tasks/TASK.readme-release-11-08-2026.md) / [AC-20261108-02](docs/acceptance/AC-20261108-02.md)。
+
 ## [0.1.0] - 2026-11-08
 
 ### Added

@@ -2,7 +2,7 @@
   "id": "docs/tasks/README.md",
   "role": "operations",
   "public_api": [],
-  "summary": "Taskの命名・状態遷移・検収への接続規則と作業一覧。エージェント基盤・RSI・Wazuh追補のTask 20261108-01から検収記録へ案内する。",
+  "summary": "Taskの命名・状態遷移・検収への接続規則と作業一覧。README整備とv0.1.0まわりの文書整合のTask 20261108-02、エージェント基盤・RSI・Wazuh追補のTask 20261108-01から検収記録へ案内する。",
   "deps_out": [
     "CHANGELOG.md",
     "HUB.codex.md",
@@ -38,13 +38,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "1fdd5454a9e7198a721504cdd8cae45d8d8a0eb5a5f7181dbf4dfec152236242",
-  "generated_at": "00023",
+  "source_sha256": "23c8f9cb77d68cdbd87a46c783fd987b507672babb02077458e6fb39ada8ce7b",
+  "generated_at": "00025",
   "review": {
-    "reviewed_at": "2026-11-08T01:06:38.570186+00:00",
-    "reviewed_by": "Codex",
-    "source_sha256": "1fdd5454a9e7198a721504cdd8cae45d8d8a0eb5a5f7181dbf4dfec152236242",
-    "summary_sha256": "56c21374164f9929cd8e3d14b4175217539ac2a0b10a5488ea94b8394dc17c70",
-    "scope": "今回変更した原文全文と要約・依存・検証出力を照合した。Wazuh検索のskippedと失敗記録、実ログ187件、関連11件と全体604件の結果を区別した。既存の他文書の再検収は含まない。"
+    "reviewed_at": "2026-11-08T04:47:20.151229+00:00",
+    "reviewed_by": "Muse",
+    "source_sha256": "23c8f9cb77d68cdbd87a46c783fd987b507672babb02077458e6fb39ada8ce7b",
+    "summary_sha256": "eeac0905ff109045f0e104b7f322e3d6f144b330cff47de6ac466aa24cf754e1",
+    "scope": "Task 20261108-02の変更に伴い、本文・要約・依存を照合した（生成00025）。"
   }
 }

@@ -12,7 +12,6 @@
     "HUB.codex.md",
     "README.md",
     "TASK.codex.md",
-    "docs/ADR/deep-research-report (16).md",
     "docs/BIRDSEYE.md",
     "docs/CONTRACTS.md",
     "docs/INCIDENT_TEMPLATE.md",
@@ -53,12 +52,12 @@
     "RUNBOOK の Tier / Acceptance / Birdseye 検査と、ID・リンク・原資料 hash の照合。"
   ],
   "source_sha256": "3f12e2007def059ff9781e422dcc22bdda8195f4d48785a73ed7aa0cd470fdaf",
-  "generated_at": "00021",
+  "generated_at": "00025",
   "review": {
-    "reviewed_at": "2026-11-07T18:30:00+09:00",
-    "reviewed_by": "GLM",
+    "reviewed_at": "2026-11-08T04:47:20.151229+00:00",
+    "reviewed_by": "Muse",
     "source_sha256": "3f12e2007def059ff9781e422dcc22bdda8195f4d48785a73ed7aa0cd470fdaf",
-    "summary_sha256": "c74f03f26aeda3151d9bb1752a7412f38ea6adccd24f99c5684f0c8842caed3d",
-    "scope": "原文全文と要約・リンクを照合した。GitHub Public公開前の最終確定（公開記録RA-20261107-01、非公開原資料のリンク注記、codemap exclude、配布物hash）を反映した。"
+    "summary_sha256": "0a71e0e962f5bb1d7bb09ee49fd67254e1642a4b2bea1d4b94bc204b410ba404",
+    "scope": "生成00025で依存（deps_in/deps_out）のみ更新。本文のhashは前回review時と一致し、要約に変更が不要なことを確認した。"
   }
 }

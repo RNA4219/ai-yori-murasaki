@@ -9,17 +9,18 @@
   ],
   "deps_in": [
     "AGENTS.md",
-    "RUNBOOK.md"
+    "RUNBOOK.md",
+    "docs/tasks/TASK.agent-core-11-08-2026.md"
   ],
   "risks": [],
   "tests": [],
   "source_sha256": "f979e83aa901f4e5557f785bb007730f3e254092e7e344c0cf263da5053dd386",
-  "generated_at": "00021",
+  "generated_at": "00025",
   "review": {
-    "reviewed_at": "2026-11-06T07:09:44.542881+09:00",
-    "reviewed_by": "Codex",
+    "reviewed_at": "2026-11-08T04:47:20.151229+00:00",
+    "reviewed_by": "Muse",
     "source_sha256": "f979e83aa901f4e5557f785bb007730f3e254092e7e344c0cf263da5053dd386",
-    "summary_sha256": "00fd5874e7180eb4fc38952399de35dd310667633b29fbf700454ff3291b2653",
-    "scope": "原文の役割・要約・参照の整合。外部仕様や製品の効果は検証していない。"
+    "summary_sha256": "0f4e77119e495917d6e4dede5c9702a978e170f24f7892c819a5f278473150a4",
+    "scope": "生成00025で依存（deps_in/deps_out）のみ更新。本文のhashは前回review時と一致し、要約に変更が不要なことを確認した。"
   }
 }

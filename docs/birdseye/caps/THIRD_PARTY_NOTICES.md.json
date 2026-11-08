@@ -1,0 +1,19 @@
+{
+  "id": "THIRD_PARTY_NOTICES.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "配布物に同梱する第三者著作物の表示。実行時依存（jsonschema、referencing、cvss（LGPLv3+）、packaging）の版とライセンスを、2026-11-07にインストール済みメタデータの実物から確認して記録する。自作コードのMIT表示へ書き換えない。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "ec5835decc8606eb1a70efdf3b3071198e27cc6ab964f8592e783c33e6dc6f42",
+  "generated_at": "00025",
+  "review": {
+    "reviewed_at": "2026-11-08T04:47:20.151229+00:00",
+    "reviewed_by": "Muse",
+    "source_sha256": "ec5835decc8606eb1a70efdf3b3071198e27cc6ab964f8592e783c33e6dc6f42",
+    "summary_sha256": "82fbbc61ebd7a2f684e5bc8b01cece4c32a454629744950bffe9936493859fbf",
+    "scope": "生成00025で新規登録。本文を読み、要約を作成して原文と照合した。"
+  }
+}
