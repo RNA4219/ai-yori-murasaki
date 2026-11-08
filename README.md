@@ -10,6 +10,10 @@ next_review_due: 2026-12-08
 
 ブルーチーム（防御側）の検知・調査・修復と、パープルチーム（攻撃側との協調による継続的な改善）の両方の機能を、AIが自動で行うPythonツールです。AIが模擬アプリへの攻撃・不審アクセスの検知・原因の調査・直し方の提案までを代行し、その結果が本当に正しいかをAIを使わない自動検査で確かめます。模擬アプリは隔離された環境の中だけで動くため、外部の実システムには影響しません。
 
+![製品モニターの画面（campaign詳細）](docs/images/monitor-campaign.png)
+
+製品実行モニターの画面です（2026-11-08の実ランの記録を再生して表示。詳しくは[モニター](#モニター)へ）。
+
 ## できること
 
 模擬アプリを隔離されたコンテナの中でだけ動かし、外部の実システムには影響させません。攻撃役のAIが実際にアクセスを試み、監視役のAIがアクセス記録（ログ）だけから不審なアクセスを見つけ、修復役のAIがコードを読んで原因を特定し、直し方の案を作ります。
@@ -98,9 +102,7 @@ aym monitor serve --bind 127.0.0.1:8765
 
 画面の見方は[製品操作ガイド](docs/PRODUCT-GUIDE.md)にあります。
 
-![製品モニターの画面（campaign詳細）](docs/images/monitor-campaign.png)
-
-上の画面は、2026-11-08の実ランの証跡として保存されたモニターAPI応答（[docs/evidence/agent-core-20261108/monitor/](docs/evidence/agent-core-20261108/monitor/) の campaign 詳細と RSI）を再生し、製品モニターで表示したものです。run一覧・モデル・アダプタ・評価は、再生に使える記録が保存されていないため空の表示になっています。画面全体は [monitor-campaign-full.png](docs/images/monitor-campaign-full.png) にあります。
+冒頭の画面は、2026-11-08の実ランの証跡として保存されたモニターAPI応答（[docs/evidence/agent-core-20261108/monitor/](docs/evidence/agent-core-20261108/monitor/) の campaign 詳細と RSI）を再生し、製品モニターで表示したものです。run一覧・モデル・アダプタ・評価は、再生に使える記録が保存されていないため空の表示になっています。画面全体は [monitor-campaign-full.png](docs/images/monitor-campaign-full.png) にあります。
 
 ## 文書と要件
 
