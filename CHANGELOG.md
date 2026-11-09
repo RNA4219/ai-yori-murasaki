@@ -12,6 +12,11 @@ Keep a Changelog の区分で管理する。記録には既存最大番号 +1 �
 
 ## [Unreleased]
 
+### Documentation / Planned
+
+- 0017 — 2026-11-09: 外部レビューで指摘されたBlue finding証拠粒度とRSI適用経路について現行HEADの静的照合を行い、実装・検証のためのP0/P1 Taskとdraft Acceptanceを起票した。最小ロジック再現は製品pytestとは区別し、P0/P1は未実装・未検収、P2は両者の検収完了まで保留。現行製品コード・テスト・機能は変更していない。Birdseye/文書検査・実pytestは未実行。
+  [P0 Task 20261109-01](docs/tasks/TASK.blue-evidence-oracle-11-09-2026.md) / [P0 AC-20261109-01](docs/acceptance/AC-20261109-01.md) / [P1 Task 20261109-02](docs/tasks/TASK.agent-rsi-apply-11-09-2026.md) / [P1 AC-20261109-02](docs/acceptance/AC-20261109-02.md) / [調査記録](docs/evidence/quality-control-20261109.md)。
+
 ## [0.1.1] - 2026-11-08
 
 ### Added
