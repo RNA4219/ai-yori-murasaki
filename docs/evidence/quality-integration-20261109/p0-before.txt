@@ -1,0 +1,28 @@
+FFFF                                                                     [100%]
+================================== FAILURES ===================================
+___________ test_distinct_events_survive_deduplication[False-False] ___________
+tests\test_blue_evidence_identity.py:62: in test_distinct_events_survive_deduplication
+    assert report["passed"] is True, report
+E   AssertionError: {'checks': [{'name': 'rows_requiring_detection', 'passed': True}, {'name': 'all_rows_covered', 'passed': False}], 'passed': False, 'rows_checked': 2, 'rows_requiring_detection': 2, ...}
+E   assert False is True
+___________ test_distinct_events_survive_deduplication[False-True] ____________
+tests\test_blue_evidence_identity.py:62: in test_distinct_events_survive_deduplication
+    assert report["passed"] is True, report
+E   AssertionError: {'checks': [{'name': 'rows_requiring_detection', 'passed': True}, {'name': 'all_rows_covered', 'passed': False}], 'passed': False, 'rows_checked': 2, 'rows_requiring_detection': 2, ...}
+E   assert False is True
+___________ test_distinct_events_survive_deduplication[True-False] ____________
+tests\test_blue_evidence_identity.py:62: in test_distinct_events_survive_deduplication
+    assert report["passed"] is True, report
+E   AssertionError: {'checks': [{'name': 'rows_requiring_detection', 'passed': True}, {'name': 'all_rows_covered', 'passed': False}], 'passed': False, 'rows_checked': 2, 'rows_requiring_detection': 2, ...}
+E   assert False is True
+____________ test_distinct_events_survive_deduplication[True-True] ____________
+tests\test_blue_evidence_identity.py:62: in test_distinct_events_survive_deduplication
+    assert report["passed"] is True, report
+E   AssertionError: {'checks': [{'name': 'rows_requiring_detection', 'passed': True}, {'name': 'all_rows_covered', 'passed': False}], 'passed': False, 'rows_checked': 2, 'rows_requiring_detection': 2, ...}
+E   assert False is True
+=========================== short test summary info ===========================
+FAILED tests/test_blue_evidence_identity.py::test_distinct_events_survive_deduplication[False-False]
+FAILED tests/test_blue_evidence_identity.py::test_distinct_events_survive_deduplication[False-True]
+FAILED tests/test_blue_evidence_identity.py::test_distinct_events_survive_deduplication[True-False]
+FAILED tests/test_blue_evidence_identity.py::test_distinct_events_survive_deduplication[True-True]
+4 failed in 4.37s

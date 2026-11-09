@@ -2,7 +2,7 @@
   "id": "RUNBOOK.md",
   "role": "operations",
   "public_api": [],
-  "summary": "製品起動・検証・復旧とWorkflow Cookbookの3ゲート、Imozuru、Yomiyasu、RSIの運用手順。",
+  "summary": "製品・文書・RSIの手順。agent registry初期化、承認適用、通常実行のhash照合、rollbackと旧registry保全を案内する。",
   "deps_out": [
     ".agents/skills/security-audit/SKILL.md",
     "CHANGELOG.md",
@@ -23,6 +23,8 @@
     "docs/acceptance/AC-20261106-06.md",
     "docs/acceptance/INDEX.md",
     "docs/requirements/DECISIONS.md",
+    "docs/requirements/QUALITY-INTEGRATION.md",
+    "docs/tasks/MANUAL-BB-BATCH-20261107.md",
     "docs/tasks/README.md"
   ],
   "deps_in": [
@@ -51,13 +53,13 @@
   "tests": [
     "RUNBOOK の Tier / Acceptance / Birdseye 検査と、ID・リンク・原資料 hash の照合。"
   ],
-  "source_sha256": "3f12e2007def059ff9781e422dcc22bdda8195f4d48785a73ed7aa0cd470fdaf",
-  "generated_at": "00025",
+  "source_sha256": "8cf7ad403f4ee3ed5070d5e7f5985818da43d935f71d8a5411279a09396af61e",
+  "generated_at": "00028",
   "review": {
-    "reviewed_at": "2026-11-08T04:47:20.151229+00:00",
-    "reviewed_by": "Muse",
-    "source_sha256": "3f12e2007def059ff9781e422dcc22bdda8195f4d48785a73ed7aa0cd470fdaf",
-    "summary_sha256": "0a71e0e962f5bb1d7bb09ee49fd67254e1642a4b2bea1d4b94bc204b410ba404",
-    "scope": "生成00025で依存（deps_in/deps_out）のみ更新。本文のhashは前回review時と一致し、要約に変更が不要なことを確認した。"
+    "reviewed_at": "2026-11-09T01:36:25.430824+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "8cf7ad403f4ee3ed5070d5e7f5985818da43d935f71d8a5411279a09396af61e",
+    "summary_sha256": "789565e4a7df9077d99ac942362ad5ee40da90f5f31e6a354c95634df7028301",
+    "scope": "今回の原文・要約・依存を照合。P0/P1の実測、P2設計のみ、未実行と性能未実証を区別する。"
   }
 }

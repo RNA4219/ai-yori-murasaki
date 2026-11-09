@@ -2,7 +2,7 @@
   "id": "docs/acceptance/INDEX.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "GitHub Pages公開の技術検収AC-20261030-01からAC-20261108-03までの索引。各行はAcceptance、Task、検証範囲、公開状態を対応付け、AC-20261108-01で製品コアを受け入れ、AC-20261108-02でREADME整備と文書整合、AC-20261108-03でv0.1.1リリースを閉じる。",
+  "summary": "技術検収一覧。品質修正のAC-20261109-01をTaskと結び、公開承認と区別する。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -13,14 +13,20 @@
     "docs/acceptance/AC-20261107-02.md",
     "docs/acceptance/AC-20261107-03.md",
     "docs/acceptance/AC-20261108-01.md",
+    "docs/acceptance/AC-20261108-02.md",
+    "docs/acceptance/AC-20261108-03.md",
+    "docs/acceptance/AC-20261109-01.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
     "docs/tasks/TASK.product-clarity-11-07-2026.md",
     "docs/tasks/TASK.product-completion-11-06-2026.md",
+    "docs/tasks/TASK.quality-integration-11-09-2026.md",
+    "docs/tasks/TASK.readme-release-11-08-2026.md",
     "docs/tasks/TASK.review-intake-11-07-2026.md",
     "docs/tasks/TASK.rsi-naming-11-06-2026.md",
     "docs/tasks/TASK.rsi-policy-11-06-2026.md",
     "docs/tasks/TASK.security-audit-skill-11-06-2026.md",
+    "docs/tasks/TASK.version-011-11-08-2026.md",
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
   ],
   "deps_in": [
@@ -32,13 +38,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "0db9180c2740cb004cad08f5a286b89183ea705232b088c338f3fbb01d15f934",
-  "generated_at": "00027",
+  "source_sha256": "26cbda052fa82c5775adf6105ca08c44b208690af7195977b79e5240c0ed460a",
+  "generated_at": "00028",
   "review": {
-    "reviewed_at": "2026-11-08T04:57:07.145218+00:00",
-    "reviewed_by": "Muse",
-    "source_sha256": "0db9180c2740cb004cad08f5a286b89183ea705232b088c338f3fbb01d15f934",
-    "summary_sha256": "5423ea6c96f0d5c977e2d2b8d92d3e7fe04a5c076c8fc8ca031e62782efa6234",
-    "scope": "生成00027。v0.1.1 リリースに伴い、本文・要約・依存を照合した。"
+    "reviewed_at": "2026-11-09T01:36:25.418820+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "26cbda052fa82c5775adf6105ca08c44b208690af7195977b79e5240c0ed460a",
+    "summary_sha256": "a88bcd9f2485f2a986c791d071892d69c8d7e80dd0546f788aedbd8bb2468850",
+    "scope": "今回の原文・要約・依存を照合。P0/P1の実測、P2設計のみ、未実行と性能未実証を区別する。"
   }
 }

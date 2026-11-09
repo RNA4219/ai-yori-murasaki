@@ -1,0 +1,25 @@
+{
+  "id": "docs/tasks/TASK.p2-sqli-11-09-2026.md",
+  "role": "task",
+  "public_api": [],
+  "summary": "SQLiの実LLM修復を独立Oracleと正常回帰で検証する後続Task。計画のみ、追加実装と実験は未着手。",
+  "deps_out": [
+    "docs/requirements/P2-VALIDATION-PLAN.md"
+  ],
+  "deps_in": [
+    "docs/acceptance/AC-20261109-01.md",
+    "docs/requirements/P2-VALIDATION-PLAN.md",
+    "docs/tasks/README.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "a0bad2ccc1ba516890a7a769863f2b2a21af9b8b08d76b4c453630007a03805d",
+  "generated_at": "00028",
+  "review": {
+    "reviewed_at": "2026-11-09T01:36:25.418820+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "a0bad2ccc1ba516890a7a769863f2b2a21af9b8b08d76b4c453630007a03805d",
+    "summary_sha256": "b7e5114530d3bc459def893f2978aaeed54e2fafd453fa40fcf740fd729638b8",
+    "scope": "今回の原文・要約・依存を照合。P0/P1の実測、P2設計のみ、未実行と性能未実証を区別する。"
+  }
+}

@@ -198,17 +198,9 @@ def _resolve_routes(routes_file: Any) -> Any:
     return routes
 
 
-def _resolve_bundle(bundle_file: Any) -> Any:
-    """Resolve the policy bundle: explicit file, else packaged default."""
-    from .agents import load_default_bundle, validate_bundle
-    if bundle_file is None:
-        return load_default_bundle()
-    path = Path(bundle_file)
-    if not path.is_file():
-        raise DataError("policy bundle ファイルが見つかりません: {}".format(
-            path), "input_invalid")
-    bundle = read_json(path)
-    return validate_bundle(bundle)
+def _resolve_bundle(bundle_file: Any, rt: Runtime) -> Any:
+    from .rsi_agent import AgentRSI
+    return AgentRSI(rt.store).resolve_bundle(bundle_file)
 
 
 def _resolve_scenario(scenario: Any) -> str:
@@ -338,11 +330,11 @@ def _dispatch(args: argparse.Namespace, rt: Runtime) -> tuple[Any, Any, Any, int
     if group == "lab" and action == "demo":
         from . import lab
         routes = _resolve_routes(getattr(args, "routes_file", None))
-        bundle = _resolve_bundle(getattr(args, "policy_bundle_file", None))
+        bundle, selection = _resolve_bundle(getattr(args, "policy_bundle_file", None), rt)
         scenario_id = _resolve_scenario(getattr(args, "scenario", None))
         data = lab.run_demo(rt, args.staging_root, args.seed, routes=routes,
                             scenario_id=scenario_id,
-                            policy_bundle=bundle)
+                            policy_bundle=bundle, policy_selection=selection)
         cid = data.get("campaign_id") if isinstance(data, dict) else None
         rid = data.get("run_id") if isinstance(data, dict) else None
         return cid, rid, data, 0
@@ -350,13 +342,13 @@ def _dispatch(args: argparse.Namespace, rt: Runtime) -> tuple[Any, Any, Any, int
     if group == "lab" and action == "iterate":
         from . import lab
         routes = _resolve_routes(getattr(args, "routes_file", None))
-        bundle = _resolve_bundle(getattr(args, "policy_bundle_file", None))
+        bundle, selection = _resolve_bundle(getattr(args, "policy_bundle_file", None), rt)
         scenario_id = _resolve_scenario(getattr(args, "scenario", None))
         data = lab.run_iterations(
             rt, args.staging_root, seed=args.seed,
             max_iterations=args.max_iterations,
             max_campaigns=args.max_campaigns, routes=routes,
-            scenario_id=scenario_id, policy_bundle=bundle)
+            scenario_id=scenario_id, policy_bundle=bundle, policy_selection=selection)
         cid = None
         rid = None
         return cid, rid, data, 0

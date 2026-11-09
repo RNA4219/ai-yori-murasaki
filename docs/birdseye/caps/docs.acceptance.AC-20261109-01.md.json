@@ -1,0 +1,43 @@
+{
+  "id": "docs/acceptance/AC-20261109-01.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "P0/P1の再現・修正・通常CLI適用と復旧を検収し、637 passedと3 skippedを記録する。P2設計完了と追加実装未着手、実モデル性能未実証を分ける。",
+  "deps_out": [
+    "docs/evidence/quality-integration-20261109/README.md",
+    "docs/releases/RA-20261109-01.md",
+    "docs/requirements/P2-VALIDATION-PLAN.md",
+    "docs/requirements/QUALITY-INTEGRATION.md",
+    "docs/tasks/TASK.p2-rsi-experiment-11-09-2026.md",
+    "docs/tasks/TASK.p2-sqli-11-09-2026.md",
+    "docs/tasks/TASK.p2-wazuh-blue-11-09-2026.md",
+    "docs/tasks/TASK.quality-integration-11-09-2026.md"
+  ],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "README.md",
+    "docs/acceptance/INDEX.md",
+    "docs/evidence/quality-integration-20261109/README.md",
+    "docs/releases/RA-20261109-01.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.quality-integration-11-09-2026.md"
+  ],
+  "risks": [
+    "実モデル性能は未実証。旧registryの自動移行なし。symlink試験3件は環境制約でskip。"
+  ],
+  "tests": [
+    "tests/test_blue_evidence_identity.py",
+    "tests/test_agent_rsi.py",
+    "tests/test_agent_lab_demo.py"
+  ],
+  "source_sha256": "de7161729182dce586127f9c2b1d7eddbac2c0b03f83470749274e0a746efcd0",
+  "generated_at": "00028",
+  "review": {
+    "reviewed_at": "2026-11-09T01:36:25.429078+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "de7161729182dce586127f9c2b1d7eddbac2c0b03f83470749274e0a746efcd0",
+    "summary_sha256": "56363ff0d44b99478a9b9b66e76771837606b9008664e143f188923683ffb53d",
+    "scope": "今回の原文・要約・依存を照合。P0/P1の実測、P2設計のみ、未実行と性能未実証を区別する。"
+  }
+}

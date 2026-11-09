@@ -1,0 +1,25 @@
+{
+  "id": "docs/tasks/TASK.p2-wazuh-blue-11-09-2026.md",
+  "role": "task",
+  "public_api": [],
+  "summary": "意味保持した実WazuhイベントでBlueの精度・参照・コストを測る後続Task。専用入力の実装と実評価は未着手。",
+  "deps_out": [
+    "docs/requirements/P2-VALIDATION-PLAN.md"
+  ],
+  "deps_in": [
+    "docs/acceptance/AC-20261109-01.md",
+    "docs/requirements/P2-VALIDATION-PLAN.md",
+    "docs/tasks/README.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "24eb810fd1e7a6a631c415bc6c266c9dde82baa7fcf4c9336dc733e32afdac00",
+  "generated_at": "00028",
+  "review": {
+    "reviewed_at": "2026-11-09T01:36:25.430824+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "24eb810fd1e7a6a631c415bc6c266c9dde82baa7fcf4c9336dc733e32afdac00",
+    "summary_sha256": "1abf86867a0d3477376b1658dad29146011d0f9ffb7204f11278249bcd17eb98",
+    "scope": "今回の原文・要約・依存を照合。P0/P1の実測、P2設計のみ、未実行と性能未実証を区別する。"
+  }
+}

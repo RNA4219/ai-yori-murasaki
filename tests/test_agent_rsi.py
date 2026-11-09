@@ -2,13 +2,18 @@
 executors (deterministic, no docker, no real model)."""
 from __future__ import annotations
 
+import contextlib
+import io
+import json
 import tempfile
 import unittest
+from types import SimpleNamespace
+from unittest.mock import patch
 from pathlib import Path
 
 from ai_yori_murasaki import rsi_agent
 from ai_yori_murasaki.agents import load_default_bundle
-from ai_yori_murasaki.jsonio import DataError, canonical
+from ai_yori_murasaki.jsonio import DataError, canonical, digest
 from ai_yori_murasaki.rsi_agent import (AgentRSI, classify_failure,
                                         outcome_from_demo)
 from ai_yori_murasaki.storage import Store
@@ -361,6 +366,7 @@ class ApplyTest(_Base):
         with self.assertRaises(DataError):
             self.rsi.apply(review["review_id"], record["baseline_digest"],
                            candidate["bundle_digest"], "rollback-x")
+
         # approved review but wrong expected refs
         review = self.rsi.record_review(candidate["candidate_id"],
                                         "reviewer-1", "approved")
@@ -379,6 +385,277 @@ class ApplyTest(_Base):
         with self.assertRaises(DataError):
             self.rsi.apply(review["review_id"], record["baseline_digest"],
                            candidate["bundle_digest"], "rollback-x")
+
+    def test_normal_cli_uses_applied_bundle(self) -> None:
+        from ai_yori_murasaki import cli
+        from ai_yori_murasaki.runtime import Runtime
+        candidate, _, record = self._ready_candidate()
+        self.rsi.initialize_registry(record["baseline_ref"])
+        review = self.rsi.record_review(candidate["candidate_id"], "reviewer", "approved")
+        self.rsi.apply(review["review_id"], record["baseline_digest"],
+                       candidate["bundle_digest"], "restore baseline")
+        args = SimpleNamespace(group="lab", action="demo", routes_file=None,
+                               policy_bundle_file=None, scenario=None,
+                               staging_root=self.artifacts, seed=7)
+        with patch("ai_yori_murasaki.lab.run_demo", return_value={}) as run:
+            cli._dispatch(args, Runtime(self.store))
+        assert digest(run.call_args.kwargs["policy_bundle"]) == candidate["bundle_digest"]
+
+    def _activate(self):
+        candidate, compared, record = self._ready_candidate()
+        self.rsi.initialize_registry(record["baseline_ref"])
+        review = self.rsi.record_review(candidate["candidate_id"], "reviewer", "approved")
+        self.rsi.apply(review["review_id"], record["baseline_digest"],
+                       candidate["bundle_digest"], "restore baseline")
+        return candidate, record, review
+
+    def test_default_explicit_and_rollback_resolution(self):
+        bundle, selection = self.rsi.resolve_bundle()
+        self.assertEqual(selection["source"], "packaged_default")
+        self.assertEqual(selection["sha256"], digest(self.baseline))
+        candidate, record, review = self._activate()
+        applied, selection = self.rsi.resolve_bundle()
+        self.assertEqual(digest(applied), candidate["bundle_digest"])
+        self.assertEqual(selection["review_id"], review["review_id"])
+        explicit = self.artifacts / "override.json"
+        override = load_default_bundle()
+        override["version"] = "operator-choice"
+        explicit.write_bytes(canonical(override))
+        selected, metadata = self.rsi.resolve_bundle(explicit)
+        self.assertEqual(digest(selected), digest(override))
+        self.assertEqual(metadata["source"], "explicit_file")
+        rolled = self.rsi.rollback(candidate["bundle_ref"], "restore")
+        self.assertEqual(rolled["current_bundle_ref"], record["baseline_ref"])
+        restored, metadata = self.rsi.resolve_bundle()
+        self.assertEqual(digest(restored), record["baseline_digest"])
+        self.assertEqual(metadata["reason"], "rollback")
+
+    def test_forged_unapproved_registry_is_not_automatically_used(self):
+        ref = self.store.put_object(self.baseline)
+        path = self.ws / "agent_rsi" / "registry.json"
+        self.store.atomic_json(path, {"current_bundle_ref": ref, "history": []})
+        with self.assertRaises(DataError):
+            self.rsi.resolve_bundle()
+
+    def test_corrupt_applied_bundle_stops_and_rollback_recovers(self):
+        candidate, record, _ = self._activate()
+        self.store._object_path(candidate["bundle_ref"]).write_bytes(b"{}")
+        with self.assertRaises(DataError):
+            self.rsi.resolve_bundle()
+        self.rsi.rollback(candidate["bundle_ref"], "corrupt candidate")
+        self.assertEqual(self.rsi.resolve_bundle()[1]["sha256"], record["baseline_digest"])
+
+    def test_activation_requires_continuous_approved_history(self):
+        candidate, record, _ = self._activate()
+        original = self.rsi._registry()
+        for mutation in ("current", "from_ref", "review", "operation"):
+            invalid = json.loads(json.dumps(original))
+            if mutation == "current":
+                invalid["current_bundle_ref"] = record["baseline_ref"]
+            elif mutation == "from_ref":
+                invalid["history"][0]["from_ref"] = candidate["bundle_ref"]
+            elif mutation == "review":
+                invalid["history"][0]["review_id"] = "agr-" + "0" * 24
+            else:
+                invalid["history"][0]["operation"] = "unapproved"
+            self.rsi._commit_registry(invalid)
+            with self.assertRaises((DataError, OSError)):
+                self.rsi.resolve_bundle()
+        self.rsi._commit_registry(original)
+        self.assertEqual(self.rsi.resolve_bundle()[1]["sha256"], candidate["bundle_digest"])
+
+    def test_registry_tampering_stops_and_trusted_rollback_restores(self):
+        candidate, record, _ = self._activate()
+        path = self.ws / "agent_rsi" / "registry.json"
+        path.write_text('{"current_bundle_ref":"../../outside"}', encoding="utf-8")
+        with self.assertRaises(DataError):
+            self.rsi.resolve_bundle()
+        self.rsi.rollback(candidate["bundle_ref"], "repair registry")
+        self.assertEqual(self.rsi.resolve_bundle()[1]["sha256"], record["baseline_digest"])
+        with self.assertRaises(DataError):
+            self.rsi.rollback(candidate["bundle_ref"], "stale expected ref")
+
+    def test_interrupted_apply_is_not_success_and_can_be_recovered(self):
+        candidate, _, record = self._ready_candidate()
+        self.rsi.initialize_registry(record["baseline_ref"])
+        review = self.rsi.record_review(candidate["candidate_id"], "reviewer", "approved")
+        original = self.store.atomic_json
+
+        def failing_write(path, value):
+            if path == self.rsi._activation_path:
+                raise OSError("injected activation write failure")
+            original(path, value)
+
+        with patch.object(self.store, "atomic_json", side_effect=failing_write):
+            with self.assertRaises(OSError):
+                self.rsi.apply(review["review_id"], record["baseline_digest"],
+                               candidate["bundle_digest"], "restore")
+        self.assertFalse(self.rsi.get_candidate(candidate["candidate_id"])["applied"])
+        with self.assertRaises(DataError):
+            self.rsi.resolve_bundle()
+        self.rsi.rollback(record["baseline_ref"], "recover interrupted commit")
+        self.assertEqual(self.rsi.resolve_bundle()[1]["sha256"], record["baseline_digest"])
+
+    def test_tampered_approval_is_rejected(self):
+        candidate, _, record = self._ready_candidate()
+        self.rsi.initialize_registry(record["baseline_ref"])
+        rejected = self.rsi.record_review(candidate["candidate_id"], "reviewer", "rejected")
+        state = self.rsi._load_state()
+        state["reviews"][rejected["review_id"]]["decision"] = "approved"
+        self.rsi._save_state(state)
+        with self.assertRaises(DataError):
+            self.rsi.apply(rejected["review_id"], record["baseline_digest"],
+                           candidate["bundle_digest"], "restore")
+
+    def test_stale_baseline_is_rejected(self):
+        candidate, _, record = self._ready_candidate()
+        other = load_default_bundle()
+        other["version"] = "other-baseline"
+        self.rsi.initialize_registry(self.store.put_object(other))
+        review = self.rsi.record_review(candidate["candidate_id"], "reviewer", "approved")
+        with self.assertRaises(DataError):
+            self.rsi.apply(review["review_id"], record["baseline_digest"],
+                           candidate["bundle_digest"], "restore")
+        self.assertEqual(self.rsi.resolve_bundle()[1]["sha256"], digest(other))
+        with self.assertRaises(DataError):
+            self.rsi.initialize_registry("../outside")
+
+    def test_invalid_explicit_bundle_never_falls_back(self):
+        for value in (b"{}", b"broken-json"):
+            explicit = self.artifacts / "bad.json"
+            explicit.write_bytes(value)
+            with self.assertRaises(DataError):
+                self.rsi.resolve_bundle(explicit)
+        with self.assertRaises(DataError):
+            self.rsi.resolve_bundle(Path("relative.json"))
+        with self.assertRaises((DataError, OSError)):
+            self.rsi.resolve_bundle(self.artifacts / "missing.json")
+
+    def test_symlinked_registry_directory_is_rejected(self):
+        destination = Path(self.tmp.name) / "outside"
+        destination.mkdir()
+        try:
+            (self.ws / "agent_rsi").symlink_to(destination, target_is_directory=True)
+        except OSError:
+            self.skipTest("OS does not allow symlink creation")
+        with self.assertRaises(DataError):
+            self.rsi.initialize_registry(self.store.put_object(self.baseline))
+        self.assertFalse((destination / "registry.json").exists())
+
+    def test_normal_demo_records_the_policy_it_actually_passes_to_agents(self):
+        from ai_yori_murasaki import lab
+        from ai_yori_murasaki.runtime import Runtime
+        from tests.test_agent_lab_demo import FakeLab, ScriptedLLM
+        candidate, record, _ = self._activate()
+        scenario = Path(lab.__file__).parent / "scenarios" / "authz-flag-false"
+        class ObservedLLM(ScriptedLLM):
+            def chat(self, **kwargs):
+                self.last_system = getattr(self, "last_system", {})
+                self.last_system[kwargs["role"]] = kwargs["messages"][0]["content"]
+                return super().chat(**kwargs)
+
+        llm = ObservedLLM(scenario)
+        rt = Runtime(self.store)
+        result = lab.run_demo(rt, self.artifacts, seed=7, llm_client=llm,
+                              lab_factory=lambda jobdir: FakeLab())
+        selected = result["policy_selection"]
+        self.assertEqual(selected["sha256"], candidate["bundle_digest"])
+        applied = self.store.get_object(candidate["bundle_ref"])
+        for role in ("red", "blue", "purple"):
+            self.assertIn(applied["roles"][role]["system_prompt"], llm.last_system[role])
+        events = [event for run in rt.list_runs(result["campaign_id"])
+                  for event in self.store.read_events(run["run_id"])]
+        policy_events = [e for e in events if (e.get("extensions") or {}).get(
+            "record_type") == "agent_policy_selection"]
+        self.assertEqual(len(policy_events), 1)
+        self.assertEqual(policy_events[0]["extensions"]["sha256"], selected["sha256"])
+        self.assertEqual(digest(self.store.get_object(selected["bundle_ref"])), selected["sha256"])
+        self.rsi.rollback(candidate["bundle_ref"], "restore")
+        again = lab.run_demo(rt, self.artifacts, seed=7, llm_client=ScriptedLLM(scenario),
+                             lab_factory=lambda jobdir: FakeLab())
+        self.assertEqual(again["policy_selection"]["sha256"], record["baseline_digest"])
+
+    def test_cli_lifecycle_with_real_policy_resolution_and_audit(self):
+        from ai_yori_murasaki import cli, lab
+        from ai_yori_murasaki.runtime import Runtime
+        from tests.test_agent_lab_demo import FakeLab, ScriptedLLM
+        rt = Runtime(self.store)
+        scope = {"targets": [{"kind": "fixture", "identifier": "t1"}], "max_targets": 1}
+        auth = {"operator_id": "op1", "granted_at": "2026-01-01T00:00:00Z",
+                "expires_at": "2099-01-01T00:00:00Z", "scope_digest": digest(scope)}
+        cid = rt.create_campaign("INT-TEST", scope, auth, "cli-cycle")["campaign_id"]
+        rt.transition(cid, "running")
+        for setup_run in rt.list_runs(cid):
+            self.store.seal_checkpoint(cid, setup_run["run_id"], "op1")
+        freeze_file = self.artifacts / "freeze.json"
+        freeze_file.write_bytes(canonical({"config": _config(_PINNED),
+            "manifest": {"manifest_id": "fixture-only-no-performance-claim"},
+            "artifact_root": str(self.artifacts)}))
+        commands = []
+
+        def command(*args, expected=0):
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = cli.main(["--workspace", str(self.ws), "--trusted-root", str(self.tr),
+                                 *args])
+            result = json.loads(stdout.getvalue())
+            self.assertEqual(code, expected, result)
+            commands.append({"command": result["command"], "status": result["status"],
+                             "exit_code": code})
+            return result["data"]
+
+        frozen = command("rsi", "agent-freeze", "--campaign-id", cid,
+                         "--freeze-file", str(freeze_file))
+        train_script = {(_TRAIN[0], "baseline"): ("blue", "blind detection fail"),
+                        (_TRAIN[1], "baseline"): "success"}
+        with patch("ai_yori_murasaki.cli_rsi._agent_executor",
+                   return_value=ScriptedExecutor(train_script)):
+            command("rsi", "agent-train", "--freeze-id", frozen["freeze_id"],
+                    "--staging-root", str(self.artifacts))
+        candidate = self._candidate_of(frozen["freeze_id"])
+        self.assertNotEqual(candidate["bundle_digest"], frozen["baseline_digest"])
+        compare_script = {(sid, "baseline"): ("blue", "miss")
+                          for sid in _VALIDATION + _HOLDOUT}
+        compare_script.update({(sid, "candidate"): "success"
+                               for sid in _VALIDATION + _HOLDOUT})
+        with patch("ai_yori_murasaki.cli_rsi._agent_executor",
+                   return_value=ScriptedExecutor(compare_script)):
+            command("rsi", "agent-compare", "--candidate-id", candidate["candidate_id"],
+                    "--staging-root", str(self.artifacts))
+        self.assertEqual(command("rsi", "agent-ready", "--candidate-id",
+                                 candidate["candidate_id"])["status"], "promotion-ready")
+        command("rsi", "agent-registry-init", "--campaign-id", cid,
+                "--baseline-ref", frozen["baseline_ref"])
+        review = command("rsi", "agent-review", "--candidate-id", candidate["candidate_id"],
+                         "--reviewer", "fixture-reviewer", "--decision", "approved")
+        command("rsi", "agent-apply", "--review-id", review["review_id"],
+                "--expected-baseline", frozen["baseline_digest"],
+                "--expected-candidate", candidate["bundle_digest"], "--rollback", "restore")
+        self.assertEqual(command("rsi", "agent-status")["policy_selection"]["sha256"],
+                         candidate["bundle_digest"])
+        scenario = Path(lab.__file__).parent / "scenarios" / "authz-flag-false"
+
+        def demo():
+            with patch("ai_yori_murasaki.lab.LLMClient", return_value=ScriptedLLM(scenario)), \
+                 patch("ai_yori_murasaki.lab.DockerLab", side_effect=lambda jobdir: FakeLab()):
+                return command("lab", "demo", "--staging-root", str(self.artifacts))
+
+        applied_run = demo()
+        self.assertEqual(applied_run["policy_selection"]["sha256"], candidate["bundle_digest"])
+        command("rsi", "agent-rollback", "--campaign-id", cid,
+                "--expected-current", candidate["bundle_ref"], "--reason", "restore baseline")
+        restored_run = demo()
+        self.assertEqual(restored_run["policy_selection"]["sha256"], frozen["baseline_digest"])
+        for run in rt.list_runs():
+            self.assertEqual(self.store.verify_chain(run["run_id"])["result"], "PASS")
+            checkpoint = self.store.verify_checkpoint(run["campaign_id"], run["run_id"])
+            self.assertEqual(checkpoint["result"], "PASS", (run, checkpoint))
+        print("CLI_LIFECYCLE " + json.dumps({
+            "evaluation": "scripted fixture, not measured improvement",
+            "commands": commands, "candidate_id": candidate["candidate_id"],
+            "review_id": review["review_id"], "applied": applied_run["policy_selection"],
+            "restored": restored_run["policy_selection"],
+            "audit": "all chains and checkpoints PASS"}, sort_keys=True))
 
     def test_apply_requires_ready(self) -> None:
         record = self._freeze(_config(pinning=_UNPINNED))

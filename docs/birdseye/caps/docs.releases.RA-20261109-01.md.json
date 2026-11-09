@@ -1,0 +1,27 @@
+{
+  "id": "docs/releases/RA-20261109-01.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "ユーザーのマージ指示によるTask 20261109-01のソース反映承認。最新mainの更新を保持し、統合後の検証、公開範囲、PRによる結果追跡と復旧方法を定める。新規Releaseと性能改善の主張は対象外。",
+  "deps_out": [
+    "docs/acceptance/AC-20261109-01.md",
+    "docs/evidence/quality-integration-20261109/README.md",
+    "docs/tasks/TASK.quality-integration-11-09-2026.md"
+  ],
+  "deps_in": [
+    "docs/acceptance/AC-20261109-01.md",
+    "docs/releases/README.md",
+    "docs/tasks/TASK.quality-integration-11-09-2026.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "a05c15a8955c2dff0a5190feed7428b7f8dbf92e0b10e4fd44f694ca9fef4b44",
+  "generated_at": "00028",
+  "review": {
+    "reviewed_at": "2026-11-09T01:36:25.430824+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "a05c15a8955c2dff0a5190feed7428b7f8dbf92e0b10e4fd44f694ca9fef4b44",
+    "summary_sha256": "23cf4cf80b85d51a66036df9b0798345098ae251a96ad2321a6b8253428a5307",
+    "scope": "今回の原文・要約・依存を照合。P0/P1の実測、P2設計のみ、未実行と性能未実証を区別する。"
+  }
+}

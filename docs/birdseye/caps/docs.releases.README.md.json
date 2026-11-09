@@ -2,9 +2,18 @@
   "id": "docs/releases/README.md",
   "role": "guide",
   "public_api": [],
-  "summary": "個別RAの人間向け要約インデックス。現在の公開版は v0.1.1（RA-20261108-02、配布物の sdist/wheel を添付し公開実行 done）。v0.1.0 の配布承認（RA-20261107-01）と文書整合（RA-20261108-01）の要約を持つ。公開ファイル選定の原本は非公開の .ga 記録で、この要約と混同しない。",
+  "summary": "公開記録の索引。既存v0.1.1の配布記録を保持し、RA-20261109-01による品質修正のソースmain反映を案内する。",
   "deps_out": [
-    "docs/CONTRACTS.md"
+    "docs/CONTRACTS.md",
+    "docs/acceptance/AC-20261107-03.md",
+    "docs/acceptance/AC-20261108-02.md",
+    "docs/acceptance/AC-20261108-03.md",
+    "docs/releases/RA-20261107-01.md",
+    "docs/releases/RA-20261108-01.md",
+    "docs/releases/RA-20261108-02.md",
+    "docs/releases/RA-20261109-01.md",
+    "docs/tasks/TASK.readme-release-11-08-2026.md",
+    "docs/tasks/TASK.version-011-11-08-2026.md"
   ],
   "deps_in": [
     "CHECKLISTS.md",
@@ -16,13 +25,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "31ee76621011a13ceb57b60856392735e6832b78fb21e9b40687676acbc4f89f",
-  "generated_at": "00027",
+  "source_sha256": "a49d90e60077ea1d5a81093bdb39eddaed76a9fe5ed2eda6a5ef2df6da54ca98",
+  "generated_at": "00028",
   "review": {
-    "reviewed_at": "2026-11-08T04:57:07.145218+00:00",
-    "reviewed_by": "Muse",
-    "source_sha256": "31ee76621011a13ceb57b60856392735e6832b78fb21e9b40687676acbc4f89f",
-    "summary_sha256": "1fbf18933c3bb769c0bf3e7c7c16cc4bcef4f2975fbd26f8e95b952d93400af8",
-    "scope": "生成00027。v0.1.1 リリースに伴い、本文・要約・依存を照合した。"
+    "reviewed_at": "2026-11-09T01:36:25.429078+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "a49d90e60077ea1d5a81093bdb39eddaed76a9fe5ed2eda6a5ef2df6da54ca98",
+    "summary_sha256": "24e191d55995dfd46e7df2867e5e7f4265c731529c4900ac6a7bb9815bdaf2e9",
+    "scope": "今回の原文・要約・依存を照合。P0/P1の実測、P2設計のみ、未実行と性能未実証を区別する。"
   }
 }

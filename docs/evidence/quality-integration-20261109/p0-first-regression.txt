@@ -1,0 +1,39 @@
+................................FFF..............................        [100%]
+================================== FAILURES ===================================
+___________________ RunDemoTest.test_agent_demo_end_to_end ____________________
+tests\test_agent_lab_demo.py:313: in test_agent_demo_end_to_end
+    result, fake = self._run(llm)
+                   ^^^^^^^^^^^^^^
+tests\test_agent_lab_demo.py:303: in _run
+    result = lab_mod.run_demo(
+ai_yori_murasaki\lab.py:404: in run_demo
+    blind = Oracle().blind_detection_check(blue_rows, findings,
+ai_yori_murasaki\oracle.py:185: in blind_detection_check
+    raise ContractError("telemetry evidence mismatch", "policy_denied")
+E   ai_yori_murasaki.jsonio.ContractError: telemetry evidence mismatch
+____________ RunDemoTest.test_agent_demo_on_unseen_scenario_shape _____________
+tests\test_agent_lab_demo.py:364: in test_agent_demo_on_unseen_scenario_shape
+    result, fake = self._run(llm, scenario="authz-role-mismatch")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_agent_lab_demo.py:303: in _run
+    result = lab_mod.run_demo(
+ai_yori_murasaki\lab.py:404: in run_demo
+    blind = Oracle().blind_detection_check(blue_rows, findings,
+ai_yori_murasaki\oracle.py:185: in blind_detection_check
+    raise ContractError("telemetry evidence mismatch", "policy_denied")
+E   ai_yori_murasaki.jsonio.ContractError: telemetry evidence mismatch
+___________________ RunDemoTest.test_blue_miss_fails_closed ___________________
+tests\test_agent_lab_demo.py:403: in test_blue_miss_fails_closed
+    self._run(MissingBlueLLM(scenario_dir))
+tests\test_agent_lab_demo.py:303: in _run
+    result = lab_mod.run_demo(
+ai_yori_murasaki\lab.py:404: in run_demo
+    blind = Oracle().blind_detection_check(blue_rows, findings,
+ai_yori_murasaki\oracle.py:185: in blind_detection_check
+    raise ContractError("telemetry evidence mismatch", "policy_denied")
+E   ai_yori_murasaki.jsonio.ContractError: telemetry evidence mismatch
+=========================== short test summary info ===========================
+FAILED tests/test_agent_lab_demo.py::RunDemoTest::test_agent_demo_end_to_end
+FAILED tests/test_agent_lab_demo.py::RunDemoTest::test_agent_demo_on_unseen_scenario_shape
+FAILED tests/test_agent_lab_demo.py::RunDemoTest::test_blue_miss_fails_closed
+3 failed, 62 passed in 19.04s

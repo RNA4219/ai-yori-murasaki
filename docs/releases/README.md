@@ -8,6 +8,8 @@ next_review_due: 2026-12-06
 
 # 公開記録
 
+品質修正のソース反映は [RA-20261109-01](RA-20261109-01.md) に基づく。対象はTask 20261109-01のmainへのマージであり、配布版v0.1.1のタグ・Release・配布物は変更しない。
+
 現在の公開版は v0.1.1（[GitHub Release](https://github.com/RNA4219/ai-yori-murasaki/releases/tag/v0.1.1)、RA-20261108-02。配布物の sdist/wheel を添付）。文書導入の技術検収をリリースとして数えない。
 今後、ユーザーから公開を依頼された場合は版、対象 Task / Acceptance、成果物 hash、検証結果、承認者、復旧方法を公開記録へ残す。
 公開判断が必要なときは `RA-YYYYMMDD-xx` を採番し、Acceptance の `release_approval_id` と相互参照する。承認記録は [RA-20261107-01](RA-20261107-01.md) を参照。

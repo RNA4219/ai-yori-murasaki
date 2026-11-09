@@ -33,7 +33,7 @@ from urllib.parse import parse_qs, urlsplit
 
 from .worker import DockerLab, stage_worker, ObservationBroker
 from .oracle import Oracle, build_final_verdict
-from .jsonio import digest
+from .jsonio import DataError, digest
 from .adapters.llm import LLMClient
 from .adapters.base import HttpBroker
 from . import lab_metrics
@@ -250,6 +250,7 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
              routes: Optional[Dict[str, Any]] = None, *,
              scenario_id: str = "authz-flag-false",
              policy_bundle: Optional[Dict[str, Any]] = None,
+             policy_selection: Optional[Dict[str, Any]] = None,
              lab_factory: Optional[Any] = None,
              failure_mode: str = "raise") -> Dict[str, Any]:
     """Run one agent-driven lab campaign end to end.
@@ -268,9 +269,23 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
     _require(staging_root.is_dir(), "staging_root must exist")
 
     scenario = load_scenario(scenario_id)
-    bundle = policy_bundle if policy_bundle is not None else \
-        load_default_bundle()
+    from .rsi_agent import AgentRSI
+    if policy_bundle is None:
+        bundle, selection = AgentRSI(runtime.store).resolve_bundle()
+    else:
+        bundle = policy_bundle
+        selection = policy_selection or {
+            "bundle_id": bundle.get("bundle_id"), "version": bundle.get("version"),
+            "bundle_ref": digest(bundle), "sha256": digest(bundle),
+            "source": "explicit_bundle", "reason": "caller_override",
+        }
     validate_bundle(bundle)
+    if (selection.get("sha256") != digest(bundle)
+            or selection.get("bundle_ref") != digest(bundle)
+            or selection.get("bundle_id") != bundle["bundle_id"]
+            or selection.get("version") != bundle["version"]):
+        raise DataError("policy selection mismatch", "policy_denied")
+    bundle_ref = runtime.store.put_object(bundle)
 
     jobdir = staging_root / _new_id("job")
     jobdir.mkdir(parents=False, exist_ok=False)
@@ -304,6 +319,10 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
         red_rid = red_run["run_id"]
         current_rid = red_rid
         runs.append(red_rid)
+        runtime.record_event(red_rid, "state_captured", "orchestrator",
+                             evidence_refs=(bundle_ref,),
+                             extensions={"record_type": "agent_policy_selection",
+                                         **selection})
         red_stage = stage_worker(jobdir, "red")
         probe_executor, probe_rows = _make_probe_executor(
             lab, red_stage, runtime, red_rid)
@@ -697,6 +716,7 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
             "campaign_id": cid,
             "scenario_id": scenario_id,
             "status": "review_pending",
+            "policy_selection": selection,
             "blue_detections": len(findings),
             "finding_ids": [f.get("finding_id") for f in findings],
             "proposal_ref": proposal_ref,
@@ -755,6 +775,7 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
                     "failure_attribution": exc.attribution,
                     "campaign_id": cid,
                     "scenario_id": scenario_id,
+                    "policy_selection": selection,
                 }
             return {
                 "status": "failed",
@@ -763,6 +784,7 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
                 "failure_attribution": "external",
                 "campaign_id": cid,
                 "scenario_id": scenario_id,
+                "policy_selection": selection,
             }
         raise
     finally:
@@ -808,6 +830,7 @@ def run_iterations(runtime: Any, staging_root: Path, *, seed: int = 1,
                    routes: Optional[Dict[str, Any]] = None,
                    scenario_id: str = "authz-flag-false",
                    policy_bundle: Optional[Dict[str, Any]] = None,
+                   policy_selection: Optional[Dict[str, Any]] = None,
                    ) -> Dict[str, Any]:
     _require(isinstance(staging_root, Path), "staging_root must be a Path")
     _require(staging_root.is_absolute(), "staging_root must be absolute")
@@ -822,7 +845,7 @@ def run_iterations(runtime: Any, staging_root: Path, *, seed: int = 1,
         _require(remaining >= 1, "remaining budget must be >= 1")
         result = run_demo(runtime, staging_root, seed, routes=routes,
                           scenario_id=scenario_id,
-                          policy_bundle=policy_bundle)
+                          policy_bundle=policy_bundle, policy_selection=policy_selection)
         verdict = result.get("final_verdict") or {}
         success = verdict.get("remediation_success") is True
         summary = {

@@ -1,0 +1,59 @@
+{
+  "base_main": "8dd42e00f431289a9379e37d9a9ffb9a56f5c59e",
+  "implementation_commit": "55edbb8",
+  "approval_id": "RA-20261109-01",
+  "suite": {
+    "passed": 637,
+    "skipped": 3,
+    "subtests_passed": 22,
+    "seconds": 127.21
+  },
+  "source_hashes_match_prior_verified_code": true,
+  "source_sha256": {
+    "ai_yori_murasaki/agents/tools.py": "5d1bd2cfeb507a5fd2289d54a843e6347e081f3c94f03c2debd1f21139a14e48",
+    "ai_yori_murasaki/oracle.py": "22b969b4afc8b8cfb300f482ac061804b9f8664ebb920b588f5a8b30f61ccfbf",
+    "ai_yori_murasaki/lab_metrics.py": "45f62d99246ac86729eee6942cb778559700bf661f0fbbfaaa26fd3d5a95ce4b",
+    "ai_yori_murasaki/rsi_agent.py": "413ad19fb7bfc51ecddb9440a9d29db73953c525ae16e388103517083a750ddc",
+    "ai_yori_murasaki/cli.py": "1d27254c564b2e4ed012e4cd21b9cfacaf7c90848018ef6e742a0bfeb81da796",
+    "ai_yori_murasaki/cli_rsi.py": "312907f3b282807c33568314a7e06e7c9e575492b2456881a5e6d1e059fa8fb7",
+    "ai_yori_murasaki/lab.py": "19380d2f39aef403d89c4ddb28117885fa50489d6ac737a7bda1c993c3fd26df",
+    "tests/test_agent_rsi.py": "e01b9292fbfbd1ec5f29495afc0dc79410ed5f45aca69cfd839a17051393bed9",
+    "tests/test_blue_evidence_identity.py": "8c53c83def1bb630e160e90f133f64f71ce8dc3125810ebd3f27e5c70d93b298",
+    "tests/test_agent_lab_demo.py": "123787fb862db28b279a3a82c846b776ed01a27bd689b782d4fcdce9aebd3441",
+    "ai_yori_murasaki/__init__.py": "b6b8b9d1ce496ecec1e161a689d9d9ce3ef5c2abd70f437a67da55a0a626a85e",
+    "pyproject.toml": "7173b54e2aeb1f7fac664eafc5e545508332cae159eb3cb8752b14d795c9dfb0"
+  },
+  "document_gates": {
+    "tier": 0,
+    "acceptance": 0,
+    "birdseye": 0
+  },
+  "yomiyasu_documents": 17,
+  "local_links_checked": 271,
+  "missing_links": [],
+  "excluded_private_links": [
+    {
+      "source": "RUNBOOK.md",
+      "target": "docs/ADR/deep-research-report (16).md"
+    },
+    {
+      "source": "HUB.codex.md",
+      "target": "docs/ADR/deep-research-report (16).md"
+    },
+    {
+      "source": "docs/releases/README.md",
+      "target": "../../.ga/publication-20261107/public-selection.md"
+    }
+  ],
+  "publication_paths_checked": 72,
+  "forbidden_publication_paths": [],
+  "credential_pattern_findings": [],
+  "remote_ci": "not configured",
+  "not_run": [
+    "real LLM/Docker loop",
+    "live Wazuh Blue scoring",
+    "real RSI promotion"
+  ],
+  "performance_improvement_claim": false,
+  "merge_result_source": "GitHub PR mergedAt and mergeCommit"
+}

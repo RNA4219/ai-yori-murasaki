@@ -1,0 +1,31 @@
+{
+  "id": "docs/requirements/P2-VALIDATION-PLAN.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "P2の必要性と実装計画。SQLi修復、意味保持Wazuh入力のBlue評価、異なるRSI候補の固定条件比較を設計し、追加実装・実験は未実行とする。",
+  "deps_out": [
+    "docs/tasks/TASK.p2-rsi-experiment-11-09-2026.md",
+    "docs/tasks/TASK.p2-sqli-11-09-2026.md",
+    "docs/tasks/TASK.p2-wazuh-blue-11-09-2026.md"
+  ],
+  "deps_in": [
+    "HUB.codex.md",
+    "docs/acceptance/AC-20261109-01.md",
+    "docs/evidence/quality-integration-20261109/README.md",
+    "docs/tasks/TASK.p2-rsi-experiment-11-09-2026.md",
+    "docs/tasks/TASK.p2-sqli-11-09-2026.md",
+    "docs/tasks/TASK.p2-wazuh-blue-11-09-2026.md",
+    "docs/tasks/TASK.quality-integration-11-09-2026.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "099a61f1f2f9fb952c718670fe90dc2d36857569ea0317875672270342f37e53",
+  "generated_at": "00028",
+  "review": {
+    "reviewed_at": "2026-11-09T01:36:25.418820+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "099a61f1f2f9fb952c718670fe90dc2d36857569ea0317875672270342f37e53",
+    "summary_sha256": "e883047abf7318e646c0d69a45b66c4240e3f4d6e8aaca56d82861e5306b1b2f",
+    "scope": "今回の原文・要約・依存を照合。P0/P1の実測、P2設計のみ、未実行と性能未実証を区別する。"
+  }
+}

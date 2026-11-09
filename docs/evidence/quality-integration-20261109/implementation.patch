@@ -1,0 +1,1194 @@
+--- a/ai_yori_murasaki/agents/tools.py
++++ b/ai_yori_murasaki/agents/tools.py
+@@ -335,6 +335,15 @@
+         if not _is_hex_ref(ref) or ref not in self._issued_refs:
+             raise _ArgError("findings[{}]: unknown_evidence_ref".format(
+                 index))
++        observation = self._runtime.store.get_object(ref)
++        if isinstance(observation, dict) and observation.get("kind") == "telemetry":
++            data = observation.get("data")
++            if (not isinstance(data, dict)
++                    or data.get("method") != item["method"]
++                    or data.get("role") != item["role"]
++                    or not isinstance(data.get("path"), str)
++                    or data["path"].split("?", 1)[0] != item["path"]):
++                raise _ArgError("findings[{}]: evidence_metadata_mismatch".format(index))
+ 
+     def _run_submit_findings(self, args: Any) -> Dict[str, Any]:
+         self._require_keys(args, {"findings"})
+@@ -349,7 +358,8 @@
+         finding_ids: List[str] = []
+         seen_keys: set = set()
+         for item in findings:
+-            dedup_key = (item["path"], item["role"], item["category"])
++            dedup_key = (item["path"], item["role"], item["category"],
++                         item["method"], item["evidence_ref"])
+             if dedup_key in seen_keys:
+                 duplicates += 1
+                 continue
+@@ -357,7 +367,8 @@
+             finding_id = "f-" + digest({
+                 "campaign": self._campaign_id, "run": self._run_id,
+                 "path": item["path"], "role": item["role"],
+-                "category": item["category"]})[:32]
++                "category": item["category"], "method": item["method"],
++                "evidence_ref": item["evidence_ref"]})[:32]
+             exists = False
+             for ref in self._runtime.list_records(self._campaign_id,
+                                                  "finding"):
+--- a/ai_yori_murasaki/oracle.py
++++ b/ai_yori_murasaki/oracle.py
+@@ -36,6 +36,25 @@
+ }
+ 
+ _SHA_RE = re.compile(r"^[0-9a-f]{64}$")
++
++
++def is_unauthorized_access(data: Any) -> bool:
++    """The shared event-level lab detection target (not Oracle answers)."""
++    return (isinstance(data, dict) and data.get("status") == 200
++            and data.get("method") == "GET"
++            and isinstance(data.get("path"), str)
++            and data["path"].split("?", 1)[0] == "/record"
++            and isinstance(data.get("role"), str) and data["role"] != "admin")
++
++
++def finding_covers(finding: Any, row: dict) -> bool:
++    """Match a saved finding to one observed event by its evidence ref."""
++    return (isinstance(finding, dict)
++            and isinstance(finding.get("location"), dict)
++            and finding["location"].get("path") == "/record"
++            and isinstance(finding.get("references"), list)
++            and isinstance(row.get("ref"), str)
++            and row["ref"] in finding["references"])
+ 
+ 
+ def _now() -> str:
+@@ -152,39 +171,31 @@
+         if not isinstance(blue_findings, list):
+             raise ContractError("findings must be list", "input_invalid")
+ 
+-        def _is_unauthorized_success(row: dict) -> bool:
+-            data = row.get("data") if isinstance(row, dict) else None
+-            if not isinstance(data, dict):
+-                return False
+-            if data.get("status") != 200 or data.get("method") != "GET":
+-                return False
+-            path = data.get("path")
+-            role = data.get("role")
+-            if not isinstance(path, str):
+-                return False
+-            base = path.split("?", 1)[0]
+-            return (base == "/record" and isinstance(role, str)
+-                    and role != "admin")
+-
+-        requiring = [row for row in telemetry_rows
+-                     if _is_unauthorized_success(row)]
++        # Resolve every input from CAS before scoring. A forged or missing
++        # reference is an evidence failure, never a benign/undetected event.
++        unique_rows = {}
++        for row in telemetry_rows:
++            if not isinstance(row, dict):
++                raise ContractError("invalid telemetry row", "input_invalid")
++            ref = row.get("ref")
++            if not isinstance(ref, str) or not _SHA_RE.fullmatch(ref):
++                raise ContractError("invalid telemetry ref", "input_invalid")
++            actual = store.get_object(ref)
++            actual_data = (actual["data"] if isinstance(actual, dict)
++                           and actual.get("kind") == "telemetry"
++                           and "observed_at" in actual and "data" in actual
++                           else actual)
++            if digest(actual) != ref or actual_data != row.get("data"):
++                raise ContractError("telemetry evidence mismatch", "policy_denied")
++            unique_rows[ref] = row
++        requiring = [row for row in unique_rows.values()
++                     if is_unauthorized_access(row["data"])]
+         uncovered: list = []
+         for row in requiring:
+             ref = row.get("ref")
+             data = row.get("data", {})
+-            covered = False
+-            for finding in blue_findings:
+-                if not isinstance(finding, dict):
+-                    continue
+-                location = finding.get("location")
+-                if not isinstance(location, dict):
+-                    continue
+-                if location.get("path") != "/record":
+-                    continue
+-                refs = finding.get("references")
+-                if isinstance(refs, list) and ref in refs:
+-                    covered = True
+-                    break
++            covered = any(finding_covers(finding, row)
++                          for finding in blue_findings)
+             if not covered:
+                 uncovered.append({
+                     "ref": ref,
+@@ -192,15 +203,30 @@
+                     "role": data.get("role"),
+                 })
+ 
++        # Precision uses stable finding IDs, just like lab_metrics/KPI.
++        unique_findings = {}
++        for finding in blue_findings:
++            if not isinstance(finding, dict):
++                raise ContractError("invalid finding", "input_invalid")
++            unique_findings[finding.get("finding_id") or digest(finding)] = finding
++        false_positives = [f.get("finding_id") for f in unique_findings.values()
++                           if not any(finding_covers(f, row) for row in requiring)]
+         checks: list[dict] = []
+         checks.append({"name": "rows_requiring_detection",
+                        "passed": len(requiring) > 0})
+         checks.append({"name": "all_rows_covered",
+                        "passed": len(uncovered) == 0})
+-        passed = bool(requiring) and not uncovered
++        checks.append({"name": "no_false_positives",
++                       "passed": not false_positives})
++        passed = bool(requiring) and not uncovered and not false_positives
+         report = {
+             "rows_checked": len(telemetry_rows),
+             "rows_requiring_detection": len(requiring),
++            "detected_events": len(requiring) - len(uncovered),
++            "missed_events": len(uncovered),
++            "true_positive_findings": len(unique_findings) - len(false_positives),
++            "false_positive_findings": len(false_positives),
++            "false_positives": false_positives,
+             "uncovered": uncovered,
+             "checks": checks,
+             "passed": passed,
+--- a/ai_yori_murasaki/lab_metrics.py
++++ b/ai_yori_murasaki/lab_metrics.py
+@@ -26,7 +26,7 @@
+ from typing import Any, Dict, List, Optional
+ 
+ from . import kpi
+-from .oracle import Oracle
++from .oracle import Oracle, finding_covers, is_unauthorized_access
+ 
+ 
+ def _hold(reason: str) -> Dict[str, Any]:
+@@ -111,28 +111,11 @@
+ 
+ def _is_attack_row(row: Dict[str, Any]) -> bool:
+     """A successful access to the protected record by a non-admin role."""
+-    if not isinstance(row, dict):
+-        return False
+-    if row.get("status") != 200 or row.get("method") != "GET":
+-        return False
+-    path = row.get("path")
+-    role = row.get("role")
+-    if not isinstance(path, str) or _norm_path(path) != "/record":
+-        return False
+-    return isinstance(role, str) and role != "admin"
++    return is_unauthorized_access(row)
+ 
+ 
+ def _finding_covers(finding: Dict[str, Any], row: Dict[str, Any]) -> bool:
+-    if not isinstance(finding, dict):
+-        return False
+-    location = finding.get("location")
+-    if not isinstance(location, dict) or location.get("path") != "/record":
+-        return False
+-    refs = finding.get("references")
+-    row_ref = row.get("ref")
+-    if not isinstance(refs, list) or not isinstance(row_ref, str):
+-        return False
+-    return row_ref in refs
++    return finding_covers(finding, row)
+ 
+ 
+ def measure(runtime: Any, campaign_id: str,
+@@ -234,9 +217,14 @@
+         status = row.get("status")
+         if isinstance(status, bool) or not isinstance(status, int):
+             return _hold("evidence_missing")
++        ref = row.get("ref")
++        if (not isinstance(ref, str) or len(ref) != 64
++                or any(char not in "0123456789abcdef" for char in ref)):
++            return _hold("evidence_missing")
+ 
+     # --- attacks: successful unauthorized accesses to the record ---
+-    attack_rows = [row for row in red_rows if _is_attack_row(row)]
++    attack_rows = list({row["ref"]: row for row in red_rows
++                        if _is_attack_row(row)}.values())
+ 
+     # --- findings coverage (deterministic, reference-based) ---
+     for finding in findings:
+--- a/ai_yori_murasaki/rsi_agent.py
++++ b/ai_yori_murasaki/rsi_agent.py
+@@ -42,7 +42,8 @@
+ from . import evaluation_identity as identity
+ from .agents.policies import validate_bundle
+ from .agents.scenarios import list_scenarios
+-from .jsonio import DataError, canonical, digest, loads
++from .jsonio import DataError, canonical, digest, loads, read_json
++from .storage import _assert_no_ancestor_reparse
+ 
+ SideExecutor = Callable[[str, dict, int], dict]
+ 
+@@ -231,10 +232,124 @@
+         self._trusted = Path(store.trusted_root)
+         self._state_path = self._workspace / "agent_rsi" / "state.json"
+         self._registry_path = self._workspace / "agent_rsi" / "registry.json"
++        self._activation_path = self._trusted / "agent_rsi" / "activation.json"
++
++    def _safe_path(self, root: Path, path: Path) -> Path:
++        if ".." in path.parts:
++            _fail("policy_denied", "path traversal denied")
++        _assert_no_ancestor_reparse(path)
++        try:
++            path.resolve().relative_to(root.resolve())
++        except ValueError:
++            _fail("policy_denied", "agent rsi path escapes root")
++        return path
++
++    def _bundle(self, ref: str) -> dict:
++        if not isinstance(ref, str) or not re.fullmatch(r"[0-9a-f]{64}", ref):
++            _fail("policy_denied", "invalid bundle reference")
++        return validate_bundle(self._store.get_object(ref))
++
++    def _registry(self, *, recovery: bool = False) -> Optional[dict]:
++        self._safe_path(self._workspace, self._registry_path)
++        self._safe_path(self._trusted, self._activation_path)
++        if not self._activation_path.exists():
++            if self._registry_path.exists():
++                _fail("policy_denied", "registry has no trusted activation")
++            return None
++        registry = read_json(self._activation_path)
++        if (not isinstance(registry, dict) or set(registry) != {
++                "current_bundle_ref", "baseline_bundle_ref", "history"}
++                or not isinstance(registry["history"], list)):
++            _fail("policy_denied", "activation invalid")
++        for key in ("current_bundle_ref", "baseline_bundle_ref"):
++            if not isinstance(registry[key], str) or not re.fullmatch(
++                    r"[0-9a-f]{64}", registry[key]):
++                _fail("policy_denied", "activation reference invalid")
++        current = registry["baseline_bundle_ref"]
++        active = []
++        for event in registry["history"]:
++            if not isinstance(event, dict) or event.get("from_ref") != current:
++                _fail("policy_denied", "activation history is not continuous")
++            if event.get("operation") == "apply":
++                review_id = event.get("review_id")
++                if not isinstance(review_id, str) or not re.fullmatch(r"agr-[0-9a-f]{24}", review_id):
++                    _fail("not_approved", "activation review invalid")
++                path = self._safe_path(self._trusted, self._trusted / "agent_rsi" / "reviews" / (review_id + ".json"))
++                pin = read_json(path)
++                review = pin.get("review") or {}
++                if (review.get("decision") != "approved"
++                        or review.get("review_id") != review_id
++                        or review.get("candidate_id") != event.get("candidate_id")
++                        or pin.get("bundle_ref") != event.get("to_ref")
++                        or pin.get("baseline_digest") != current):
++                    _fail("not_approved", "activation review mismatch")
++                active.append(event)
++            elif event.get("operation") == "rollback":
++                previous = active.pop()["from_ref"] if active else registry["baseline_bundle_ref"]
++                if event.get("to_ref") != previous:
++                    _fail("policy_denied", "rollback target not previously approved")
++            else:
++                _fail("policy_denied", "unknown activation operation")
++            current = event.get("to_ref")
++        if current != registry["current_bundle_ref"]:
++            _fail("policy_denied", "activation current does not match history")
++        if not recovery:
++            if (not self._registry_path.exists()
++                    or read_json(self._registry_path) != registry):
++                _fail("policy_denied", "registry/activation mismatch; rollback required")
++        return registry
++
++    def _commit_registry(self, registry: dict) -> None:
++        # Trusted activation is the commit point. A partial write leaves a
++        # mismatch that stops execution and can be recovered by rollback.
++        self._safe_path(self._workspace, self._registry_path)
++        self._safe_path(self._trusted, self._activation_path)
++        self._store.atomic_json(self._registry_path, registry)
++        self._store.atomic_json(self._activation_path, registry)
++
++    def resolve_bundle(self, bundle_file: Optional[Path] = None) -> tuple:
++        """Explicit operator selection > trusted activation > default.
++
++        Invalid selected state fails closed; no fallback after a failure.
++        Evaluation executors pass their frozen bundles explicitly instead.
++        """
++        from .agents import load_default_bundle
++        with self._store.lock():
++            if bundle_file is not None:
++                path = Path(bundle_file)
++                if not path.is_absolute():
++                    _fail("input_invalid", "bundle file must be absolute")
++                self._safe_path(path.parent, path)
++                bundle = validate_bundle(read_json(path))
++                source, reason = "explicit_file", "operator_override"
++            else:
++                registry = self._registry()
++                if registry is None:
++                    bundle = load_default_bundle()
++                    source, reason = "packaged_default", "no_activation"
++                else:
++                    bundle = self._bundle(registry["current_bundle_ref"])
++                    source, reason = "approved_registry", "trusted_activation"
++            ref = self._store.put_object(bundle)
++            selection = {
++                "bundle_id": bundle["bundle_id"], "version": bundle["version"],
++                "bundle_ref": ref, "sha256": digest(bundle),
++                "source": source, "reason": reason,
++            }
++            if source == "approved_registry":
++                selection["activation_sha256"] = digest(registry)
++                if registry["history"]:
++                    selection["reason"] = registry["history"][-1]["operation"]
++                    selection["review_id"] = registry["history"][-1].get("review_id")
++                    selection["candidate_id"] = registry["history"][-1].get("candidate_id")
++                else:
++                    selection["reason"] = "operator_initialized_baseline"
++            return bundle, selection
+ 
+     # -- state helpers ----------------------------------------------------
+ 
+     def _load_state(self) -> dict:
++        self._safe_path(self._workspace, self._state_path)
+         if not self._state_path.exists():
+             return {"candidates": {}, "freezes": {}, "reviews": {},
+                     "memory": []}
+@@ -248,11 +363,14 @@
+         return data
+ 
+     def _save_state(self, state: dict) -> None:
++        self._safe_path(self._workspace, self._state_path)
+         self._state_path.parent.mkdir(parents=True, exist_ok=True)
+         self._store.atomic_json(self._state_path, state)
+ 
+     def _pin_path(self, freeze_id: str) -> Path:
+-        return self._trusted / "agent_rsi" / "{}.json".format(freeze_id)
++        if not isinstance(freeze_id, str) or not re.fullmatch(r"ag-[0-9a-f]{24}", freeze_id):
++            _fail("input_invalid", "invalid freeze id")
++        return self._safe_path(self._trusted, self._trusted / "agent_rsi" / (freeze_id + ".json"))
+ 
+     # -- freeze ------------------------------------------------------------
+ 
+@@ -790,6 +908,11 @@
+ 
+     def record_review(self, candidate_id: str, reviewer: str,
+                       decision: str) -> dict:
++        with self._store.lock():
++            return self._record_review(candidate_id, reviewer, decision)
++
++    def _record_review(self, candidate_id: str, reviewer: str,
++                       decision: str) -> dict:
+         candidate = self.get_candidate(candidate_id)
+         if not _is_id(reviewer):
+             _fail("input_invalid", "reviewer invalid")
+@@ -809,19 +932,34 @@
+         }
+         state["reviews"][review_id] = review
+         self._save_state(state)
++        pin_path = self._trusted / "agent_rsi" / "reviews" / (review_id + ".json")
++        self._safe_path(self._trusted, pin_path)
++        self._store.atomic_json(pin_path, {
++            "review": review, "bundle_ref": candidate["bundle_ref"],
++            "comparison_ref": candidate.get("comparison_ref"),
++            "baseline_digest": candidate["baseline_digest"],
++        })
+         return review
+ 
+     def initialize_registry(self, baseline_ref: str) -> dict:
+-        if not re.fullmatch(r"[0-9a-f]{64}", str(baseline_ref)):
+-            _fail("input_invalid", "baseline ref must be sha256")
+-        self._store.get_object(baseline_ref)
+-        registry = {"current_bundle_ref": baseline_ref, "history": []}
+-        self._registry_path.parent.mkdir(parents=True, exist_ok=True)
+-        self._store.atomic_json(self._registry_path, registry)
+-        return registry
++        with self._store.lock():
++            self._bundle(baseline_ref)
++            self._safe_path(self._workspace, self._registry_path)
++            self._safe_path(self._trusted, self._activation_path)
++            if self._registry_path.exists() or self._activation_path.exists():
++                _fail("policy_denied", "registry already exists")
++            registry = {"current_bundle_ref": baseline_ref,
++                        "baseline_bundle_ref": baseline_ref, "history": []}
++            self._commit_registry(registry)
++            return registry
+ 
+     def apply(self, review_id: str, expected_baseline: str,
+               expected_candidate: str, rollback: str) -> dict:
++        with self._store.lock():
++            return self._apply(review_id, expected_baseline, expected_candidate, rollback)
++
++    def _apply(self, review_id: str, expected_baseline: str,
++               expected_candidate: str, rollback: str) -> dict:
+         state = self._load_state()
+         review = state["reviews"].get(review_id)
+         if not isinstance(review, dict):
+@@ -840,25 +978,92 @@
+             _fail("review_mismatch", "baseline digest mismatch")
+         if expected_candidate != candidate["bundle_digest"]:
+             _fail("review_mismatch", "candidate digest mismatch")
++        if not re.fullmatch(r"agr-[0-9a-f]{24}", str(review_id)):
++            _fail("input_invalid", "invalid review id")
++        pin_path = self._trusted / "agent_rsi" / "reviews" / (review_id + ".json")
++        self._safe_path(self._trusted, pin_path)
++        expected_pin = {"review": review, "bundle_ref": candidate["bundle_ref"],
++                        "comparison_ref": candidate.get("comparison_ref"),
++                        "baseline_digest": candidate["baseline_digest"]}
++        if not pin_path.exists() or read_json(pin_path) != expected_pin:
++            _fail("not_approved", "trusted review mismatch")
++        bundle = self._bundle(candidate["bundle_ref"])
++        if digest(bundle) != expected_candidate:
++            _fail("review_mismatch", "bundle digest mismatch")
++        record = self.load_freeze(candidate["freeze_id"])
++        comparison = self._store.get_object(candidate.get("comparison_ref"))
++        planned = {(sid, split, seed) for split in ("validation", "holdout")
++                   for sid in record["config"]["scenario_splits"][split]
++                   for seed in record["config"]["seed_pairs"]}
++        pairs = comparison.get("pairs", [])
++        actual = {(p["task_id"], p["split"], p["seed"]) for p in pairs}
++        if (comparison.get("candidate_id") != candidate["candidate_id"]
++                or comparison.get("freeze_id") != record["freeze_id"]
++                or comparison.get("config_digest") != record["config_digest"]
++                or candidate["baseline_digest"] != record["baseline_digest"]
++                or actual != planned or len(pairs) != len(planned)
++                or self._evaluate_pairs(pairs, record["config"], candidate) != summary
++                or summary.get("ready") is not True):
++            _fail("not_ready", "comparison does not match frozen evaluation")
+         if not _is_id(rollback):
+             _fail("input_invalid", "rollback description required")
+-        if not self._registry_path.exists():
++        registry = self._registry()
++        if registry is None:
+             _fail("checkpoint_missing", "registry not initialized")
+-        registry = loads(self._registry_path.read_bytes())
+         previous = registry["current_bundle_ref"]
++        if previous != expected_baseline:
++            _fail("review_mismatch", "current registry is not evaluated baseline")
++        self._bundle(previous)
+         registry["history"].append({
+             "candidate_id": candidate["candidate_id"],
+             "review_id": review_id,
+             "from_ref": previous,
+             "to_ref": candidate["bundle_ref"],
+             "rollback": rollback,
++            "operation": "apply",
++            "campaign_id": candidate["campaign_id"],
+         })
+         registry["current_bundle_ref"] = candidate["bundle_ref"]
+-        self._store.atomic_json(self._registry_path, registry)
+         candidate["applied"] = True
+         state["candidates"][candidate["candidate_id"]] = candidate
+         self._save_state(state)
++        try:
++            self._commit_registry(registry)
++        except Exception:
++            candidate["applied"] = False
++            self._save_state(state)
++            raise
+         return {"applied": True,
+                 "candidate_id": candidate["candidate_id"],
+                 "current_bundle_ref": candidate["bundle_ref"],
+                 "rollback": rollback}
++
++    def rollback(self, expected_current: str, reason: str) -> dict:
++        """Restore the most recent active apply's previous approved bundle.
++
++        Reads the trusted commit even if its workspace mirror is damaged;
++        never loads a broken current bundle in order to restore its predecessor.
++        """
++        if not _is_id(reason):
++            _fail("input_invalid", "rollback reason required (1..128 chars)")
++        with self._store.lock():
++            registry = self._registry(recovery=True)
++            if registry is None or registry["current_bundle_ref"] != expected_current:
++                _fail("review_mismatch", "rollback current mismatch")
++            active = []
++            for event in registry["history"]:
++                if event["operation"] == "apply":
++                    active.append(event)
++                elif event["operation"] == "rollback" and active:
++                    active.pop()
++            previous = active[-1]["from_ref"] if active else registry["baseline_bundle_ref"]
++            self._bundle(previous)
++            registry["history"].append({
++                "operation": "rollback", "from_ref": expected_current,
++                "to_ref": previous, "reason": reason,
++                "campaign_id": active[-1]["campaign_id"] if active else None,
++            })
++            registry["current_bundle_ref"] = previous
++            self._commit_registry(registry)
++            return {"rolled_back": True, "current_bundle_ref": previous,
++                    "previous_bundle_ref": expected_current, "reason": reason}
+--- a/ai_yori_murasaki/cli.py
++++ b/ai_yori_murasaki/cli.py
+@@ -198,17 +198,9 @@
+     return routes
+ 
+ 
+-def _resolve_bundle(bundle_file: Any) -> Any:
+-    """Resolve the policy bundle: explicit file, else packaged default."""
+-    from .agents import load_default_bundle, validate_bundle
+-    if bundle_file is None:
+-        return load_default_bundle()
+-    path = Path(bundle_file)
+-    if not path.is_file():
+-        raise DataError("policy bundle ファイルが見つかりません: {}".format(
+-            path), "input_invalid")
+-    bundle = read_json(path)
+-    return validate_bundle(bundle)
++def _resolve_bundle(bundle_file: Any, rt: Runtime) -> Any:
++    from .rsi_agent import AgentRSI
++    return AgentRSI(rt.store).resolve_bundle(bundle_file)
+ 
+ 
+ def _resolve_scenario(scenario: Any) -> str:
+@@ -338,11 +330,11 @@
+     if group == "lab" and action == "demo":
+         from . import lab
+         routes = _resolve_routes(getattr(args, "routes_file", None))
+-        bundle = _resolve_bundle(getattr(args, "policy_bundle_file", None))
++        bundle, selection = _resolve_bundle(getattr(args, "policy_bundle_file", None), rt)
+         scenario_id = _resolve_scenario(getattr(args, "scenario", None))
+         data = lab.run_demo(rt, args.staging_root, args.seed, routes=routes,
+                             scenario_id=scenario_id,
+-                            policy_bundle=bundle)
++                            policy_bundle=bundle, policy_selection=selection)
+         cid = data.get("campaign_id") if isinstance(data, dict) else None
+         rid = data.get("run_id") if isinstance(data, dict) else None
+         return cid, rid, data, 0
+@@ -350,13 +342,13 @@
+     if group == "lab" and action == "iterate":
+         from . import lab
+         routes = _resolve_routes(getattr(args, "routes_file", None))
+-        bundle = _resolve_bundle(getattr(args, "policy_bundle_file", None))
++        bundle, selection = _resolve_bundle(getattr(args, "policy_bundle_file", None), rt)
+         scenario_id = _resolve_scenario(getattr(args, "scenario", None))
+         data = lab.run_iterations(
+             rt, args.staging_root, seed=args.seed,
+             max_iterations=args.max_iterations,
+             max_campaigns=args.max_campaigns, routes=routes,
+-            scenario_id=scenario_id, policy_bundle=bundle)
++            scenario_id=scenario_id, policy_bundle=bundle, policy_selection=selection)
+         cid = None
+         rid = None
+         return cid, rid, data, 0
+--- a/ai_yori_murasaki/cli_rsi.py
++++ b/ai_yori_murasaki/cli_rsi.py
+@@ -172,6 +172,17 @@
+     aap.add_argument("--expected-candidate", required=True)
+     aap.add_argument("--rollback", required=True)
+ 
++    ari = sub.add_parser("agent-registry-init")
++    ari.add_argument("--campaign-id", required=True)
++    ari.add_argument("--baseline-ref", required=True)
++
++    arb = sub.add_parser("agent-rollback")
++    arb.add_argument("--campaign-id", required=True)
++    arb.add_argument("--expected-current", required=True)
++    arb.add_argument("--reason", required=True)
++
++    sub.add_parser("agent-status")
++
+     ash = sub.add_parser("agent-show")
+     ash.add_argument("--candidate-id", required=True)
+ 
+@@ -540,6 +551,26 @@
+                            {"record_type": "agent_rsi_apply",
+                             "phase": "verify"})
+ 
++    if action in ("agent-registry-init", "agent-rollback"):
++        from .rsi_agent import AgentRSI
++        agent_rsi = AgentRSI(rt.store)
++
++        def op():
++            if action == "agent-registry-init":
++                return agent_rsi.initialize_registry(args.baseline_ref)
++            return agent_rsi.rollback(args.expected_current, args.reason)
++
++        return _run_verify(
++            rt, args.campaign_id, op, "state_captured",
++            lambda result: [result["current_bundle_ref"]],
++            {"record_type": action.replace("-", "_"), "phase": "verify"})
++
++    if action == "agent-status":
++        from .rsi_agent import AgentRSI
++        agent_rsi = AgentRSI(rt.store)
++        bundle, selection = agent_rsi.resolve_bundle()
++        return {"policy_selection": selection}
++
+     if action == "agent-show":
+         from .rsi_agent import AgentRSI
+         return AgentRSI(rt.store).get_candidate(args.candidate_id)
+--- a/ai_yori_murasaki/lab.py
++++ b/ai_yori_murasaki/lab.py
+@@ -33,7 +33,7 @@
+ 
+ from .worker import DockerLab, stage_worker, ObservationBroker
+ from .oracle import Oracle, build_final_verdict
+-from .jsonio import digest
++from .jsonio import DataError, digest
+ from .adapters.llm import LLMClient
+ from .adapters.base import HttpBroker
+ from . import lab_metrics
+@@ -250,6 +250,7 @@
+              routes: Optional[Dict[str, Any]] = None, *,
+              scenario_id: str = "authz-flag-false",
+              policy_bundle: Optional[Dict[str, Any]] = None,
++             policy_selection: Optional[Dict[str, Any]] = None,
+              lab_factory: Optional[Any] = None,
+              failure_mode: str = "raise") -> Dict[str, Any]:
+     """Run one agent-driven lab campaign end to end.
+@@ -268,9 +269,23 @@
+     _require(staging_root.is_dir(), "staging_root must exist")
+ 
+     scenario = load_scenario(scenario_id)
+-    bundle = policy_bundle if policy_bundle is not None else \
+-        load_default_bundle()
++    from .rsi_agent import AgentRSI
++    if policy_bundle is None:
++        bundle, selection = AgentRSI(runtime.store).resolve_bundle()
++    else:
++        bundle = policy_bundle
++        selection = policy_selection or {
++            "bundle_id": bundle.get("bundle_id"), "version": bundle.get("version"),
++            "bundle_ref": digest(bundle), "sha256": digest(bundle),
++            "source": "explicit_bundle", "reason": "caller_override",
++        }
+     validate_bundle(bundle)
++    if (selection.get("sha256") != digest(bundle)
++            or selection.get("bundle_ref") != digest(bundle)
++            or selection.get("bundle_id") != bundle["bundle_id"]
++            or selection.get("version") != bundle["version"]):
++        raise DataError("policy selection mismatch", "policy_denied")
++    bundle_ref = runtime.store.put_object(bundle)
+ 
+     jobdir = staging_root / _new_id("job")
+     jobdir.mkdir(parents=False, exist_ok=False)
+@@ -304,6 +319,10 @@
+         red_rid = red_run["run_id"]
+         current_rid = red_rid
+         runs.append(red_rid)
++        runtime.record_event(red_rid, "state_captured", "orchestrator",
++                             evidence_refs=(bundle_ref,),
++                             extensions={"record_type": "agent_policy_selection",
++                                         **selection})
+         red_stage = stage_worker(jobdir, "red")
+         probe_executor, probe_rows = _make_probe_executor(
+             lab, red_stage, runtime, red_rid)
+@@ -697,6 +716,7 @@
+             "campaign_id": cid,
+             "scenario_id": scenario_id,
+             "status": "review_pending",
++            "policy_selection": selection,
+             "blue_detections": len(findings),
+             "finding_ids": [f.get("finding_id") for f in findings],
+             "proposal_ref": proposal_ref,
+@@ -755,6 +775,7 @@
+                     "failure_attribution": exc.attribution,
+                     "campaign_id": cid,
+                     "scenario_id": scenario_id,
++                    "policy_selection": selection,
+                 }
+             return {
+                 "status": "failed",
+@@ -763,6 +784,7 @@
+                 "failure_attribution": "external",
+                 "campaign_id": cid,
+                 "scenario_id": scenario_id,
++                "policy_selection": selection,
+             }
+         raise
+     finally:
+@@ -808,6 +830,7 @@
+                    routes: Optional[Dict[str, Any]] = None,
+                    scenario_id: str = "authz-flag-false",
+                    policy_bundle: Optional[Dict[str, Any]] = None,
++                   policy_selection: Optional[Dict[str, Any]] = None,
+                    ) -> Dict[str, Any]:
+     _require(isinstance(staging_root, Path), "staging_root must be a Path")
+     _require(staging_root.is_absolute(), "staging_root must be absolute")
+@@ -822,7 +845,7 @@
+         _require(remaining >= 1, "remaining budget must be >= 1")
+         result = run_demo(runtime, staging_root, seed, routes=routes,
+                           scenario_id=scenario_id,
+-                          policy_bundle=policy_bundle)
++                          policy_bundle=policy_bundle, policy_selection=policy_selection)
+         verdict = result.get("final_verdict") or {}
+         success = verdict.get("remediation_success") is True
+         summary = {
+--- a/tests/test_agent_rsi.py
++++ b/tests/test_agent_rsi.py
+@@ -2,13 +2,18 @@
+ executors (deterministic, no docker, no real model)."""
+ from __future__ import annotations
+ 
++import contextlib
++import io
++import json
+ import tempfile
+ import unittest
++from types import SimpleNamespace
++from unittest.mock import patch
+ from pathlib import Path
+ 
+ from ai_yori_murasaki import rsi_agent
+ from ai_yori_murasaki.agents import load_default_bundle
+-from ai_yori_murasaki.jsonio import DataError, canonical
++from ai_yori_murasaki.jsonio import DataError, canonical, digest
+ from ai_yori_murasaki.rsi_agent import (AgentRSI, classify_failure,
+                                         outcome_from_demo)
+ from ai_yori_murasaki.storage import Store
+@@ -361,6 +366,7 @@
+         with self.assertRaises(DataError):
+             self.rsi.apply(review["review_id"], record["baseline_digest"],
+                            candidate["bundle_digest"], "rollback-x")
++
+         # approved review but wrong expected refs
+         review = self.rsi.record_review(candidate["candidate_id"],
+                                         "reviewer-1", "approved")
+@@ -379,6 +385,277 @@
+         with self.assertRaises(DataError):
+             self.rsi.apply(review["review_id"], record["baseline_digest"],
+                            candidate["bundle_digest"], "rollback-x")
++
++    def test_normal_cli_uses_applied_bundle(self) -> None:
++        from ai_yori_murasaki import cli
++        from ai_yori_murasaki.runtime import Runtime
++        candidate, _, record = self._ready_candidate()
++        self.rsi.initialize_registry(record["baseline_ref"])
++        review = self.rsi.record_review(candidate["candidate_id"], "reviewer", "approved")
++        self.rsi.apply(review["review_id"], record["baseline_digest"],
++                       candidate["bundle_digest"], "restore baseline")
++        args = SimpleNamespace(group="lab", action="demo", routes_file=None,
++                               policy_bundle_file=None, scenario=None,
++                               staging_root=self.artifacts, seed=7)
++        with patch("ai_yori_murasaki.lab.run_demo", return_value={}) as run:
++            cli._dispatch(args, Runtime(self.store))
++        assert digest(run.call_args.kwargs["policy_bundle"]) == candidate["bundle_digest"]
++
++    def _activate(self):
++        candidate, compared, record = self._ready_candidate()
++        self.rsi.initialize_registry(record["baseline_ref"])
++        review = self.rsi.record_review(candidate["candidate_id"], "reviewer", "approved")
++        self.rsi.apply(review["review_id"], record["baseline_digest"],
++                       candidate["bundle_digest"], "restore baseline")
++        return candidate, record, review
++
++    def test_default_explicit_and_rollback_resolution(self):
++        bundle, selection = self.rsi.resolve_bundle()
++        self.assertEqual(selection["source"], "packaged_default")
++        self.assertEqual(selection["sha256"], digest(self.baseline))
++        candidate, record, review = self._activate()
++        applied, selection = self.rsi.resolve_bundle()
++        self.assertEqual(digest(applied), candidate["bundle_digest"])
++        self.assertEqual(selection["review_id"], review["review_id"])
++        explicit = self.artifacts / "override.json"
++        override = load_default_bundle()
++        override["version"] = "operator-choice"
++        explicit.write_bytes(canonical(override))
++        selected, metadata = self.rsi.resolve_bundle(explicit)
++        self.assertEqual(digest(selected), digest(override))
++        self.assertEqual(metadata["source"], "explicit_file")
++        rolled = self.rsi.rollback(candidate["bundle_ref"], "restore")
++        self.assertEqual(rolled["current_bundle_ref"], record["baseline_ref"])
++        restored, metadata = self.rsi.resolve_bundle()
++        self.assertEqual(digest(restored), record["baseline_digest"])
++        self.assertEqual(metadata["reason"], "rollback")
++
++    def test_forged_unapproved_registry_is_not_automatically_used(self):
++        ref = self.store.put_object(self.baseline)
++        path = self.ws / "agent_rsi" / "registry.json"
++        self.store.atomic_json(path, {"current_bundle_ref": ref, "history": []})
++        with self.assertRaises(DataError):
++            self.rsi.resolve_bundle()
++
++    def test_corrupt_applied_bundle_stops_and_rollback_recovers(self):
++        candidate, record, _ = self._activate()
++        self.store._object_path(candidate["bundle_ref"]).write_bytes(b"{}")
++        with self.assertRaises(DataError):
++            self.rsi.resolve_bundle()
++        self.rsi.rollback(candidate["bundle_ref"], "corrupt candidate")
++        self.assertEqual(self.rsi.resolve_bundle()[1]["sha256"], record["baseline_digest"])
++
++    def test_activation_requires_continuous_approved_history(self):
++        candidate, record, _ = self._activate()
++        original = self.rsi._registry()
++        for mutation in ("current", "from_ref", "review", "operation"):
++            invalid = json.loads(json.dumps(original))
++            if mutation == "current":
++                invalid["current_bundle_ref"] = record["baseline_ref"]
++            elif mutation == "from_ref":
++                invalid["history"][0]["from_ref"] = candidate["bundle_ref"]
++            elif mutation == "review":
++                invalid["history"][0]["review_id"] = "agr-" + "0" * 24
++            else:
++                invalid["history"][0]["operation"] = "unapproved"
++            self.rsi._commit_registry(invalid)
++            with self.assertRaises((DataError, OSError)):
++                self.rsi.resolve_bundle()
++        self.rsi._commit_registry(original)
++        self.assertEqual(self.rsi.resolve_bundle()[1]["sha256"], candidate["bundle_digest"])
++
++    def test_registry_tampering_stops_and_trusted_rollback_restores(self):
++        candidate, record, _ = self._activate()
++        path = self.ws / "agent_rsi" / "registry.json"
++        path.write_text('{"current_bundle_ref":"../../outside"}', encoding="utf-8")
++        with self.assertRaises(DataError):
++            self.rsi.resolve_bundle()
++        self.rsi.rollback(candidate["bundle_ref"], "repair registry")
++        self.assertEqual(self.rsi.resolve_bundle()[1]["sha256"], record["baseline_digest"])
++        with self.assertRaises(DataError):
++            self.rsi.rollback(candidate["bundle_ref"], "stale expected ref")
++
++    def test_interrupted_apply_is_not_success_and_can_be_recovered(self):
++        candidate, _, record = self._ready_candidate()
++        self.rsi.initialize_registry(record["baseline_ref"])
++        review = self.rsi.record_review(candidate["candidate_id"], "reviewer", "approved")
++        original = self.store.atomic_json
++
++        def failing_write(path, value):
++            if path == self.rsi._activation_path:
++                raise OSError("injected activation write failure")
++            original(path, value)
++
++        with patch.object(self.store, "atomic_json", side_effect=failing_write):
++            with self.assertRaises(OSError):
++                self.rsi.apply(review["review_id"], record["baseline_digest"],
++                               candidate["bundle_digest"], "restore")
++        self.assertFalse(self.rsi.get_candidate(candidate["candidate_id"])["applied"])
++        with self.assertRaises(DataError):
++            self.rsi.resolve_bundle()
++        self.rsi.rollback(record["baseline_ref"], "recover interrupted commit")
++        self.assertEqual(self.rsi.resolve_bundle()[1]["sha256"], record["baseline_digest"])
++
++    def test_tampered_approval_is_rejected(self):
++        candidate, _, record = self._ready_candidate()
++        self.rsi.initialize_registry(record["baseline_ref"])
++        rejected = self.rsi.record_review(candidate["candidate_id"], "reviewer", "rejected")
++        state = self.rsi._load_state()
++        state["reviews"][rejected["review_id"]]["decision"] = "approved"
++        self.rsi._save_state(state)
++        with self.assertRaises(DataError):
++            self.rsi.apply(rejected["review_id"], record["baseline_digest"],
++                           candidate["bundle_digest"], "restore")
++
++    def test_stale_baseline_is_rejected(self):
++        candidate, _, record = self._ready_candidate()
++        other = load_default_bundle()
++        other["version"] = "other-baseline"
++        self.rsi.initialize_registry(self.store.put_object(other))
++        review = self.rsi.record_review(candidate["candidate_id"], "reviewer", "approved")
++        with self.assertRaises(DataError):
++            self.rsi.apply(review["review_id"], record["baseline_digest"],
++                           candidate["bundle_digest"], "restore")
++        self.assertEqual(self.rsi.resolve_bundle()[1]["sha256"], digest(other))
++        with self.assertRaises(DataError):
++            self.rsi.initialize_registry("../outside")
++
++    def test_invalid_explicit_bundle_never_falls_back(self):
++        for value in (b"{}", b"broken-json"):
++            explicit = self.artifacts / "bad.json"
++            explicit.write_bytes(value)
++            with self.assertRaises(DataError):
++                self.rsi.resolve_bundle(explicit)
++        with self.assertRaises(DataError):
++            self.rsi.resolve_bundle(Path("relative.json"))
++        with self.assertRaises((DataError, OSError)):
++            self.rsi.resolve_bundle(self.artifacts / "missing.json")
++
++    def test_symlinked_registry_directory_is_rejected(self):
++        destination = Path(self.tmp.name) / "outside"
++        destination.mkdir()
++        try:
++            (self.ws / "agent_rsi").symlink_to(destination, target_is_directory=True)
++        except OSError:
++            self.skipTest("OS does not allow symlink creation")
++        with self.assertRaises(DataError):
++            self.rsi.initialize_registry(self.store.put_object(self.baseline))
++        self.assertFalse((destination / "registry.json").exists())
++
++    def test_normal_demo_records_the_policy_it_actually_passes_to_agents(self):
++        from ai_yori_murasaki import lab
++        from ai_yori_murasaki.runtime import Runtime
++        from tests.test_agent_lab_demo import FakeLab, ScriptedLLM
++        candidate, record, _ = self._activate()
++        scenario = Path(lab.__file__).parent / "scenarios" / "authz-flag-false"
++        class ObservedLLM(ScriptedLLM):
++            def chat(self, **kwargs):
++                self.last_system = getattr(self, "last_system", {})
++                self.last_system[kwargs["role"]] = kwargs["messages"][0]["content"]
++                return super().chat(**kwargs)
++
++        llm = ObservedLLM(scenario)
++        rt = Runtime(self.store)
++        result = lab.run_demo(rt, self.artifacts, seed=7, llm_client=llm,
++                              lab_factory=lambda jobdir: FakeLab())
++        selected = result["policy_selection"]
++        self.assertEqual(selected["sha256"], candidate["bundle_digest"])
++        applied = self.store.get_object(candidate["bundle_ref"])
++        for role in ("red", "blue", "purple"):
++            self.assertIn(applied["roles"][role]["system_prompt"], llm.last_system[role])
++        events = [event for run in rt.list_runs(result["campaign_id"])
++                  for event in self.store.read_events(run["run_id"])]
++        policy_events = [e for e in events if (e.get("extensions") or {}).get(
++            "record_type") == "agent_policy_selection"]
++        self.assertEqual(len(policy_events), 1)
++        self.assertEqual(policy_events[0]["extensions"]["sha256"], selected["sha256"])
++        self.assertEqual(digest(self.store.get_object(selected["bundle_ref"])), selected["sha256"])
++        self.rsi.rollback(candidate["bundle_ref"], "restore")
++        again = lab.run_demo(rt, self.artifacts, seed=7, llm_client=ScriptedLLM(scenario),
++                             lab_factory=lambda jobdir: FakeLab())
++        self.assertEqual(again["policy_selection"]["sha256"], record["baseline_digest"])
++
++    def test_cli_lifecycle_with_real_policy_resolution_and_audit(self):
++        from ai_yori_murasaki import cli, lab
++        from ai_yori_murasaki.runtime import Runtime
++        from tests.test_agent_lab_demo import FakeLab, ScriptedLLM
++        rt = Runtime(self.store)
++        scope = {"targets": [{"kind": "fixture", "identifier": "t1"}], "max_targets": 1}
++        auth = {"operator_id": "op1", "granted_at": "2026-01-01T00:00:00Z",
++                "expires_at": "2099-01-01T00:00:00Z", "scope_digest": digest(scope)}
++        cid = rt.create_campaign("INT-TEST", scope, auth, "cli-cycle")["campaign_id"]
++        rt.transition(cid, "running")
++        for setup_run in rt.list_runs(cid):
++            self.store.seal_checkpoint(cid, setup_run["run_id"], "op1")
++        freeze_file = self.artifacts / "freeze.json"
++        freeze_file.write_bytes(canonical({"config": _config(_PINNED),
++            "manifest": {"manifest_id": "fixture-only-no-performance-claim"},
++            "artifact_root": str(self.artifacts)}))
++        commands = []
++
++        def command(*args, expected=0):
++            stdout = io.StringIO()
++            with contextlib.redirect_stdout(stdout):
++                code = cli.main(["--workspace", str(self.ws), "--trusted-root", str(self.tr),
++                                 *args])
++            result = json.loads(stdout.getvalue())
++            self.assertEqual(code, expected, result)
++            commands.append({"command": result["command"], "status": result["status"],
++                             "exit_code": code})
++            return result["data"]
++
++        frozen = command("rsi", "agent-freeze", "--campaign-id", cid,
++                         "--freeze-file", str(freeze_file))
++        train_script = {(_TRAIN[0], "baseline"): ("blue", "blind detection fail"),
++                        (_TRAIN[1], "baseline"): "success"}
++        with patch("ai_yori_murasaki.cli_rsi._agent_executor",
++                   return_value=ScriptedExecutor(train_script)):
++            command("rsi", "agent-train", "--freeze-id", frozen["freeze_id"],
++                    "--staging-root", str(self.artifacts))
++        candidate = self._candidate_of(frozen["freeze_id"])
++        self.assertNotEqual(candidate["bundle_digest"], frozen["baseline_digest"])
++        compare_script = {(sid, "baseline"): ("blue", "miss")
++                          for sid in _VALIDATION + _HOLDOUT}
++        compare_script.update({(sid, "candidate"): "success"
++                               for sid in _VALIDATION + _HOLDOUT})
++        with patch("ai_yori_murasaki.cli_rsi._agent_executor",
++                   return_value=ScriptedExecutor(compare_script)):
++            command("rsi", "agent-compare", "--candidate-id", candidate["candidate_id"],
++                    "--staging-root", str(self.artifacts))
++        self.assertEqual(command("rsi", "agent-ready", "--candidate-id",
++                                 candidate["candidate_id"])["status"], "promotion-ready")
++        command("rsi", "agent-registry-init", "--campaign-id", cid,
++                "--baseline-ref", frozen["baseline_ref"])
++        review = command("rsi", "agent-review", "--candidate-id", candidate["candidate_id"],
++                         "--reviewer", "fixture-reviewer", "--decision", "approved")
++        command("rsi", "agent-apply", "--review-id", review["review_id"],
++                "--expected-baseline", frozen["baseline_digest"],
++                "--expected-candidate", candidate["bundle_digest"], "--rollback", "restore")
++        self.assertEqual(command("rsi", "agent-status")["policy_selection"]["sha256"],
++                         candidate["bundle_digest"])
++        scenario = Path(lab.__file__).parent / "scenarios" / "authz-flag-false"
++
++        def demo():
++            with patch("ai_yori_murasaki.lab.LLMClient", return_value=ScriptedLLM(scenario)), \
++                 patch("ai_yori_murasaki.lab.DockerLab", side_effect=lambda jobdir: FakeLab()):
++                return command("lab", "demo", "--staging-root", str(self.artifacts))
++
++        applied_run = demo()
++        self.assertEqual(applied_run["policy_selection"]["sha256"], candidate["bundle_digest"])
++        command("rsi", "agent-rollback", "--campaign-id", cid,
++                "--expected-current", candidate["bundle_ref"], "--reason", "restore baseline")
++        restored_run = demo()
++        self.assertEqual(restored_run["policy_selection"]["sha256"], frozen["baseline_digest"])
++        for run in rt.list_runs():
++            self.assertEqual(self.store.verify_chain(run["run_id"])["result"], "PASS")
++            checkpoint = self.store.verify_checkpoint(run["campaign_id"], run["run_id"])
++            self.assertEqual(checkpoint["result"], "PASS", (run, checkpoint))
++        print("CLI_LIFECYCLE " + json.dumps({
++            "evaluation": "scripted fixture, not measured improvement",
++            "commands": commands, "candidate_id": candidate["candidate_id"],
++            "review_id": review["review_id"], "applied": applied_run["policy_selection"],
++            "restored": restored_run["policy_selection"],
++            "audit": "all chains and checkpoints PASS"}, sort_keys=True))
+ 
+     def test_apply_requires_ready(self) -> None:
+         record = self._freeze(_config(pinning=_UNPINNED))
+--- /dev/null
++++ b/tests/test_blue_evidence_identity.py
+@@ -0,0 +1,145 @@
++"""Event-level detection regression tests; real broker/Oracle, no LLM."""
++import pytest
++
++from ai_yori_murasaki.agents.tools import ToolBroker
++from ai_yori_murasaki.jsonio import DataError, digest
++from ai_yori_murasaki.oracle import Oracle
++from ai_yori_murasaki.runtime import Runtime
++from ai_yori_murasaki.storage import Store
++
++
++@pytest.fixture
++def blue(tmp_path):
++    store = Store(tmp_path / "ws", tmp_path / "trusted")
++    rt = Runtime(store)
++    scope = {"targets": [{"kind": "fixture", "identifier": "t1"}],
++             "max_targets": 1}
++    auth = {"operator_id": "op1", "granted_at": "2026-01-01T00:00:00Z",
++            "expires_at": "2099-01-01T00:00:00Z", "scope_digest": digest(scope)}
++    cid = rt.create_campaign("INT-TEST", scope, auth, "c1")["campaign_id"]
++    rt.transition(cid, "running")
++    red = rt.start_run(cid, "red", 1, "r1")["run_id"]
++    rt.finish_run(red, "completed")
++    rt.seal_run(cid, red)
++    rid = rt.start_run(cid, "blue_blind", 1, "b1")["run_id"]
++    broker = ToolBroker(runtime=rt, campaign_id=cid, run_id=rid,
++                        role="blue", grants=["submit_findings"])
++    return rt, cid, broker
++
++
++def row(rt, timestamp, **changes):
++    data = {"timestamp": timestamp, "method": "GET", "path": "/record",
++            "status": 200, "role": "guest"}
++    data.update(changes)
++    observation = {"kind": "telemetry", "observed_at": "2026-11-09T00:00:00Z",
++                   "data": data}
++    return {"ref": rt.store.put_object(observation), "data": data}
++
++
++def entry(observation):
++    data = observation["data"]
++    return {"category": "authz", "severity": "high", "title": "access",
++            "path": data["path"], "method": data["method"],
++            "role": data["role"], "evidence_ref": observation["ref"],
++            "rationale": "observed access"}
++
++
++def saved(rt, cid):
++    return [rt.store.get_object(ref) for ref in rt.list_records(cid, "finding")]
++
++
++@pytest.mark.parametrize("reverse", [False, True])
++@pytest.mark.parametrize("separate_calls", [False, True])
++def test_distinct_events_survive_deduplication(blue, reverse, separate_calls):
++    rt, cid, broker = blue
++    rows = [row(rt, 100), row(rt, 101)]
++    broker.issue_refs([r["ref"] for r in rows])
++    reports = [entry(r) for r in (rows[::-1] if reverse else rows)]
++    batches = [[r] for r in reports] if separate_calls else [reports]
++    for batch in batches:
++        result = broker.execute("submit_findings", {"findings": batch})
++        assert result["type"] == "tool_result"
++    findings = saved(rt, cid)
++    report = Oracle().blind_detection_check(rows, findings, rt.store)["report"]
++    assert report["passed"] is True, report
++    assert len(findings) == 2
++    assert {f["references"][0] for f in findings} == {r["ref"] for r in rows}
++    assert report["detected_events"] == 2
++    assert report["missed_events"] == report["false_positive_findings"] == 0
++
++
++def test_same_evidence_is_idempotent_in_batch_and_on_retry(blue):
++    rt, cid, broker = blue
++    event = row(rt, 100)
++    broker.issue_refs([event["ref"]])
++    first = broker.execute("submit_findings", {"findings": [entry(event)] * 2})
++    retry = broker.execute("submit_findings", {"findings": [entry(event)]})
++    assert first["result"]["submitted"] == first["result"]["duplicates"] == 1
++    assert retry["result"]["submitted"] == 0
++    assert retry["result"]["duplicates"] == 1
++    assert len(saved(rt, cid)) == 1
++
++
++@pytest.mark.parametrize("report_benign", [False, True])
++def test_benign_and_attack_counts(blue, report_benign):
++    rt, cid, broker = blue
++    rows = [row(rt, 100), row(rt, 101, role="admin"),
++            row(rt, 102, status=403), row(rt, 103, path="/public")]
++    broker.issue_refs([r["ref"] for r in rows])
++    reports = [entry(rows[0])] + ([entry(rows[1])] if report_benign else [])
++    broker.execute("submit_findings", {"findings": reports})
++    report = Oracle().blind_detection_check(rows, saved(rt, cid), rt.store)["report"]
++    assert report["rows_requiring_detection"] == report["detected_events"] == 1
++    assert report["missed_events"] == 0
++    assert report["true_positive_findings"] == 1
++    assert report["false_positive_findings"] == int(report_benign)
++    assert report["passed"] is (not report_benign)
++
++
++@pytest.mark.parametrize("bad_ref", [None, "", "not-a-ref", "f" * 64, 3])
++def test_invalid_or_unissued_refs_reject_whole_batch(blue, bad_ref):
++    rt, cid, broker = blue
++    event = row(rt, 100)
++    broker.issue_refs([event["ref"]])
++    invalid = entry(event)
++    invalid["evidence_ref"] = bad_ref
++    result = broker.execute("submit_findings", {"findings": [entry(event), invalid]})
++    assert result["type"] == "tool_error"
++    assert saved(rt, cid) == []
++
++
++def test_missing_and_other_agent_refs_are_rejected(blue):
++    rt, cid, broker = blue
++    event = row(rt, 100)
++    red_broker = ToolBroker(runtime=rt, campaign_id=cid,
++                           run_id=broker._run_id, role="red", grants=["read_evidence"])
++    red_broker.issue_refs([event["ref"]])
++    assert broker.execute("submit_findings", {"findings": [entry(event)]})["type"] == "tool_error"
++    assert broker.execute("read_evidence", {"ref": event["ref"]})["type"] == "tool_error"
++    missing = entry(event)
++    del missing["evidence_ref"]
++    assert broker.execute("submit_findings", {"findings": [missing]})["type"] == "tool_error"
++    assert saved(rt, cid) == []
++
++
++def test_oracle_rejects_missing_or_mismatched_cas(blue):
++    rt, _, _ = blue
++    event = row(rt, 100)
++    event["data"]["status"] = 403
++    with pytest.raises(DataError):
++        Oracle().blind_detection_check([event], [], rt.store)
++    event["ref"] = "f" * 64
++    with pytest.raises((DataError, FileNotFoundError)):
++        Oracle().blind_detection_check([event], [], rt.store)
++
++
++@pytest.mark.parametrize("changes", [{"role": "admin"}, {"method": "POST"},
++                                     {"path": "/public"}])
++def test_report_metadata_must_match_issued_observation(blue, changes):
++    rt, cid, broker = blue
++    event = row(rt, 100)
++    broker.issue_refs([event["ref"]])
++    finding = entry(event)
++    finding.update(changes)
++    assert broker.execute("submit_findings", {"findings": [finding]})["type"] == "tool_error"
++    assert saved(rt, cid) == []
+--- a/tests/test_agent_lab_demo.py
++++ b/tests/test_agent_lab_demo.py
+@@ -357,6 +357,18 @@
+                                                  "patch_drafted")]
+         self.assertEqual(len(patched_events), 2)
+ 
++    def test_metrics_hold_when_observation_reference_is_missing(self) -> None:
++        from ai_yori_murasaki import lab_metrics
++        scenario = _PROJECT / "ai_yori_murasaki" / "scenarios" / "authz-flag-false"
++        result, _ = self._run(ScriptedLLM(scenario))
++        measurement = self.store.get_object(result["measurement_ref"])
++        observations = self.store.get_object(measurement["red_ref"])
++        del observations["observations"][-1]["ref"]
++        measurement["red_ref"] = self.store.put_object(observations)
++        measured = lab_metrics.measure(self.rt, result["campaign_id"], measurement)
++        self.assertEqual(measured["status"], "HOLD")
++        self.assertEqual(measured["reason_code"], "evidence_missing")
++
+     def test_agent_demo_on_unseen_scenario_shape(self) -> None:
+         scenario_dir = (_PROJECT / "ai_yori_murasaki" / "scenarios"
+                         / "authz-role-mismatch")

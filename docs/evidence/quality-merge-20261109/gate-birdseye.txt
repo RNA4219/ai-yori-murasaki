@@ -1,0 +1,2 @@
+{"index_path": "C:\\Users\\ryo-n\\Codex_dev\\_worktrees\\aym-quality-merge-20261109\\docs\\birdseye\\index.json", "hot_path": "C:\\Users\\ryo-n\\Codex_dev\\_worktrees\\aym-quality-merge-20261109\\docs\\birdseye\\hot.json", "failures": [], "warnings": [], "remediations": []}
+exit_code=0

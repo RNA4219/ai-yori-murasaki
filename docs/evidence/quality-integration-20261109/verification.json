@@ -1,0 +1,95 @@
+{
+  "base_head": "82001b5f5c1b8384dd070e19f028ddd2afe6d2c3",
+  "authorization": "User explicitly approved temporary Codex substitution on 2026-11-09",
+  "source_sha256": {
+    "ai_yori_murasaki/agents/tools.py": "5d1bd2cfeb507a5fd2289d54a843e6347e081f3c94f03c2debd1f21139a14e48",
+    "ai_yori_murasaki/oracle.py": "22b969b4afc8b8cfb300f482ac061804b9f8664ebb920b588f5a8b30f61ccfbf",
+    "ai_yori_murasaki/lab_metrics.py": "45f62d99246ac86729eee6942cb778559700bf661f0fbbfaaa26fd3d5a95ce4b",
+    "ai_yori_murasaki/rsi_agent.py": "413ad19fb7bfc51ecddb9440a9d29db73953c525ae16e388103517083a750ddc",
+    "ai_yori_murasaki/cli.py": "1d27254c564b2e4ed012e4cd21b9cfacaf7c90848018ef6e742a0bfeb81da796",
+    "ai_yori_murasaki/cli_rsi.py": "312907f3b282807c33568314a7e06e7c9e575492b2456881a5e6d1e059fa8fb7",
+    "ai_yori_murasaki/lab.py": "19380d2f39aef403d89c4ddb28117885fa50489d6ac737a7bda1c993c3fd26df",
+    "tests/test_agent_rsi.py": "e01b9292fbfbd1ec5f29495afc0dc79410ed5f45aca69cfd839a17051393bed9",
+    "tests/test_blue_evidence_identity.py": "8c53c83def1bb630e160e90f133f64f71ce8dc3125810ebd3f27e5c70d93b298",
+    "tests/test_agent_lab_demo.py": "123787fb862db28b279a3a82c846b776ed01a27bd689b782d4fcdce9aebd3441"
+  },
+  "log_sha256": {
+    "gate-acceptance.txt": "a9f58776a09b5dac438049683f24bf85764e0ff8e7455952456165c68c158627",
+    "gate-birdseye.txt": "4263b842c84032f3b51020d0fe17042a0c5120393cbf974f2f2d47922a7c6187",
+    "gate-tier.txt": "ee373fa8f9ae61156adc943a31a5f5573a21c669a4f5123dd8563e2afb3b4b54",
+    "p0-after.txt": "bfd571360e42d8717b35e5607ee3db6c7574760defa65608f08128d54df9c0fd",
+    "p0-before.txt": "0a05a7af22d1a8893838fc79c14922ad029ca101ba7f7cda4a0caaffd601f30b",
+    "p0-first-regression.txt": "3e3fd32f941786a53fc0eec46ff2a31a6942b8036049047cab10a5f891cc48e9",
+    "p0-test-setup-error.txt": "affafc5a11bb0242c44016b54cd97db808c70960d53218c2708c2dcb28765753",
+    "p1-before.txt": "a31f0a25872f7a1d4b9cbc8e6415d60e47e48228405e7cca966064fafb16b511",
+    "p1-first-regression.txt": "8ee6455aee27ab32caf6d591d721a69f0f3b71ab62b504e89e2115c5080ca1e5",
+    "p1-integration-cli-args-error.txt": "3e4dbd894f23f660ddc52f5b3ab1892ed021f09a6cfbe2bf4181d7a476be6f7a",
+    "p1-integration-setup-checkpoint-error.txt": "99e9d0c70e843607f43060550ad65b4b7bce95a60359bd16bc86668301b6f523",
+    "p1-integration.txt": "ff635f468dbdcf369f2f93c835ada057ec20691aee19077cc04f61b24986b58b",
+    "p1-second-regression.txt": "628f8783efb56acaf7b622a2b7c94ef056a65a128f2e47b436909f9287af7442",
+    "pytest-all-before-final-guards.txt": "710b42589a5c684148ea16957ea2b7d9edf9e37a68a17424df00072fba8d7c7d",
+    "pytest-all.txt": "9efa55fc7fdf29fd3d0abd68a55fe389cf596a6c2ef48ae1c90f304724c018d5"
+  },
+  "P0": {
+    "before": {
+      "failed": 4,
+      "seconds": 4.37
+    },
+    "after": {
+      "passed": 65,
+      "seconds": 23.95
+    },
+    "status": "complete"
+  },
+  "P1": {
+    "before": {
+      "failed": 1,
+      "seconds": 2.22
+    },
+    "cli_integration": {
+      "passed": 1,
+      "seconds": 14.68
+    },
+    "status": "complete"
+  },
+  "final_suite": {
+    "passed": 637,
+    "skipped": 3,
+    "subtests_passed": 22,
+    "seconds": 124.39,
+    "exit_code": 0
+  },
+  "not_run": [
+    "real LLM/Docker loop",
+    "live Wazuh Blue scoring",
+    "real RSI promotion"
+  ],
+  "performance_improvement_claim": false,
+  "documentation_gates": {
+    "tier_and_drift": 0,
+    "acceptance": 0,
+    "birdseye_strict": 0
+  },
+  "P2": {
+    "design": "complete",
+    "implementation": "not_started",
+    "task_ids": [
+      "20261109-02",
+      "20261109-03",
+      "20261109-04"
+    ]
+  },
+  "final_audit": {
+    "local_links_checked": 229,
+    "missing_links": [],
+    "source_hashes_match_verified_snapshot": true,
+    "diff_check_exit": 0,
+    "task_done": true,
+    "acceptance_approved": true
+  },
+  "artifact_sha256": {
+    "implementation.patch": "a13889f1c3947792d01f56a7eded3de6423c9ee3b4795c71d0dfdc99e855579c",
+    "yomiyasu-summary.json": "c57a0bfc9792a11b73356870296cd850aa9953c72e858bfec0281debf2a7619e",
+    "final-audit.json": "bfd4368158796c12b3a0a9c47027397e5d890b8aa222fc13490633acbe58512a"
+  }
+}

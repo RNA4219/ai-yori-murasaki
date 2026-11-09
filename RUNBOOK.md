@@ -94,6 +94,21 @@ manual-bbによる手動ブラックボックス試験は[MANUAL-BB-BATCH-202611
 
 ## RSI
 
+製品agent bundleの通常実行への反映は [Blue評価とRSI適用の契約](docs/requirements/QUALITY-INTEGRATION.md) に従う。従来の認可方針用RSIとは別のregistryである。
+
+```powershell
+# agent-freeze / train / compare / readyを経て得たIDとhashを使用する。
+aym rsi agent-registry-init --campaign-id <campaign-id> --baseline-ref <baseline-ref>
+aym rsi agent-review --candidate-id <candidate-id> --reviewer <reviewer-id> --decision approved
+aym rsi agent-apply --review-id <review-id> --expected-baseline <baseline-sha256> --expected-candidate <candidate-sha256> --rollback '直前方策へ戻す'
+aym rsi agent-status
+aym lab demo --staging-root <絶対パス>
+aym rsi agent-rollback --campaign-id <campaign-id> --expected-current <candidate-ref> --reason '直前方策へ戻す'
+aym lab demo --staging-root <絶対パス>
+```
+
+通常実行の `policy_selection` と `agent_policy_selection` イベントを照合する。適用状態の破損は自動で無視しない。trusted activationが正常なら `agent-rollback` で復旧する。trusted pinのない旧registryは保全し、内容確認後に分離した新規workspace／trusted rootへ初期化する。実行中のcurrentが評価baselineと異なる場合は、実際のbaselineを明示してfreezeし直し、再評価する。
+
 自己改善を扱う作業は [RSI 方針](docs/RSI.md) の9項目と [RSI 契約](docs/CONTRACTS.md#rsi) を読み、次の段取りで進める。
 実装済みCLIは[操作ガイド](docs/PRODUCT-GUIDE.md#rsiの操作)を参照する。以下の原則は実装後も維持する。
 

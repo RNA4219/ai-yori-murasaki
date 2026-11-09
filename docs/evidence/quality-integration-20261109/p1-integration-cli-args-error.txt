@@ -1,0 +1,11 @@
+F.
+================================== FAILURES ===================================
+_____ ApplyTest.test_cli_lifecycle_with_real_policy_resolution_and_audit ______
+tests\test_agent_rsi.py:602: in test_cli_lifecycle_with_real_policy_resolution_and_audit
+    command("rsi", "agent-compare", "--freeze-id", frozen["freeze_id"],
+tests\test_agent_rsi.py:581: in command
+    self.assertEqual(code, expected, result)
+E   AssertionError: 2 != 0 : {'campaign_id': None, 'command': 'unknown', 'data': {'message': '�����������ł��܂���ł���'}, 'reason_code': 'usage_error', 'run_id': None, 'schema_version': '1.0.0', 'status': 'fail'}
+=========================== short test summary info ===========================
+FAILED tests/test_agent_rsi.py::ApplyTest::test_cli_lifecycle_with_real_policy_resolution_and_audit
+1 failed, 1 passed in 12.28s

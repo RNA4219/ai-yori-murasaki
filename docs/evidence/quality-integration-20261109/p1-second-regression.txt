@@ -1,0 +1,10 @@
+..........................F...s......................................... [ 73%]
+..........................                                               [100%]
+================================== FAILURES ===================================
+_ ApplyTest.test_normal_demo_records_the_policy_it_actually_passes_to_agents __
+tests\test_agent_rsi.py:526: in test_normal_demo_records_the_policy_it_actually_passes_to_agents
+    from test_agent_lab_demo import FakeLab, ScriptedLLM
+E   ModuleNotFoundError: No module named 'test_agent_lab_demo'
+=========================== short test summary info ===========================
+FAILED tests/test_agent_rsi.py::ApplyTest::test_normal_demo_records_the_policy_it_actually_passes_to_agents
+1 failed, 96 passed, 1 skipped in 29.84s

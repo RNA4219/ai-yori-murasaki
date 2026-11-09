@@ -1,0 +1,36 @@
+EEEE                                                                     [100%]
+=================================== ERRORS ====================================
+__ ERROR at setup of test_distinct_events_survive_deduplication[False-False] __
+tests\test_blue_evidence_identity.py:21: in blue
+    rid = rt.start_run(cid, "blue_blind", 1, "b1")["run_id"]
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ai_yori_murasaki\runtime.py:444: in start_run
+    raise DataError(
+E   ai_yori_murasaki.jsonio.DataError: phase blue_blind requires prior phase completed and sealed
+__ ERROR at setup of test_distinct_events_survive_deduplication[False-True] ___
+tests\test_blue_evidence_identity.py:21: in blue
+    rid = rt.start_run(cid, "blue_blind", 1, "b1")["run_id"]
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ai_yori_murasaki\runtime.py:444: in start_run
+    raise DataError(
+E   ai_yori_murasaki.jsonio.DataError: phase blue_blind requires prior phase completed and sealed
+__ ERROR at setup of test_distinct_events_survive_deduplication[True-False] ___
+tests\test_blue_evidence_identity.py:21: in blue
+    rid = rt.start_run(cid, "blue_blind", 1, "b1")["run_id"]
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ai_yori_murasaki\runtime.py:444: in start_run
+    raise DataError(
+E   ai_yori_murasaki.jsonio.DataError: phase blue_blind requires prior phase completed and sealed
+___ ERROR at setup of test_distinct_events_survive_deduplication[True-True] ___
+tests\test_blue_evidence_identity.py:21: in blue
+    rid = rt.start_run(cid, "blue_blind", 1, "b1")["run_id"]
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ai_yori_murasaki\runtime.py:444: in start_run
+    raise DataError(
+E   ai_yori_murasaki.jsonio.DataError: phase blue_blind requires prior phase completed and sealed
+=========================== short test summary info ===========================
+ERROR tests/test_blue_evidence_identity.py::test_distinct_events_survive_deduplication[False-False]
+ERROR tests/test_blue_evidence_identity.py::test_distinct_events_survive_deduplication[False-True]
+ERROR tests/test_blue_evidence_identity.py::test_distinct_events_survive_deduplication[True-False]
+ERROR tests/test_blue_evidence_identity.py::test_distinct_events_survive_deduplication[True-True]
+4 errors in 3.71s

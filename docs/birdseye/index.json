@@ -1,5 +1,5 @@
 {
-  "generated_at": "00027",
+  "generated_at": "00028",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -16,7 +16,7 @@
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
       "mtime": "00003",
-      "source_sha256": "335e7b3fe63b5c086b27d04f08a2a43422c651f6103996ae40c32e3bd544fe06"
+      "source_sha256": "b3dd7fe2fd1b8a0405a10aa45a5a06d4b913c3afd4e3a0f288d3c81d2efd978d"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -37,19 +37,19 @@
       "role": "navigation",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
       "mtime": "00007",
-      "source_sha256": "ccdf8ba20bc7f45124907a28928ac84cfbf4594b0f1a5b2d75c475a94ae73631"
+      "source_sha256": "6f20aba3377a3b8429d4d391a9c2084c21b2f0531e664efe9560c2afa0d76a2a"
     },
     "README.md": {
       "role": "overview",
       "caps": "docs/birdseye/caps/README.md.json",
       "mtime": "00008",
-      "source_sha256": "a71d817166c7a445dad7c8102701d0bc17028bf284772d1dac949c14a0f07336"
+      "source_sha256": "218c186fdbe4368be82cd53226a46bf78435fb0ef957d6de7ee5ec269170bca6"
     },
     "RUNBOOK.md": {
       "role": "operations",
       "caps": "docs/birdseye/caps/RUNBOOK.md.json",
       "mtime": "00009",
-      "source_sha256": "3f12e2007def059ff9781e422dcc22bdda8195f4d48785a73ed7aa0cd470fdaf"
+      "source_sha256": "8cf7ad403f4ee3ed5070d5e7f5985818da43d935f71d8a5411279a09396af61e"
     },
     "TASK.codex.md": {
       "role": "template",
@@ -68,10 +68,10 @@
       "mtime": "00012"
     },
     "docs/acceptance/INDEX.md": {
-      "role": "index",
+      "role": "navigation",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
       "mtime": "00013",
-      "source_sha256": "ee31e20fc9555d75417cd2fecc76bdb6312f9db65d1f65fb16e687064bbb8634"
+      "source_sha256": "26cbda052fa82c5775adf6105ca08c44b208690af7195977b79e5240c0ed460a"
     },
     "docs/acceptance/README.md": {
       "role": "guide",
@@ -108,13 +108,13 @@
       "role": "guide",
       "caps": "docs/birdseye/caps/docs.releases.README.md.json",
       "mtime": "00021",
-      "source_sha256": "8c3d2e996d5ec109aa10991c4e5b1270abdb143bd3d33c9db3c09335c687dac4"
+      "source_sha256": "a49d90e60077ea1d5a81093bdb39eddaed76a9fe5ed2eda6a5ef2df6da54ca98"
     },
     "docs/tasks/README.md": {
-      "role": "guide",
+      "role": "operations",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
       "mtime": "00022",
-      "source_sha256": "1fdd5454a9e7198a721504cdd8cae45d8d8a0eb5a5f7181dbf4dfec152236242"
+      "source_sha256": "c7c50ffae3e8ce1449e4671cc898f2f70084224315e215f9fb889ef0fba9aa15"
     },
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md": {
       "role": "task",
@@ -274,7 +274,8 @@
     "docs/PRODUCT-ACCEPTANCE.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.PRODUCT-ACCEPTANCE.md.json",
-      "mtime": "00050"
+      "mtime": "00050",
+      "source_sha256": "21eaa9d9a016dd8e881b77ca2877ad03a217a5e6a58d9416b9b88af4a142e4f0"
     },
     "docs/PRODUCT-GUIDE.md": {
       "role": "doc",
@@ -289,7 +290,8 @@
     "docs/requirements/API-CONTRACTS.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.requirements.API-CONTRACTS.md.json",
-      "mtime": "00053"
+      "mtime": "00053",
+      "source_sha256": "e1337a8017d25b025fe7b6e1872e6139ed0aae64eef7c8ae21715e05e678909d"
     },
     "docs/requirements/COMPACTION-01.md": {
       "role": "doc",
@@ -470,6 +472,60 @@
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.tasks.TASK.version-011-11-08-2026.md.json",
       "mtime": "00091"
+    },
+    "docs/acceptance/AC-20261109-01.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261109-01.md.json",
+      "mtime": "00092",
+      "source_sha256": "de7161729182dce586127f9c2b1d7eddbac2c0b03f83470749274e0a746efcd0"
+    },
+    "docs/evidence/quality-integration-20261109/README.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.evidence.quality-integration-20261109.README.md.json",
+      "mtime": "00093",
+      "source_sha256": "4dd2c3dc8f364b0faf54ebd316794bbbf51ff7d01364d4f7e46f540397e3bf27"
+    },
+    "docs/releases/RA-20261109-01.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.releases.RA-20261109-01.md.json",
+      "mtime": "00094",
+      "source_sha256": "a05c15a8955c2dff0a5190feed7428b7f8dbf92e0b10e4fd44f694ca9fef4b44"
+    },
+    "docs/requirements/P2-VALIDATION-PLAN.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.P2-VALIDATION-PLAN.md.json",
+      "mtime": "00095",
+      "source_sha256": "099a61f1f2f9fb952c718670fe90dc2d36857569ea0317875672270342f37e53"
+    },
+    "docs/requirements/QUALITY-INTEGRATION.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.QUALITY-INTEGRATION.md.json",
+      "mtime": "00096",
+      "source_sha256": "43d674f497f39378b5a8cd193cfd0048496a47435602f617d4df31657a7cc298"
+    },
+    "docs/tasks/TASK.p2-rsi-experiment-11-09-2026.md": {
+      "role": "task",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.p2-rsi-experiment-11-09-2026.md.json",
+      "mtime": "00097",
+      "source_sha256": "eefc4a26cb892b2b5fe5820eb690000b2a7014851df8989c7e7509422270c0bc"
+    },
+    "docs/tasks/TASK.p2-sqli-11-09-2026.md": {
+      "role": "task",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.p2-sqli-11-09-2026.md.json",
+      "mtime": "00098",
+      "source_sha256": "a0bad2ccc1ba516890a7a769863f2b2a21af9b8b08d76b4c453630007a03805d"
+    },
+    "docs/tasks/TASK.p2-wazuh-blue-11-09-2026.md": {
+      "role": "task",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.p2-wazuh-blue-11-09-2026.md.json",
+      "mtime": "00099",
+      "source_sha256": "24eb810fd1e7a6a631c415bc6c266c9dde82baa7fcf4c9336dc733e32afdac00"
+    },
+    "docs/tasks/TASK.quality-integration-11-09-2026.md": {
+      "role": "task",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.quality-integration-11-09-2026.md.json",
+      "mtime": "00100",
+      "source_sha256": "d472ee8b65bfe93c7bcf8228a7cf54b07c9c901904b837129c8fd3a703daae60"
     }
   },
   "edges": [
