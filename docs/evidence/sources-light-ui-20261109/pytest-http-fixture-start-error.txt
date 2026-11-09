@@ -1,0 +1,19 @@
+...................F..............................                       [100%]
+================================== FAILURES ===================================
+____________________ test_real_http_mcp_reader_with_bearer ____________________
+tests\test_sources.py:148: in test_real_http_mcp_reader_with_bearer
+    with socket.create_connection(("127.0.0.1", port), timeout=.2):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python311\Lib\socket.py:851: in create_connection
+    raise exceptions[0]
+..\..\AppData\Local\Programs\Python\Python311\Lib\socket.py:836: in create_connection
+    sock.connect(sa)
+E   TimeoutError: timed out
+
+During handling of the above exception, another exception occurred:
+tests\test_sources.py:152: in test_real_http_mcp_reader_with_bearer
+    pytest.fail("local MCP HTTP fixture did not start")
+E   Failed: local MCP HTTP fixture did not start
+=========================== short test summary info ===========================
+FAILED tests/test_sources.py::test_real_http_mcp_reader_with_bearer - Failed:...
+1 failed, 49 passed in 22.57s

@@ -1,0 +1,31 @@
+{
+  "id": "docs/tasks/TASK.sources-light-ui-11-09-2026.md",
+  "role": "task",
+  "public_api": [],
+  "summary": "資料取り込み・出典・白基調と文字拡大のTask。CLI、参考情報の分離、許可MCPと文字サイズを定義し技術検収を完了する。追加のmain反映承認はRA-20261109-02へ結ぶ。",
+  "deps_out": [
+    "docs/SOURCES.md",
+    "docs/acceptance/AC-20261109-02.md",
+    "docs/evidence/sources-light-ui-20261109/README.md",
+    "docs/releases/RA-20261109-02.md"
+  ],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/AC-20261109-02.md",
+    "docs/acceptance/INDEX.md",
+    "docs/releases/RA-20261109-02.md",
+    "docs/tasks/README.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "8873d7cdf4b5a317bdea472b738216f210b1c32b26db45385525ad172187f7c6",
+  "generated_at": "00030",
+  "review": {
+    "reviewed_at": "2026-11-09T05:32:05.050360+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "8873d7cdf4b5a317bdea472b738216f210b1c32b26db45385525ad172187f7c6",
+    "summary_sha256": "7f9808eb6f8c5b3068938aa306fcb62ef5bced16c6e209711b26eebd5a6a5994",
+    "scope": "今回の原文・要約・参照を照合。MCPローカル試験、実サービス未検証、画面実測、参考情報と判定証拠の分離を確認。"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "mobile": {
+    "width": 390,
+    "bodyFont": "18px",
+    "headingFont": "24px",
+    "overflow": false,
+    "violations": [],
+    "scriptExecuted": false
+  },
+  "desktop": {
+    "width": 1440,
+    "bodyFont": "18px",
+    "headingFont": "24px",
+    "background": "rgb(247, 248, 252)",
+    "overflow": false,
+    "violations": [],
+    "sourceLinks": [
+      "obsidian://open?vault=Notes&file=research",
+      "https://developers.notion.com/guides/mcp/overview",
+      "https://github.com/RNA4219/ai-yori-murasaki/pull/3"
+    ]
+  }
+}

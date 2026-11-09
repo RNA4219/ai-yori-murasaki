@@ -1,0 +1,57 @@
+{
+  "recorded_at": "2026-11-09T05:28:53.137128+00:00",
+  "base_commit": "dbffaac02a740499b72e33c9a0a943e4bff1693d",
+  "task_id": "20261109-05",
+  "acceptance_id": "AC-20261109-02",
+  "changelog": "0018",
+  "full_suite": {
+    "passed": 657,
+    "skipped": 3,
+    "subtests_passed": 22,
+    "seconds": 128.4,
+    "exit_code": 0
+  },
+  "final_html_regression": {
+    "passed": 24,
+    "seconds": 13.62,
+    "exit_code": 0
+  },
+  "after_full_suite": [
+    "CSS h2/h3 font sizes adjusted; 24 server/HTML tests and real-browser checks passed.",
+    "Original CRLF restored in HTML without content changes; final JavaScript syntax passed.",
+    "Documentation and evidence added; Tier/Acceptance/Birdseye checks passed."
+  ],
+  "not_run": [
+    "User Obsidian vault",
+    "Live Notion/GitHub MCP",
+    "OAuth login and refresh flow",
+    "Real LLM/Docker"
+  ],
+  "publication": "local changes only; no commit/push/merge/release for this addition",
+  "sha256": {
+    "ai_yori_murasaki/cli.py": "681569dc477d8c109bbfdd0241ee7da8f01e6b9fa944d020a5aa314426bfc2be",
+    "ai_yori_murasaki/cli_sources.py": "38280f128cfce7169ba41b96d6c7d29eadda77294b482a8b7816acfb9b5d4543",
+    "ai_yori_murasaki/server.py": "ad6db2fdb2fbe88aa7c5b54551230b084e607ad0cf2c1ba5b1bc61e3b07684fc",
+    "ai_yori_murasaki/source_mcp.py": "85c1bfe2113d795d0b75a8d16cf6c3061739b014a82020f24e84af07d745ecf7",
+    "ai_yori_murasaki/sources.py": "6cc22f348ebf0b80c02678fc117e377d957ce9ed9800ac8ae7e29aa5c63cb846",
+    "ai_yori_murasaki/web/index.html": "8fc7c5807dd24edafd6a9468246c7febeff24bcd33fa49b4ee4d57c8ef3fb202",
+    "docs/evidence/sources-light-ui-20261109/README.md": "59ebc25d78f3c1f60667db5ed67f8d395880b03dec70b2464a2d732b18106210",
+    "docs/evidence/sources-light-ui-20261109/desktop-list.png": "6f00b79360a7bdaaaf65ed0a03b0aecafe5d0b3ba566c850c328c04819a218aa",
+    "docs/evidence/sources-light-ui-20261109/documents-acceptance.txt": "a9f58776a09b5dac438049683f24bf85764e0ff8e7455952456165c68c158627",
+    "docs/evidence/sources-light-ui-20261109/documents-birdseye.txt": "4263b842c84032f3b51020d0fe17042a0c5120393cbf974f2f2d47922a7c6187",
+    "docs/evidence/sources-light-ui-20261109/documents-tier.txt": "ee373fa8f9ae61156adc943a31a5f5573a21c669a4f5123dd8563e2afb3b4b54",
+    "docs/evidence/sources-light-ui-20261109/final-diff-check.txt": "bde294368bfed77c2cddf8cec271d398aee9cdbab3b26e1059281bd33adb0120",
+    "docs/evidence/sources-light-ui-20261109/final-syntax.txt": "ae5f5caaea570501880ad87f2265aeac43f96bebf078d99d3ebbfa791d74b9c1",
+    "docs/evidence/sources-light-ui-20261109/mobile-detail.png": "44271907ba968cac780f1f339f1a7e38502e2cff8bbca3303f9cb7d80e77a3d9",
+    "docs/evidence/sources-light-ui-20261109/pytest-all.txt": "3bf7d8956208e2e89f5eaa6e216ca4df487b7f86fd433ac034e5da64ddf599d2",
+    "docs/evidence/sources-light-ui-20261109/pytest-final-html.txt": "803d039ac1a169c7f77044bbd0dc783aacfda23bc93daf6200a00d52035ffc80",
+    "docs/evidence/sources-light-ui-20261109/pytest-first-test-argument-error.txt": "3974670bf6dbeb7a3fca9bedbe426092e92ff7e51ac80cde3d2f3edacb6fa96d",
+    "docs/evidence/sources-light-ui-20261109/pytest-http-fixture-start-error.txt": "9d55f59a38d8785ba10df1b10602447b0b9a381fcc4a50f86f503f29c8e90cb0",
+    "docs/evidence/sources-light-ui-20261109/ui-check.json": "c3835084175876b0e653220f0eec95835e4acaf8b2e9c88f87116d9039fa4f63",
+    "docs/evidence/sources-light-ui-20261109/yomiyasu-summary.json": "2dc426501797355b55b98a9a929ee7657782ae6b89cbd839c5ce75664487f26c",
+    "pyproject.toml": "4eebd60c6cc55515eaaa4100e9460ce53752ba15c156407972354af4f16e6b39",
+    "tests/fixtures/source_mcp_server.py": "d6006cc4ff41a533e170b5bd3828596453ebe89cb26b8096a730e3f1dc572a7e",
+    "tests/test_sources.py": "5e8ec22ae6e8068139b900edf8a431d2e3499e66c8a3fda1879b3e2eec4e56ce",
+    "uv.lock": "7cef128faec6e7b5b63c9048458df225eaec0de340e45d7b1d80618f2357e8fc"
+  }
+}

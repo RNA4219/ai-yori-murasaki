@@ -20,6 +20,8 @@ template_version: 1.0.0
 - In: ローカルDockerラボ、Campaign/Run管理、Evidence/CAS/checkpoint、非LLM Oracle、修復と正常回帰、7種のadapter契約、Ollama実接続、RSI、KPI、P2反復、読み取り専用HTMLモニター、MIT配布物、Workflow Cookbook Tier 3の運用。
 - Out: 第三者への攻撃、本番接続・変更、外部サービスの運用導入、外部公開、Git初期化、リモートCI。
 
+2026-11-09の承認済み追加範囲は、operatorによるObsidian／Notion／GitHub Issueの読取取り込み、出典リンク、白基調のモニター。資料はFindingやOracleとは分け、Blue／RSIへ自動入力しない。[資料取り込み契約](docs/SOURCES.md)に接続方法と制約を定める。
+
 外部Trivy/CodeQL/Wazuh/Sigma CLI/RustXNG/rdshの実接続は未検証。Sigmaは文書化したJSON表現の部分集合を扱う。大規模ホスト数やSLAは実証していない。
 
 ## 3. Constraints / Assumptions
@@ -43,7 +45,7 @@ RSIの原則は[9項目の方針](docs/RSI.md)に従う。Experience Memoryに�
 
 ## 5. Interfaces
 
-- CLI: `aym campaign/run/checkpoint/oracle/verify/monitor/lab/rsi`。
+- CLI: `aym campaign/run/checkpoint/oracle/verify/monitor/lab/rsi/sources`。
 - モニター: `127.0.0.1:8765`、読み取り専用HTTP。raw CASやprivate ledgerを配信しない。
 - Ollama: 製品adapter経由でBlue/レビューにGLM、Red/PurpleにDeepSeekを割り当てる。
 - 操作: [RUNBOOK](RUNBOOK.md)、[製品操作ガイド](docs/PRODUCT-GUIDE.md)。

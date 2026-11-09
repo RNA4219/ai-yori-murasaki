@@ -2,9 +2,10 @@
   "id": "docs/requirements/MONITOR-REDESIGN.md",
   "role": "doc",
   "public_api": [],
-  "summary": "LinearとVercelを参照したモニターの配置・配色・表示切替と、差分更新・通信失敗時の保持を定める。",
+  "summary": "モニターの配置と更新契約。今回の指示で白基調、本文18px・補助16px以上・見出し24pxへ変更し、フォーカス・古い応答・スクロール保持を継続する。",
   "deps_out": [
     "docs/acceptance/AC-20261107-01.md",
+    "docs/acceptance/AC-20261109-02.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md"
   ],
   "deps_in": [
@@ -14,13 +15,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "552ca99790ff666974a684d11ac57d204774c5dda19581527551b7f10983cfae",
-  "generated_at": "00021",
+  "source_sha256": "efbc47d806937348470d2d81fe9aa2a69d172e70ce469429a268900ae9aca0ad",
+  "generated_at": "00030",
   "review": {
-    "reviewed_at": "2026-11-06T20:01:26.138861+00:00",
+    "reviewed_at": "2026-11-09T05:32:05.050360+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "552ca99790ff666974a684d11ac57d204774c5dda19581527551b7f10983cfae",
-    "summary_sha256": "53814bce32d11a79738367008f5a35f912d696d82578e2d17c3712fb3e2279d3",
-    "scope": "原文と要約・実リンクを照合。モニターの変更と技術検収を確認し、見た目のユーザー承認を代行しない。"
+    "source_sha256": "efbc47d806937348470d2d81fe9aa2a69d172e70ce469429a268900ae9aca0ad",
+    "summary_sha256": "d1da63a1e0cfc5c09ebda2a550e7815dc13fc3edc9c17a225b03ade5aa369118",
+    "scope": "今回の原文・要約・参照を照合。MCPローカル試験、実サービス未検証、画面実測、参考情報と判定証拠の分離を確認。"
   }
 }
