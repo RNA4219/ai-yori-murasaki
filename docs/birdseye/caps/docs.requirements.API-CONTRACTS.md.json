@@ -2,9 +2,10 @@
   "id": "docs/requirements/API-CONTRACTS.md",
   "role": "doc",
   "public_api": [],
-  "summary": "CLIのJSON/終了コード/コマンドとread-only HTTPの投影、非配信情報、追加監視APIの契約。",
+  "summary": "CLIのJSON・終了コードと監視APIの契約。製品agentのregistry初期化・状態確認・rollbackとlab方策選択を定義する。",
   "deps_out": [
-    "docs/PRODUCT-ACCEPTANCE.md"
+    "docs/PRODUCT-ACCEPTANCE.md",
+    "docs/requirements/QUALITY-INTEGRATION.md"
   ],
   "deps_in": [
     "BLUEPRINT.md",
@@ -14,13 +15,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "58a1d3fa300a5ddd3dbfa62b3563ec2df06d9904ec6500592c54947f035b7351",
-  "generated_at": "00021",
+  "source_sha256": "e1337a8017d25b025fe7b6e1872e6139ed0aae64eef7c8ae21715e05e678909d",
+  "generated_at": "00026",
   "review": {
-    "reviewed_at": "2026-11-06T19:30:36.760596+00:00",
+    "reviewed_at": "2026-11-09T01:26:13.697017+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "58a1d3fa300a5ddd3dbfa62b3563ec2df06d9904ec6500592c54947f035b7351",
-    "summary_sha256": "f8555c2602a3653730cd7beee2d5fbbfc0a7c89423eec3993d4654ea23b74ca8",
-    "scope": "原文と要約・導線を照合。製品の実測範囲と未検証の区別を維持。"
+    "source_sha256": "e1337a8017d25b025fe7b6e1872e6139ed0aae64eef7c8ae21715e05e678909d",
+    "summary_sha256": "14ee9af1c43509f5f9976634c8f30fe93af2c42aa2afe541fe7b8de60c0cedc3",
+    "scope": "今回の原文・要約・依存を照合。P0/P1の実測、P2設計のみ、未実行と性能未実証を区別する。"
   }
 }

@@ -1,0 +1,36 @@
+.......................FF..                                              [100%]
+================================== FAILURES ===================================
+___________________ RunDemoTest.test_agent_demo_end_to_end ____________________
+tests\test_agent_lab_demo.py:313: in test_agent_demo_end_to_end
+    result, fake = self._run(llm)
+                   ^^^^^^^^^^^^^^
+tests\test_agent_lab_demo.py:303: in _run
+    result = lab_mod.run_demo(
+ai_yori_murasaki\lab.py:627: in run_demo
+    runtime.register_record("remediation", remediation, run_id=reeval_rid)
+ai_yori_murasaki\runtime.py:980: in register_record
+    semantic_validate(kind, value, ctx)
+ai_yori_murasaki\contracts.py:397: in semantic_validate
+    validate(name, instance)
+ai_yori_murasaki\contracts.py:103: in validate
+    raise ContractError(f"{kind}: {error.validator} validation failed",
+E   ai_yori_murasaki.jsonio.ContractError: remediation: additionalProperties validation failed
+____________ RunDemoTest.test_agent_demo_on_unseen_scenario_shape _____________
+tests\test_agent_lab_demo.py:364: in test_agent_demo_on_unseen_scenario_shape
+    result, fake = self._run(llm, scenario="authz-role-mismatch")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_agent_lab_demo.py:303: in _run
+    result = lab_mod.run_demo(
+ai_yori_murasaki\lab.py:627: in run_demo
+    runtime.register_record("remediation", remediation, run_id=reeval_rid)
+ai_yori_murasaki\runtime.py:980: in register_record
+    semantic_validate(kind, value, ctx)
+ai_yori_murasaki\contracts.py:397: in semantic_validate
+    validate(name, instance)
+ai_yori_murasaki\contracts.py:103: in validate
+    raise ContractError(f"{kind}: {error.validator} validation failed",
+E   ai_yori_murasaki.jsonio.ContractError: remediation: additionalProperties validation failed
+=========================== short test summary info ===========================
+FAILED tests/test_agent_lab_demo.py::RunDemoTest::test_agent_demo_end_to_end
+FAILED tests/test_agent_lab_demo.py::RunDemoTest::test_agent_demo_on_unseen_scenario_shape
+2 failed, 25 passed in 13.25s

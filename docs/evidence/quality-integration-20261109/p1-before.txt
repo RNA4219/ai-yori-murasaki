@@ -1,0 +1,12 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+________________ ApplyTest.test_normal_cli_uses_applied_bundle ________________
+tests\test_agent_rsi.py:380: in test_normal_cli_uses_applied_bundle
+    assert digest(run.call_args.kwargs["policy_bundle"]) == candidate["bundle_digest"]
+E   AssertionError: assert '9471add0fef1...98a1a86cd2b8e' == '3d5de9678477...3442decd63ee6'
+E     
+E     - 3d5de9678477dbfcbafb57eb23ebd1d5006f1c86b13288faab83442decd63ee6
+E     + 9471add0fef18bf1018a9b863d09a7cfd690ce56301524e290d98a1a86cd2b8e
+=========================== short test summary info ===========================
+FAILED tests/test_agent_rsi.py::ApplyTest::test_normal_cli_uses_applied_bundle
+1 failed in 2.22s

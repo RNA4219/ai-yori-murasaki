@@ -26,7 +26,7 @@ import math
 from typing import Any, Dict, List, Optional
 
 from . import kpi
-from .oracle import Oracle
+from .oracle import Oracle, finding_covers, is_unauthorized_access
 
 
 def _hold(reason: str) -> Dict[str, Any]:
@@ -111,28 +111,11 @@ def _check_report(runtime: Any, report: Any) -> bool:
 
 def _is_attack_row(row: Dict[str, Any]) -> bool:
     """A successful access to the protected record by a non-admin role."""
-    if not isinstance(row, dict):
-        return False
-    if row.get("status") != 200 or row.get("method") != "GET":
-        return False
-    path = row.get("path")
-    role = row.get("role")
-    if not isinstance(path, str) or _norm_path(path) != "/record":
-        return False
-    return isinstance(role, str) and role != "admin"
+    return is_unauthorized_access(row)
 
 
 def _finding_covers(finding: Dict[str, Any], row: Dict[str, Any]) -> bool:
-    if not isinstance(finding, dict):
-        return False
-    location = finding.get("location")
-    if not isinstance(location, dict) or location.get("path") != "/record":
-        return False
-    refs = finding.get("references")
-    row_ref = row.get("ref")
-    if not isinstance(refs, list) or not isinstance(row_ref, str):
-        return False
-    return row_ref in refs
+    return finding_covers(finding, row)
 
 
 def measure(runtime: Any, campaign_id: str,
@@ -234,9 +217,14 @@ def measure(runtime: Any, campaign_id: str,
         status = row.get("status")
         if isinstance(status, bool) or not isinstance(status, int):
             return _hold("evidence_missing")
+        ref = row.get("ref")
+        if (not isinstance(ref, str) or len(ref) != 64
+                or any(char not in "0123456789abcdef" for char in ref)):
+            return _hold("evidence_missing")
 
     # --- attacks: successful unauthorized accesses to the record ---
-    attack_rows = [row for row in red_rows if _is_attack_row(row)]
+    attack_rows = list({row["ref"]: row for row in red_rows
+                        if _is_attack_row(row)}.values())
 
     # --- findings coverage (deterministic, reference-based) ---
     for finding in findings:

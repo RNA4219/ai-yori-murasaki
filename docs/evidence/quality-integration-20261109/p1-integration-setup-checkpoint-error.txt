@@ -1,0 +1,11 @@
+F
+================================== FAILURES ===================================
+_____ ApplyTest.test_cli_lifecycle_with_real_policy_resolution_and_audit ______
+tests\test_agent_rsi.py:630: in test_cli_lifecycle_with_real_policy_resolution_and_audit
+    self.assertEqual(self.store.verify_checkpoint(run["campaign_id"], run["run_id"])["result"], "PASS")
+E   AssertionError: 'HOLD' != 'PASS'
+E   - HOLD
+E   + PASS
+=========================== short test summary info ===========================
+FAILED tests/test_agent_rsi.py::ApplyTest::test_cli_lifecycle_with_real_policy_resolution_and_audit
+1 failed in 15.01s

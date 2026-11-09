@@ -42,7 +42,8 @@ from urllib.parse import quote
 from . import evaluation_identity as identity
 from .agents.policies import validate_bundle
 from .agents.scenarios import list_scenarios
-from .jsonio import DataError, canonical, digest, loads
+from .jsonio import DataError, canonical, digest, loads, read_json
+from .storage import _assert_no_ancestor_reparse
 
 SideExecutor = Callable[[str, dict, int], dict]
 
@@ -231,10 +232,124 @@ class AgentRSI:
         self._trusted = Path(store.trusted_root)
         self._state_path = self._workspace / "agent_rsi" / "state.json"
         self._registry_path = self._workspace / "agent_rsi" / "registry.json"
+        self._activation_path = self._trusted / "agent_rsi" / "activation.json"
+
+    def _safe_path(self, root: Path, path: Path) -> Path:
+        if ".." in path.parts:
+            _fail("policy_denied", "path traversal denied")
+        _assert_no_ancestor_reparse(path)
+        try:
+            path.resolve().relative_to(root.resolve())
+        except ValueError:
+            _fail("policy_denied", "agent rsi path escapes root")
+        return path
+
+    def _bundle(self, ref: str) -> dict:
+        if not isinstance(ref, str) or not re.fullmatch(r"[0-9a-f]{64}", ref):
+            _fail("policy_denied", "invalid bundle reference")
+        return validate_bundle(self._store.get_object(ref))
+
+    def _registry(self, *, recovery: bool = False) -> Optional[dict]:
+        self._safe_path(self._workspace, self._registry_path)
+        self._safe_path(self._trusted, self._activation_path)
+        if not self._activation_path.exists():
+            if self._registry_path.exists():
+                _fail("policy_denied", "registry has no trusted activation")
+            return None
+        registry = read_json(self._activation_path)
+        if (not isinstance(registry, dict) or set(registry) != {
+                "current_bundle_ref", "baseline_bundle_ref", "history"}
+                or not isinstance(registry["history"], list)):
+            _fail("policy_denied", "activation invalid")
+        for key in ("current_bundle_ref", "baseline_bundle_ref"):
+            if not isinstance(registry[key], str) or not re.fullmatch(
+                    r"[0-9a-f]{64}", registry[key]):
+                _fail("policy_denied", "activation reference invalid")
+        current = registry["baseline_bundle_ref"]
+        active = []
+        for event in registry["history"]:
+            if not isinstance(event, dict) or event.get("from_ref") != current:
+                _fail("policy_denied", "activation history is not continuous")
+            if event.get("operation") == "apply":
+                review_id = event.get("review_id")
+                if not isinstance(review_id, str) or not re.fullmatch(r"agr-[0-9a-f]{24}", review_id):
+                    _fail("not_approved", "activation review invalid")
+                path = self._safe_path(self._trusted, self._trusted / "agent_rsi" / "reviews" / (review_id + ".json"))
+                pin = read_json(path)
+                review = pin.get("review") or {}
+                if (review.get("decision") != "approved"
+                        or review.get("review_id") != review_id
+                        or review.get("candidate_id") != event.get("candidate_id")
+                        or pin.get("bundle_ref") != event.get("to_ref")
+                        or pin.get("baseline_digest") != current):
+                    _fail("not_approved", "activation review mismatch")
+                active.append(event)
+            elif event.get("operation") == "rollback":
+                previous = active.pop()["from_ref"] if active else registry["baseline_bundle_ref"]
+                if event.get("to_ref") != previous:
+                    _fail("policy_denied", "rollback target not previously approved")
+            else:
+                _fail("policy_denied", "unknown activation operation")
+            current = event.get("to_ref")
+        if current != registry["current_bundle_ref"]:
+            _fail("policy_denied", "activation current does not match history")
+        if not recovery:
+            if (not self._registry_path.exists()
+                    or read_json(self._registry_path) != registry):
+                _fail("policy_denied", "registry/activation mismatch; rollback required")
+        return registry
+
+    def _commit_registry(self, registry: dict) -> None:
+        # Trusted activation is the commit point. A partial write leaves a
+        # mismatch that stops execution and can be recovered by rollback.
+        self._safe_path(self._workspace, self._registry_path)
+        self._safe_path(self._trusted, self._activation_path)
+        self._store.atomic_json(self._registry_path, registry)
+        self._store.atomic_json(self._activation_path, registry)
+
+    def resolve_bundle(self, bundle_file: Optional[Path] = None) -> tuple:
+        """Explicit operator selection > trusted activation > default.
+
+        Invalid selected state fails closed; no fallback after a failure.
+        Evaluation executors pass their frozen bundles explicitly instead.
+        """
+        from .agents import load_default_bundle
+        with self._store.lock():
+            if bundle_file is not None:
+                path = Path(bundle_file)
+                if not path.is_absolute():
+                    _fail("input_invalid", "bundle file must be absolute")
+                self._safe_path(path.parent, path)
+                bundle = validate_bundle(read_json(path))
+                source, reason = "explicit_file", "operator_override"
+            else:
+                registry = self._registry()
+                if registry is None:
+                    bundle = load_default_bundle()
+                    source, reason = "packaged_default", "no_activation"
+                else:
+                    bundle = self._bundle(registry["current_bundle_ref"])
+                    source, reason = "approved_registry", "trusted_activation"
+            ref = self._store.put_object(bundle)
+            selection = {
+                "bundle_id": bundle["bundle_id"], "version": bundle["version"],
+                "bundle_ref": ref, "sha256": digest(bundle),
+                "source": source, "reason": reason,
+            }
+            if source == "approved_registry":
+                selection["activation_sha256"] = digest(registry)
+                if registry["history"]:
+                    selection["reason"] = registry["history"][-1]["operation"]
+                    selection["review_id"] = registry["history"][-1].get("review_id")
+                    selection["candidate_id"] = registry["history"][-1].get("candidate_id")
+                else:
+                    selection["reason"] = "operator_initialized_baseline"
+            return bundle, selection
 
     # -- state helpers ----------------------------------------------------
 
     def _load_state(self) -> dict:
+        self._safe_path(self._workspace, self._state_path)
         if not self._state_path.exists():
             return {"candidates": {}, "freezes": {}, "reviews": {},
                     "memory": []}
@@ -248,11 +363,14 @@ class AgentRSI:
         return data
 
     def _save_state(self, state: dict) -> None:
+        self._safe_path(self._workspace, self._state_path)
         self._state_path.parent.mkdir(parents=True, exist_ok=True)
         self._store.atomic_json(self._state_path, state)
 
     def _pin_path(self, freeze_id: str) -> Path:
-        return self._trusted / "agent_rsi" / "{}.json".format(freeze_id)
+        if not isinstance(freeze_id, str) or not re.fullmatch(r"ag-[0-9a-f]{24}", freeze_id):
+            _fail("input_invalid", "invalid freeze id")
+        return self._safe_path(self._trusted, self._trusted / "agent_rsi" / (freeze_id + ".json"))
 
     # -- freeze ------------------------------------------------------------
 
@@ -790,6 +908,11 @@ class AgentRSI:
 
     def record_review(self, candidate_id: str, reviewer: str,
                       decision: str) -> dict:
+        with self._store.lock():
+            return self._record_review(candidate_id, reviewer, decision)
+
+    def _record_review(self, candidate_id: str, reviewer: str,
+                       decision: str) -> dict:
         candidate = self.get_candidate(candidate_id)
         if not _is_id(reviewer):
             _fail("input_invalid", "reviewer invalid")
@@ -809,19 +932,34 @@ class AgentRSI:
         }
         state["reviews"][review_id] = review
         self._save_state(state)
+        pin_path = self._trusted / "agent_rsi" / "reviews" / (review_id + ".json")
+        self._safe_path(self._trusted, pin_path)
+        self._store.atomic_json(pin_path, {
+            "review": review, "bundle_ref": candidate["bundle_ref"],
+            "comparison_ref": candidate.get("comparison_ref"),
+            "baseline_digest": candidate["baseline_digest"],
+        })
         return review
 
     def initialize_registry(self, baseline_ref: str) -> dict:
-        if not re.fullmatch(r"[0-9a-f]{64}", str(baseline_ref)):
-            _fail("input_invalid", "baseline ref must be sha256")
-        self._store.get_object(baseline_ref)
-        registry = {"current_bundle_ref": baseline_ref, "history": []}
-        self._registry_path.parent.mkdir(parents=True, exist_ok=True)
-        self._store.atomic_json(self._registry_path, registry)
-        return registry
+        with self._store.lock():
+            self._bundle(baseline_ref)
+            self._safe_path(self._workspace, self._registry_path)
+            self._safe_path(self._trusted, self._activation_path)
+            if self._registry_path.exists() or self._activation_path.exists():
+                _fail("policy_denied", "registry already exists")
+            registry = {"current_bundle_ref": baseline_ref,
+                        "baseline_bundle_ref": baseline_ref, "history": []}
+            self._commit_registry(registry)
+            return registry
 
     def apply(self, review_id: str, expected_baseline: str,
               expected_candidate: str, rollback: str) -> dict:
+        with self._store.lock():
+            return self._apply(review_id, expected_baseline, expected_candidate, rollback)
+
+    def _apply(self, review_id: str, expected_baseline: str,
+               expected_candidate: str, rollback: str) -> dict:
         state = self._load_state()
         review = state["reviews"].get(review_id)
         if not isinstance(review, dict):
@@ -840,25 +978,92 @@ class AgentRSI:
             _fail("review_mismatch", "baseline digest mismatch")
         if expected_candidate != candidate["bundle_digest"]:
             _fail("review_mismatch", "candidate digest mismatch")
+        if not re.fullmatch(r"agr-[0-9a-f]{24}", str(review_id)):
+            _fail("input_invalid", "invalid review id")
+        pin_path = self._trusted / "agent_rsi" / "reviews" / (review_id + ".json")
+        self._safe_path(self._trusted, pin_path)
+        expected_pin = {"review": review, "bundle_ref": candidate["bundle_ref"],
+                        "comparison_ref": candidate.get("comparison_ref"),
+                        "baseline_digest": candidate["baseline_digest"]}
+        if not pin_path.exists() or read_json(pin_path) != expected_pin:
+            _fail("not_approved", "trusted review mismatch")
+        bundle = self._bundle(candidate["bundle_ref"])
+        if digest(bundle) != expected_candidate:
+            _fail("review_mismatch", "bundle digest mismatch")
+        record = self.load_freeze(candidate["freeze_id"])
+        comparison = self._store.get_object(candidate.get("comparison_ref"))
+        planned = {(sid, split, seed) for split in ("validation", "holdout")
+                   for sid in record["config"]["scenario_splits"][split]
+                   for seed in record["config"]["seed_pairs"]}
+        pairs = comparison.get("pairs", [])
+        actual = {(p["task_id"], p["split"], p["seed"]) for p in pairs}
+        if (comparison.get("candidate_id") != candidate["candidate_id"]
+                or comparison.get("freeze_id") != record["freeze_id"]
+                or comparison.get("config_digest") != record["config_digest"]
+                or candidate["baseline_digest"] != record["baseline_digest"]
+                or actual != planned or len(pairs) != len(planned)
+                or self._evaluate_pairs(pairs, record["config"], candidate) != summary
+                or summary.get("ready") is not True):
+            _fail("not_ready", "comparison does not match frozen evaluation")
         if not _is_id(rollback):
             _fail("input_invalid", "rollback description required")
-        if not self._registry_path.exists():
+        registry = self._registry()
+        if registry is None:
             _fail("checkpoint_missing", "registry not initialized")
-        registry = loads(self._registry_path.read_bytes())
         previous = registry["current_bundle_ref"]
+        if previous != expected_baseline:
+            _fail("review_mismatch", "current registry is not evaluated baseline")
+        self._bundle(previous)
         registry["history"].append({
             "candidate_id": candidate["candidate_id"],
             "review_id": review_id,
             "from_ref": previous,
             "to_ref": candidate["bundle_ref"],
             "rollback": rollback,
+            "operation": "apply",
+            "campaign_id": candidate["campaign_id"],
         })
         registry["current_bundle_ref"] = candidate["bundle_ref"]
-        self._store.atomic_json(self._registry_path, registry)
         candidate["applied"] = True
         state["candidates"][candidate["candidate_id"]] = candidate
         self._save_state(state)
+        try:
+            self._commit_registry(registry)
+        except Exception:
+            candidate["applied"] = False
+            self._save_state(state)
+            raise
         return {"applied": True,
                 "candidate_id": candidate["candidate_id"],
                 "current_bundle_ref": candidate["bundle_ref"],
                 "rollback": rollback}
+
+    def rollback(self, expected_current: str, reason: str) -> dict:
+        """Restore the most recent active apply's previous approved bundle.
+
+        Reads the trusted commit even if its workspace mirror is damaged;
+        never loads a broken current bundle in order to restore its predecessor.
+        """
+        if not _is_id(reason):
+            _fail("input_invalid", "rollback reason required (1..128 chars)")
+        with self._store.lock():
+            registry = self._registry(recovery=True)
+            if registry is None or registry["current_bundle_ref"] != expected_current:
+                _fail("review_mismatch", "rollback current mismatch")
+            active = []
+            for event in registry["history"]:
+                if event["operation"] == "apply":
+                    active.append(event)
+                elif event["operation"] == "rollback" and active:
+                    active.pop()
+            previous = active[-1]["from_ref"] if active else registry["baseline_bundle_ref"]
+            self._bundle(previous)
+            registry["history"].append({
+                "operation": "rollback", "from_ref": expected_current,
+                "to_ref": previous, "reason": reason,
+                "campaign_id": active[-1]["campaign_id"] if active else None,
+            })
+            registry["current_bundle_ref"] = previous
+            self._commit_registry(registry)
+            return {"rolled_back": True, "current_bundle_ref": previous,
+                    "previous_bundle_ref": expected_current, "reason": reason}

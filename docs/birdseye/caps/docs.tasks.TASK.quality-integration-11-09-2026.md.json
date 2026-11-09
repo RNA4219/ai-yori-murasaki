@@ -1,0 +1,28 @@
+{
+  "id": "docs/tasks/TASK.quality-integration-11-09-2026.md",
+  "role": "task",
+  "public_api": [],
+  "summary": "P0証拠識別とP1通常適用・復旧を修正し、修正前後と637 passedを検収するTask。ユーザー承認のCodex代行とP2設計のみの範囲を記録する。",
+  "deps_out": [
+    "docs/acceptance/AC-20261109-01.md",
+    "docs/evidence/quality-integration-20261109/README.md",
+    "docs/requirements/P2-VALIDATION-PLAN.md"
+  ],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261109-01.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "e44018dfb9259800a5269f88d0f08b3eaf335e3b69b84fe453f835c6cc50a841",
+  "generated_at": "00026",
+  "review": {
+    "reviewed_at": "2026-11-09T01:26:13.692738+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "e44018dfb9259800a5269f88d0f08b3eaf335e3b69b84fe453f835c6cc50a841",
+    "summary_sha256": "3ebae222c441f2c8e53ba5ac5df60c71b8a45ec9f43ef54fc81a3cf935eb5a41",
+    "scope": "今回の原文・要約・依存を照合。P0/P1の実測、P2設計のみ、未実行と性能未実証を区別する。"
+  }
+}

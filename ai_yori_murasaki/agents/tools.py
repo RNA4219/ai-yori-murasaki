@@ -335,6 +335,15 @@ class ToolBroker:
         if not _is_hex_ref(ref) or ref not in self._issued_refs:
             raise _ArgError("findings[{}]: unknown_evidence_ref".format(
                 index))
+        observation = self._runtime.store.get_object(ref)
+        if isinstance(observation, dict) and observation.get("kind") == "telemetry":
+            data = observation.get("data")
+            if (not isinstance(data, dict)
+                    or data.get("method") != item["method"]
+                    or data.get("role") != item["role"]
+                    or not isinstance(data.get("path"), str)
+                    or data["path"].split("?", 1)[0] != item["path"]):
+                raise _ArgError("findings[{}]: evidence_metadata_mismatch".format(index))
 
     def _run_submit_findings(self, args: Any) -> Dict[str, Any]:
         self._require_keys(args, {"findings"})
@@ -349,7 +358,8 @@ class ToolBroker:
         finding_ids: List[str] = []
         seen_keys: set = set()
         for item in findings:
-            dedup_key = (item["path"], item["role"], item["category"])
+            dedup_key = (item["path"], item["role"], item["category"],
+                         item["method"], item["evidence_ref"])
             if dedup_key in seen_keys:
                 duplicates += 1
                 continue
@@ -357,7 +367,8 @@ class ToolBroker:
             finding_id = "f-" + digest({
                 "campaign": self._campaign_id, "run": self._run_id,
                 "path": item["path"], "role": item["role"],
-                "category": item["category"]})[:32]
+                "category": item["category"], "method": item["method"],
+                "evidence_ref": item["evidence_ref"]})[:32]
             exists = False
             for ref in self._runtime.list_records(self._campaign_id,
                                                  "finding"):

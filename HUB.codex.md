@@ -27,6 +27,7 @@ template_version: 1.0.0
 
 | 依頼 | 入口 | 続けて読むもの |
 | --- | --- | --- |
+| Blue評価とRSI通常適用の品質修正 | [整合性契約](docs/requirements/QUALITY-INTEGRATION.md) | [検収](docs/acceptance/AC-20261109-01.md)、[P2計画](docs/requirements/P2-VALIDATION-PLAN.md) |
 | 承認済み追加要件の実装 | [追加要件](docs/requirements/REQUIREMENTS-EXTENSION.md) | [仕様](docs/requirements/SPEC-ASSESSMENT.md)、[追加検収](docs/acceptance/AC-20261107-03.md) |
 | 製品要件の再評価 | [受領レビューと必要性評価](docs/reviews/REVIEW-INTAKE-20261107.md) | [完成判定の撤回](docs/acceptance/AC-20261106-06.md) |
 | モニターの画面と更新挙動 | [再設計](docs/requirements/MONITOR-REDESIGN.md) | [画面検収](docs/acceptance/AC-20261107-01.md) |

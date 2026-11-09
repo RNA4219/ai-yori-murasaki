@@ -40,6 +40,14 @@ intent_id: INT-AYM-PRODUCT-20261106 / owner: RNA4219 / status: reviewed
 
 ### 1.4 コマンド別契約
 
+#### `aym rsi agent-registry-init / agent-status / agent-rollback`
+
+- `agent-registry-init --campaign-id <id> --baseline-ref <sha256>`: schema検証済みbaselineを初期登録する。既存registryの上書きは拒否する。
+- `agent-status`: 通常実行で選択する方策の `policy_selection` を返す。破損・未承認状態の読み取りは失敗し、成功としてデフォルトを返さない。
+- `agent-rollback --campaign-id <id> --expected-current <sha256> --reason <1..128文字>`: trusted履歴上の直前方策へ戻す。正常な復元先と期待current一致が必要。
+- 更新コマンドはverify runに結果refを記録し、chainとcheckpointをsealする。失敗は非ゼロ終了とする。これらは従来の認可方針用 `rsi apply` とは別の、製品agent bundle用コマンドである。
+- `lab demo / iterate --policy-bundle-file <絶対パス>` の選択順、拒否条件、証跡は [方策選択契約](QUALITY-INTEGRATION.md#通常実行の方策選択) に従う。
+
 #### `aym campaign create`
 
 - args: `--intent-id <string>`, `--scope-file <path>`, `--authorization-file <path>`, `--idempotency-key <string>`（必須）。

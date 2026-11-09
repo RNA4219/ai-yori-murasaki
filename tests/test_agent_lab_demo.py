@@ -357,6 +357,18 @@ class RunDemoTest(unittest.TestCase):
                                                  "patch_drafted")]
         self.assertEqual(len(patched_events), 2)
 
+    def test_metrics_hold_when_observation_reference_is_missing(self) -> None:
+        from ai_yori_murasaki import lab_metrics
+        scenario = _PROJECT / "ai_yori_murasaki" / "scenarios" / "authz-flag-false"
+        result, _ = self._run(ScriptedLLM(scenario))
+        measurement = self.store.get_object(result["measurement_ref"])
+        observations = self.store.get_object(measurement["red_ref"])
+        del observations["observations"][-1]["ref"]
+        measurement["red_ref"] = self.store.put_object(observations)
+        measured = lab_metrics.measure(self.rt, result["campaign_id"], measurement)
+        self.assertEqual(measured["status"], "HOLD")
+        self.assertEqual(measured["reason_code"], "evidence_missing")
+
     def test_agent_demo_on_unseen_scenario_shape(self) -> None:
         scenario_dir = (_PROJECT / "ai_yori_murasaki" / "scenarios"
                         / "authz-role-mismatch")

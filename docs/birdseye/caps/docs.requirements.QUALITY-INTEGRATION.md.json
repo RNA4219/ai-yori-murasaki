@@ -1,0 +1,31 @@
+{
+  "id": "docs/requirements/QUALITY-INTEGRATION.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "Blue報告の事象識別とOracle/KPIの単位、CAS検査・権限、明示指定優先とtrusted activation、適用失敗時の停止・復旧・実使用hash証跡を定義する。",
+  "deps_out": [],
+  "deps_in": [
+    "HUB.codex.md",
+    "RUNBOOK.md",
+    "docs/acceptance/AC-20261109-01.md",
+    "docs/evidence/quality-integration-20261109/README.md",
+    "docs/requirements/API-CONTRACTS.md"
+  ],
+  "risks": [
+    "実モデル性能は未実証。旧registryの自動移行なし。symlink試験3件は環境制約でskip。"
+  ],
+  "tests": [
+    "tests/test_blue_evidence_identity.py",
+    "tests/test_agent_rsi.py",
+    "tests/test_agent_lab_demo.py"
+  ],
+  "source_sha256": "43d674f497f39378b5a8cd193cfd0048496a47435602f617d4df31657a7cc298",
+  "generated_at": "00026",
+  "review": {
+    "reviewed_at": "2026-11-09T01:26:13.697017+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "43d674f497f39378b5a8cd193cfd0048496a47435602f617d4df31657a7cc298",
+    "summary_sha256": "bc3f2af39f6a290cf6446df7f8b4ee22bb49dbc84cdcd45e1edd189f963d0f17",
+    "scope": "今回の原文・要約・依存を照合。P0/P1の実測、P2設計のみ、未実行と性能未実証を区別する。"
+  }
+}

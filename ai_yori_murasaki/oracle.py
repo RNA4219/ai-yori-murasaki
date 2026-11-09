@@ -38,6 +38,25 @@ KIND_FIELDS: dict[str, dict[str, type]] = {
 _SHA_RE = re.compile(r"^[0-9a-f]{64}$")
 
 
+def is_unauthorized_access(data: Any) -> bool:
+    """The shared event-level lab detection target (not Oracle answers)."""
+    return (isinstance(data, dict) and data.get("status") == 200
+            and data.get("method") == "GET"
+            and isinstance(data.get("path"), str)
+            and data["path"].split("?", 1)[0] == "/record"
+            and isinstance(data.get("role"), str) and data["role"] != "admin")
+
+
+def finding_covers(finding: Any, row: dict) -> bool:
+    """Match a saved finding to one observed event by its evidence ref."""
+    return (isinstance(finding, dict)
+            and isinstance(finding.get("location"), dict)
+            and finding["location"].get("path") == "/record"
+            and isinstance(finding.get("references"), list)
+            and isinstance(row.get("ref"), str)
+            and row["ref"] in finding["references"])
+
+
 def _now() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
@@ -152,39 +171,31 @@ class Oracle:
         if not isinstance(blue_findings, list):
             raise ContractError("findings must be list", "input_invalid")
 
-        def _is_unauthorized_success(row: dict) -> bool:
-            data = row.get("data") if isinstance(row, dict) else None
-            if not isinstance(data, dict):
-                return False
-            if data.get("status") != 200 or data.get("method") != "GET":
-                return False
-            path = data.get("path")
-            role = data.get("role")
-            if not isinstance(path, str):
-                return False
-            base = path.split("?", 1)[0]
-            return (base == "/record" and isinstance(role, str)
-                    and role != "admin")
-
-        requiring = [row for row in telemetry_rows
-                     if _is_unauthorized_success(row)]
+        # Resolve every input from CAS before scoring. A forged or missing
+        # reference is an evidence failure, never a benign/undetected event.
+        unique_rows = {}
+        for row in telemetry_rows:
+            if not isinstance(row, dict):
+                raise ContractError("invalid telemetry row", "input_invalid")
+            ref = row.get("ref")
+            if not isinstance(ref, str) or not _SHA_RE.fullmatch(ref):
+                raise ContractError("invalid telemetry ref", "input_invalid")
+            actual = store.get_object(ref)
+            actual_data = (actual["data"] if isinstance(actual, dict)
+                           and actual.get("kind") == "telemetry"
+                           and "observed_at" in actual and "data" in actual
+                           else actual)
+            if digest(actual) != ref or actual_data != row.get("data"):
+                raise ContractError("telemetry evidence mismatch", "policy_denied")
+            unique_rows[ref] = row
+        requiring = [row for row in unique_rows.values()
+                     if is_unauthorized_access(row["data"])]
         uncovered: list = []
         for row in requiring:
             ref = row.get("ref")
             data = row.get("data", {})
-            covered = False
-            for finding in blue_findings:
-                if not isinstance(finding, dict):
-                    continue
-                location = finding.get("location")
-                if not isinstance(location, dict):
-                    continue
-                if location.get("path") != "/record":
-                    continue
-                refs = finding.get("references")
-                if isinstance(refs, list) and ref in refs:
-                    covered = True
-                    break
+            covered = any(finding_covers(finding, row)
+                          for finding in blue_findings)
             if not covered:
                 uncovered.append({
                     "ref": ref,
@@ -192,15 +203,30 @@ class Oracle:
                     "role": data.get("role"),
                 })
 
+        # Precision uses stable finding IDs, just like lab_metrics/KPI.
+        unique_findings = {}
+        for finding in blue_findings:
+            if not isinstance(finding, dict):
+                raise ContractError("invalid finding", "input_invalid")
+            unique_findings[finding.get("finding_id") or digest(finding)] = finding
+        false_positives = [f.get("finding_id") for f in unique_findings.values()
+                           if not any(finding_covers(f, row) for row in requiring)]
         checks: list[dict] = []
         checks.append({"name": "rows_requiring_detection",
                        "passed": len(requiring) > 0})
         checks.append({"name": "all_rows_covered",
                        "passed": len(uncovered) == 0})
-        passed = bool(requiring) and not uncovered
+        checks.append({"name": "no_false_positives",
+                       "passed": not false_positives})
+        passed = bool(requiring) and not uncovered and not false_positives
         report = {
             "rows_checked": len(telemetry_rows),
             "rows_requiring_detection": len(requiring),
+            "detected_events": len(requiring) - len(uncovered),
+            "missed_events": len(uncovered),
+            "true_positive_findings": len(unique_findings) - len(false_positives),
+            "false_positive_findings": len(false_positives),
+            "false_positives": false_positives,
             "uncovered": uncovered,
             "checks": checks,
             "passed": passed,

@@ -172,6 +172,17 @@ def add_parser(subparsers):
     aap.add_argument("--expected-candidate", required=True)
     aap.add_argument("--rollback", required=True)
 
+    ari = sub.add_parser("agent-registry-init")
+    ari.add_argument("--campaign-id", required=True)
+    ari.add_argument("--baseline-ref", required=True)
+
+    arb = sub.add_parser("agent-rollback")
+    arb.add_argument("--campaign-id", required=True)
+    arb.add_argument("--expected-current", required=True)
+    arb.add_argument("--reason", required=True)
+
+    sub.add_parser("agent-status")
+
     ash = sub.add_parser("agent-show")
     ash.add_argument("--candidate-id", required=True)
 
@@ -539,6 +550,26 @@ def dispatch(args, rt):
         return _run_verify(rt, cid, op, "rsi_applied", ev,
                            {"record_type": "agent_rsi_apply",
                             "phase": "verify"})
+
+    if action in ("agent-registry-init", "agent-rollback"):
+        from .rsi_agent import AgentRSI
+        agent_rsi = AgentRSI(rt.store)
+
+        def op():
+            if action == "agent-registry-init":
+                return agent_rsi.initialize_registry(args.baseline_ref)
+            return agent_rsi.rollback(args.expected_current, args.reason)
+
+        return _run_verify(
+            rt, args.campaign_id, op, "state_captured",
+            lambda result: [result["current_bundle_ref"]],
+            {"record_type": action.replace("-", "_"), "phase": "verify"})
+
+    if action == "agent-status":
+        from .rsi_agent import AgentRSI
+        agent_rsi = AgentRSI(rt.store)
+        bundle, selection = agent_rsi.resolve_bundle()
+        return {"policy_selection": selection}
 
     if action == "agent-show":
         from .rsi_agent import AgentRSI

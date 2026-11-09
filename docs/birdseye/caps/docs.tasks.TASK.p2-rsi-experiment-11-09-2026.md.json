@@ -1,0 +1,25 @@
+{
+  "id": "docs/tasks/TASK.p2-rsi-experiment-11-09-2026.md",
+  "role": "task",
+  "public_api": [],
+  "summary": "計測不良を隔離し異なるRSI候補を固定条件・未見集合で比較する後続Task。実モデル比較・昇格は未実行。",
+  "deps_out": [
+    "docs/requirements/P2-VALIDATION-PLAN.md"
+  ],
+  "deps_in": [
+    "docs/acceptance/AC-20261109-01.md",
+    "docs/requirements/P2-VALIDATION-PLAN.md",
+    "docs/tasks/README.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "eefc4a26cb892b2b5fe5820eb690000b2a7014851df8989c7e7509422270c0bc",
+  "generated_at": "00026",
+  "review": {
+    "reviewed_at": "2026-11-09T01:26:13.692738+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "eefc4a26cb892b2b5fe5820eb690000b2a7014851df8989c7e7509422270c0bc",
+    "summary_sha256": "ca77389b6e0917bc0d2d0c2fbb4dd17b9a143a62e4f852943412bfa4d603c6e5",
+    "scope": "今回の原文・要約・依存を照合。P0/P1の実測、P2設計のみ、未実行と性能未実証を区別する。"
+  }
+}
