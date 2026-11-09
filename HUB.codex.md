@@ -27,6 +27,8 @@ template_version: 1.0.0
 
 | 依頼 | 入口 | 続けて読むもの |
 | --- | --- | --- |
+| Blue/Oracleの証拠重複修正（P0、検収未了） | [Task 20261109-01](docs/tasks/TASK.blue-evidence-oracle-11-09-2026.md) | [draft検収](docs/acceptance/AC-20261109-01.md)、[P0契約](docs/P0-CONTRACTS.md) |
+| RSI採用後の通常実行反映（P1、P0依存） | [Task 20261109-02](docs/tasks/TASK.agent-rsi-apply-11-09-2026.md) | [draft検収](docs/acceptance/AC-20261109-02.md)、[RSI契約](docs/CONTRACTS.md#rsi) |
 | 承認済み追加要件の実装 | [追加要件](docs/requirements/REQUIREMENTS-EXTENSION.md) | [仕様](docs/requirements/SPEC-ASSESSMENT.md)、[追加検収](docs/acceptance/AC-20261107-03.md) |
 | 製品要件の再評価 | [受領レビューと必要性評価](docs/reviews/REVIEW-INTAKE-20261107.md) | [完成判定の撤回](docs/acceptance/AC-20261106-06.md) |
 | モニターの画面と更新挙動 | [再設計](docs/requirements/MONITOR-REDESIGN.md) | [画面検収](docs/acceptance/AC-20261107-01.md) |

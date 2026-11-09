@@ -22,6 +22,8 @@ Task、[Acceptance](../acceptance/README.md)、[CHANGELOG](../../CHANGELOG.md)�
 
 | task_id | 作業 | 検収 |
 | --- | --- | --- |
+| 20261109-01 | [P0: Blue証拠重複とOracle整合（planned）](TASK.blue-evidence-oracle-11-09-2026.md) | [AC-20261109-01（draft）](../acceptance/AC-20261109-01.md) |
+| 20261109-02 | [P1: RSI方策の通常実行適用と復旧（planned、P0依存）](TASK.agent-rsi-apply-11-09-2026.md) | [AC-20261109-02（draft）](../acceptance/AC-20261109-02.md) |
 | 20261108-03 | [v0.1.1 リリース（版上げと配布物の再ビルド）](TASK.version-011-11-08-2026.md) | [AC-20261108-03](../acceptance/AC-20261108-03.md) |
 | 20261108-02 | [README整備とv0.1.0まわりの文書整合](TASK.readme-release-11-08-2026.md) | [AC-20261108-02](../acceptance/AC-20261108-02.md) |
 | 20261108-01 | [エージェント実行基盤・RSI・Wazuh追補](TASK.agent-core-11-08-2026.md) | [AC-20261108-01](../acceptance/AC-20261108-01.md) |
