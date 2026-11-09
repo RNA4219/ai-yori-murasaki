@@ -10,6 +10,8 @@ next_review_due: 2026-12-06
 
 | Acceptance | Task | 対象 | 公開 |
 | --- | --- | --- | --- |
+| [AC-20261109-01（draft）](AC-20261109-01.md) | [20261109-01](../tasks/TASK.blue-evidence-oracle-11-09-2026.md) | P0：証拠参照単位のfinding/Oracle整合、before/after未実行 | なし |
+| [AC-20261109-02（draft）](AC-20261109-02.md) | [20261109-02](../tasks/TASK.agent-rsi-apply-11-09-2026.md) | P1：承認済みbundleの実行反映・rollback、P0待ち | なし |
 | [AC-20261108-03](AC-20261108-03.md) | [20261108-03](../tasks/TASK.version-011-11-08-2026.md) | v0.1.1 リリース（版上げ・配布物の再ビルド・秘密検査・テスト再実行） | GitHub Release v0.1.1（配布物添付） |
 | [AC-20261108-02](AC-20261108-02.md) | [20261108-02](../tasks/TASK.readme-release-11-08-2026.md) | README整備（クイックスタート・モニター節）とv0.1.0まわりの文書整合 | Releaseノート整備 |
 | [AC-20261108-01](AC-20261108-01.md) | [20261108-01](../tasks/TASK.agent-core-11-08-2026.md) | エージェント実行基盤・エージェントRSI・P1/P2拡張・Wazuh実ログ187件の取り込み | ソース更新のみ |
