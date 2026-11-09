@@ -2,7 +2,7 @@
   "id": "HUB.codex.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "製品操作、要件の再評価、調査、RSI、文書運用、検収の原文へ案内する。",
+  "summary": "文書ハブ。品質修正契約・技術検収・P2計画を含む用途別の原文へ案内する。",
   "deps_out": [
     ".agents/skills/security-audit/SKILL.md",
     "AGENTS.md",
@@ -24,10 +24,16 @@
     "docs/UPSTREAM.md",
     "docs/acceptance/AC-20261106-06.md",
     "docs/acceptance/AC-20261107-01.md",
+    "docs/acceptance/AC-20261107-03.md",
+    "docs/acceptance/AC-20261109-01.md",
     "docs/acceptance/INDEX.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
     "docs/requirements/MONITOR-REDESIGN.md",
+    "docs/requirements/P2-VALIDATION-PLAN.md",
+    "docs/requirements/QUALITY-INTEGRATION.md",
+    "docs/requirements/REQUIREMENTS-EXTENSION.md",
+    "docs/requirements/SPEC-ASSESSMENT.md",
     "docs/reviews/REVIEW-INTAKE-20261107.md",
     "docs/tasks/README.md",
     "docs/workflow-adoption.md",
@@ -43,13 +49,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "ccdf8ba20bc7f45124907a28928ac84cfbf4594b0f1a5b2d75c475a94ae73631",
-  "generated_at": "00025",
+  "source_sha256": "6f20aba3377a3b8429d4d391a9c2084c21b2f0531e664efe9560c2afa0d76a2a",
+  "generated_at": "00028",
   "review": {
-    "reviewed_at": "2026-11-08T04:47:20.151229+00:00",
-    "reviewed_by": "Muse",
-    "source_sha256": "ccdf8ba20bc7f45124907a28928ac84cfbf4594b0f1a5b2d75c475a94ae73631",
-    "summary_sha256": "144c09388bd4a15b6ac03387bbe3ed34f4c92989dbcc70f1b45e3540b2588601",
-    "scope": "生成00025で依存（deps_in/deps_out）のみ更新。本文のhashは前回review時と一致し、要約に変更が不要なことを確認した。"
+    "reviewed_at": "2026-11-09T01:36:25.433430+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "6f20aba3377a3b8429d4d391a9c2084c21b2f0531e664efe9560c2afa0d76a2a",
+    "summary_sha256": "4be6d92f7c41e909a858724aae9ff9758f0ccb62778fe67746b977cad09a0b27",
+    "scope": "今回の原文・要約・依存を照合。P0/P1の実測、P2設計のみ、未実行と性能未実証を区別する。"
   }
 }

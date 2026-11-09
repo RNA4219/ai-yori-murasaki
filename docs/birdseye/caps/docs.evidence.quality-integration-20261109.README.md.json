@@ -11,17 +11,18 @@
   "deps_in": [
     "CHANGELOG.md",
     "docs/acceptance/AC-20261109-01.md",
+    "docs/releases/RA-20261109-01.md",
     "docs/tasks/TASK.quality-integration-11-09-2026.md"
   ],
   "risks": [],
   "tests": [],
   "source_sha256": "4dd2c3dc8f364b0faf54ebd316794bbbf51ff7d01364d4f7e46f540397e3bf27",
-  "generated_at": "00026",
+  "generated_at": "00028",
   "review": {
-    "reviewed_at": "2026-11-09T01:26:13.695269+00:00",
+    "reviewed_at": "2026-11-09T01:36:25.433430+00:00",
     "reviewed_by": "Codex",
     "source_sha256": "4dd2c3dc8f364b0faf54ebd316794bbbf51ff7d01364d4f7e46f540397e3bf27",
-    "summary_sha256": "33015b55a53819699e26adec4f77ceabb2f764511122d5ef57bb18be6ae7670d",
+    "summary_sha256": "e6a14e5f99149e4e0d8e9029046a9e74501b01d7bdd11a25d5689e91712ad5f6",
     "scope": "今回の原文・要約・依存を照合。P0/P1の実測、P2設計のみ、未実行と性能未実証を区別する。"
   }
 }

@@ -2,7 +2,7 @@
   "id": "README.md",
   "role": "overview",
   "public_api": [],
-  "summary": "隔離ラボの起動と製品の案内。冒頭とモニター節に製品モニターの画面（実ラン証跡のAPI応答を再生、docs/images/）を置き、クイックスタートと公開状態（現在の公開版 v0.1.1 の GitHub Release）を備える。既存の実動作証跡とWazuh意味保持追補を区別し、正規化イベントを既定、擬似HTTP行を明示選択とする。関連14件と全体607 passed、実WazuhのBlue検知性能とIndexer検索は未検証。",
+  "summary": "製品概要と起動方法。P0証拠消失とP1通常方策の不一致を修正し637 passed、実モデルの性能向上未実証とP2計画を区別する。",
   "deps_out": [
     "BLUEPRINT.md",
     "CHANGELOG.md",
@@ -14,6 +14,7 @@
     "docs/RSI.md",
     "docs/acceptance/AC-20261107-03.md",
     "docs/acceptance/AC-20261108-01.md",
+    "docs/acceptance/AC-20261109-01.md",
     "docs/acceptance/INDEX.md",
     "docs/evidence/wazuh-live-20261108.md",
     "docs/releases/README.md",
@@ -39,13 +40,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "4c80df5822a84accdb4ec23433ebc11e9611eb1a3cad5a64d8739681757dfe95",
-  "generated_at": "00027",
+  "source_sha256": "218c186fdbe4368be82cd53226a46bf78435fb0ef957d6de7ee5ec269170bca6",
+  "generated_at": "00028",
   "review": {
-    "reviewed_at": "2026-11-08T04:57:07.145218+00:00",
-    "reviewed_by": "Muse",
-    "source_sha256": "4c80df5822a84accdb4ec23433ebc11e9611eb1a3cad5a64d8739681757dfe95",
-    "summary_sha256": "0ab0bc73edd31ab68993f44a870d5bc7ea1bc34f3845358b7dd33b50455a1c4d",
-    "scope": "生成00027。v0.1.1 リリースに伴い、本文・要約・依存を照合した。"
+    "reviewed_at": "2026-11-09T01:36:25.418820+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "218c186fdbe4368be82cd53226a46bf78435fb0ef957d6de7ee5ec269170bca6",
+    "summary_sha256": "7129ac1fbee75dad57a51e7b66577fce9a016dfa78e99dfce94152191bab06c8",
+    "scope": "今回の原文・要約・依存を照合。P0/P1の実測、P2設計のみ、未実行と性能未実証を区別する。"
   }
 }

@@ -2,11 +2,11 @@
   "id": "docs/PRODUCT-ACCEPTANCE.md",
   "role": "doc",
   "public_api": [],
-  "summary": "過去の個別実行と50要件の対応を保持する対応表。現在の判定は未完成で、製品完成の検収撤回とR-046の不足を明示し、全要件充足とは区別する。2026-11-08にエージェント実行基盤とエージェントRSIの中核をAC-20261108-01で検収した対応を反映し、残り4類型はfixture評価の範囲にとどまる。",
+  "summary": "過去の実行結果と50要件・T01〜T20の対応表。製品は未完成と明記し、認可不備の実モデル実証、他類型の固定fixture、RSI不採用と未pin探索、個別検証と汎用性能未実証を区別する。",
   "deps_out": [
     "docs/acceptance/AC-20261106-06.md",
-    "docs/requirements/ACCEPTANCE-PLAN.md",
-    "docs/reviews/REVIEW-INTAKE-20261107.md"
+    "docs/acceptance/AC-20261108-01.md",
+    "docs/requirements/ACCEPTANCE-PLAN.md"
   ],
   "deps_in": [
     "docs/acceptance/AC-20261106-06.md",
@@ -25,10 +25,10 @@
   "source_sha256": "21eaa9d9a016dd8e881b77ca2877ad03a217a5e6a58d9416b9b88af4a142e4f0",
   "generated_at": "00025",
   "review": {
-    "reviewed_at": "2026-11-08T04:47:29.767587+00:00",
-    "reviewed_by": "Muse",
+    "reviewed_at": "2026-11-09T01:36:25.430824+00:00",
+    "reviewed_by": "Codex",
     "source_sha256": "21eaa9d9a016dd8e881b77ca2877ad03a217a5e6a58d9416b9b88af4a142e4f0",
-    "summary_sha256": "9081f9d60e392e29ad4b4e8ca3618c72e8a6c81e8a818f9da41b5e9ff1181275",
-    "scope": "生成00025に際し再確認。原文はPhase 5（a69707c）で前回review後に変更されており、現在の判定（未完成・撤回の明示・R-046不足・AC-20261108-01での中核検収）を原文と照合して要約を更新した。"
+    "summary_sha256": "c9290d47bed9749762e668f29cf19aa58fa7ff5bcd22aaed524427fa6602b7d9",
+    "scope": "今回の原文・要約・依存を照合。P0/P1の実測、P2設計のみ、未実行と性能未実証を区別する。"
   }
 }

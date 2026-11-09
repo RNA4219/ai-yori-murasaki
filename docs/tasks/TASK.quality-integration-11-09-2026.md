@@ -48,6 +48,8 @@ checker・状態機械・coordinatorの決定的fixture試験は契約上の適�
 
 ## Result
 
+後続のmain反映は、ユーザーの「問題ないならマージまでやって」に基づく [RA-20261109-01](../releases/RA-20261109-01.md) に従う。先行するREADMEとv0.1.1の更新を保持して統合し、統合後の検証とPRのmerge結果を別に記録する。
+
 P0修正前4 failed、P1修正前1 failedを保存した。P0の65件の回帰と、P1の11 CLI操作による統合を確認し、最終全体回帰は637 passed / 3 skipped / 22 subtests passed（124.39秒）で終了0だった。[実装差分](../evidence/quality-integration-20261109/implementation.patch)と[実行記録](../evidence/quality-integration-20261109/README.md)を保持する。
 
 P2は [計画](../requirements/P2-VALIDATION-PLAN.md)とTask 20261109-02／03／04を作成した。追加実装は未着手。実モデルの能力・RSI改善は新たに主張していない。文書の3ゲート、日本語本文の検査、索引の内容照合を検収記録へ確定して完了した。

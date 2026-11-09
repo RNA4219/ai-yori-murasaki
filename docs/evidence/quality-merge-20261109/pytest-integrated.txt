@@ -1,0 +1,21 @@
+.......................................................s................ [ 11%]
+........................................................................ [ 22%]
+........................................................ [ 31%]
+.................................................................. [ 41%]
+........................................................................ [ 52%]
+........................................................................ [ 64%]
+...s.................................................................... [ 75%]
+...s.................................................................... [ 86%]
+........................................................................ [ 97%]
+..............                                                           [100%]
+============================= slowest 5 durations =============================
+13.48s call     tests/test_agent_rsi.py::ApplyTest::test_cli_lifecycle_with_real_policy_resolution_and_audit
+9.50s call     tests/test_agent_rsi.py::ApplyTest::test_normal_demo_records_the_policy_it_actually_passes_to_agents
+4.39s call     tests/test_agent_lab_demo.py::RunDemoTest::test_metrics_hold_when_observation_reference_is_missing
+4.24s call     tests/test_agent_lab_demo.py::RunDemoTest::test_agent_demo_end_to_end
+4.10s call     tests/test_agent_lab_demo.py::RunDemoTest::test_agent_demo_on_unseen_scenario_shape
+=========================== short test summary info ===========================
+SKIPPED [1] tests\test_agent_rsi.py:534: OS does not allow symlink creation
+SKIPPED [1] tests\test_v1_storage.py:206: symlink unsupported
+SKIPPED [1] tests\test_v1_worker_commands.py:187: symlink not available
+637 passed, 3 skipped, 22 subtests passed in 127.21s (0:02:07)

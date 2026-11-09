@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "TaskとAcceptanceを結ぶ履歴。[0.1.1] - 2026-11-08に0014–0016を確定し、0016でv0.1.1リリース（版上げと配布物の再ビルド、GitHub Releaseへの添付、Birdseye生成00027）を記録する。[0.1.0]節に0001–0013（0012にWazuhの意味保持JSONLと全体607 passed）を保持し、[Unreleased]は空。",
+  "summary": "変更履歴。0017でBlueの事象識別とRSI通常適用・復旧を記録し、637 passedとP2計画を性能実証から区別する。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -13,15 +13,22 @@
     "docs/acceptance/AC-20261107-02.md",
     "docs/acceptance/AC-20261107-03.md",
     "docs/acceptance/AC-20261108-01.md",
+    "docs/acceptance/AC-20261108-02.md",
+    "docs/acceptance/AC-20261108-03.md",
+    "docs/acceptance/AC-20261109-01.md",
+    "docs/evidence/quality-integration-20261109/README.md",
     "docs/evidence/wazuh-live-20261108.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
     "docs/tasks/TASK.product-clarity-11-07-2026.md",
     "docs/tasks/TASK.product-completion-11-06-2026.md",
+    "docs/tasks/TASK.quality-integration-11-09-2026.md",
+    "docs/tasks/TASK.readme-release-11-08-2026.md",
     "docs/tasks/TASK.review-intake-11-07-2026.md",
     "docs/tasks/TASK.rsi-naming-11-06-2026.md",
     "docs/tasks/TASK.rsi-policy-11-06-2026.md",
     "docs/tasks/TASK.security-audit-skill-11-06-2026.md",
+    "docs/tasks/TASK.version-011-11-08-2026.md",
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
   ],
   "deps_in": [
@@ -44,13 +51,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "71919b6b85de90fd6d0f40e4ea9e0cdf94554ed4af45334c54d47534bb1530dc",
-  "generated_at": "00027",
+  "source_sha256": "b3dd7fe2fd1b8a0405a10aa45a5a06d4b913c3afd4e3a0f288d3c81d2efd978d",
+  "generated_at": "00028",
   "review": {
-    "reviewed_at": "2026-11-08T04:57:07.145218+00:00",
-    "reviewed_by": "Muse",
-    "source_sha256": "71919b6b85de90fd6d0f40e4ea9e0cdf94554ed4af45334c54d47534bb1530dc",
-    "summary_sha256": "9d0401fb0ca7022d51bb051c61e3010812d7847a220feba6ab12ae9b168d511a",
-    "scope": "生成00027。v0.1.1 リリースに伴い、本文・要約・依存を照合した。"
+    "reviewed_at": "2026-11-09T01:36:25.418820+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "b3dd7fe2fd1b8a0405a10aa45a5a06d4b913c3afd4e3a0f288d3c81d2efd978d",
+    "summary_sha256": "4bd0df5c4d04383e35c79e1c3813df3c20b08d4c43aa00766bae4017aa601b6a",
+    "scope": "今回の原文・要約・依存を照合。P0/P1の実測、P2設計のみ、未実行と性能未実証を区別する。"
   }
 }

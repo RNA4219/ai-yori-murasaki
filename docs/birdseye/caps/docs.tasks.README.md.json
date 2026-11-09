@@ -2,7 +2,7 @@
   "id": "docs/tasks/README.md",
   "role": "operations",
   "public_api": [],
-  "summary": "20261030-01から20261108-03までのTask索引。各行は対象Acceptanceへのリンクを持ち、20261108-02でREADME整備とv0.1.0まわりの文書整合、20261108-03でv0.1.1リリース（版上げと配布物の再ビルド）の作業範囲を示す。",
+  "summary": "Taskの起票・状態・完了条件と一覧。品質修正のTaskとP2の未着手3課題を追跡する。",
   "deps_out": [
     "CHANGELOG.md",
     "HUB.codex.md",
@@ -16,16 +16,25 @@
     "docs/acceptance/AC-20261107-02.md",
     "docs/acceptance/AC-20261107-03.md",
     "docs/acceptance/AC-20261108-01.md",
+    "docs/acceptance/AC-20261108-02.md",
+    "docs/acceptance/AC-20261108-03.md",
+    "docs/acceptance/AC-20261109-01.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
+    "docs/tasks/TASK.p2-rsi-experiment-11-09-2026.md",
+    "docs/tasks/TASK.p2-sqli-11-09-2026.md",
+    "docs/tasks/TASK.p2-wazuh-blue-11-09-2026.md",
     "docs/tasks/TASK.product-clarity-11-07-2026.md",
     "docs/tasks/TASK.product-completion-11-06-2026.md",
+    "docs/tasks/TASK.quality-integration-11-09-2026.md",
+    "docs/tasks/TASK.readme-release-11-08-2026.md",
     "docs/tasks/TASK.review-intake-11-07-2026.md",
     "docs/tasks/TASK.rsi-naming-11-06-2026.md",
     "docs/tasks/TASK.rsi-policy-11-06-2026.md",
     "docs/tasks/TASK.security-audit-skill-11-06-2026.md",
+    "docs/tasks/TASK.version-011-11-08-2026.md",
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
   ],
   "deps_in": [
@@ -38,13 +47,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "57d5ccf524d5d227dcfcfb5c08fd3a8d84f0ac89512e37148e941992ce06b178",
-  "generated_at": "00027",
+  "source_sha256": "c7c50ffae3e8ce1449e4671cc898f2f70084224315e215f9fb889ef0fba9aa15",
+  "generated_at": "00028",
   "review": {
-    "reviewed_at": "2026-11-08T04:57:07.145218+00:00",
-    "reviewed_by": "Muse",
-    "source_sha256": "57d5ccf524d5d227dcfcfb5c08fd3a8d84f0ac89512e37148e941992ce06b178",
-    "summary_sha256": "8048f33c649fe56f5adf93ae5b87bd1372c9b06408cd31e61819756746512d02",
-    "scope": "生成00027。v0.1.1 リリースに伴い、本文・要約・依存を照合した。"
+    "reviewed_at": "2026-11-09T01:36:25.418820+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "c7c50ffae3e8ce1449e4671cc898f2f70084224315e215f9fb889ef0fba9aa15",
+    "summary_sha256": "c43c29f05d64cb5f949ac0e104858796335b3120a2ad485f374f8d769296dfba",
+    "scope": "今回の原文・要約・依存を照合。P0/P1の実測、P2設計のみ、未実行と性能未実証を区別する。"
   }
 }

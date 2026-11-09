@@ -6,23 +6,25 @@
   "deps_out": [
     "docs/acceptance/AC-20261109-01.md",
     "docs/evidence/quality-integration-20261109/README.md",
+    "docs/releases/RA-20261109-01.md",
     "docs/requirements/P2-VALIDATION-PLAN.md"
   ],
   "deps_in": [
     "CHANGELOG.md",
     "docs/acceptance/AC-20261109-01.md",
     "docs/acceptance/INDEX.md",
+    "docs/releases/RA-20261109-01.md",
     "docs/tasks/README.md"
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "e44018dfb9259800a5269f88d0f08b3eaf335e3b69b84fe453f835c6cc50a841",
-  "generated_at": "00026",
+  "source_sha256": "d472ee8b65bfe93c7bcf8228a7cf54b07c9c901904b837129c8fd3a703daae60",
+  "generated_at": "00028",
   "review": {
-    "reviewed_at": "2026-11-09T01:26:13.692738+00:00",
+    "reviewed_at": "2026-11-09T01:36:25.418820+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "e44018dfb9259800a5269f88d0f08b3eaf335e3b69b84fe453f835c6cc50a841",
-    "summary_sha256": "3ebae222c441f2c8e53ba5ac5df60c71b8a45ec9f43ef54fc81a3cf935eb5a41",
+    "source_sha256": "d472ee8b65bfe93c7bcf8228a7cf54b07c9c901904b837129c8fd3a703daae60",
+    "summary_sha256": "d71e8f0284c7f53d1959217e711b8c2787256ddac8add22007f951561b03c0bd",
     "scope": "今回の原文・要約・依存を照合。P0/P1の実測、P2設計のみ、未実行と性能未実証を区別する。"
   }
 }

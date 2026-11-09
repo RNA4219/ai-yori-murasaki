@@ -1,0 +1,15 @@
+Repo: C:\Users\ryo-n\Codex_dev\_worktrees\aym-quality-merge-20261109
+Current Tier: 3 (Full)
+
+Tier 0: OK README.md
+Tier 1: OK HUB.codex.md, OK BLUEPRINT.md
+Tier 2: OK RUNBOOK.md, OK GUARDRAILS.md, OK EVALUATION.md
+Tier 3: OK docs/acceptance, OK docs/tasks, OK docs/birdseye/index.json, OK docs/birdseye/hot.json, OK docs/birdseye/caps
+
+Template drift:
+- OK HUB.codex.md (doc=1.0.0, template=1.0.0)
+- OK BLUEPRINT.md (doc=1.0.0, template=1.0.0)
+- OK RUNBOOK.md (doc=1.0.0, template=1.0.0)
+- OK GUARDRAILS.md (doc=1.1.0, template=1.1.0)
+- OK EVALUATION.md (doc=1.0.0, template=1.0.0)
+exit_code=0
