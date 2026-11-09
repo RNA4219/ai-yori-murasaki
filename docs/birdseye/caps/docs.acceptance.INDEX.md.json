@@ -2,7 +2,7 @@
   "id": "docs/acceptance/INDEX.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "技術検収一覧。品質修正のAC-20261109-01をTaskと結び、公開承認と区別する。",
+  "summary": "技術検収一覧。資料取り込み・出典リンク・画面変更をAC-20261109-02として追跡し、追加のソース反映承認RA-20261109-02を記録する。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -16,6 +16,7 @@
     "docs/acceptance/AC-20261108-02.md",
     "docs/acceptance/AC-20261108-03.md",
     "docs/acceptance/AC-20261109-01.md",
+    "docs/acceptance/AC-20261109-02.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
     "docs/tasks/TASK.product-clarity-11-07-2026.md",
@@ -26,6 +27,7 @@
     "docs/tasks/TASK.rsi-naming-11-06-2026.md",
     "docs/tasks/TASK.rsi-policy-11-06-2026.md",
     "docs/tasks/TASK.security-audit-skill-11-06-2026.md",
+    "docs/tasks/TASK.sources-light-ui-11-09-2026.md",
     "docs/tasks/TASK.version-011-11-08-2026.md",
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
   ],
@@ -38,13 +40,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "26cbda052fa82c5775adf6105ca08c44b208690af7195977b79e5240c0ed460a",
-  "generated_at": "00028",
+  "source_sha256": "9d3faeaefdba3195db1d16e488fef4160348b1111711268eb7e8eabb4582e249",
+  "generated_at": "00030",
   "review": {
-    "reviewed_at": "2026-11-09T01:36:25.418820+00:00",
+    "reviewed_at": "2026-11-09T05:32:05.052039+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "26cbda052fa82c5775adf6105ca08c44b208690af7195977b79e5240c0ed460a",
-    "summary_sha256": "a88bcd9f2485f2a986c791d071892d69c8d7e80dd0546f788aedbd8bb2468850",
-    "scope": "今回の原文・要約・依存を照合。P0/P1の実測、P2設計のみ、未実行と性能未実証を区別する。"
+    "source_sha256": "9d3faeaefdba3195db1d16e488fef4160348b1111711268eb7e8eabb4582e249",
+    "summary_sha256": "2039b7895ead5cd52ae83c3aac7f540c38c0f8ba2b5c478be37ea5b30e56a878",
+    "scope": "今回の原文・要約・参照を照合。MCPローカル試験、実サービス未検証、画面実測、参考情報と判定証拠の分離を確認。"
   }
 }

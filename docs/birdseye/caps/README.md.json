@@ -2,7 +2,7 @@
   "id": "README.md",
   "role": "overview",
   "public_api": [],
-  "summary": "製品概要と起動方法。P0証拠消失とP1通常方策の不一致を修正し637 passed、実モデルの性能向上未実証とP2計画を区別する。",
+  "summary": "製品概要と起動。資料の手動読取取り込み、出典リンク、白基調と文字拡大、657件成功を案内し、実サービス未接続と既存の性能限界を分ける。",
   "deps_out": [
     "BLUEPRINT.md",
     "CHANGELOG.md",
@@ -12,9 +12,11 @@
     "RUNBOOK.md",
     "docs/PRODUCT-GUIDE.md",
     "docs/RSI.md",
+    "docs/SOURCES.md",
     "docs/acceptance/AC-20261107-03.md",
     "docs/acceptance/AC-20261108-01.md",
     "docs/acceptance/AC-20261109-01.md",
+    "docs/acceptance/AC-20261109-02.md",
     "docs/acceptance/INDEX.md",
     "docs/evidence/wazuh-live-20261108.md",
     "docs/releases/README.md",
@@ -40,13 +42,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "218c186fdbe4368be82cd53226a46bf78435fb0ef957d6de7ee5ec269170bca6",
-  "generated_at": "00028",
+  "source_sha256": "cf00d09830a28250b4e448e859694d3901b5d5550f8846d7f1830644def65faf",
+  "generated_at": "00030",
   "review": {
-    "reviewed_at": "2026-11-09T01:36:25.418820+00:00",
+    "reviewed_at": "2026-11-09T05:32:05.052545+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "218c186fdbe4368be82cd53226a46bf78435fb0ef957d6de7ee5ec269170bca6",
-    "summary_sha256": "7129ac1fbee75dad57a51e7b66577fce9a016dfa78e99dfce94152191bab06c8",
-    "scope": "今回の原文・要約・依存を照合。P0/P1の実測、P2設計のみ、未実行と性能未実証を区別する。"
+    "source_sha256": "cf00d09830a28250b4e448e859694d3901b5d5550f8846d7f1830644def65faf",
+    "summary_sha256": "441df81b24be5e9ec26a5503d553f8ccaff8a5b3af9eaa3dd6231a4260a34fc6",
+    "scope": "今回の原文・要約・参照を照合。MCPローカル試験、実サービス未検証、画面実測、参考情報と判定証拠の分離を確認。"
   }
 }

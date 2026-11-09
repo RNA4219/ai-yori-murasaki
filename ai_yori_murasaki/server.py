@@ -36,6 +36,8 @@ ALLOWED_HOSTS = ("127.0.0.1", "localhost")
 ROUTES: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("index", re.compile(r"^/$")),
     ("health", re.compile(r"^/api/health$")),
+    ("sources", re.compile(r"^/api/sources$")),
+    ("source", re.compile(r"^/api/sources/(src-[0-9a-f]{32})$")),
     ("campaigns", re.compile(r"^/api/campaigns$")),
     ("campaign", re.compile(r"^/api/campaigns/([a-z0-9][a-z0-9-]{0,63})$")),
     ("campaign_runs", re.compile(r"^/api/campaigns/([a-z0-9][a-z0-9-]{0,63})/runs$")),
@@ -706,6 +708,18 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
 
         if name == "health":
             return _json_response(200, {"status": "ok"})
+
+        if name in ("sources", "source"):
+            if view == "blue":
+                return _json_response(200, {"status": "withheld", "reason": "資料はBlueに非公開"})
+            from .sources import Sources
+            sources = Sources(store)
+            try:
+                if name == "sources":
+                    return _json_response(200, {"sources": sources.list()})
+                return _json_response(200, {"source": sources.get(groups[0])})
+            except (DataError, OSError, KeyError):
+                return _error(409, "source_unavailable")
 
         if name == "campaigns":
             campaigns = [_project_campaign(c, runtime) for c in runtime.list_campaigns()]

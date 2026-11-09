@@ -18,6 +18,8 @@
 - `packaging` はデュアルライセンス（Apache-2.0 OR BSD-2-Clause）。いずれか一方を選択して利用できる。ライセンス原文はPyPI配布物に同梱。
 - 各ライセンスの全文は各パッケージの配布物（wheel内のライセンスファイル、または各公式リポジトリ）から取得する。本リポジトリは全文を複製しない。
 
+任意のMCP取り込み用依存は `mcp==2.3.0`（MIT）。2026-11-09にインストールした配布メタデータの `License: MIT` を確認した。`pip install '.[mcp]'` で導入し、SDKや依存パッケージのライセンス原文は各配布物を参照する。画面検証に使ったaxe-coreは検証環境だけに導入し、製品へ同梱しない。
+
 ## CVSS v4.0 仕様の帰属
 
 CVSS v4.0 の算出仕様は FIRST (Forum of Incident Response and Security Teams) が定める。CVSSはFIRSTの登録商標の場合がある。仕様の詳細は FIRST の公式仕様書を正本とし、本製品は `cvss` パッケージを介して算出する（`calculator: "cvss/3.6"` として記録）。

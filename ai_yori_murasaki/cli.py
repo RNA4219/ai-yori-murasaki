@@ -172,6 +172,8 @@ def _build_parser() -> _Parser:
 
     cli_rsi.add_parser(sub)
     cli_assessment.add_parser(sub)
+    from . import cli_sources
+    cli_sources.add_parser(sub)
     return parser
 
 
@@ -234,6 +236,10 @@ def _dispatch(args: argparse.Namespace, rt: Runtime) -> tuple[Any, Any, Any, int
     """Return (campaign_id, run_id, data, exit_code)."""
     group = args.group
     action = getattr(args, "action", None)
+
+    if group == "sources":
+        from .cli_sources import dispatch
+        return None, None, dispatch(args, rt), 0
 
     if group == "assess":
         return cli_assessment.dispatch(args, rt)

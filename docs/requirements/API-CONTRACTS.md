@@ -195,3 +195,16 @@ intent_id: INT-AYM-PRODUCT-20261106 / owner: RNA4219 / status: reviewed
 (7)本画面はoperatorローカル専用。Blueはhost到達不能。
 
 現行実装の検証結果と配置は[製品検収の対応表](../PRODUCT-ACCEPTANCE.md)を参照する。3段階の見直しはCOMPACTION-01〜03に保存した。
+
+## 6. operator用の資料取り込み
+
+CLIは `aym sources list/show/import-obsidian/import-file/import-mcp`。各引数とMCPの許可ツール・接続形式は[資料取り込みガイド](../SOURCES.md)を正本とする。通常のJSON応答・終了コード規則を継承し、成功はexit 0、入力不正はexit 2、MCP未導入・接続失敗はexit 3とする。
+
+取り込み結果は `data={status: imported|updated|unchanged, document_id, ref}`。資料の保存状態は `reference_only` とし、取り込み操作の結果状態と区別する。provider・出典URLでIDを固定し、同一内容は再登録せず、変更時は `previous_ref` で過去のCASを保持する。内容hashには本文、タイトル、出典、関連リンクを含む。Findingの件数やOracleの採点には加えない。
+
+| method | path | operatorの成功応答 |
+| --- | --- | --- |
+| GET | `/api/sources` | `{sources: [{document_id, provider, source_url, title, links, imported_at, status, transport}]}` |
+| GET | `/api/sources/<document_id>` | `{source: {一覧項目, body, content_sha256, previous_ref, ref}}` |
+
+欠落・破損は409 `source_unavailable`。Blue viewでは、存在するIDでも存在しないIDでも内容・件数を含まない同じ `withheld` 応答にする。任意path、raw CAS、資格情報・接続設定は公開しない。既存のHost／Origin検証、GET／HEAD限定、Blueのネットワーク隔離を維持する。資料の出典リンクは操作者指定の所在であり、正しさの認定ではない。

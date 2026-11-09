@@ -2,7 +2,7 @@
   "id": "docs/releases/README.md",
   "role": "guide",
   "public_api": [],
-  "summary": "公開記録の索引。既存v0.1.1の配布記録を保持し、RA-20261109-01による品質修正のソースmain反映を案内する。",
+  "summary": "公開承認記録の一覧。資料インポートと白基調のTaskをRA-20261109-02へ結び、ソースのmain反映と配布版v0.1.1を区別する。",
   "deps_out": [
     "docs/CONTRACTS.md",
     "docs/acceptance/AC-20261107-03.md",
@@ -12,6 +12,7 @@
     "docs/releases/RA-20261108-01.md",
     "docs/releases/RA-20261108-02.md",
     "docs/releases/RA-20261109-01.md",
+    "docs/releases/RA-20261109-02.md",
     "docs/tasks/TASK.readme-release-11-08-2026.md",
     "docs/tasks/TASK.version-011-11-08-2026.md"
   ],
@@ -25,13 +26,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "a49d90e60077ea1d5a81093bdb39eddaed76a9fe5ed2eda6a5ef2df6da54ca98",
-  "generated_at": "00028",
+  "source_sha256": "4d083638fdb2c7891be665ffa7278c3d08fa6fe511f0c5ecdcba5a05f98114cf",
+  "generated_at": "00030",
   "review": {
-    "reviewed_at": "2026-11-09T01:36:25.429078+00:00",
+    "reviewed_at": "2026-11-09T05:32:05.047334+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "a49d90e60077ea1d5a81093bdb39eddaed76a9fe5ed2eda6a5ef2df6da54ca98",
-    "summary_sha256": "24e191d55995dfd46e7df2867e5e7f4265c731529c4900ac6a7bb9815bdaf2e9",
-    "scope": "今回の原文・要約・依存を照合。P0/P1の実測、P2設計のみ、未実行と性能未実証を区別する。"
+    "source_sha256": "4d083638fdb2c7891be665ffa7278c3d08fa6fe511f0c5ecdcba5a05f98114cf",
+    "summary_sha256": "b83c345341cb32c4a356c40ddeebfc619200e8289115b7c22f4af5298eef9821",
+    "scope": "今回の原文・要約・参照を照合。MCPローカル試験、実サービス未検証、画面実測、参考情報と判定証拠の分離を確認。"
   }
 }

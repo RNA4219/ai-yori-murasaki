@@ -1,0 +1,47 @@
+[
+  {
+    "path": "docs/tasks/TASK.sources-light-ui-11-09-2026.md",
+    "run_exit": 0,
+    "verify_exit": 0,
+    "verify": [
+      "この最終稿に必要な検査（lint、資料との照合）を実行した記録があり、最終稿のハッシュが記録と合いました。合格の判定ではありません。完了報告を付けるときは、この出力の2行目を写してください。",
+      "yomiyasu-check: executed via=verify run=20261109T053124Z-71395ff1 attempt=1 final=sha256:8873d7cdf4b5 mode=compose reader=expert checks=lint,materials meaning_risk=26 replay=skipped"
+    ]
+  },
+  {
+    "path": "docs/acceptance/INDEX.md",
+    "run_exit": 0,
+    "verify_exit": 0,
+    "verify": [
+      "この最終稿に必要な検査（lint、diff、資料との照合）を実行した記録があり、最終稿のハッシュが記録と合いました。合格の判定ではありません。完了報告を付けるときは、この出力の2行目を写してください。",
+      "yomiyasu-check: executed via=verify run=20261109T053126Z-32b541c0 attempt=1 final=sha256:9d3faeaefdba mode=rewrite reader=expert checks=lint,diff,materials meaning_risk=2 replay=skipped"
+    ]
+  },
+  {
+    "path": "docs/acceptance/AC-20261109-02.md",
+    "run_exit": 0,
+    "verify_exit": 0,
+    "verify": [
+      "この最終稿に必要な検査（lint、資料との照合）を実行した記録があり、最終稿のハッシュが記録と合いました。合格の判定ではありません。完了報告を付けるときは、この出力の2行目を写してください。",
+      "yomiyasu-check: executed via=verify run=20261109T053128Z-3f5ed0c4 attempt=1 final=sha256:9ea12c7a25f0 mode=compose reader=expert checks=lint,materials meaning_risk=32 replay=skipped"
+    ]
+  },
+  {
+    "path": "docs/releases/README.md",
+    "run_exit": 0,
+    "verify_exit": 0,
+    "verify": [
+      "この最終稿に必要な検査（lint、diff、資料との照合）を実行した記録があり、最終稿のハッシュが記録と合いました。合格の判定ではありません。完了報告を付けるときは、この出力の2行目を写してください。",
+      "yomiyasu-check: executed via=verify run=20261109T053130Z-bb187801 attempt=1 final=sha256:4d083638fdb2 mode=rewrite reader=expert checks=lint,diff,materials meaning_risk=2 replay=skipped"
+    ]
+  },
+  {
+    "path": "docs/releases/RA-20261109-02.md",
+    "run_exit": 0,
+    "verify_exit": 0,
+    "verify": [
+      "この最終稿に必要な検査（lint、資料との照合）を実行した記録があり、最終稿のハッシュが記録と合いました。合格の判定ではありません。完了報告を付けるときは、この出力の2行目を写してください。",
+      "yomiyasu-check: executed via=verify run=20261109T053132Z-f43880f7 attempt=1 final=sha256:5a40192f36ea mode=compose reader=expert checks=lint,materials meaning_risk=19 replay=skipped"
+    ]
+  }
+]

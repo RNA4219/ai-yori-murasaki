@@ -2,12 +2,13 @@
   "id": "BLUEPRINT.md",
   "role": "requirements",
   "public_api": [],
-  "summary": "隔離ラボ、証跡、独立Oracle、RSI、P2、HTMLの実装範囲と入出力、外部接続・公開の除外を定める。",
+  "summary": "製品の目的と境界。operatorの資料取り込みを追加範囲とし、Finding・Oracle・Blue・RSIへの自動転用を分ける。",
   "deps_out": [
     "RUNBOOK.md",
     "docs/CONTRACTS.md",
     "docs/PRODUCT-GUIDE.md",
     "docs/RSI.md",
+    "docs/SOURCES.md",
     "docs/acceptance/AC-20261106-06.md",
     "docs/requirements/ACCEPTANCE-PLAN.md",
     "docs/requirements/API-CONTRACTS.md",
@@ -25,13 +26,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "eba4c5e22e425deb958f98c53409c7371acd858955b7208e97b8719d945f6199",
-  "generated_at": "00025",
+  "source_sha256": "0c8d216b5101fc866580cba0ad523be5c99b1ac35236d49c8d3a06a06eb3ee17",
+  "generated_at": "00030",
   "review": {
-    "reviewed_at": "2026-11-08T04:47:20.151229+00:00",
-    "reviewed_by": "Muse",
-    "source_sha256": "eba4c5e22e425deb958f98c53409c7371acd858955b7208e97b8719d945f6199",
-    "summary_sha256": "711b8635f880de2f50f7f85ff19ae9fcda274f33802fad7bd9e0b434e9d9314c",
-    "scope": "生成00025で依存（deps_in/deps_out）のみ更新。本文のhashは前回review時と一致し、要約に変更が不要なことを確認した。"
+    "reviewed_at": "2026-11-09T05:32:05.047334+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "0c8d216b5101fc866580cba0ad523be5c99b1ac35236d49c8d3a06a06eb3ee17",
+    "summary_sha256": "3b4a3ffab35cf5a901a7be542d025e2d311d9f04a4cfe4eb151c995f6c3ae559",
+    "scope": "今回の原文・要約・参照を照合。MCPローカル試験、実サービス未検証、画面実測、参考情報と判定証拠の分離を確認。"
   }
 }

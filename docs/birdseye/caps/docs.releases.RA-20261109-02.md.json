@@ -1,0 +1,27 @@
+{
+  "id": "docs/releases/RA-20261109-02.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "ユーザーの明示指示によるTask20261109-05のmain反映承認。対象・除外、検証済みhash、公開前の文書・秘密検査、PR正本、revertと資料保全を記録する。",
+  "deps_out": [
+    "docs/acceptance/AC-20261109-02.md",
+    "docs/evidence/sources-light-ui-20261109/README.md",
+    "docs/tasks/TASK.sources-light-ui-11-09-2026.md"
+  ],
+  "deps_in": [
+    "docs/acceptance/AC-20261109-02.md",
+    "docs/releases/README.md",
+    "docs/tasks/TASK.sources-light-ui-11-09-2026.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "5a40192f36ea3a3aea4ae4d050f60d8ac4291e73b9fc6d5cba0ee076751f8043",
+  "generated_at": "00030",
+  "review": {
+    "reviewed_at": "2026-11-09T05:32:05.050360+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "5a40192f36ea3a3aea4ae4d050f60d8ac4291e73b9fc6d5cba0ee076751f8043",
+    "summary_sha256": "daff540848f2aa02ada9308ba2eff77fe159ce51a847377670a487e4502415a1",
+    "scope": "今回の原文・要約・参照を照合。MCPローカル試験、実サービス未検証、画面実測、参考情報と判定証拠の分離を確認。"
+  }
+}

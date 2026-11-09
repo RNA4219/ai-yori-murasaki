@@ -1,0 +1,40 @@
+{
+  "id": "docs/acceptance/AC-20261109-02.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "資料取り込みと白基調の技術検収。657件成功、最終HTML24件成功、実ブラウザーとaxe違反0を記録し、実サービス接続等の未実行と追加のソース反映承認を分ける。",
+  "deps_out": [
+    "docs/SOURCES.md",
+    "docs/evidence/sources-light-ui-20261109/README.md",
+    "docs/releases/RA-20261109-02.md",
+    "docs/tasks/TASK.sources-light-ui-11-09-2026.md"
+  ],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "README.md",
+    "docs/SOURCES.md",
+    "docs/acceptance/INDEX.md",
+    "docs/evidence/sources-light-ui-20261109/README.md",
+    "docs/releases/RA-20261109-02.md",
+    "docs/requirements/MONITOR-REDESIGN.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.sources-light-ui-11-09-2026.md"
+  ],
+  "risks": [
+    "実利用者vault・実Notion/GitHub未接続。OAuth画面なし。資料は未検証の参考情報。"
+  ],
+  "tests": [
+    "tests/test_sources.py",
+    "tests/test_v1_server.py"
+  ],
+  "source_sha256": "9ea12c7a25f0e0c8d27821e86a5a6aa4d946df8394eabbd6d3d11cf8cda164c4",
+  "generated_at": "00030",
+  "review": {
+    "reviewed_at": "2026-11-09T05:32:05.054137+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "9ea12c7a25f0e0c8d27821e86a5a6aa4d946df8394eabbd6d3d11cf8cda164c4",
+    "summary_sha256": "8cddf30ee9aa13c7ad464cac2f27f612eb64fbe05b7bbc4bf42ee7e1a70f4800",
+    "scope": "今回の原文・要約・参照を照合。MCPローカル試験、実サービス未検証、画面実測、参考情報と判定証拠の分離を確認。"
+  }
+}

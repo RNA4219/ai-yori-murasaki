@@ -2,7 +2,7 @@
   "id": "docs/tasks/README.md",
   "role": "operations",
   "public_api": [],
-  "summary": "Taskの起票・状態・完了条件と一覧。品質修正のTaskとP2の未着手3課題を追跡する。",
+  "summary": "Taskの起票・状態・完了条件と一覧。資料取り込みと明るい画面のTaskを検収へ結ぶ。",
   "deps_out": [
     "CHANGELOG.md",
     "HUB.codex.md",
@@ -19,6 +19,7 @@
     "docs/acceptance/AC-20261108-02.md",
     "docs/acceptance/AC-20261108-03.md",
     "docs/acceptance/AC-20261109-01.md",
+    "docs/acceptance/AC-20261109-02.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
@@ -34,6 +35,7 @@
     "docs/tasks/TASK.rsi-naming-11-06-2026.md",
     "docs/tasks/TASK.rsi-policy-11-06-2026.md",
     "docs/tasks/TASK.security-audit-skill-11-06-2026.md",
+    "docs/tasks/TASK.sources-light-ui-11-09-2026.md",
     "docs/tasks/TASK.version-011-11-08-2026.md",
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
   ],
@@ -47,13 +49,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "c7c50ffae3e8ce1449e4671cc898f2f70084224315e215f9fb889ef0fba9aa15",
-  "generated_at": "00028",
+  "source_sha256": "976d8ff28fe2be759bcc1623f1d908f8005ad7db80b8cc238750d5ce5fd50e2b",
+  "generated_at": "00030",
   "review": {
-    "reviewed_at": "2026-11-09T01:36:25.418820+00:00",
+    "reviewed_at": "2026-11-09T05:32:05.053605+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "c7c50ffae3e8ce1449e4671cc898f2f70084224315e215f9fb889ef0fba9aa15",
-    "summary_sha256": "c43c29f05d64cb5f949ac0e104858796335b3120a2ad485f374f8d769296dfba",
-    "scope": "今回の原文・要約・依存を照合。P0/P1の実測、P2設計のみ、未実行と性能未実証を区別する。"
+    "source_sha256": "976d8ff28fe2be759bcc1623f1d908f8005ad7db80b8cc238750d5ce5fd50e2b",
+    "summary_sha256": "f8282915ddb6c20a28513d202bbdba823b50738283cb7884b15f264002f9504a",
+    "scope": "今回の原文・要約・参照を照合。MCPローカル試験、実サービス未検証、画面実測、参考情報と判定証拠の分離を確認。"
   }
 }

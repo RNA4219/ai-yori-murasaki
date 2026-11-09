@@ -1,0 +1,119 @@
+[
+  {
+    "path": "README.md",
+    "run_exit": 0,
+    "verify_exit": 0,
+    "verify": [
+      "この最終稿に必要な検査（lint、diff、資料との照合）を実行した記録があり、最終稿のハッシュが記録と合いました。合格の判定ではありません。完了報告を付けるときは、この出力の2行目を写してください。",
+      "yomiyasu-check: executed via=verify run=20261109T052517Z-d095241d attempt=1 final=sha256:cf00d09830a2 mode=rewrite reader=expert checks=lint,diff,materials meaning_risk=10 replay=skipped"
+    ]
+  },
+  {
+    "path": "BLUEPRINT.md",
+    "run_exit": 0,
+    "verify_exit": 0,
+    "verify": [
+      "この最終稿に必要な検査（lint、diff、資料との照合）を実行した記録があり、最終稿のハッシュが記録と合いました。合格の判定ではありません。完了報告を付けるときは、この出力の2行目を写してください。",
+      "yomiyasu-check: executed via=verify run=20261109T052519Z-3e1a591f attempt=1 final=sha256:0c8d216b5101 mode=rewrite reader=expert checks=lint,diff,materials meaning_risk=6 replay=skipped"
+    ]
+  },
+  {
+    "path": "CHANGELOG.md",
+    "run_exit": 0,
+    "verify_exit": 0,
+    "verify": [
+      "この最終稿に必要な検査（lint、diff、資料との照合）を実行した記録があり、最終稿のハッシュが記録と合いました。合格の判定ではありません。完了報告を付けるときは、この出力の2行目を写してください。",
+      "yomiyasu-check: executed via=verify run=20261109T052521Z-4dd9e957 attempt=1 final=sha256:2faf00d417c3 mode=rewrite reader=expert checks=lint,diff,materials meaning_risk=12 replay=skipped"
+    ]
+  },
+  {
+    "path": "HUB.codex.md",
+    "run_exit": 0,
+    "verify_exit": 0,
+    "verify": [
+      "この最終稿に必要な検査（lint、diff、資料との照合）を実行した記録があり、最終稿のハッシュが記録と合いました。合格の判定ではありません。完了報告を付けるときは、この出力の2行目を写してください。",
+      "yomiyasu-check: executed via=verify run=20261109T052523Z-bafa7066 attempt=1 final=sha256:83fd97690e48 mode=rewrite reader=expert checks=lint,diff,materials meaning_risk=3 replay=skipped"
+    ]
+  },
+  {
+    "path": "THIRD_PARTY_NOTICES.md",
+    "run_exit": 0,
+    "verify_exit": 0,
+    "verify": [
+      "この最終稿に必要な検査（lint、diff、資料との照合）を実行した記録があり、最終稿のハッシュが記録と合いました。合格の判定ではありません。完了報告を付けるときは、この出力の2行目を写してください。",
+      "yomiyasu-check: executed via=verify run=20261109T052524Z-7e88e092 attempt=1 final=sha256:66a13d25d47c mode=rewrite reader=expert checks=lint,diff,materials meaning_risk=4 replay=skipped"
+    ]
+  },
+  {
+    "path": "docs/SOURCES.md",
+    "run_exit": 0,
+    "verify_exit": 0,
+    "verify": [
+      "この最終稿に必要な検査（lint、資料との照合）を実行した記録があり、最終稿のハッシュが記録と合いました。合格の判定ではありません。完了報告を付けるときは、この出力の2行目を写してください。",
+      "yomiyasu-check: executed via=verify run=20261109T052526Z-425c50a7 attempt=1 final=sha256:a97bba92bd95 mode=compose reader=expert checks=lint,materials meaning_risk=107 replay=skipped"
+    ]
+  },
+  {
+    "path": "docs/requirements/API-CONTRACTS.md",
+    "run_exit": 0,
+    "verify_exit": 0,
+    "verify": [
+      "この最終稿に必要な検査（lint、diff、資料との照合）を実行した記録があり、最終稿のハッシュが記録と合いました。合格の判定ではありません。完了報告を付けるときは、この出力の2行目を写してください。",
+      "yomiyasu-check: executed via=verify run=20261109T052528Z-7374dd45 attempt=1 final=sha256:d0bcc46bca71 mode=rewrite reader=expert checks=lint,diff,materials meaning_risk=20 replay=skipped"
+    ]
+  },
+  {
+    "path": "docs/requirements/MONITOR-REDESIGN.md",
+    "run_exit": 0,
+    "verify_exit": 0,
+    "verify": [
+      "この最終稿に必要な検査（lint、diff、資料との照合）を実行した記録があり、最終稿のハッシュが記録と合いました。合格の判定ではありません。完了報告を付けるときは、この出力の2行目を写してください。",
+      "yomiyasu-check: executed via=verify run=20261109T052530Z-9ab9c982 attempt=1 final=sha256:efbc47d80693 mode=rewrite reader=expert checks=lint,diff,materials meaning_risk=4 replay=skipped"
+    ]
+  },
+  {
+    "path": "docs/tasks/README.md",
+    "run_exit": 0,
+    "verify_exit": 0,
+    "verify": [
+      "この最終稿に必要な検査（lint、diff、資料との照合）を実行した記録があり、最終稿のハッシュが記録と合いました。合格の判定ではありません。完了報告を付けるときは、この出力の2行目を写してください。",
+      "yomiyasu-check: executed via=verify run=20261109T052532Z-8620e522 attempt=1 final=sha256:976d8ff28fe2 mode=rewrite reader=expert checks=lint,diff,materials meaning_risk=2 replay=skipped"
+    ]
+  },
+  {
+    "path": "docs/tasks/TASK.sources-light-ui-11-09-2026.md",
+    "run_exit": 0,
+    "verify_exit": 0,
+    "verify": [
+      "この最終稿に必要な検査（lint、資料との照合）を実行した記録があり、最終稿のハッシュが記録と合いました。合格の判定ではありません。完了報告を付けるときは、この出力の2行目を写してください。",
+      "yomiyasu-check: executed via=verify run=20261109T052534Z-803589ed attempt=1 final=sha256:0b3e4d70282e mode=compose reader=expert checks=lint,materials meaning_risk=26 replay=skipped"
+    ]
+  },
+  {
+    "path": "docs/acceptance/INDEX.md",
+    "run_exit": 0,
+    "verify_exit": 0,
+    "verify": [
+      "この最終稿に必要な検査（lint、diff、資料との照合）を実行した記録があり、最終稿のハッシュが記録と合いました。合格の判定ではありません。完了報告を付けるときは、この出力の2行目を写してください。",
+      "yomiyasu-check: executed via=verify run=20261109T052536Z-d84cf34e attempt=1 final=sha256:12f5dc2ce246 mode=rewrite reader=expert checks=lint,diff,materials meaning_risk=2 replay=skipped"
+    ]
+  },
+  {
+    "path": "docs/acceptance/AC-20261109-02.md",
+    "run_exit": 0,
+    "verify_exit": 0,
+    "verify": [
+      "この最終稿に必要な検査（lint、資料との照合）を実行した記録があり、最終稿のハッシュが記録と合いました。合格の判定ではありません。完了報告を付けるときは、この出力の2行目を写してください。",
+      "yomiyasu-check: executed via=verify run=20261109T052538Z-ba8eae27 attempt=1 final=sha256:62fd2f44f9d4 mode=compose reader=expert checks=lint,materials meaning_risk=32 replay=skipped"
+    ]
+  },
+  {
+    "path": "docs/evidence/sources-light-ui-20261109/README.md",
+    "run_exit": 0,
+    "verify_exit": 0,
+    "verify": [
+      "この最終稿に必要な検査（lint、資料との照合）を実行した記録があり、最終稿のハッシュが記録と合いました。合格の判定ではありません。完了報告を付けるときは、この出力の2行目を写してください。",
+      "yomiyasu-check: executed via=verify run=20261109T052539Z-683bf9b4 attempt=2 final=sha256:59ebc25d78f3 mode=compose reader=expert checks=lint,materials meaning_risk=69 replay=skipped"
+    ]
+  }
+]

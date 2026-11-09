@@ -1,0 +1,17 @@
+Installed 6 packages in 271ms
+..........F......................................                        [100%]
+================================== FAILURES ===================================
+_______________ test_http_source_projection_and_blind_boundary ________________
+tests\test_sources.py:81: in test_http_source_projection_and_blind_boundary
+    status, _, data = request("/api/sources")
+                      ^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_sources.py:80: in request
+    return handle_request(runtime, "GET", path, {"Host": "127.0.0.1:8765"}, 8765)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ai_yori_murasaki\server.py:913: in handle_request
+    for key, value in headers.items():
+                      ^^^^^^^^^^^^^
+E   AttributeError: 'int' object has no attribute 'items'
+=========================== short test summary info ===========================
+FAILED tests/test_sources.py::test_http_source_projection_and_blind_boundary
+1 failed, 48 passed in 21.41s

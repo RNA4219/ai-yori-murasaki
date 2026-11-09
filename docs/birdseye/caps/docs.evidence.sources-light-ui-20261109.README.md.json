@@ -1,0 +1,28 @@
+{
+  "id": "docs/evidence/sources-light-ui-20261109/README.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "入力・修正理由・コマンド・657件成功・最終HTML24件・途中の失敗・画面測定・文書検査・所要時間・未実行を追跡する証跡索引。",
+  "deps_out": [
+    "docs/SOURCES.md",
+    "docs/acceptance/AC-20261109-02.md"
+  ],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/SOURCES.md",
+    "docs/acceptance/AC-20261109-02.md",
+    "docs/releases/RA-20261109-02.md",
+    "docs/tasks/TASK.sources-light-ui-11-09-2026.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "59ebc25d78f3c1f60667db5ed67f8d395880b03dec70b2464a2d732b18106210",
+  "generated_at": "00030",
+  "review": {
+    "reviewed_at": "2026-11-09T05:32:05.047334+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "59ebc25d78f3c1f60667db5ed67f8d395880b03dec70b2464a2d732b18106210",
+    "summary_sha256": "ae5e4e2ab9ff7b2ff89dd11d20ce17c14c53f36564540f5da33f3b60ff15ebf2",
+    "scope": "今回の原文・要約・参照を照合。MCPローカル試験、実サービス未検証、画面実測、参考情報と判定証拠の分離を確認。"
+  }
+}

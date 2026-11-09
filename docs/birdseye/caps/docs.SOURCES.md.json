@@ -1,0 +1,36 @@
+{
+  "id": "docs/SOURCES.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "Obsidian、Notion、GitHub Issueの手動ファイル・MCP読取手順。出典と関連リンク、認証設定、許可ツール、保存履歴、参考情報の境界、OAuth画面と実サービス検証の未実施を定める。",
+  "deps_out": [
+    "docs/acceptance/AC-20261109-02.md",
+    "docs/evidence/sources-light-ui-20261109/README.md"
+  ],
+  "deps_in": [
+    "BLUEPRINT.md",
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "README.md",
+    "docs/acceptance/AC-20261109-02.md",
+    "docs/evidence/sources-light-ui-20261109/README.md",
+    "docs/requirements/API-CONTRACTS.md",
+    "docs/tasks/TASK.sources-light-ui-11-09-2026.md"
+  ],
+  "risks": [
+    "実利用者vault・実Notion/GitHub未接続。OAuth画面なし。資料は未検証の参考情報。"
+  ],
+  "tests": [
+    "tests/test_sources.py",
+    "tests/test_v1_server.py"
+  ],
+  "source_sha256": "a97bba92bd95e67d8d4d233a05923d5a8a97691c02fd76c7dad124b55f233e10",
+  "generated_at": "00030",
+  "review": {
+    "reviewed_at": "2026-11-09T05:32:05.049340+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "a97bba92bd95e67d8d4d233a05923d5a8a97691c02fd76c7dad124b55f233e10",
+    "summary_sha256": "d65eb5d3cb2330b98512485b386e994f82f49dcb31a530fdda156dacd4e8441f",
+    "scope": "今回の原文・要約・参照を照合。MCPローカル試験、実サービス未検証、画面実測、参考情報と判定証拠の分離を確認。"
+  }
+}

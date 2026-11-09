@@ -12,6 +12,11 @@ Keep a Changelog の区分で管理する。記録には既存最大番号 +1 �
 
 ## [Unreleased]
 
+### Added
+
+- 0018 — 2026-11-09: Obsidianのノート、NotionとGitHub Issueの読取資料を手動CLIで取り込む機能を追加した。MCPは追加依存の公式SDK2.3.0を使い、許可した読取ツール、stdio／Streamable HTTP、環境変数参照の認証に対応する。資料の出典・関連リンク・CAS更新履歴を保存し、operator専用の「資料と出典」で表示する。モニターを白基調、本文18px・補助16px以上・見出し24pxに変更した。全体657 passed / 3 skipped / 22 subtests passed、最終HTML関連24 passed。実ブラウザーの1440px／390px幅とaxe-core違反0件を確認した。実サービス認証、OAuthログイン画面、自動同期、エージェントへの資料入力は含まない。
+  [Task 20261109-05](docs/tasks/TASK.sources-light-ui-11-09-2026.md) / [AC-20261109-02](docs/acceptance/AC-20261109-02.md) / [使い方](docs/SOURCES.md) / [証跡](docs/evidence/sources-light-ui-20261109/README.md)。
+
 ### Fixed
 
 - 0017 — 2026-11-09: Blue findingの重複キーとIDにmethod／evidence_refを含め、別事象の証拠消失を修正した。OracleとKPIの照合規則、CAS検査、検知・見逃し・誤検知の単位を揃えた。製品agent RSIのtrusted activationを通常lab実行へ接続し、明示指定優先、承認・比較の照合、使用bundle証跡、破損拒否、rollbackを実装した。CLI状態機械と通常実行・復旧を偽LLM／偽Dockerで確認し、全体回帰は637 passed / 3 skipped / 22 subtests passed（124.39秒）。実モデルの性能改善や実候補の昇格は主張しない。P2の3課題は設計・Task化のみ。
