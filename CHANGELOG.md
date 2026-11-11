@@ -19,6 +19,9 @@ Keep a Changelog の区分で管理する。記録には既存最大番号 +1 �
 
 ### Fixed
 
+- 0021 — 2026-11-11: Agentの`read_target_file`がファイル行数より広い範囲指定を拒否する問題を修正。要求幅ではなく実際の読取範囲を200行・32KiBに切り詰め、未読の続きは`next_start_line`で返す。空ファイルや境界値の回帰テストを追加。GitHub連携環境からのPython回帰実行は未実施のため検収保留。
+  [Task 20261111-03](docs/tasks/TASK.read-target-range-11-11-2026.md) / [AC-20261111-03](docs/acceptance/AC-20261111-03.md)。
+
 - 0020 — 2026-11-11: Red Runを偽造せず、明示的なCASログ入力からBlind Blue Runを作成できる入口を追加。入力のCAS参照をmanifest・Run・監査イベントへ固定し、クラッシュ再開でも維持する。通常BlueのRed封印条件とOracleの独立評価条件は維持。CLIに`--imported-logs-file`／`--imported-logs-ref`と`oracle evaluate --evaluated-run-id`を追加。macOS標準TMPDIRの`/var` symlinkに対応してpytestの一時ルートを実パス化し、Store本体の拒否条件は変更しない。回帰テストを追加したが、GitHub連携環境からのPython実行とmacOS実機確認は未実施のため検収保留。自動検知処理や実データの性能検証は含まない。
   [Task 20261111-02](docs/tasks/TASK.ops-imported-blue-11-11-2026.md) / [AC-20261111-02](docs/acceptance/AC-20261111-02.md)。
 
