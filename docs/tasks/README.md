@@ -22,6 +22,7 @@ Task、[Acceptance](../acceptance/README.md)、[CHANGELOG](../../CHANGELOG.md)�
 
 | task_id | 作業 | 検収 |
 | --- | --- | --- |
+| 20261111-02 | [運用障害3件（実ログBlue・Oracle CLI・macOS試験）](TASK.ops-imported-blue-11-11-2026.md) | [AC-20261111-02](../acceptance/AC-20261111-02.md)（未検収） |
 | 20261111-01 | [Agent RSI no-opとモデル固定検証](TASK.agent-rsi-pin-11-11-2026.md) | [AC-20261111-01](../acceptance/AC-20261111-01.md)（未検収） |
 | 20261109-05 | [資料インポート・出典リンク・明るい画面](TASK.sources-light-ui-11-09-2026.md) | [AC-20261109-02](../acceptance/AC-20261109-02.md) |
 | 20261109-01 | [Blue評価とRSI適用の整合性修正](TASK.quality-integration-11-09-2026.md) | [AC-20261109-01](../acceptance/AC-20261109-01.md) |

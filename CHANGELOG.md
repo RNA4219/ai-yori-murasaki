@@ -19,6 +19,9 @@ Keep a Changelog の区分で管理する。記録には既存最大番号 +1 �
 
 ### Fixed
 
+- 0020 — 2026-11-11: Red Runを偽造せず、明示的なCASログ入力からBlind Blue Runを作成できる入口を追加。入力のCAS参照をmanifest・Run・監査イベントへ固定し、クラッシュ再開でも維持する。通常BlueのRed封印条件とOracleの独立評価条件は維持。CLIに`--imported-logs-file`／`--imported-logs-ref`と`oracle evaluate --evaluated-run-id`を追加。macOS標準TMPDIRの`/var` symlinkに対応してpytestの一時ルートを実パス化し、Store本体の拒否条件は変更しない。回帰テストを追加したが、GitHub連携環境からのPython実行とmacOS実機確認は未実施のため検収保留。自動検知処理や実データの性能検証は含まない。
+  [Task 20261111-02](docs/tasks/TASK.ops-imported-blue-11-11-2026.md) / [AC-20261111-02](docs/acceptance/AC-20261111-02.md)。
+
 - 0019 — 2026-11-11: agent RSIでcandidateとbaselineのdigestが一致する場合、評価実行とholdoutアクセスを事前に拒否。モデル固定の自己申告ではなく、freezeで指定したOllama digestとtrain／validation／holdoutのモデル観測を照合する。DGX等のOpenAI互換接続や検証不能な別名は探索扱い。fixture回帰6件を追加したが、GitHub連携環境でのPythonテストと実LLM評価は未実施のため検収は保留。
   [Task 20261111-01](docs/tasks/TASK.agent-rsi-pin-11-11-2026.md) / [AC-20261111-01](docs/acceptance/AC-20261111-01.md)。
 
