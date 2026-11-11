@@ -356,6 +356,30 @@ class CompareTest(_Base):
         self.assertFalse(compared["summary"]["model_pinned"])
         self.assertFalse(compared["summary"]["ready"])
 
+    def test_training_model_drift_blocks_promotion(self) -> None:
+        script = {(sid, "baseline"): ("blue", "miss")
+                  for sid in _VALIDATION + _HOLDOUT}
+        script.update({(sid, "candidate"): "success"
+                       for sid in _VALIDATION + _HOLDOUT})
+        record = self._freeze(_config(pinning=_PINNED))
+
+        class DriftedTrainExecutor(ScriptedExecutor):
+            def __call__(self, scenario_id, bundle, seed):
+                outcome = super().__call__(scenario_id, bundle, seed)
+                outcome["model_observations"][0]["digest"] = "sha256:" + "b" * 64
+                return outcome
+
+        train_script = {(sid, "baseline"): "success" for sid in _TRAIN}
+        train_script[(_TRAIN[0], "baseline")] = ("blue", "blind detection fail")
+        self.rsi.train(record["freeze_id"], DriftedTrainExecutor(train_script))
+        candidate = self._candidate_of(record["freeze_id"])
+        compared = self.rsi.compare(record["freeze_id"],
+                                    candidate["candidate_id"],
+                                    ScriptedExecutor(script))
+        self.assertEqual(compared["summary"]["model_pin_reason"],
+                         "model_digest_unverified_or_mismatch")
+        self.assertFalse(compared["summary"]["ready"])
+
     def test_pinned_without_model_calls_cannot_be_promoted(self) -> None:
         script = {(sid, "baseline"): ("blue", "miss")
                   for sid in _VALIDATION + _HOLDOUT}
