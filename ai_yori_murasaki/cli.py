@@ -121,6 +121,9 @@ def _build_parser() -> _Parser:
                             "reevaluation", "verify"])
     r.add_argument("--seed", type=int, default=0)
     r.add_argument("--idempotency-key", required=True)
+    imported = r.add_mutually_exclusive_group()
+    imported.add_argument("--imported-logs-file", type=Path)
+    imported.add_argument("--imported-logs-ref")
     r = run.add_parser("finish")
     r.add_argument("--run-id", required=True)
     r.add_argument("--completion", required=True,
@@ -143,6 +146,7 @@ def _build_parser() -> _Parser:
     o = orc.add_parser("evaluate")
     o.add_argument("--run-id", required=True)
     o.add_argument("--predicate-file", type=Path, required=True)
+    o.add_argument("--evaluated-run-id", default=None)
 
     ver = sub.add_parser("verify").add_subparsers(dest="action", required=True)
     for name in ("chain", "checkpoint"):
@@ -287,8 +291,19 @@ def _dispatch(args: argparse.Namespace, rt: Runtime) -> tuple[Any, Any, Any, int
 
     if group == "run":
         if action == "start":
+            source_ref = args.imported_logs_ref
+            if args.imported_logs_file is not None:
+                if args.phase != "blue_blind":
+                    raise DataError("imported logs only allowed for blue_blind",
+                                    "input_invalid")
+                logs = read_json(args.imported_logs_file)
+                if not isinstance(logs, (dict, list)) or not logs:
+                    raise DataError("imported logs must be nonempty JSON",
+                                    "input_invalid")
+                source_ref = rt.store.put_object(logs)
             data = rt.start_run(args.campaign_id, args.phase, args.seed,
-                                args.idempotency_key)
+                                args.idempotency_key,
+                                imported_source_ref=source_ref)
             return args.campaign_id, data.get("run_id"), data, 0
         if action == "finish":
             data = rt.finish_run(args.run_id, args.completion, args.cause)
@@ -306,7 +321,8 @@ def _dispatch(args: argparse.Namespace, rt: Runtime) -> tuple[Any, Any, Any, int
         return args.campaign_id, args.run_id, data, 0
 
     if group == "oracle" and action == "evaluate":
-        data = rt.record_oracle(args.run_id, read_json(args.predicate_file))
+        data = rt.record_oracle(args.run_id, read_json(args.predicate_file),
+                                evaluated_run_id=args.evaluated_run_id)
         verdict = data.get("verdict")
         code = {"PASS": 0, "FAIL": 1, "HOLD": 3}.get(verdict, 2)
         return None, args.run_id, data, code
