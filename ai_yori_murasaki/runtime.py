@@ -248,7 +248,8 @@ class Runtime:
     # ------------------------------------------------------------------ #
     def _bootstrap_run(self, campaign_id: str, phase: str, seed: int,
                        idempotency_key: str, campaign: dict,
-                       evaluation_context: dict | None = None) -> dict:
+                       evaluation_context: dict | None = None,
+                       imported_source_ref: str | None = None) -> dict:
         """Private: create a run without public phase/status validation."""
         if phase not in PHASES:
             raise DataError("invalid phase", "input_invalid")
@@ -293,6 +294,8 @@ class Runtime:
         payload = {"campaign_id": campaign_id, "phase": phase, "seed": seed}
         if evaluation_context is not None:
             payload["evaluation_context"] = evaluation_context
+        if imported_source_ref is not None:
+            payload["imported_source_ref"] = imported_source_ref
         prior = self._check_idem("run", idempotency_key, payload)
         if prior is not None:
             return prior
@@ -341,6 +344,9 @@ class Runtime:
                 evaluation_context["evaluation_manifest_ref"]
             manifest["evaluation_manifest_id"] = \
                 evaluation_context["evaluation_manifest_id"]
+        if imported_source_ref is not None:
+            manifest["input_mode"] = "imported_logs"
+            manifest["imported_source_ref"] = imported_source_ref
         manifest_ref = self.store.put_object(manifest)
         run = {
             "schema_version": "1.0.0",
@@ -358,6 +364,11 @@ class Runtime:
             "budget": budget,
             "manifest_ref": manifest_ref,
         }
+        if imported_source_ref is not None:
+            run["extensions"] = {
+                "input_mode": "imported_logs",
+                "imported_source_ref": imported_source_ref,
+            }
         validate("run", run)
         self.store.save_manifest(run_id, {"run": run, "sealed": False})
         self.store.update_catalog(run_id, {
@@ -366,6 +377,13 @@ class Runtime:
             "manifest_ref": manifest_ref,
             "campaign": campaign,
         })
+        if imported_source_ref is not None:
+            # Durable provenance is on both the manifest and verified ledger.
+            # This must never be mistaken for a synthetic Red run.
+            self.record_event(run_id, "state_captured", "orchestrator",
+                              evidence_refs=(imported_source_ref,),
+                              extensions={"input_mode": "imported_logs",
+                                          "imported_source_ref": imported_source_ref})
         self._save_idem("run", idempotency_key, payload, run)
         return run
 
@@ -386,7 +404,8 @@ class Runtime:
 
     def start_run(self, campaign_id: str, phase: str, seed: int,
                   idempotency_key: str, *,
-                  evaluation_context: dict | None = None) -> dict:
+                  evaluation_context: dict | None = None,
+                  imported_source_ref: str | None = None) -> dict:
         if phase not in PHASES:
             raise DataError("invalid phase", "input_invalid")
         if not isinstance(seed, int) or isinstance(seed, bool) or seed < 0 or seed >= 2 ** 63:
@@ -427,9 +446,26 @@ class Runtime:
             if actual.get("manifest_id") != mid:
                 raise DataError("evaluation manifest id mismatch",
                                 "input_invalid")
+        if imported_source_ref is not None:
+            if phase != "blue_blind":
+                raise DataError("imported logs only allowed for blue_blind",
+                                "input_invalid")
+            if not isinstance(imported_source_ref, str) or not imported_source_ref:
+                raise DataError("imported_source_ref must be a CAS reference",
+                                "input_invalid")
+            try:
+                imported = self.store.get_object(imported_source_ref)
+            except (DataError, FileNotFoundError) as exc:
+                raise DataError("imported log source not found",
+                                "input_invalid") from exc
+            if not isinstance(imported, (dict, list)) or not imported:
+                raise DataError("imported log source must be nonempty JSON",
+                                "input_invalid")
         payload = {"campaign_id": campaign_id, "phase": phase, "seed": seed}
         if evaluation_context is not None:
             payload["evaluation_context"] = evaluation_context
+        if imported_source_ref is not None:
+            payload["imported_source_ref"] = imported_source_ref
         with self.store.lock():
             prior = self._check_idem("run", idempotency_key, payload)
             if prior is not None:
@@ -440,13 +476,16 @@ class Runtime:
                 raise DataError(
                     f"phase {phase} not allowed in campaign status {status}",
                     "policy_denied")
-            if not self._prior_phase_sealed(campaign_id, phase):
+            # Imported Blue uses an immutable CAS source instead of Red output.
+            # Ordinary Blind Blue keeps the original Red seal gate.
+            if imported_source_ref is None and not self._prior_phase_sealed(campaign_id, phase):
                 raise DataError(
                     f"phase {phase} requires prior phase completed and sealed",
                     "policy_denied")
             return self._bootstrap_run(campaign_id, phase, seed,
                                        idempotency_key, campaign,
-                                       evaluation_context=evaluation_context)
+                                       evaluation_context=evaluation_context,
+                                       imported_source_ref=imported_source_ref)
 
     def get_run(self, run_id: str) -> dict:
         manifest = self.store.load_manifest(run_id)
@@ -809,10 +848,16 @@ class Runtime:
             # the previously created new run.  A bad CAS manifest must fail
             # closed (Store error), not be swallowed to None.
             inherited_ctx = None
+            inherited_imported_source_ref = None
             old_ref = run.get("manifest_ref")
             if isinstance(old_ref, str) and old_ref:
                 old_manifest = self.store.get_object(old_ref)
                 if isinstance(old_manifest, dict):
+                    if old_manifest.get("input_mode") == "imported_logs":
+                        inherited_imported_source_ref = old_manifest.get("imported_source_ref")
+                        if not isinstance(inherited_imported_source_ref, str):
+                            raise DataError("imported log source reference invalid", "hold")
+                        self.store.get_object(inherited_imported_source_ref)
                     mref = old_manifest.get("evaluation_manifest_ref")
                     mid = old_manifest.get("evaluation_manifest_id")
                     if isinstance(mref, str) and mref and isinstance(mid, str) and mid:
@@ -827,6 +872,8 @@ class Runtime:
                        "phase": run["phase"], "seed": run["seed"]}
             if inherited_ctx is not None:
                 payload["evaluation_context"] = inherited_ctx
+            if inherited_imported_source_ref is not None:
+                payload["imported_source_ref"] = inherited_imported_source_ref
             prior = self._check_idem("run", idem_key, payload)
             if prior is not None:
                 return prior
@@ -845,7 +892,8 @@ class Runtime:
                 run["campaign_id"], run["phase"], run["seed"],
                 idem_key,
                 self.get_campaign(run["campaign_id"]),
-                evaluation_context=inherited_ctx)
+                evaluation_context=inherited_ctx,
+                imported_source_ref=inherited_imported_source_ref)
             return new_run
 
     # ------------------------------------------------------------------ #
@@ -1023,9 +1071,11 @@ def create_campaign(intent_id: str, scope: dict, authorization: dict,
 
 def start_run(campaign_id: str, phase: str, seed: int,
               idempotency_key: str, *,
-              evaluation_context: dict | None = None) -> dict:
+              evaluation_context: dict | None = None,
+              imported_source_ref: str | None = None) -> dict:
     return _runtime().start_run(campaign_id, phase, seed, idempotency_key,
-                                evaluation_context=evaluation_context)
+                                evaluation_context=evaluation_context,
+                                imported_source_ref=imported_source_ref)
 
 
 def record_event(run_id: str, event_type: str, source: str,
