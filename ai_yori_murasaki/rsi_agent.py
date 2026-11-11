@@ -85,7 +85,8 @@ def _is_id(value: Any) -> bool:
         value.strip() == value
 
 
-def _verify_model_pinning(pairs: List[dict], pinning: dict) -> tuple[bool, str, int]:
+def _verify_model_pinning(pairs: List[dict], pinning: dict,
+                          train_results: List[dict]) -> tuple[bool, str, int]:
     """Verify each observed invocation against immutable, frozen Ollama digests.
 
     A config label, a requested model, and an OpenAI-compatible response
@@ -97,24 +98,29 @@ def _verify_model_pinning(pairs: List[dict], pinning: dict) -> tuple[bool, str, 
     expected = pinning.get("expected_models")
     if not isinstance(expected, dict) or not expected:
         return False, "expected_models_missing", 0
-    seen = 0
+    runs = [item.get("outcome") for item in train_results
+            if isinstance(item, dict)]
     for pair in pairs:
-        for side in ("baseline", "candidate"):
-            observations = pair[side].get("model_observations")
-            if not isinstance(observations, list) or not observations:
-                return False, "model_observations_missing", seen
-            for item in observations:
-                seen += 1
-                if not isinstance(item, dict):
-                    return False, "invalid_model_observation", seen
-                model = item.get("requested_model")
-                if (not isinstance(model, str) or model not in expected
-                        or model.endswith(":cloud")
-                        or item.get("effective_model") != model
-                        or item.get("transport") != "ollama-native"
-                        or item.get("source") != "ollama-tags-prepost"
-                        or item.get("digest") != expected[model]):
-                    return False, "model_digest_unverified_or_mismatch", seen
+        runs.extend((pair["baseline"], pair["candidate"]))
+    seen = 0
+    if not train_results or len(runs) != len(train_results) + 2 * len(pairs):
+        return False, "train_observations_missing", seen
+    for run in runs:
+        observations = run.get("model_observations") if isinstance(run, dict) else None
+        if not isinstance(observations, list) or not observations:
+            return False, "model_observations_missing", seen
+        for item in observations:
+            seen += 1
+            if not isinstance(item, dict):
+                return False, "invalid_model_observation", seen
+            model = item.get("requested_model")
+            if (not isinstance(model, str) or model not in expected
+                    or model.endswith(":cloud")
+                    or item.get("effective_model") != model
+                    or item.get("transport") != "ollama-native"
+                    or item.get("source") != "ollama-tags-prepost"
+                    or item.get("digest") != expected[model]):
+                return False, "model_digest_unverified_or_mismatch", seen
     return True, "verified", seen
 
 
@@ -911,8 +917,11 @@ class AgentRSI:
         hold_rate_b = hold_b / hold_den if hold_den else 0.0
         hold_rate_c = hold_c / hold_den if hold_den else 0.0
         gain = val_rate_c - val_rate_b
+        train_report = self._store.get_object(candidate["train_report_ref"])
+        train_results = train_report.get("results", []) if isinstance(
+            train_report, dict) else []
         pinned, model_pin_reason, model_observations = _verify_model_pinning(
-            pairs, config["model_pinning"])
+            pairs, config["model_pinning"], train_results)
         ready = (
             complete
             and invalid_pairs == 0
