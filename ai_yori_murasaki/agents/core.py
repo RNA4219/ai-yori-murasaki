@@ -8,7 +8,8 @@ as the next user message. Failure semantics are fail-closed:
 - incomplete / empty / unavailable LLM responses end the loop as
   ``llm_failure`` (never retried into a fixed answer),
 - budget exhaustion ends the loop as ``budget_exhausted`` /
-  ``invalid_action_budget``,
+  ``invalid_action_budget``, while failed patch validation at the last
+  permitted fix attempt ends as ``fix_attempts_exhausted``,
 - only a validated ``stop`` report yields ``completed``.
 
 Every turn, tool request and denial is recorded on the run's evidence
@@ -221,6 +222,19 @@ class AgentLoop:
             result = broker.execute(tool, args)
             actions.append({"turn": turns, "tool": tool,
                             "status": result["type"]})
+
+            # A spent fix budget is terminal, not a series of invalid actions.
+            if (result["type"] == "tool_error"
+                    and result.get("error") == "fix_attempts_exhausted"):
+                return self._summarize(
+                    "fix_attempts_exhausted", "max_fix_attempts", None,
+                    turns, llm_calls, actions, result["error"])
+            if (tool == "propose_patch" and result["type"] == "tool_result"
+                    and result["result"].get("valid") is False
+                    and broker.fix_attempts_exhausted):
+                return self._summarize(
+                    "fix_attempts_exhausted", "max_fix_attempts", None,
+                    turns, llm_calls, actions, "patch_validation_failed")
 
             if result["type"] == "stop":
                 payload = result["result"]

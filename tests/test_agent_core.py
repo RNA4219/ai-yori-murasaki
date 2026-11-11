@@ -341,7 +341,11 @@ class PurplePatchTest(_Base):
             "reason": "未検証", "report": {
                 "proposal_ref": result["result"]["proposal_ref"]}})
         self.assertEqual(stop["type"], "tool_error")
-        self.assertEqual(stop["error"], "unknown_evidence_ref")
+        self.assertEqual(stop["error"], "report_invalid")
+        # A truly unissued ref must still be rejected.
+        forged = broker.execute("stop", {
+            "reason": "偽造", "report": {"proposal_ref": "f" * 64}})
+        self.assertEqual(forged["error"], "unknown_evidence_ref")
 
     def test_read_target_file_window(self) -> None:
         text = "a = 1\nb = 2\nc = 3\n"
@@ -357,7 +361,9 @@ class PurplePatchTest(_Base):
         self.assertEqual(omitted["type"], "tool_result")
         self.assertEqual(omitted["result"]["start_line"], 1)
         self.assertEqual(omitted["result"]["end_line"], 3)
-        self.assertIn("3: c = 3", omitted["result"]["content"])
+        self.assertEqual(
+            omitted["result"]["content"],
+            "1: a = 1\n2: b = 2\n3: c = 3")
 
     def test_fix_attempts_exhausted(self) -> None:
         target_dir = self._target_dir(self.FLAWED)
@@ -374,6 +380,26 @@ class PurplePatchTest(_Base):
             "new_content": self.FIXED + "\n# third\n"})
         self.assertEqual(third["type"], "tool_error")
         self.assertEqual(third["error"], "fix_attempts_exhausted")
+
+    def test_failed_patch_limit_ends_loop_as_exhausted(self) -> None:
+        target_dir = self._target_dir(self.FLAWED)
+        cfg = json.loads(json.dumps(self.bundle["roles"]["purple"]))
+        cfg["budget"]["max_fix_attempts"] = 1
+        llm = FakeLLM([_resp(_action(
+            "propose_patch", root_cause="x", rationale="x",
+            new_content=self.FIXED))])
+        result = self._loop(llm, "purple", role_cfg=cfg).run(
+            task="fix", target_dir=target_dir,
+            unit_validator=lambda _: {
+                "static_passed": True, "unit_passed": False,
+                "unit_checks": [{"name": "gate", "passed": False}],
+            })
+        self.assertEqual(result["status"], "fix_attempts_exhausted")
+        self.assertEqual(result["stop_reason"], "max_fix_attempts")
+        self.assertEqual(result["last_error"], "patch_validation_failed")
+        self.assertIsNone(result["report"])
+        self.assertEqual(result["llm_calls"], 1)
+        self.assertEqual(result["actions"][0]["tool"], "propose_patch")
 
 
 class BundleValidationTest(_Base):

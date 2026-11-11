@@ -416,17 +416,20 @@ class DockerRunnerTests(unittest.TestCase):
             })
 
     def test_build_argv_roundtrip_validator(self):
-        plan = {
-            "id": "abc123",
-            "image": "img",
-            "network": "none",
-            "staged_source": "/tmp/stage",
-            "script": "/app/run.py",
-            "args": ["--x", "1"],
-        }
-        argv = adapter_base._build_docker_argv_from_plan(plan)
-        adapter_base._validate_docker_argv(
-            argv, staging_root="/tmp/stage", allowed_images=["img"])
+        # macOS /tmp is a symlink; keep the guard by using a resolved path.
+        with tempfile.TemporaryDirectory() as tmp:
+            stage = os.path.realpath(tmp)
+            plan = {
+                "id": "abc123",
+                "image": "img",
+                "network": "none",
+                "staged_source": stage,
+                "script": "/app/run.py",
+                "args": ["--x", "1"],
+            }
+            argv = adapter_base._build_docker_argv_from_plan(plan)
+            adapter_base._validate_docker_argv(
+                argv, staging_root=stage, allowed_images=["img"])
 
     def test_build_argv_mount_readonly_true(self):
         plan = {
