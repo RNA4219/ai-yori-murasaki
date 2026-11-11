@@ -49,6 +49,33 @@ aym verify checkpoint --campaign-id <ID> --run-id <ID>
 
 ハッシュ列だけでは、末尾削除や全列の再計算を独立に検知できない。trusted rootのcheckpointと照合する。checkpointがなければ保留であり、成功扱いにしない。検証結果はsealed runへの追記ではなく、verification journalへ保存する。
 
+## 実ログを使った Blind Blue と Oracle CLI
+
+攻撃役を動かさず、operatorが認可済みCampaignへJSONのログ書き出しを取り込む場合は、`red`の代わりに明示的な入力を指定する。通常の`blue_blind`は従来どおり、完了・封印済み`red`が必須。
+
+```sh
+aym campaign transition --campaign-id <campaign-id> --to running
+aym run start --campaign-id <campaign-id> --phase blue_blind \
+  --idempotency-key blue-import-001 --imported-logs-file ./logs.json
+# 応答に含まれるblue run_idを保存する
+aym run finish --run-id <blue-run-id> --completion completed
+aym run seal --campaign-id <campaign-id> --run-id <blue-run-id>
+aym checkpoint seal --campaign-id <campaign-id> --run-id <blue-run-id> --operator-id <operator-id>
+aym campaign transition --campaign-id <campaign-id> --to blind_completed
+aym run start --campaign-id <campaign-id> --phase verify --idempotency-key verify-import-001
+aym oracle evaluate --run-id <verify-run-id> \
+  --evaluated-run-id <blue-run-id> --predicate-file ./predicate.json
+aym run finish --run-id <verify-run-id> --completion completed
+aym run seal --campaign-id <campaign-id> --run-id <verify-run-id>
+aym campaign transition --campaign-id <campaign-id> --to purple_open
+```
+
+`logs.json`は空でないJSONオブジェクトまたは配列。JSONLの場合は先にJSONへ整形する。`--imported-logs-ref <CAS-SHA256>`で同じStoreへ保存済みのデータを指定してもよい。取り込み元はrun manifest、run extensions、イベント証跡のCAS参照に記録され、idempotency keyの再利用では参照一致を要求する。クラッシュ再開時も参照を引き継ぐ。
+
+この入口が行うのは**入力の固定・記録とBlue Runの作成**であり、ログに対する検知アルゴリズムの自動実行は行わない。Blue workerへの入力引き渡し、Finding記録、Oracle predicateの準備は利用側の実行手順が必要。独立Oracleは`verify`/`reevaluation`の実行Runに結果を保存し、`--evaluated-run-id`で同じCampaignの完了・封印済みBlue Runを指定したときだけBlue評価として扱う。PASSの自己申告では`purple_open`を開かない。
+
+実データに含まれる機密・個人情報を除外した上でローカルStoreへ取り込む。認可scope、Blue/Oracleの権限分離、封印・checkpointの条件は変更しない。既存`--evaluated-run-id`省略時は評価Run自身を対象にする。
+
 ## RSIの操作
 
 現在の採用評価器は、`require_admin`を持つローカル認可方針を決定的に実行する。trainで原因を分析し候補を作成する。評価用の正解情報はLLMに送信しない。
