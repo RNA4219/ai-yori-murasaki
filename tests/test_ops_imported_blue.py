@@ -143,6 +143,23 @@ def test_cli_import_blue_oracle_target_unlocks_purple(env, tmp_path, capsys):
     assert rt.get_campaign(cid)["status"] == "purple_open"
 
 
+def test_cli_json_array_logs_are_wrapped_for_cas(env, tmp_path, capsys):
+    rt, cid, ws, tr = env
+    path = tmp_path / "logs.json"
+    path.write_text(json.dumps([{"source": "export", "event": "fixture"}]),
+                    encoding="utf-8")
+    code, reply = _cli_call(ws, tr, capsys, "run", "start",
+                             "--campaign-id", cid, "--phase", "blue_blind",
+                             "--idempotency-key", "array-blue",
+                             "--imported-logs-file", str(path))
+    assert code == 0, reply
+    source_ref = rt.get_run(reply["run_id"])["extensions"]["imported_source_ref"]
+    assert rt.store.get_object(source_ref) == {
+        "kind": "imported_logs",
+        "records": [{"source": "export", "event": "fixture"}],
+    }
+
+
 def test_cli_oracle_target_rejects_unsealed_blue(env, tmp_path, capsys):
     rt, cid, ws, tr = env
     ref = _logs(rt)
