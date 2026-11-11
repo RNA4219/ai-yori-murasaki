@@ -368,7 +368,7 @@ class PurplePatchTest(_Base):
 
     def test_read_target_file_clamps_oversized_request_to_eof(self) -> None:
         target_dir = self._target_dir("".join(
-            "value = {}\\n".format(i) for i in range(1, 134)))
+            "value = {}\n".format(i) for i in range(1, 134)))
         broker = self._broker(target_dir, lambda nc: {})
         result = broker.execute("read_target_file", {
             "path": "target.py", "start_line": 1, "end_line": 300})
@@ -381,7 +381,7 @@ class PurplePatchTest(_Base):
 
     def test_read_target_file_paginates_at_200_lines(self) -> None:
         target_dir = self._target_dir("".join(
-            "value = {}\\n".format(i) for i in range(1, 226)))
+            "value = {}\n".format(i) for i in range(1, 226)))
         broker = self._broker(target_dir, lambda nc: {})
         first = broker.execute("read_target_file", {
             "path": "target.py", "start_line": 1, "end_line": 300})
@@ -399,7 +399,7 @@ class PurplePatchTest(_Base):
         self.assertTrue(second["result"]["content"].startswith("201: value = 201"))
 
     def test_read_target_file_resumes_at_byte_boundary(self) -> None:
-        target_dir = self._target_dir(("x" * 500 + "\\n") * 100)
+        target_dir = self._target_dir(("x" * 500 + "\n") * 100)
         broker = self._broker(target_dir, lambda nc: {})
         first = broker.execute("read_target_file", {"path": "target.py"})
         self.assertEqual(first["type"], "tool_result")
@@ -427,7 +427,7 @@ class PurplePatchTest(_Base):
                 "path": "target.py", "start_line": start, "end_line": end})
             self.assertEqual(invalid["type"], "tool_error")
             self.assertEqual(invalid["error"], "invalid_line_range")
-        target_dir = self._target_dir("x" * (33 * 1024) + "\\n")
+        target_dir = self._target_dir("x" * (33 * 1024) + "\n")
         oversized = broker.execute("read_target_file", {"path": "target.py"})
         self.assertEqual(oversized["type"], "tool_error")
         self.assertEqual(oversized["error"], "range_too_large")
