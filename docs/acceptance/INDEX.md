@@ -10,6 +10,7 @@ next_review_due: 2026-12-06
 
 | Acceptance | Task | 対象 | 公開 |
 | --- | --- | --- | --- |
+| [AC-20261111-02](AC-20261111-02.md) | [20261111-02](../tasks/TASK.ops-imported-blue-11-11-2026.md) | 実ログBlue入口・Oracle CLI評価対象・macOSテスト | 未検収 |
 | [AC-20261111-01](AC-20261111-01.md) | [20261111-01](../tasks/TASK.agent-rsi-pin-11-11-2026.md) | RSI no-op評価とモデルdigest証跡 | 未検収 |
 | [AC-20261109-02](AC-20261109-02.md) | [20261109-05](../tasks/TASK.sources-light-ui-11-09-2026.md) | 資料の読取インポート、出典リンク、白基調と文字拡大 | ソース反映承認（RA-20261109-02） |
 | [AC-20261109-07](AC-20261109-07.md) | [20261109-07](../tasks/TASK.llm-remote-11-09-2026.md) | 認証付きOpenAI互換接続と秘密情報保護 | 未検収 |
