@@ -74,6 +74,8 @@ aym monitor serve --bind 127.0.0.1:8765
 
 ## 起動
 
+macOS等で認証付きOpenAI互換LLMを使用する場合は、[導入手順](docs/INSTALL-DGX.md)を参照してください。
+
 Python 3.11以上、DockerのLinuxコンテナ実行環境、Ollamaを使用します。Ollamaには`glm-5.3:cloud`と`deepseek-v4.1-flash:cloud`を登録し、cloudモデルを利用できる状態にします。
 
 ```powershell

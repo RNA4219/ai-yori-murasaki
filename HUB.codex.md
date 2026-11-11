@@ -33,6 +33,7 @@ template_version: 1.0.0
 | 製品要件の再評価 | [受領レビューと必要性評価](docs/reviews/REVIEW-INTAKE-20261107.md) | [完成判定の撤回](docs/acceptance/AC-20261106-06.md) |
 | モニターの画面と更新挙動 | [再設計](docs/requirements/MONITOR-REDESIGN.md) | [画面検収](docs/acceptance/AC-20261107-01.md) |
 | 製品の起動・操作 | [製品操作ガイド](docs/PRODUCT-GUIDE.md) | [製品検収](docs/acceptance/AC-20261106-06.md) |
+| OpenAI互換LLMの認証付き接続 | [導入手順](docs/INSTALL-DGX.md) | [検証計画](docs/acceptance/AC-20261109-07.md) |
 | 目的・境界の確認 | [BLUEPRINT](BLUEPRINT.md) | [原資料（非公開の保存資料）](<docs/ADR/deep-research-report (16).md>) |
 | 調査・原典収集 | [RUNBOOK: Imozuru](RUNBOOK.md#imozuru) | [契約](docs/CONTRACTS.md) |
 | 自己改善の設計・評価 | [RSI 方針](docs/RSI.md) | [RUNBOOK: RSI](RUNBOOK.md#rsi)、[RSI 契約](docs/CONTRACTS.md#rsi) |
