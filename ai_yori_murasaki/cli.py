@@ -300,6 +300,10 @@ def _dispatch(args: argparse.Namespace, rt: Runtime) -> tuple[Any, Any, Any, int
                 if not isinstance(logs, (dict, list)) or not logs:
                     raise DataError("imported logs must be nonempty JSON",
                                     "input_invalid")
+                # Store persists dict objects; keep JSON-array exports in
+                # an explicit envelope instead of rejecting typical logs.
+                if isinstance(logs, list):
+                    logs = {"kind": "imported_logs", "records": logs}
                 source_ref = rt.store.put_object(logs)
             data = rt.start_run(args.campaign_id, args.phase, args.seed,
                                 args.idempotency_key,
