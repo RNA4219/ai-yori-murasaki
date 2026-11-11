@@ -184,9 +184,10 @@ def test_cli_oracle_target_rejects_unsealed_blue(env, tmp_path, capsys,
     assert code == 4 and reply["status"] == "denied", reply
 
 
-def test_pytest_tmpdir_resolved():
+def test_pytest_tmpdir_resolved(tmp_path):
     """macOS /var is a symlink; pytest's temp roots must use /private/var."""
     root = Path(tempfile.gettempdir())
     assert root == root.resolve()
+    assert tmp_path == tmp_path.resolve()
     with tempfile.TemporaryDirectory() as name:
         assert Path(name) == Path(name).resolve()
