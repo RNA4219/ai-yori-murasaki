@@ -72,20 +72,91 @@ def _run_verify(rt, campaign_id, op, event_type, evidence_fn, extensions,
 
 
 def _agent_executor(rt, staging_root, routes):
-    """Build the real lab executor for agent RSI (record-mode outcomes)."""
+    """Record model identities at real LLM calls; never trust config labels."""
     from pathlib import Path as _Path
     from . import lab
     from .adapters.llm import LLMClient
     from .adapters.base import HttpBroker
+    from .jsonio import loads as _loads
     from .rsi_agent import outcome_from_demo
-    llm = LLMClient(HttpBroker(rt.policy), timeout_ms=90000, retry_cap=0)
+
+    broker = HttpBroker(rt.policy)
+    llm = LLMClient(broker, timeout_ms=90000, retry_cap=0)
+    observed = []
+
+    class RecordingClient:
+        def chat(self, **kwargs):
+            requested = kwargs.get("model")
+            try:
+                response = llm.chat(**kwargs)
+            except Exception:
+                observed.append({"requested_model": requested,
+                                 "effective_model": None})
+                raise
+            observed.append({
+                "requested_model": requested,
+                "effective_model": response.get("effective_model")
+                if isinstance(response, dict) else None,
+            })
+            return response
+
+    recording_client = RecordingClient()
+
+    def local_digests():
+        # OpenAI-compatible response names do not attest immutable weights.
+        if llm._configured_url is not None:
+            return {}
+        try:
+            response = broker.request(
+                "GET", "http://localhost:11434/api/tags",
+                timeout=10.0, max_bytes=262144)
+            if response.get("status") != 200:
+                return {}
+            document = _loads(response["body"])
+            if not isinstance(document, dict) or not isinstance(
+                    document.get("models"), list):
+                return {}
+            versions = {}
+            for item in document["models"]:
+                if not isinstance(item, dict):
+                    continue
+                name, checksum = item.get("name"), item.get("digest")
+                if (isinstance(name, str) and name
+                        and isinstance(checksum, str) and len(checksum) == 64
+                        and all(c in "0123456789abcdef" for c in checksum)):
+                    versions[name] = "sha256:" + checksum
+            return versions
+        except Exception:
+            # Missing or unverifiable registry evidence must fail closed.
+            return {}
 
     def executor(scenario_id, bundle, seed):
+        before = local_digests()
+        observed.clear()
         result = lab.run_demo(rt, _Path(staging_root), seed,
-                              llm_client=llm, routes=routes,
+                              llm_client=recording_client, routes=routes,
                               scenario_id=scenario_id,
                               policy_bundle=bundle, failure_mode="record")
-        return outcome_from_demo(result)
+        after = local_digests()
+        outcome = outcome_from_demo(result)
+        observations = []
+        for item in observed:
+            model = item["requested_model"]
+            is_native = llm._configured_url is None
+            verified = (is_native and isinstance(model, str)
+                        and not model.endswith(":cloud")
+                        and item["effective_model"] == model
+                        and model in before and before[model] == after.get(model))
+            observations.append({
+                "requested_model": model,
+                "effective_model": item["effective_model"],
+                "transport": "ollama-native" if is_native else "openai-compatible",
+                "source": "ollama-tags-prepost" if verified else "unverified",
+                "digest": before[model] if verified else None,
+            })
+        outcome["model_observations"] = observations
+        return outcome
+
     return executor
 
 

@@ -18,6 +18,21 @@ next_review_due: 2026-12-06
 実行 → 証拠の保存 → 原因分析 → 改善候補の作成 → 同条件比較
 → 未見課題での確認 → 採用判断 → 次の改善
 
+## エージェントRSIのモデル固定とno-op候補（2026-11-11）
+
+`train` でcandidateのbundle digestがbaselineと同一だった場合、`compare` は開始前に拒否する。validation／holdoutの実行も、holdoutアクセス監査も発生させない。
+
+モデルの固定は `model_pinning.status` の自己申告ではなく、凍結した `expected_models` と実行観測を照合する。例：
+
+```json
+{"model_pinning":{"status":"pinned","note":"local Ollama",
+  "expected_models":{"model-name:tag":"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}}}
+```
+
+値は `GET /api/tags` で確認したローカルモデルのdigestをfreeze**前**に設定する。train・validation・holdoutの各実行で、要求モデル名、LLM応答に含まれるモデル名、`/api/tags` の前後digestの一致を確認する。証跡の欠落、モデルの不一致、OpenAI互換API（DGX等）のモデル名、Ollama cloud aliasは `exploratory-unpinned-model` とする。既存の `{"status":"pinned","note":"..."}` は受け付けるが、digestの事前固定が無いので採用準備完了にはしない。
+
+`/api/tags` の前後確認は、ローカルOllamaサーバーの自己申告を信頼する運用上の確認であり、推論時に実ロードされた重みの暗号学的な証明ではない。モデル名・digestを偽装できる実行器やサーバーに対する保証、実モデルの性能改善の証明には使わない。対応：[Task 20261111-01](tasks/TASK.agent-rsi-pin-11-11-2026.md)／[AC-20261111-01](acceptance/AC-20261111-01.md)。
+
 ## 1. 目的と評価条件を先に固定する
 
 何を達成すれば成功か、何を測るか、どこまで実行してよいかを決める。

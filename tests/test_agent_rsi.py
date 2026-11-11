@@ -18,7 +18,8 @@ from ai_yori_murasaki.rsi_agent import (AgentRSI, classify_failure,
                                         outcome_from_demo)
 from ai_yori_murasaki.storage import Store
 
-_PINNED = {"status": "pinned:local-digest-abc", "note": "local"}
+_PINNED = {"status": "pinned", "note": "synthetic unit-test fixture",
+           "expected_models": {"scripted-model": "sha256:" + "a" * 64}}
 _UNPINNED = {"status": "unpinned:cloud-alias", "note": "cloud"}
 
 _TRAIN = ["authz-flag-false", "authz-allow-missing"]
@@ -83,12 +84,23 @@ class ScriptedExecutor:
             raise AssertionError(
                 "no script for {} {}".format(scenario_id, label))
         if action == "success":
-            return _success(calls=6)
-        if action == "external":
-            return _failed("unknown", "docker unavailable",
-                           attribution="external")
-        phase, reason = action
-        return _failed(phase, reason)
+            result = _success(calls=6)
+        elif action == "external":
+            result = _failed("unknown", "docker unavailable",
+                             attribution="external")
+        else:
+            phase, reason = action
+            result = _failed(phase, reason)
+        # This is a synthetic model identity for unit tests, not evidence
+        # of any physical/local model's performance.
+        result["model_observations"] = [{
+            "requested_model": "scripted-model",
+            "effective_model": "scripted-model",
+            "transport": "ollama-native",
+            "source": "ollama-tags-prepost",
+            "digest": "sha256:" + "a" * 64,
+        }]
+        return result
 
 
 class _Base(unittest.TestCase):
@@ -166,6 +178,12 @@ class FreezeTest(_Base):
             "holdout": ["authz-default-allow"]}
         with self.assertRaises(DataError):
             self._freeze(config=bad)
+
+    def test_invalid_expected_model_digest_is_rejected(self) -> None:
+        cfg = _config(pinning={"status": "pinned", "note": "",
+                               "expected_models": {"scripted-model": "latest"}})
+        with self.assertRaises(DataError):
+            self._freeze(config=cfg)
 
     def test_runner_change_breaks_freeze(self) -> None:
         record = self._freeze()
@@ -275,6 +293,114 @@ class CompareTest(_Base):
         self.assertTrue(summary["ready"])
         ready = self.rsi.ready(result["candidate_id"])
         self.assertEqual(ready["status"], "promotion-ready")
+
+    def test_unchanged_candidate_never_touches_holdout(self) -> None:
+        record = self._freeze()
+        train = self.rsi.train(
+            record["freeze_id"],
+            ScriptedExecutor({(sid, "baseline"): "success" for sid in _TRAIN}))
+        self.assertFalse(train["changed"])
+        access = []
+        executor = ScriptedExecutor({})
+        with self.assertRaises(DataError):
+            self.rsi.compare(record["freeze_id"], train["candidate_id"],
+                             executor, on_holdout=access.append)
+        self.assertEqual(executor.calls, [])
+        self.assertEqual(access, [])
+        self.assertFalse(self.rsi.get_candidate(train["candidate_id"])["compared"])
+
+    def test_self_declared_pinned_without_digests_is_exploratory(self) -> None:
+        script = {(sid, "baseline"): ("blue", "miss")
+                  for sid in _VALIDATION + _HOLDOUT}
+        script.update({(sid, "candidate"): "success"
+                       for sid in _VALIDATION + _HOLDOUT})
+        config = _config(pinning={"status": "pinned", "note": "claim only"})
+        result, _ = self._compare(script, config=config)
+        self.assertFalse(result["summary"]["model_pinned"])
+        self.assertEqual(result["summary"]["model_pin_reason"],
+                         "expected_models_missing")
+        self.assertEqual(self.rsi.ready(result["candidate_id"])["status"],
+                         "exploratory-unpinned-model")
+
+    def test_different_digest_or_cloud_alias_blocks_promotion(self) -> None:
+        script = {(sid, "baseline"): ("blue", "miss")
+                  for sid in _VALIDATION + _HOLDOUT}
+        script.update({(sid, "candidate"): "success"
+                       for sid in _VALIDATION + _HOLDOUT})
+        mismatch = {"status": "pinned", "note": "wrong digest",
+                    "expected_models": {"scripted-model": "sha256:" + "b" * 64}}
+        result, _ = self._compare(script, config=_config(pinning=mismatch))
+        self.assertFalse(result["summary"]["model_pinned"])
+        self.assertEqual(result["summary"]["model_pin_reason"],
+                         "model_digest_unverified_or_mismatch")
+
+        record = self._freeze(_config(pinning=_PINNED))
+        self._train_with_one_failure(record["freeze_id"])
+        candidate = self._candidate_of(record["freeze_id"])
+
+        class CloudExecutor(ScriptedExecutor):
+            def __call__(self, scenario_id, bundle, seed):
+                outcome = super().__call__(scenario_id, bundle, seed)
+                outcome["model_observations"] = [{
+                    "requested_model": "scripted-model",
+                    "effective_model": "cloud-alias-revision",
+                    "transport": "openai-compatible",
+                    "source": "unverified",
+                    "digest": None,
+                }]
+                return outcome
+
+        compared = self.rsi.compare(record["freeze_id"],
+                                    candidate["candidate_id"],
+                                    CloudExecutor(script))
+        self.assertFalse(compared["summary"]["model_pinned"])
+        self.assertFalse(compared["summary"]["ready"])
+
+    def test_training_model_drift_blocks_promotion(self) -> None:
+        script = {(sid, "baseline"): ("blue", "miss")
+                  for sid in _VALIDATION + _HOLDOUT}
+        script.update({(sid, "candidate"): "success"
+                       for sid in _VALIDATION + _HOLDOUT})
+        record = self._freeze(_config(pinning=_PINNED))
+
+        class DriftedTrainExecutor(ScriptedExecutor):
+            def __call__(self, scenario_id, bundle, seed):
+                outcome = super().__call__(scenario_id, bundle, seed)
+                outcome["model_observations"][0]["digest"] = "sha256:" + "b" * 64
+                return outcome
+
+        train_script = {(sid, "baseline"): "success" for sid in _TRAIN}
+        train_script[(_TRAIN[0], "baseline")] = ("blue", "blind detection fail")
+        self.rsi.train(record["freeze_id"], DriftedTrainExecutor(train_script))
+        candidate = self._candidate_of(record["freeze_id"])
+        compared = self.rsi.compare(record["freeze_id"],
+                                    candidate["candidate_id"],
+                                    ScriptedExecutor(script))
+        self.assertEqual(compared["summary"]["model_pin_reason"],
+                         "model_digest_unverified_or_mismatch")
+        self.assertFalse(compared["summary"]["ready"])
+
+    def test_pinned_without_model_calls_cannot_be_promoted(self) -> None:
+        script = {(sid, "baseline"): ("blue", "miss")
+                  for sid in _VALIDATION + _HOLDOUT}
+        script.update({(sid, "candidate"): "success"
+                       for sid in _VALIDATION + _HOLDOUT})
+        record = self._freeze(_config(pinning=_PINNED))
+        self._train_with_one_failure(record["freeze_id"])
+        candidate = self._candidate_of(record["freeze_id"])
+
+        class NoTraceExecutor(ScriptedExecutor):
+            def __call__(self, scenario_id, bundle, seed):
+                outcome = super().__call__(scenario_id, bundle, seed)
+                outcome.pop("model_observations")
+                return outcome
+
+        compared = self.rsi.compare(record["freeze_id"],
+                                    candidate["candidate_id"],
+                                    NoTraceExecutor(script))
+        self.assertEqual(compared["summary"]["model_pin_reason"],
+                         "model_observations_missing")
+        self.assertFalse(compared["summary"]["ready"])
 
     def test_holdout_regression_blocks_ready(self) -> None:
         script = {(sid, "baseline"): ("blue", "miss") for sid in _VALIDATION}
