@@ -2194,8 +2194,9 @@ td, th { font-variant-numeric: tabular-nums; }
     var s = rec.status;
     if (s === 'scored') {
       if (typeof rec.epss !== 'number' || !isFinite(rec.epss)) return 'EPSS取得失敗';
-      var pct = (typeof rec.percentile === 'number' && isFinite(rec.percentile)) ? String(Math.round(rec.percentile * 1000) / 10) : '未記録';
-      return 'EPSS ' + rec.epss + '（上位' + pct + '％。悪用される可能性の推定値）';
+      var hasPercentile = (typeof rec.percentile === 'number' && isFinite(rec.percentile) && rec.percentile >= 0 && rec.percentile <= 1);
+      var rank = hasPercentile ? ('上位' + String(Math.round((1 - rec.percentile) * 1000) / 10) + '％相当') : '順位未記録';
+      return 'EPSS ' + rec.epss + '（' + rank + '。悪用される可能性の推定値）';
     }
     if (s === 'not_listed' || s === 'expired' || s === 'missing' || s === 'corrupt' || s === 'not_tested' || s === 'not_applicable') return ENRICH_EPSS_TEXT[s];
     return 'EPSS取得失敗';
