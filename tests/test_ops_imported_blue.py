@@ -160,13 +160,18 @@ def test_cli_json_array_logs_are_wrapped_for_cas(env, tmp_path, capsys):
     }
 
 
-def test_cli_oracle_target_rejects_unsealed_blue(env, tmp_path, capsys):
+@pytest.mark.parametrize("completion", ["completed", "incomplete"])
+def test_cli_oracle_target_rejects_unsealed_blue(env, tmp_path, capsys,
+                                                   completion):
     rt, cid, ws, tr = env
     ref = _logs(rt)
     blue = rt.start_run(cid, "blue_blind", 1, "blue-unsealed",
                         imported_source_ref=ref)
     # A verify run may not start while another run is running.
-    rt.finish_run(blue["run_id"], "incomplete", "not_executed")
+    if completion == "incomplete":
+        rt.finish_run(blue["run_id"], completion, "not_executed")
+    else:
+        rt.finish_run(blue["run_id"], completion)
     verification = rt.start_run(cid, "verify", 0, "oracle-guard")
     ev = rt.store.put_object({"code": 0})
     predicate = Oracle().make_predicate("p1", "exit_code", ev, {"code": 0})
