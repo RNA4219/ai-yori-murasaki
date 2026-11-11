@@ -224,7 +224,27 @@ def _make_runtime(args: argparse.Namespace) -> Runtime:
         raise DataError("workspace が指定されていません", "usage_error")
     if not args.trusted_root:
         raise DataError("trusted-root が指定されていません", "usage_error")
-    store = Store(str(args.workspace), str(args.trusted_root))
+    secrets: list[str] = []
+    raw_secrets = os.environ.get("AYM_SECRETS", "")
+    if raw_secrets:
+        secrets.extend(s for s in raw_secrets.split("\n") if s)
+    api_key_raw = os.environ.get("AYM_LLM_API_KEY", "")
+    if api_key_raw:
+        secrets.append(api_key_raw)
+        stripped = api_key_raw.strip()
+        if stripped:
+            secrets.append(stripped)
+            if stripped.lower().startswith("bearer "):
+                bare = stripped[len("bearer "):].strip()
+                if bare:
+                    secrets.append(bare)
+    seen: set[str] = set()
+    unique_secrets: list[str] = []
+    for s in secrets:
+        if s and s not in seen:
+            seen.add(s)
+            unique_secrets.append(s)
+    store = Store(str(args.workspace), str(args.trusted_root), tuple(unique_secrets))
     policy_path = args.policy
     if policy_path is None:
         policy_path = Path(__file__).with_name("default-policy.json")

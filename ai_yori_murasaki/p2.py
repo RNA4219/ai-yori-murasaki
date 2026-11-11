@@ -7,6 +7,7 @@ code itself.
 
 from __future__ import annotations
 
+import os
 import re
 from urllib.parse import urlsplit
 
@@ -40,6 +41,19 @@ def route_model(role, routes=None):
     if not isinstance(role, str) or role not in _KNOWN_ROLES:
         raise DataError("未知のロールです: %r" % (role,))
     table = dict(_DEFAULT_ROUTES)
+    # AYM_LLM_MODEL serves as a universal fallback for all known roles,
+    # applied after defaults but before explicit per-role routes overrides.
+    # This makes loop metadata match the actual requested model.
+    env_model = os.environ.get("AYM_LLM_MODEL", "")
+    if env_model and env_model != env_model.strip():
+        raise DataError("AYM_LLM_MODEL に前後の空白は使用できません")
+    if env_model:
+        if any(ord(c) < 32 or ord(c) == 127 for c in env_model):
+            raise DataError("AYM_LLM_MODEL に制御文字は使用できません")
+        if len(env_model) > 200:
+            raise DataError("AYM_LLM_MODEL は1〜200文字の非空文字列である必要があります")
+        for key in table:
+            table[key] = env_model
     if routes is not None:
         if not isinstance(routes, dict):
             raise DataError("routes は辞書である必要があります")

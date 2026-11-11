@@ -27,6 +27,7 @@ Task、[Acceptance](../acceptance/README.md)、[CHANGELOG](../../CHANGELOG.md)�
 | 20261109-02 | [SQLiの実LLM修復検証（計画）](TASK.p2-sqli-11-09-2026.md) | 未着手 |
 | 20261109-03 | [実WazuhイベントのBlue評価（計画）](TASK.p2-wazuh-blue-11-09-2026.md) | 未着手 |
 | 20261109-04 | [異なるRSI候補の固定条件比較（計画）](TASK.p2-rsi-experiment-11-09-2026.md) | 未着手 |
+| 20261109-07 | [OpenAI互換LLM接続の汎用化](TASK.llm-remote-11-09-2026.md) | [AC-20261109-07](../acceptance/AC-20261109-07.md)（未検収） |
 | 20261108-03 | [v0.1.1 リリース（版上げと配布物の再ビルド）](TASK.version-011-11-08-2026.md) | [AC-20261108-03](../acceptance/AC-20261108-03.md) |
 | 20261108-02 | [README整備とv0.1.0まわりの文書整合](TASK.readme-release-11-08-2026.md) | [AC-20261108-02](../acceptance/AC-20261108-02.md) |
 | 20261108-01 | [エージェント実行基盤・RSI・Wazuh追補](TASK.agent-core-11-08-2026.md) | [AC-20261108-01](../acceptance/AC-20261108-01.md) |
