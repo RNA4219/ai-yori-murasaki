@@ -26,9 +26,10 @@ Loop (mirrors the 9-item RSI policy and the RSI contract):
    reflection into the default executor; apply is an explicit operator
    operation with an approved review, expected refs and a rollback path.
 
-Model pinning: comparisons running on unpinned cloud aliases are marked
-exploratory and never become promotion-ready (SPEC-EVALUATION A-3 /
-decision D-058), regardless of measured gains.
+Model pinning: promotion requires frozen expected SHA-256 digests and
+matching per-run Ollama-native model observations; alias names and
+unverifiable OpenAI-compatible endpoints remain exploratory (SPEC-
+EVALUATION A-3 / decision D-058), regardless of measured gains.
 """
 from __future__ import annotations
 
@@ -82,6 +83,39 @@ def _fail(reason: str, message: str) -> None:
 def _is_id(value: Any) -> bool:
     return isinstance(value, str) and 0 < len(value) <= 128 and \
         value.strip() == value
+
+
+def _verify_model_pinning(pairs: List[dict], pinning: dict) -> tuple[bool, str, int]:
+    """Verify each observed invocation against immutable, frozen Ollama digests.
+
+    A config label, a requested model, and an OpenAI-compatible response
+    model name alone are not evidence of a pinned model.
+    """
+    status = pinning.get("status", "")
+    if status != "pinned" and not status.startswith("pinned:"):
+        return False, "unpinned_config", 0
+    expected = pinning.get("expected_models")
+    if not isinstance(expected, dict) or not expected:
+        return False, "expected_models_missing", 0
+    seen = 0
+    for pair in pairs:
+        for side in ("baseline", "candidate"):
+            observations = pair[side].get("model_observations")
+            if not isinstance(observations, list) or not observations:
+                return False, "model_observations_missing", seen
+            for item in observations:
+                seen += 1
+                if not isinstance(item, dict):
+                    return False, "invalid_model_observation", seen
+                model = item.get("requested_model")
+                if (not isinstance(model, str) or model not in expected
+                        or model.endswith(":cloud")
+                        or item.get("effective_model") != model
+                        or item.get("transport") != "ollama-native"
+                        or item.get("source") != "ollama-tags-prepost"
+                        or item.get("digest") != expected[model]):
+                    return False, "model_digest_unverified_or_mismatch", seen
+    return True, "verified", seen
 
 
 def agent_runner_snapshot() -> bytes:
@@ -461,13 +495,23 @@ class AgentRSI:
         pinning = config["model_pinning"]
         if not isinstance(pinning, dict):
             _fail("input_invalid", "model_pinning must be object")
-        if set(pinning.keys()) != {"status", "note"}:
+        if (set(pinning.keys()) - {"status", "note", "expected_models"}
+                or not {"status", "note"} <= set(pinning.keys())):
             _fail("input_invalid", "model_pinning keys invalid")
         if not isinstance(pinning["status"], str) or not (
                 1 <= len(pinning["status"]) <= 200):
             _fail("input_invalid", "model_pinning status invalid")
         if not isinstance(pinning["note"], str) or len(pinning["note"]) > 500:
             _fail("input_invalid", "model_pinning note invalid")
+        expected = pinning.get("expected_models", {})
+        if (not isinstance(expected, dict) or len(expected) > 16):
+            _fail("input_invalid", "expected_models must be a mapping of at most 16 models")
+        for model, model_digest in expected.items():
+            if (not isinstance(model, str) or not (1 <= len(model) <= 200)
+                    or model.strip() != model
+                    or not isinstance(model_digest, str)
+                    or re.fullmatch(r"sha256:[0-9a-f]{64}", model_digest) is None):
+                _fail("input_invalid", "expected_models requires immutable sha256 digests")
         return config
 
     def freeze(self, campaign_id: str, config: dict, manifest: dict,
@@ -737,6 +781,7 @@ class AgentRSI:
             "failure_attribution": attribution if attribution in
             ("candidate", "external") else
             ("candidate" if not success else None),
+            "model_observations": outcome.get("model_observations"),
         }
 
     def compare(self, freeze_id: str, candidate_id: str,
@@ -751,6 +796,13 @@ class AgentRSI:
         config = record["config"]
         baseline = record["baseline_bundle"]
         candidate_bundle = self._store.get_object(candidate["bundle_ref"])
+        if (digest(candidate_bundle) != candidate["bundle_digest"]
+                or candidate["baseline_digest"] != record["baseline_digest"]):
+            _fail("review_mismatch", "candidate/baseline digest mismatch")
+        # Refuse a no-op before creating a holdout-access audit or running
+        # an executor. A no-op cannot establish evidence of improvement.
+        if candidate["bundle_digest"] == record["baseline_digest"]:
+            _fail("policy_denied", "unchanged candidate cannot be compared")
         tasks = [(sid, "validation") for sid in
                  config["scenario_splits"]["validation"]]
         tasks += [(sid, "holdout") for sid in
@@ -859,7 +911,8 @@ class AgentRSI:
         hold_rate_b = hold_b / hold_den if hold_den else 0.0
         hold_rate_c = hold_c / hold_den if hold_den else 0.0
         gain = val_rate_c - val_rate_b
-        pinned = config["model_pinning"]["status"].startswith("pinned")
+        pinned, model_pin_reason, model_observations = _verify_model_pinning(
+            pairs, config["model_pinning"])
         ready = (
             complete
             and invalid_pairs == 0
@@ -883,6 +936,8 @@ class AgentRSI:
             "benign_ok": benign_ok,
             "total_calls": total_calls,
             "model_pinned": pinned,
+            "model_pin_reason": model_pin_reason,
+            "model_observations_checked": model_observations,
             "exploration_grade": not pinned,
             "ready": ready,
             "thresholds": thresholds,
