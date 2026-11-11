@@ -97,7 +97,7 @@ def build_tool_schemas(grants: Optional[List[str]] = None,
             "args": {},
         },
         "read_target_file": {
-            "description": "対象コードの一部を行番号付きで読む。",
+            "description": "対象コードを行番号付きで読む。200行/32KiBを超える場合は行境界で区切り、続きがあればnext_start_lineを返す。",
             "args": {"path": "ファイル名", "start_line": "1以上(省略可)",
                      "end_line": "(省略可)"},
         },
@@ -483,7 +483,8 @@ class ToolBroker:
         if start_line is None:
             start_line = 1
         if end_line is None:
-            end_line = total
+            # Even an empty file should produce a successful empty read.
+            end_line = max(1, total)
         for value in (start_line, end_line):
             if not isinstance(value, int) or isinstance(value, bool):
                 raise _ArgError("invalid_line_range")
@@ -491,18 +492,32 @@ class ToolBroker:
                 raise _ArgError("invalid_line_range")
         if start_line > end_line:
             raise _ArgError("invalid_line_range")
-        if end_line - start_line + 1 > _LINE_WINDOW:
-            raise _ArgError("range_too_large")
-        selected = lines[start_line - 1:end_line]
-        content = "\n".join(
-            "{}: {}".format(start_line + idx, line.rstrip("\n\r"))
-            for idx, line in enumerate(selected))
-        if len(content.encode("utf-8")) > _LINE_BYTES:
-            raise _ArgError("range_too_large")
+
+        # Clamp the *returned* interval, not the requested interval. Models
+        # often request a generous end_line without knowing the file length.
+        limit = min(end_line, total, start_line + _LINE_WINDOW - 1)
+        chunks: List[str] = []
+        size = 0
+        for index in range(start_line - 1, limit):
+            chunk = "{}: {}".format(index + 1, lines[index].rstrip("\n\r"))
+            chunk_size = len(chunk.encode("utf-8")) + (1 if chunks else 0)
+            if size + chunk_size > _LINE_BYTES:
+                # A single physical line cannot be resumed with a line-only
+                # cursor; fail rather than silently omitting its tail.
+                if not chunks:
+                    raise _ArgError("range_too_large")
+                break
+            chunks.append(chunk)
+            size += chunk_size
+
+        actual_end = start_line + len(chunks) - 1 if chunks else total
+        result = {"path": path, "total_lines": total,
+                  "start_line": start_line, "end_line": actual_end,
+                  "content": "\n".join(chunks)}
+        if actual_end < total:
+            result["next_start_line"] = actual_end + 1
         return {"type": "tool_result", "tool": "read_target_file",
-                "result": {"path": path, "total_lines": total,
-                            "start_line": start_line, "end_line": end_line,
-                            "content": content}}
+                "result": result}
 
     # propose_patch -----------------------------------------------------------------
 

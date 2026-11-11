@@ -365,6 +365,73 @@ class PurplePatchTest(_Base):
             omitted["result"]["content"],
             "1: a = 1\n2: b = 2\n3: c = 3")
 
+
+    def test_read_target_file_clamps_oversized_request_to_eof(self) -> None:
+        target_dir = self._target_dir("".join(
+            "value = {}\\n".format(i) for i in range(1, 134)))
+        broker = self._broker(target_dir, lambda nc: {})
+        result = broker.execute("read_target_file", {
+            "path": "target.py", "start_line": 1, "end_line": 300})
+        self.assertEqual(result["type"], "tool_result")
+        self.assertEqual(result["result"]["total_lines"], 133)
+        self.assertEqual(result["result"]["start_line"], 1)
+        self.assertEqual(result["result"]["end_line"], 133)
+        self.assertNotIn("next_start_line", result["result"])
+        self.assertIn("133: value = 133", result["result"]["content"])
+
+    def test_read_target_file_paginates_at_200_lines(self) -> None:
+        target_dir = self._target_dir("".join(
+            "value = {}\\n".format(i) for i in range(1, 226)))
+        broker = self._broker(target_dir, lambda nc: {})
+        first = broker.execute("read_target_file", {
+            "path": "target.py", "start_line": 1, "end_line": 300})
+        self.assertEqual(first["type"], "tool_result")
+        self.assertEqual(first["result"]["end_line"], 200)
+        self.assertEqual(first["result"]["next_start_line"], 201)
+        second = broker.execute("read_target_file", {
+            "path": "target.py",
+            "start_line": first["result"]["next_start_line"],
+            "end_line": 300})
+        self.assertEqual(second["type"], "tool_result")
+        self.assertEqual(second["result"]["start_line"], 201)
+        self.assertEqual(second["result"]["end_line"], 225)
+        self.assertNotIn("next_start_line", second["result"])
+        self.assertTrue(second["result"]["content"].startswith("201: value = 201"))
+
+    def test_read_target_file_resumes_at_byte_boundary(self) -> None:
+        target_dir = self._target_dir(("x" * 500 + "\\n") * 100)
+        broker = self._broker(target_dir, lambda nc: {})
+        first = broker.execute("read_target_file", {"path": "target.py"})
+        self.assertEqual(first["type"], "tool_result")
+        self.assertLessEqual(len(first["result"]["content"].encode("utf-8")),
+                             32 * 1024)
+        self.assertLess(first["result"]["end_line"], 100)
+        next_line = first["result"]["next_start_line"]
+        self.assertEqual(next_line, first["result"]["end_line"] + 1)
+        second = broker.execute("read_target_file", {
+            "path": "target.py", "start_line": next_line, "end_line": 300})
+        self.assertEqual(second["type"], "tool_result")
+        self.assertEqual(second["result"]["end_line"], 100)
+        self.assertNotIn("next_start_line", second["result"])
+
+    def test_read_target_file_empty_and_invalid_ranges(self) -> None:
+        target_dir = self._target_dir("")
+        broker = self._broker(target_dir, lambda nc: {})
+        empty = broker.execute("read_target_file", {"path": "target.py"})
+        self.assertEqual(empty["type"], "tool_result")
+        self.assertEqual(empty["result"]["total_lines"], 0)
+        self.assertEqual(empty["result"]["content"], "")
+        self.assertNotIn("next_start_line", empty["result"])
+        for start, end in ((True, 2), (3, 2), (0, 10)):
+            invalid = broker.execute("read_target_file", {
+                "path": "target.py", "start_line": start, "end_line": end})
+            self.assertEqual(invalid["type"], "tool_error")
+            self.assertEqual(invalid["error"], "invalid_line_range")
+        target_dir = self._target_dir("x" * (33 * 1024) + "\\n")
+        oversized = broker.execute("read_target_file", {"path": "target.py"})
+        self.assertEqual(oversized["type"], "tool_error")
+        self.assertEqual(oversized["error"], "range_too_large")
+
     def test_fix_attempts_exhausted(self) -> None:
         target_dir = self._target_dir(self.FLAWED)
         broker = self._broker(target_dir, lambda nc: {
