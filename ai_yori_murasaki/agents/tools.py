@@ -207,6 +207,11 @@ class ToolBroker:
     def issued_refs(self) -> Set[str]:
         return set(self._issued_refs)
 
+    @property
+    def fix_attempts_exhausted(self) -> bool:
+        return (self._max_fix_attempts is not None
+                and self._proposed_count >= self._max_fix_attempts)
+
     # -- event helpers ----------------------------------------------------
 
     def _record(self, event_type: str, extensions: Dict[str, Any],
@@ -489,7 +494,7 @@ class ToolBroker:
         if end_line - start_line + 1 > _LINE_WINDOW:
             raise _ArgError("range_too_large")
         selected = lines[start_line - 1:end_line]
-        content = "".join(
+        content = "\n".join(
             "{}: {}".format(start_line + idx, line.rstrip("\n\r"))
             for idx, line in enumerate(selected))
         if len(content.encode("utf-8")) > _LINE_BYTES:
@@ -552,8 +557,9 @@ class ToolBroker:
         }
         proposal_ref = self._runtime.store.put_object(proposal)
         passed = validation.get("unit_passed") is True
-        if passed:
-            self._issued_refs.add(proposal_ref)
+        # The proposal was issued even when validation fails; stop still rejects
+        # it as report_invalid rather than treating it as a fabricated ref.
+        self._issued_refs.add(proposal_ref)
         self._record("remediation_drafted", {
             "record_type": "agent_tool", "tool": "propose_patch",
             "root_cause": root_cause[:512], "generated_by": "llm"},
