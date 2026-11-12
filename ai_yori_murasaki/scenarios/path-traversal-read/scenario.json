@@ -1,6 +1,6 @@
 {
   "split": "validation",
   "scenario_id": "path-traversal-read",
-  "surface": "GET /health -> 200; GET /public -> 200; scenario-specific endpoint -> see target.py",
+  "surface": "GET /health -> 200; GET /public -> 200; GET /files?name=readme.txt -> 200 {\"content\":\"This is a public readme file.\"}; GET /files?name=<input> -> 200 or 404",
   "flaw_class": "path"
 }
