@@ -1,6 +1,6 @@
 {
   "split": "train",
   "scenario_id": "xss-reflect",
-  "surface": "GET /health -> 200; GET /public -> 200; scenario-specific endpoint -> see target.py",
+  "surface": "GET /health -> 200; GET /public -> 200; GET /greet?name=Alice -> 200 {\"greeting\":\"Hello, Alice!\"}; GET /greet?name=<input> -> 200",
   "flaw_class": "xss"
 }

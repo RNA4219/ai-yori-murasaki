@@ -308,6 +308,7 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
     runs: List[str] = []
     lab: Optional[DockerLab] = None
     current_rid: Optional[str] = None
+    recorded_agents: Dict[str, dict] = {}
     try:
         lab = (lab_factory or DockerLab)(jobdir.resolve())
         lab.__enter__()
@@ -333,6 +334,9 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
             run_id=red_rid, role="red", role_cfg=bundle["roles"]["red"],
             routes=routes, seed=seed).run(
                 task=red_task, probe_executor=probe_executor)
+        recorded_agents["red"] = {k: red_loop[k] for k in
+                                  ("status", "stop_reason", "turns",
+                                   "llm_calls", "actions", "model")}
         if red_loop["status"] != "completed":
             raise _LabFailure("red", "red agent loop status: {}".format(
                 red_loop["status"]), "candidate")
@@ -406,6 +410,9 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
             run_id=blue_rid, role="blue", role_cfg=bundle["roles"]["blue"],
             routes=routes, seed=seed).run(
                 task=blue_task, initial_refs=blue_refs)
+        recorded_agents["blue"] = {k: blue_loop[k] for k in
+                                   ("status", "stop_reason", "turns",
+                                    "llm_calls", "actions", "model")}
         blue_detected_at = time.time()
         if blue_loop["status"] != "completed":
             raise _LabFailure("blue", "blue agent loop status: {}".format(
@@ -461,6 +468,9 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
                 task=purple_task, target_dir=target_dir,
                 unit_validator=unit_validator,
                 initial_refs=finding_refs + list(blue_refs))
+        recorded_agents["purple"] = {k: purple_loop[k] for k in
+                                     ("status", "stop_reason", "turns",
+                                      "llm_calls", "actions", "model")}
         if purple_loop["status"] != "completed":
             raise _LabFailure("purple", "purple agent loop status: {}".format(
                 purple_loop["status"]), "candidate")
@@ -727,17 +737,7 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
             "metrics": metrics,
             "measurement_ref": measurement_ref,
             "tuning_ref": tune_ref,
-            "agent": {
-                "red": {k: red_loop[k] for k in
-                        ("status", "stop_reason", "turns", "llm_calls",
-                         "actions", "model")},
-                "blue": {k: blue_loop[k] for k in
-                         ("status", "stop_reason", "turns", "llm_calls",
-                          "actions", "model")},
-                "purple": {k: purple_loop[k] for k in
-                           ("status", "stop_reason", "turns", "llm_calls",
-                            "actions", "model")},
-            },
+            "agent": recorded_agents,
         }
     except Exception as exc:
         if current_rid is not None:
@@ -776,6 +776,7 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
                     "campaign_id": cid,
                     "scenario_id": scenario_id,
                     "policy_selection": selection,
+                    "agent": recorded_agents,
                 }
             return {
                 "status": "failed",
@@ -785,6 +786,7 @@ def run_demo(runtime: Any, staging_root: Path, seed: int = 1,
                 "campaign_id": cid,
                 "scenario_id": scenario_id,
                 "policy_selection": selection,
+                "agent": recorded_agents,
             }
         raise
     finally:

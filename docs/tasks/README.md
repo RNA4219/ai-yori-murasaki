@@ -22,6 +22,7 @@ Task、[Acceptance](../acceptance/README.md)、[CHANGELOG](../../CHANGELOG.md)�
 
 | task_id | 作業 | 検収 |
 | --- | --- | --- |
+| 20261112-01 | [RSIシナリオ起動・課題文・失敗時呼び出し数](TASK.rsi-scenarios-11-12-2026.md) | [AC-20261112-01](../acceptance/AC-20261112-01.md)（未検収） |
 | 20261111-03 | [対象ファイル読取の範囲切り詰め・継続](TASK.read-target-range-11-11-2026.md) | [AC-20261111-03](../acceptance/AC-20261111-03.md)（未検収） |
 | 20261111-02 | [運用障害3件（実ログBlue・Oracle CLI・macOS試験）](TASK.ops-imported-blue-11-11-2026.md) | [AC-20261111-02](../acceptance/AC-20261111-02.md)（未検収） |
 | 20261111-01 | [Agent RSI no-opとモデル固定検証](TASK.agent-rsi-pin-11-11-2026.md) | [AC-20261111-01](../acceptance/AC-20261111-01.md)（未検収） |

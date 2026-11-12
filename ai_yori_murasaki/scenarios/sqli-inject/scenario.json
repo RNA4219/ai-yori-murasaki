@@ -1,6 +1,6 @@
 {
   "split": "train",
   "scenario_id": "sqli-inject",
-  "surface": "GET /health -> 200; GET /public -> 200; scenario-specific endpoint -> see target.py",
+  "surface": "GET /health -> 200; GET /public -> 200; GET /api/items?category=food -> 200 {\"items\":[\"apple\",\"bread\"]}; GET /api/items?category=<input> -> 200 or 404",
   "flaw_class": "sqli"
 }

@@ -27,6 +27,7 @@ template_version: 1.0.0
 
 | 依頼 | 入口 | 続けて読むもの |
 | --- | --- | --- |
+| RSIシナリオ起動・Red課題文・失敗時呼び出し計測 | [Task 20261112-01](docs/tasks/TASK.rsi-scenarios-11-12-2026.md) | [AC-20261112-01](docs/acceptance/AC-20261112-01.md) |
 | 実ログのBlind Blue／Oracle CLI／macOS試験 | [製品操作ガイド](docs/PRODUCT-GUIDE.md#実ログを使った-blind-blue-と-oracle-cli) | [Task](docs/tasks/TASK.ops-imported-blue-11-11-2026.md)、[検収](docs/acceptance/AC-20261111-02.md) |
 | 資料の取り込み・出典リンク・明るい画面 | [資料取り込み](docs/SOURCES.md) | [Task](docs/tasks/TASK.sources-light-ui-11-09-2026.md)、[検収](docs/acceptance/AC-20261109-02.md) |
 | Blue評価とRSI通常適用の品質修正 | [整合性契約](docs/requirements/QUALITY-INTEGRATION.md) | [検収](docs/acceptance/AC-20261109-01.md)、[P2計画](docs/requirements/P2-VALIDATION-PLAN.md) |
