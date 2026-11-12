@@ -10,6 +10,7 @@ next_review_due: 2026-12-06
 
 | Acceptance | Task | 対象 | 公開 |
 | --- | --- | --- | --- |
+| [AC-20261112-01](AC-20261112-01.md) | [20261112-01](../tasks/TASK.rsi-scenarios-11-12-2026.md) | RSIシナリオのreadonly起動・課題URL・失敗時LLM呼び出し集計 | 未検収 |
 | [AC-20261111-03](AC-20261111-03.md) | [20261111-03](../tasks/TASK.read-target-range-11-11-2026.md) | read_target_fileの範囲切り詰めと継続位置 | 未検収 |
 | [AC-20261111-02](AC-20261111-02.md) | [20261111-02](../tasks/TASK.ops-imported-blue-11-11-2026.md) | 実ログBlue入口・Oracle CLI評価対象・macOSテスト | 未検収 |
 | [AC-20261111-01](AC-20261111-01.md) | [20261111-01](../tasks/TASK.agent-rsi-pin-11-11-2026.md) | RSI no-op評価とモデルdigest証跡 | 未検収 |
