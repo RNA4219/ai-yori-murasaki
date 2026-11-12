@@ -19,6 +19,9 @@ Keep a Changelog の区分で管理する。記録には既存最大番号 +1 �
 
 ### Fixed
 
+- 0022 — 2026-11-12: RSIのpath-traversal-readでread-onlyコンテナ起動時に書き込んで落ちる問題を修正。4問のsurfaceに公開HTTP入口と正常応答例を記載し、失敗したRed/Blue/PurpleのLLM呼び出し数をRSI outcomeへ反映。回帰テストを追加したが、GitHub連携環境でpytest・Docker実行は未了のため検収保留。既存のRSI計測結果との同一条件比較はできず、新freezeでの再評価が必要。
+  [Task 20261112-01](docs/tasks/TASK.rsi-scenarios-11-12-2026.md) / [AC-20261112-01](docs/acceptance/AC-20261112-01.md)。
+
 - 0021 — 2026-11-11: Agentの`read_target_file`がファイル行数より広い範囲指定を拒否する問題を修正。要求幅ではなく実際の読取範囲を200行・32KiBに切り詰め、未読の続きは`next_start_line`で返す。空ファイルや境界値の回帰テストを追加。GitHub連携環境からのPython回帰実行は未実施のため検収保留。
   [Task 20261111-03](docs/tasks/TASK.read-target-range-11-11-2026.md) / [AC-20261111-03](docs/acceptance/AC-20261111-03.md)。
 
