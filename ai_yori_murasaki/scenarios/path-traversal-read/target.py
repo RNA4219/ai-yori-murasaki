@@ -30,6 +30,9 @@ PORT = 8080
 
 def read_file(name: str) -> str | None:
     """Vulnerable: no path validation, allows traversal."""
+    # The container mounts /app read-only; keep the benign fixture in memory.
+    if name == "readme.txt":
+        return "This is a public readme file.\n"
     try:
         path = os.path.join(FILES_DIR, name)
         with open(path, "r") as fh:
@@ -101,12 +104,6 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main():
-    # Ensure readme.txt exists in files/
-    os.makedirs(FILES_DIR, exist_ok=True)
-    readme = os.path.join(FILES_DIR, "readme.txt")
-    if not os.path.exists(readme):
-        with open(readme, "w") as fh:
-            fh.write("This is a public readme file.\n")
     server = ThreadingHTTPServer((HOST, PORT), Handler)
     server.daemon_threads = True
     try: server.serve_forever()
