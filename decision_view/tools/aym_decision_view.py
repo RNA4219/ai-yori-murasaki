@@ -1,0 +1,239 @@
+"""判断用ビューの JSON（aym.decision-view/1）を、AYM の保存データから読み取りだけで作る。
+
+作成: Claude (Opus 5.5) / 2026-11-16 / 入力: 作者の依頼「読む人が判断できるように丸める画面」、
+AYM 538e228 の storage.Store・runtime.Runtime と、取り込み済み finding の形（extensions.notion・extensions.enrichment）。
+
+使い方:
+    python tools/aym_decision_view.py --campaign <campaign_id> --previous auto \
+        --map tools/mapping.example.json --out decision.json
+
+- 書き込みはしない（Store・Runtime の読み取りだけ）。
+- build_view() は I/O を持たない純粋な関数。サーバーの API から返すときもこれを使える。
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import re
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
+from urllib.parse import urlsplit
+from typing import Any
+
+SCHEMA = "aym.decision-view/1"
+STATES = ("open", "in_progress", "waiting", "done", "wont_fix", "other")
+SEVERITIES = ("critical", "high", "medium", "low", "info")
+_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}")
+_INTENT_DATE = re.compile(r"-\d{8}[A-Z]?$")
+
+
+def _http_link(*candidates: Any) -> str | None:
+    for c in candidates:
+        if not isinstance(c, str):
+            continue
+        try:
+            parsed = urlsplit(c)
+            if parsed.scheme in ("https", "http") and parsed.hostname and not parsed.username and not parsed.password:
+                return c
+        except ValueError:
+            continue
+    return None
+
+
+def _date_only(value: Any) -> str | None:
+    if isinstance(value, str) and _DATE.match(value):
+        candidate = value[:10]
+        try:
+            datetime.strptime(candidate, "%Y-%m-%d")
+            return candidate
+        except ValueError:
+            pass
+    return None
+
+
+def _enrichment(finding: dict) -> dict:
+    recs = ((finding.get("extensions") or {}).get("enrichment") or {}).get("records") or []
+    kev = sorted({r.get("cve") for r in recs if r.get("kind") == "kev" and r.get("status") == "listed" and r.get("cve")})
+    epss = [r for r in recs if r.get("kind") == "epss" and isinstance(r.get("epss"), (int, float))]
+    top = max(epss, key=lambda r: r["epss"]) if epss else None
+    cves = ((finding.get("extensions") or {}).get("notion") or {}).get("cve") or {}
+    ids = cves.get("ids") if isinstance(cves.get("ids"), list) else sorted({r.get("cve") for r in recs if r.get("cve")})
+    return {
+        "cve_count": len(ids),
+        "kev": bool(kev),
+        "kev_cves": kev,
+        "epss_max": round(top["epss"], 5) if top else None,
+        "epss_cve": top.get("cve") if top else None,
+        "epss_percentile": round(top["percentile"], 5) if top and isinstance(top.get("percentile"), (int, float)) else None,
+    }
+
+
+def _freshness(findings: list[dict], now: datetime) -> dict:
+    """種類（kev・epss）ごとに、期限がいちばん早い記録で古さを判断する（取得の時期が混ざっていても見落とさない）。"""
+    oldest: dict[str, dict] = {}
+    for f in findings:
+        for r in ((f.get("extensions") or {}).get("enrichment") or {}).get("records") or []:
+            kind = r.get("kind")
+            if kind not in ("kev", "epss"):
+                continue
+            exp = r.get("expires_at")
+            key = exp if isinstance(exp, (int, float)) else float("-inf")  # 期限が読めない記録は古いものとして扱う
+            if kind not in oldest or key < oldest[kind][0]:
+                oldest[kind] = (key, r)
+    out: dict[str, dict] = {}
+    for kind, (key, r) in oldest.items():
+        known = key != float("-inf")
+        out[kind] = {
+            "source_version": r.get("source_version"),
+            "fetched_at": r.get("fetched_at"),
+            "expires_at": datetime.fromtimestamp(key, timezone.utc).isoformat() if known else None,
+            "expired": (not known) or key < now.timestamp(),
+        }
+    return out
+
+
+def _item(finding: dict, record: dict | None, mapping: dict) -> dict:
+    ext = (finding.get("extensions") or {}).get("notion") or {}
+    props = record if isinstance(record, dict) else (ext.get("properties") or {})
+    fields = mapping.get("fields") or {}
+    label = props.get(fields.get("status", ""))
+    state = (mapping.get("status_values") or {}).get(label, "other") if label is not None else "other"
+    if state not in STATES:
+        state = "other"
+    severity = finding.get("severity") if finding.get("severity") in SEVERITIES else "info"
+    item = {
+        "key": ((finding.get("location") or {}).get("path")) or finding.get("finding_id"),
+        "ref": props.get(fields.get("key", "")) if fields.get("key") else None,
+        "title": finding.get("title") or "",
+        "severity": severity,
+        "state": state,
+        "state_label": label if isinstance(label, str) else None,
+        "due": _date_only(props.get(fields.get("due", ""))) if fields.get("due") else None,
+        "link": _http_link(*(finding.get("references") or []), ext.get("url")),
+    }
+    item.update(_enrichment(finding))
+    return item
+
+
+def build_view(campaign: dict, findings: list[dict], records: dict[str, dict] | None = None, *,
+               mapping: dict, now: datetime, previous: dict | None = None,
+               name: str | None = None) -> dict:
+    """campaign・findings（と元の行 records: finding_id → 行）から判断用ビューを作る。
+
+    previous は {"campaign": {...}, "findings": [...], "records": {...}} か None。
+    """
+    records = records or {}
+    items = [_item(f, records.get(f.get("finding_id")), mapping) for f in findings]
+    by_key: dict[str, dict] = {}
+    for it in items:
+        by_key.setdefault(it["key"], it)
+    removed: list[dict] = []
+    prev_info = None
+    if previous:
+        prev_recs = previous.get("records") or {}
+        prev_items = {}
+        for f in previous.get("findings") or []:
+            it = _item(f, prev_recs.get(f.get("finding_id")), mapping)
+            prev_items.setdefault(it["key"], it)
+        for it in items:
+            p = prev_items.get(it["key"])
+            if p is None:
+                it["change"] = "new"
+            elif p["state"] != it["state"] or p["state_label"] != it["state_label"]:
+                it["change"] = "state_changed"
+                it["prev_state"] = p["state"]
+                it["prev_state_label"] = p["state_label"]
+            else:
+                it["change"] = "unchanged"
+        removed = [{"key": k, "ref": p["ref"], "title": p["title"], "prev_state": p["state"],
+                    "prev_state_label": p["state_label"]} for k, p in prev_items.items() if k not in by_key]
+        pc = previous.get("campaign") or {}
+        prev_info = {"id": pc.get("campaign_id"), "created_at": pc.get("created_at")}
+    return {
+        "schema": SCHEMA,
+        "generated_at": now.astimezone(timezone.utc).isoformat(),
+        "campaign": {
+            "id": campaign.get("campaign_id"),
+            "name": name or campaign.get("intent_id") or campaign.get("campaign_id"),
+            "created_at": campaign.get("created_at"),
+        },
+        "previous": prev_info,
+        "freshness": _freshness(findings, now),
+        "rules": mapping.get("rules") or {},
+        "items": items,
+        "removed": removed,
+    }
+
+
+# --- AYM の保存データから読む部分（ここから下だけが AYM に依存する） ---
+
+def _load(runtime, store, campaign_id: str) -> tuple[dict, list[dict], dict[str, dict]]:
+    campaign = runtime.get_campaign(campaign_id)
+    findings = [store.get_object(ref) for ref in runtime.list_records(campaign_id, "finding")]
+    records: dict[str, dict] = {}
+    for f in findings:
+        ref = ((f.get("extensions") or {}).get("notion") or {}).get("source_record_ref")
+        if not ref:
+            continue
+        try:
+            obj = store.get_object(ref)
+        except Exception:  # 元の行が読めなくても、finding に残っている列で続ける
+            continue
+        if isinstance(obj, dict) and isinstance(obj.get("record"), dict):
+            records[f["finding_id"]] = obj["record"]
+    return campaign, findings, records
+
+
+def pick_previous(campaigns: list[dict], current: dict) -> str | None:
+    """intent_id の末尾の日付（-YYYYMMDD と英字 1 つ）を除いた部分が同じで、current より前に作られた最新の Campaign。"""
+    intent = current.get("intent_id") or ""
+    prefix = _INTENT_DATE.sub("", intent)
+    if not prefix or prefix == intent:
+        return None
+    older = [c for c in campaigns
+             if c.get("campaign_id") != current.get("campaign_id")
+             and _INTENT_DATE.sub("", c.get("intent_id") or "") == prefix
+             and (c.get("created_at") or "") < (current.get("created_at") or "")]
+    return max(older, key=lambda c: c.get("created_at") or "")["campaign_id"] if older else None
+
+
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description="AYM の Campaign から判断用ビューの JSON を作る（読み取りだけ）")
+    ap.add_argument("--campaign", required=True)
+    ap.add_argument("--previous", default="auto", help="比べる Campaign の ID、auto（既定）、none")
+    ap.add_argument("--map", required=True, help="列名と状態の対応（mapping.example.json を参照）")
+    ap.add_argument("--name", help="画面に出す名前（既定は intent_id）")
+    ap.add_argument("--out", required=True)
+    ap.add_argument("--workspace", default=os.environ.get("AYM_WORKSPACE"))
+    ap.add_argument("--trusted", default=os.environ.get("AYM_TRUSTED_ROOT"))
+    args = ap.parse_args(argv)
+    if not args.workspace or not args.trusted:
+        ap.error("--workspace と --trusted（または AYM_WORKSPACE・AYM_TRUSTED_ROOT）が要る")
+    from ai_yori_murasaki.runtime import Runtime
+    from ai_yori_murasaki.storage import Store
+    store = Store(Path(args.workspace), Path(args.trusted))
+    runtime = Runtime(store)
+    mapping = json.loads(Path(args.map).read_text(encoding="utf-8"))
+    campaign, findings, records = _load(runtime, store, args.campaign)
+    prev_id = None
+    if args.previous == "auto":
+        prev_id = pick_previous(runtime.list_campaigns(), campaign)
+    elif args.previous != "none":
+        prev_id = args.previous
+    previous = None
+    if prev_id:
+        pc, pf, pr = _load(runtime, store, prev_id)
+        previous = {"campaign": pc, "findings": pf, "records": pr}
+    view = build_view(campaign, findings, records, mapping=mapping, now=datetime.now(timezone.utc),
+                      previous=previous, name=args.name)
+    out = Path(args.out)
+    out.write_text(json.dumps(view, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    print(json.dumps({"out": str(out), "items": len(view["items"]), "previous": prev_id,
+                      "removed": len(view["removed"])}, ensure_ascii=False))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
