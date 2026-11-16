@@ -125,7 +125,9 @@ def _item(finding: dict, record: dict | None, mapping: dict) -> dict:
 ASSESSMENT_STATUSES = ("confirmed", "candidate", "refuted", "retested", "proposed", "undetermined", "historical", "unknown")
 
 def derive_assessment_status(f: dict | None, historical: bool = False) -> str:
-    if not f:
+    # An empty finding object is still a finding: JS treats {} as truthy.
+    # Preserve the report-level historical flag even when its fields are empty.
+    if f is None:
         return "unknown"
     if historical or f.get("historical"):
         return "historical"
