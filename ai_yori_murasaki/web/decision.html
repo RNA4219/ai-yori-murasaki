@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>紫 - 判断の画面</title>
+<!--
+  判断の画面（aym.decision-view/1 を読んで、読む人が決めることを先に見せる）
+  作成: Claude (Opus 5.5 → Fable 5.2) / 2026-11-16 / 入力: 作者の依頼「読む人が判断できるように丸める画面」「無骨すぎる、もう少しやわらかく」、
+  AYM 538e228 の web/index.html（CSP の流儀と、紫の色）。
+  外部のファイルは読まない（AYM のサーバーの CSP: インラインはハッシュで許可、connect-src 'self'、style 属性は不可）。
+  文字は OS に入っている丸ゴシックを使う（外部のフォントは CSP で読めない）。
+  データの読み方: ?data=<同じ配信元の JSON の URL> / ?campaign=<ID>（/api/campaigns/<ID>/decision-view を読む。API は未実装） / ファイルを選ぶ・落とす。
+-->
+<style>
+/* 並べ方: 1 列。先頭に「いまの状況」を 1 枚で言い、その下に「いま決めること」「早めに対応すること」を置く。色は藤色の地に、紫を 1 色だけ。 */
+:root {
+  --bg: #f6f3fa; --panel: #ffffff; --panel-soft: #faf8fd; --fg: #2b2733; --muted: #6f6a7d; --line: #e8e3f0;
+  --accent: #7b4fa0; --accent-soft: #f0e9f7;
+  --rose: #ae3f55; --rose-soft: #fbeaee; --amber: #8a5f14; --amber-soft: #fbf2df;
+  --leaf: #357050; --leaf-soft: #e7f4ec; --indigo: #4d5fa3; --indigo-soft: #eaeefa; --mist: #c9c3d8;
+  --shadow: 0 1px 2px rgba(64, 44, 92, .05), 0 10px 28px rgba(64, 44, 92, .07);
+  --font: "Hiragino Maru Gothic ProN", "Tsukushi A Round Gothic", "BIZ UDPGothic", "Yu Gothic UI", "Meiryo", system-ui, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1b1822; --panel: #25212f; --panel-soft: #2b2736; --fg: #ece9f3; --muted: #aaa4bb; --line: #3a3548;
+    --accent: #c3a6e6; --accent-soft: #33294a;
+    --rose: #f0a3b0; --rose-soft: #40232b; --amber: #ecc27a; --amber-soft: #3a2e17;
+    --leaf: #8fd3a8; --leaf-soft: #1c3526; --indigo: #a9b6ee; --indigo-soft: #232a48; --mist: #5a546b;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .25); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1b1822; --panel: #25212f; --panel-soft: #2b2736; --fg: #ece9f3; --muted: #aaa4bb; --line: #3a3548;
+  --accent: #c3a6e6; --accent-soft: #33294a;
+  --rose: #f0a3b0; --rose-soft: #40232b; --amber: #ecc27a; --amber-soft: #3a2e17;
+  --leaf: #8fd3a8; --leaf-soft: #1c3526; --indigo: #a9b6ee; --indigo-soft: #232a48; --mist: #5a546b;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .25); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.75 var(--font); -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 860px; margin: 0 auto; padding-block: 24px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 28px; }
+#view { display: grid; gap: 36px; }
+.top { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 14px; }
+.mark { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: var(--panel); font-weight: 700; font-size: 15px; }
+h1 { font-size: 26px; line-height: 1.4; margin: 0; text-wrap: balance; letter-spacing: .01em; }
+h2 { font-size: 19px; line-height: 1.4; margin: 0; text-wrap: balance; }
+p { margin: 0; }
+a { color: var(--accent); }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+.card { background: var(--panel); border-radius: 22px; box-shadow: var(--shadow); padding: 26px 28px; display: grid; gap: 16px; min-width: 0; }
+.eyebrow { color: var(--accent); font-size: 13px; font-weight: 600; }
+.lead { font-size: 16px; max-width: 38em; }
+.note { border-radius: 16px; padding: 12px 16px; font-size: 14px; }
+.note.warn { background: var(--amber-soft); color: var(--amber); }
+.note.err { background: var(--rose-soft); color: var(--rose); }
+#notes { display: grid; gap: 8px; }
+#notes:empty { display: none; }
+
+/* 先頭の 1 枚 */
+.jump { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill { display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; padding: 6px 14px; background: var(--accent-soft); color: var(--accent); font: inherit; font-size: 14px; border: 0; text-decoration: none; cursor: pointer; }
+.pill b { font-variant-numeric: tabular-nums; }
+.pill.rose { background: var(--rose-soft); color: var(--rose); }
+.pill.amber { background: var(--amber-soft); color: var(--amber); }
+.pill.plain { background: var(--panel-soft); color: var(--muted); box-shadow: inset 0 0 0 1px var(--line); }
+.pill[aria-pressed="true"] { background: var(--accent); color: var(--panel); box-shadow: none; }
+.progress { display: grid; gap: 10px; }
+.bar { display: flex; height: 14px; border-radius: 999px; overflow: hidden; background: var(--line); gap: 2px; }
+.seg { min-width: 4px; }
+.seg.done { background: var(--leaf); } .seg.wont_fix { background: var(--muted); }
+.seg.in_progress { background: var(--indigo); } .seg.waiting { background: var(--amber); }
+.seg.open { background: var(--mist); } .seg.other { background: var(--line); }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 18px; list-style: none; margin: 0; padding: 0; font-size: 13px; color: var(--muted); }
+.legend li { display: inline-flex; align-items: center; gap: 6px; }
+.legend b { color: var(--fg); font-variant-numeric: tabular-nums; }
+.dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.dot.done { background: var(--leaf); } .dot.wont_fix { background: var(--muted); } .dot.in_progress { background: var(--indigo); }
+.dot.waiting { background: var(--amber); } .dot.open { background: var(--mist); } .dot.other { background: var(--line); }
+.dot.accent { background: var(--accent); }
+
+/* 見出しと説明 */
+.sec { display: grid; gap: 14px; scroll-margin-top: 16px; }
+.sec-head { display: grid; gap: 4px; padding-inline: 6px; }
+.sec-sub { color: var(--muted); font-size: 14px; max-width: 42em; }
+
+/* 課題の 1 行（開くと理由が読める） */
+.items { display: grid; gap: 10px; }
+.item { background: var(--panel); border-radius: 18px; box-shadow: var(--shadow); min-width: 0; }
+.item > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: start; padding: 16px 20px; border-radius: 18px; }
+.item > summary::-webkit-details-marker { display: none; }
+.item-main { display: grid; gap: 6px; min-width: 0; }
+.item-title { font-weight: 600; font-size: 15.5px; line-height: 1.5; overflow-wrap: anywhere; }
+.item-meta { color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips:empty { display: none; }
+.chip { font-size: 12.5px; border-radius: 999px; padding: 2px 11px; background: var(--accent-soft); color: var(--accent); }
+.chip.crit { background: var(--rose-soft); color: var(--rose); }
+.chip.warn { background: var(--amber-soft); color: var(--amber); }
+.sev { font-size: 12.5px; font-weight: 600; border-radius: 999px; padding: 2px 0; margin-top: 2px; white-space: nowrap; min-width: 4.2em; text-align: center; }
+.sev.critical { background: var(--rose-soft); color: var(--rose); }
+.sev.high { background: var(--amber-soft); color: var(--amber); }
+.sev.medium { background: var(--indigo-soft); color: var(--indigo); }
+.sev.low, .sev.info { background: var(--panel-soft); color: var(--muted); box-shadow: inset 0 0 0 1px var(--line); }
+.chev { width: 9px; height: 9px; margin: 8px 4px 0; border-right: 2px solid var(--mist); border-bottom: 2px solid var(--mist); transform: rotate(45deg); transition: transform .15s ease; }
+.item[open] .chev { transform: rotate(225deg); margin-top: 12px; }
+.item-more { margin: 0 20px; padding: 16px 0 20px; border-top: 1px solid var(--line); display: grid; gap: 14px; font-size: 14px; }
+.facts { display: grid; grid-template-columns: max-content 1fr; gap: 8px 18px; margin: 0; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.facts ul { margin: 0; padding-left: 1.2em; }
+.btn { display: inline-flex; align-items: center; gap: 6px; justify-self: start; border-radius: 999px; padding: 7px 18px; background: var(--accent); color: var(--panel); text-decoration: none; font: inherit; font-size: 14px; border: 0; cursor: pointer; }
+.btn.ghost { background: var(--accent-soft); color: var(--accent); }
+.more { display: flex; justify-content: center; }
+.empty { background: var(--leaf-soft); color: var(--leaf); border-radius: 18px; padding: 18px 22px; }
+
+/* 前回から変わったこと */
+.changes { display: grid; gap: 10px; }
+.fold { background: var(--panel); border-radius: 18px; box-shadow: var(--shadow); }
+.fold > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 14px 20px; border-radius: 18px; font-weight: 600; }
+.fold > summary::-webkit-details-marker { display: none; }
+.fold > summary .count { margin-left: auto; color: var(--muted); font-weight: 400; font-variant-numeric: tabular-nums; }
+.fold > summary .chev { margin: 0 4px 4px 8px; }
+.fold[open] > summary .chev { margin: 4px 4px 0 8px; }
+.fold-body { margin: 0 20px; padding: 12px 0 18px; border-top: 1px solid var(--line); font-size: 14px; }
+.fold-body ul { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
+.fold.none { box-shadow: none; background: transparent; }
+.fold.none > summary { cursor: default; color: var(--muted); font-weight: 400; padding-block: 4px; }
+.fold.inline { box-shadow: none; background: var(--panel-soft); }
+.fold.inline > summary { font-weight: 400; color: var(--muted); font-size: 14px; padding: 10px 16px; }
+
+/* 絞り込み */
+.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.filters input[type=search] { flex: 1 1 220px; min-width: 0; }
+input[type=search], select { font: inherit; color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 7px 16px; }
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th, td { border-bottom: 1px solid var(--line); padding: 8px 10px; text-align: left; }
+tr:last-child th, tr:last-child td { border-bottom: 0; }
+th { color: var(--muted); font-weight: 400; white-space: nowrap; }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* 読み込み */
+.drop { display: grid; justify-items: center; gap: 12px; border: 2px dashed var(--line); border-radius: 18px; padding: 32px 20px; color: var(--muted); background: var(--panel-soft); cursor: pointer; text-align: center; }
+.drop.over, .drop:focus-within { border-color: var(--accent); color: var(--accent); }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+dl.terms { display: grid; grid-template-columns: max-content 1fr; gap: 8px 18px; margin: 0; }
+dl.terms dt { font-weight: 600; }
+dl.terms dd { margin: 0; }
+.foot { color: var(--muted); font-size: 13px; padding-inline: 6px; display: grid; gap: 2px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+@media (max-width: 560px) {
+  .card { padding: 22px 20px; border-radius: 20px; }
+  h1 { font-size: 22px; }
+  .item > summary { grid-template-columns: 1fr auto; padding: 14px 16px; }
+  .item > summary .sev { grid-column: 1 / -1; justify-self: start; }
+  .item-more { margin: 0 16px; }
+  .facts, dl.terms { grid-template-columns: 1fr; gap: 2px 0; }
+  .facts dd, dl.terms dd { margin-bottom: 8px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+<main class="wrap" id="app">
+  <header class="top"><span class="mark" aria-hidden="true">紫</span><span>判断の画面</span></header>
+  <div id="notes"></div>
+
+  <section class="card" id="loader">
+    <h1>判断用のデータを読み込みます</h1>
+    <p class="muted">AYM で作った JSON（aym.decision-view/1）を選ぶか、下の枠に落としてください。読んだデータはこのページの中だけで使い、どこにも送りません。</p>
+    <label class="drop" id="drop" for="file">
+      <span>ここにファイルを落とす</span>
+      <span class="btn ghost">ファイルを選ぶ</span>
+      <input type="file" id="file" class="visually-hidden" accept="application/json,.json">
+    </label>
+    <button type="button" class="btn ghost" id="sample" hidden>見本のデータで試す</button>
+  </section>
+
+  <div id="view" hidden>
+    <section class="card" aria-labelledby="h-sum">
+      <p class="eyebrow" id="sum-name"></p>
+      <h1 id="h-sum"></h1>
+      <p class="lead" id="sum-lead"></p>
+      <nav class="jump" id="jump" aria-label="画面の中の行き先"></nav>
+      <div class="progress">
+        <p id="progress-text"></p>
+        <div class="bar" id="bar" role="img"></div>
+        <ul class="legend" id="legend"></ul>
+      </div>
+      <p class="muted" id="since"></p>
+      <details class="fold inline">
+        <summary><span>重大度ごとの内訳を見る</span><span class="chev" aria-hidden="true"></span></summary>
+        <div class="fold-body scroll"><table id="matrix"></table></div>
+      </details>
+    </section>
+
+    <section class="sec" id="sec-now" aria-labelledby="h-now">
+      <div class="sec-head"><h2 id="h-now">いま決めること</h2><p class="sec-sub" id="now-sub"></p></div>
+      <div class="items" id="now"></div>
+    </section>
+
+    <section class="sec" id="sec-soon" aria-labelledby="h-soon">
+      <div class="sec-head"><h2 id="h-soon">早めに対応すること</h2><p class="sec-sub" id="soon-sub"></p></div>
+      <div class="items" id="soon"></div>
+      <div class="more" id="soon-more"></div>
+    </section>
+
+    <section class="sec" id="sec-changes" aria-labelledby="h-changes">
+      <div class="sec-head"><h2 id="h-changes">前回から変わったこと</h2><p class="sec-sub" id="changes-sub"></p></div>
+      <div class="changes" id="changes"></div>
+    </section>
+
+    <section class="sec" id="sec-all" aria-labelledby="h-all">
+      <div class="sec-head"><h2 id="h-all">すべての課題</h2><p class="sec-sub" id="all-sub"></p></div>
+      <div class="filters">
+        <input type="search" id="q" placeholder="名前や番号で探す" aria-label="名前や番号で探す">
+        <button type="button" class="pill plain" id="f-active" aria-pressed="true">終わっていない</button>
+        <button type="button" class="pill plain" id="f-any" aria-pressed="false">すべて</button>
+        <button type="button" class="pill plain" id="f-closed" aria-pressed="false">片付いた</button>
+        <button type="button" class="pill plain" id="f-kev" aria-pressed="false">悪用が確認されたもの</button>
+        <select id="f-sev" aria-label="重大度で絞る"><option value="">重大度: すべて</option></select>
+      </div>
+      <div class="items" id="all"></div>
+      <div class="more" id="all-more"></div>
+    </section>
+
+    <section class="card">
+      <details>
+        <summary>言葉の説明</summary>
+        <dl class="terms">
+          <dt>悪用が確認されている</dt><dd>実際の攻撃に使われた、と米国 CISA の一覧（KEV）に載っている脆弱性を含みます。</dd>
+          <dt>悪用の見込み</dt><dd>今後 30 日のうちに攻撃に使われる確率の見積もりです（FIRST の EPSS）。脆弱性が複数あるときは、いちばん高い値を出します。</dd>
+          <dt>重大度</dt><dd>元のデータに付いている重大度です（重大・高・中・低・情報）。</dd>
+          <dt>期限</dt><dd>元のデータの対応期限です。この画面を開いた日を今日として、過ぎた日数を数えます。</dd>
+          <dt>終わっていない</dt><dd>状態が「手つかず」「対応中」「判断待ち」のものです。元のデータの言葉は、そのまま出します。</dd>
+          <dt>いま決めること</dt><dd>終わっていないもののうち、悪用が確認されているもの、または判断待ちのものです。</dd>
+          <dt>早めに対応すること</dt><dd>終わっていないもののうち、期限を過ぎた重大・高のもの、または悪用の見込みが高いものです。</dd>
+        </dl>
+      </details>
+    </section>
+
+    <footer class="foot" id="foot"></footer>
+  </div>
+</main>
+
+<script id="decision-core">
+/* 判断の計算（画面に依存しない。tests/decision-core.test.mjs がこの部分だけを取り出して試す） */
+(function (root) {
+  'use strict';
+  var SCHEMA = 'aym.decision-view/1';
+  var DEFAULT_RULES = { epss_high: 0.1, due_soon_days: 7, top_n: 5 };
+  var SEVERITIES = ['critical', 'high', 'medium', 'low', 'info'];
+  var SEV_LABEL = { critical: '重大', high: '高', medium: '中', low: '低', info: '情報' };
+  var SEV_WEIGHT = { critical: 300, high: 200, medium: 100, low: 50, info: 0 };
+  var STATES = ['waiting', 'open', 'in_progress', 'done', 'wont_fix', 'other'];
+  var STATE_LABEL = { open: '手つかず', in_progress: '対応中', waiting: '判断待ち', done: '片付いた', wont_fix: '対応しない', other: 'その他' };
+  var ACTIVE = { open: true, in_progress: true, waiting: true };
+
+  function isActive(state) { return ACTIVE[state] === true; }
+
+  function dayNumber(ymd) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(ymd || '');
+    if (!m) return null;
+    return Math.round(Date.UTC(+m[1], +m[2] - 1, +m[3]) / 86400000);
+  }
+
+  function shortDate(ymd) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(ymd || '');
+    return m ? (+m[2]) + '/' + (+m[3]) : '';
+  }
+
+  function rulesOf(view) {
+    var r = {}, k, src = (view && view.rules) || {};
+    for (k in DEFAULT_RULES) r[k] = typeof src[k] === 'number' ? src[k] : DEFAULT_RULES[k];
+    return r;
+  }
+
+  function validate(view) {
+    if (!view || typeof view !== 'object') throw new Error('JSON ではありません。');
+    if (view.schema !== SCHEMA) throw new Error('形式が違います（schema が ' + SCHEMA + ' ではありません）。');
+    if (!Array.isArray(view.items)) throw new Error('items がありません。');
+    return view;
+  }
+
+  /* 1 件について、急ぐ理由と段（now: いま決める / soon: 早めに / null）を出す */
+  function assess(item, today, rules) {
+    var reasons = [];
+    var active = isActive(item.state);
+    var t = dayNumber(today), d = dayNumber(item.due);
+    var overdueDays = null, dueInDays = null;
+    if (active && t !== null && d !== null) {
+      if (d < t) overdueDays = t - d; else dueInDays = d - t;
+    }
+    var severe = item.severity === 'critical' || item.severity === 'high';
+    var epssHigh = typeof item.epss_max === 'number' && item.epss_max >= rules.epss_high;
+    var dueSoon = dueInDays !== null && dueInDays <= rules.due_soon_days;
+    if (active && item.kev) reasons.push({ code: 'kev', text: '悪用が確認されている', tone: 'crit' });
+    if (active && item.state === 'waiting') reasons.push({ code: 'waiting', text: '判断待ち', tone: 'warn' });
+    if (overdueDays !== null) reasons.push({ code: 'overdue', text: '期限を ' + overdueDays + ' 日過ぎた', tone: severe ? 'crit' : 'warn' });
+    if (dueSoon) reasons.push({ code: 'due_soon', text: dueInDays === 0 ? '期限は今日' : '期限まであと ' + dueInDays + ' 日', tone: 'warn' });
+    if (active && epssHigh) reasons.push({ code: 'epss', text: '悪用の見込み ' + Math.round(item.epss_max * 100) + '%', tone: 'warn' });
+    var tier = null;
+    if (active && (item.kev || item.state === 'waiting')) tier = 'now';
+    else if (active && ((overdueDays !== null && severe) || epssHigh)) tier = 'soon';
+    var score = 0;
+    if (active) {
+      score += item.kev ? 1000 : 0;
+      score += item.state === 'waiting' ? 500 : 0;
+      score += overdueDays !== null ? Math.min(overdueDays, 60) * 2 : 0;
+      score += dueSoon ? 50 : 0;
+      score += SEV_WEIGHT[item.severity] || 0;
+      score += typeof item.epss_max === 'number' ? item.epss_max * 400 : 0;
+    }
+    return { active: active, overdueDays: overdueDays, dueInDays: dueInDays, reasons: reasons, tier: tier,
+             decideNow: tier !== null, score: score };
+  }
+
+  function byScore(a, b) {
+    if (b.a.score !== a.a.score) return b.a.score - a.a.score;
+    var da = a.item.due || '9999', db = b.item.due || '9999';
+    if (da !== db) return da < db ? -1 : 1;
+    return (a.item.title || '').localeCompare(b.item.title || '', 'ja');
+  }
+
+  function summarize(view, today) {
+    validate(view);
+    var rules = rulesOf(view);
+    var rows = view.items.map(function (item) { return { item: item, a: assess(item, today, rules) }; });
+    rows.sort(byScore);
+    var now = rows.filter(function (r) { return r.a.tier === 'now'; });
+    var soon = rows.filter(function (r) { return r.a.tier === 'soon'; });
+    var counts = { total: rows.length, active: 0, closed: 0, kev: 0, waiting: 0, overdueSevere: 0, overdue: 0, changed: 0,
+                   now: now.length, soon: soon.length, decideNow: now.length + soon.length };
+    var changes = { added: [], closed: [], stateChanged: [], removed: (view.removed || []).slice() };
+    var matrix = {}, stateCounts = {};
+    STATES.forEach(function (s) { stateCounts[s] = 0; matrix[s] = {}; SEVERITIES.forEach(function (v) { matrix[s][v] = 0; }); });
+    rows.forEach(function (r) {
+      var it = r.item, a = r.a;
+      if (a.active) counts.active++;
+      if (a.active && it.kev) counts.kev++;
+      if (a.active && it.state === 'waiting') counts.waiting++;
+      if (a.overdueDays !== null) { counts.overdue++; if (it.severity === 'critical' || it.severity === 'high') counts.overdueSevere++; }
+      var st = STATES.indexOf(it.state) >= 0 ? it.state : 'other';
+      var sv = SEVERITIES.indexOf(it.severity) >= 0 ? it.severity : 'info';
+      stateCounts[st]++;
+      matrix[st][sv]++;
+      if (it.change === 'new') changes.added.push(r);
+      else if (it.change === 'state_changed') {
+        if (!isActive(it.state) && isActive(it.prev_state)) changes.closed.push(r); else changes.stateChanged.push(r);
+      }
+    });
+    counts.closed = stateCounts.done + stateCounts.wont_fix;
+    counts.changed = changes.added.length + changes.closed.length + changes.stateChanged.length + changes.removed.length;
+    var fresh = {};
+    ['kev', 'epss'].forEach(function (k) {
+      var f = view.freshness && view.freshness[k];
+      if (f) fresh[k] = { expired: !!f.expired, fetched_at: f.fetched_at || null, source_version: f.source_version || null };
+    });
+    return { rules: rules, rows: rows, now: now, soon: soon, decide: now.concat(soon), counts: counts, changes: changes,
+             matrix: matrix, stateCounts: stateCounts, freshness: fresh, hasPrevious: !!view.previous };
+  }
+
+  function stateLabel(item) { return item.state_label || STATE_LABEL[item.state] || STATE_LABEL.other; }
+
+  function safeLink(url) {
+    if (typeof url !== 'string') return null;
+    var u;
+    try { u = new URL(url); } catch (e) { return null; }
+    if (u.protocol !== 'https:' && u.protocol !== 'http:') return null;
+    if (u.username || u.password) return null;
+    return u.href;
+  }
+
+  root.AYMDecision = { SCHEMA: SCHEMA, DEFAULT_RULES: DEFAULT_RULES, SEVERITIES: SEVERITIES, SEV_LABEL: SEV_LABEL,
+    STATES: STATES, STATE_LABEL: STATE_LABEL, isActive: isActive, dayNumber: dayNumber, shortDate: shortDate, validate: validate,
+    assess: assess, summarize: summarize, stateLabel: stateLabel, safeLink: safeLink, rulesOf: rulesOf };
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+</script>
+
+<script>
+(function () {
+  'use strict';
+  var D = window.AYMDecision;
+  var state = { view: null, sum: null, soonAll: false, allLimit: 30, fState: 'active', fKev: false };
+  function $(id) { return document.getElementById(id); }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+  function todayLocal() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  function when(iso) { if (!iso) return '不明'; var d = new Date(iso); return isNaN(d) ? iso : d.toLocaleString('ja-JP', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }); }
+  function day(iso) { if (!iso) return '前回'; var d = new Date(iso); return isNaN(d) ? '前回' : (d.getMonth() + 1) + '/' + d.getDate(); }
+  function pct(x) { return Math.round(x * 100); }
+
+  function note(kind, text) { var n = el('div', 'note ' + kind, text); n.setAttribute('role', kind === 'err' ? 'alert' : 'status'); $('notes').appendChild(n); }
+
+  function nameOf(it) { return (it.ref ? it.ref + ' ' : '') + (it.title || ''); }
+
+  function reasonSentences(it, a) {
+    var out = [];
+    a.reasons.forEach(function (r) {
+      if (r.code === 'kev') {
+        var ids = (it.kev_cves || []).slice(0, 3).join('、');
+        out.push('実際の攻撃に使われたと確認されている脆弱性を含みます' + (ids ? '（' + ids + ((it.kev_cves || []).length > 3 ? ' ほか' : '') + '）' : '') + '。');
+      } else if (r.code === 'waiting') out.push('誰かの判断を待って止まっています。');
+      else if (r.code === 'overdue') out.push('期限（' + D.shortDate(it.due) + '）を ' + a.overdueDays + ' 日過ぎています。');
+      else if (r.code === 'due_soon') out.push(a.dueInDays === 0 ? '期限は今日です。' : '期限（' + D.shortDate(it.due) + '）まであと ' + a.dueInDays + ' 日です。');
+      else if (r.code === 'epss') out.push('今後 30 日のうちに攻撃に使われる見込みが ' + pct(it.epss_max) + '% と見積もられている脆弱性' + (it.epss_cve ? '（' + it.epss_cve + '）' : '') + 'を含みます。');
+    });
+    return out;
+  }
+
+  function fact(dl, label, node) { dl.appendChild(el('dt', null, label)); var dd = el('dd'); if (typeof node === 'string') dd.textContent = node; else dd.appendChild(node); dl.appendChild(dd); }
+
+  function itemCard(r) {
+    var it = r.item, a = r.a;
+    var d = el('details', 'item');
+    var s = el('summary');
+    s.appendChild(el('span', 'sev ' + (D.SEVERITIES.indexOf(it.severity) >= 0 ? it.severity : 'info'), D.SEV_LABEL[it.severity] || '情報'));
+    var main = el('span', 'item-main');
+    main.appendChild(el('span', 'item-title', it.title || '（名前なし）'));
+    var meta = [];
+    if (it.ref) meta.push(it.ref);
+    meta.push(D.stateLabel(it));
+    if (it.due) meta.push('期限 ' + D.shortDate(it.due));
+    main.appendChild(el('span', 'item-meta', meta.join(' ・ ')));
+    var chips = el('span', 'chips');
+    a.reasons.forEach(function (x) { chips.appendChild(el('span', 'chip ' + x.tone, x.text)); });
+    if (it.change === 'new') chips.appendChild(el('span', 'chip', '新しく入った'));
+    main.appendChild(chips);
+    s.appendChild(main);
+    var chev = el('span', 'chev'); chev.setAttribute('aria-hidden', 'true'); s.appendChild(chev);
+    d.appendChild(s);
+    d.addEventListener('toggle', function () {
+      if (!d.open || d.querySelector('.item-more')) return;
+      var more = el('div', 'item-more');
+      var dl = el('dl', 'facts');
+      var why = reasonSentences(it, a);
+      if (why.length) { var ul = el('ul'); why.forEach(function (w) { ul.appendChild(el('li', null, w)); }); fact(dl, '急ぐ理由', ul); }
+      else fact(dl, '急ぐ理由', a.active ? '急ぐ理由は見つかっていません。' : 'すでに終わっています。');
+      if (it.cve_count > 0) {
+        var t = it.cve_count + ' 件の脆弱性（CVE）が関係しています。';
+        if (typeof it.epss_max === 'number') t += '悪用の見込みは、いちばん高いもので ' + pct(it.epss_max) + '% です。';
+        fact(dl, '脆弱性', t);
+      }
+      fact(dl, '状態', D.stateLabel(it));
+      fact(dl, '期限', it.due ? it.due : '決まっていません');
+      more.appendChild(dl);
+      var href = D.safeLink(it.link);
+      if (href) { var b = el('a', 'btn ghost', '元のデータを開く'); b.href = href; b.target = '_blank'; b.rel = 'noopener noreferrer'; more.appendChild(b); }
+      d.appendChild(more);
+    });
+    return d;
+  }
+
+  function fillItems(node, rows) { clear(node); rows.forEach(function (r) { node.appendChild(itemCard(r)); }); }
+
+  function jumpPill(cls, label, n, target) {
+    var a = el('a', 'pill ' + cls); a.href = '#' + target;
+    a.appendChild(el('span', null, label)); a.appendChild(el('b', null, String(n)));
+    return a;
+  }
+
+  function renderSummary(s, v) {
+    var c = s.counts;
+    $('sum-name').textContent = (v.campaign && v.campaign.name) || '';
+    $('h-sum').textContent = c.now ? 'いま決めることは ' + c.now + ' 件です' : '急ぎの判断はありません';
+    var lead = [];
+    if (c.now) {
+      var parts = [];
+      if (c.kev) parts.push('悪用が確認されたものが ' + c.kev + ' 件');
+      if (c.waiting) parts.push('判断待ちが ' + c.waiting + ' 件');
+      lead.push(parts.join('、') + 'あります。');
+    }
+    if (c.soon) lead.push((c.now ? 'ほかに、' : '') + '早めに対応することが ' + c.soon + ' 件あります。');
+    if (!c.now && !c.soon) lead.push(c.active ? '終わっていないものは ' + c.active + ' 件です。' : 'すべて片付いています。');
+    $('sum-lead').textContent = lead.join('');
+    var j = $('jump'); clear(j);
+    j.appendChild(jumpPill(c.now ? 'rose' : 'plain', 'いま決めること', c.now, 'sec-now'));
+    j.appendChild(jumpPill(c.soon ? 'amber' : 'plain', '早めに対応すること', c.soon, 'sec-soon'));
+    if (s.hasPrevious) j.appendChild(jumpPill('', '前回から変わったこと', c.changed, 'sec-changes'));
+    $('progress-text').textContent = c.total + ' 件のうち ' + c.closed + ' 件が片付いています（' + (c.total ? pct(c.closed / c.total) : 0) + '%）。'
+      + (s.stateCounts.wont_fix ? 'このうち ' + s.stateCounts.wont_fix + ' 件は、対応しないと決めたものです。' : '');
+    var bar = $('bar'), legend = $('legend'); clear(bar); clear(legend);
+    var order = ['done', 'wont_fix', 'in_progress', 'waiting', 'open', 'other'], spoken = [];
+    order.forEach(function (st) {
+      var n = s.stateCounts[st];
+      if (!n) return;
+      var seg = el('span', 'seg ' + st); seg.style.flexGrow = String(n); bar.appendChild(seg);
+      var li = el('li'); li.appendChild(el('span', 'dot ' + st)); li.appendChild(el('span', null, D.STATE_LABEL[st])); li.appendChild(el('b', null, String(n)));
+      legend.appendChild(li);
+      spoken.push(D.STATE_LABEL[st] + ' ' + n + ' 件');
+    });
+    bar.setAttribute('aria-label', spoken.join('、'));
+    var since = $('since');
+    if (!s.hasPrevious) since.textContent = '前回のデータがないので、変化は比べていません。';
+    else {
+      var bits = [];
+      if (s.changes.closed.length) bits.push(s.changes.closed.length + ' 件が片付き');
+      if (s.changes.added.length) bits.push(s.changes.added.length + ' 件が新しく入り');
+      since.textContent = '前回（' + day(v.previous.created_at) + '）から、' + (bits.length ? bits.join('、') + 'ました。' : '片付いたものも、新しく入ったものもありません。');
+    }
+    var t = $('matrix'); clear(t);
+    var thead = el('thead'), hr = el('tr');
+    hr.appendChild(el('th', null, '状態'));
+    D.SEVERITIES.forEach(function (x) { hr.appendChild(el('th', 'n', D.SEV_LABEL[x])); });
+    hr.appendChild(el('th', 'n', '計'));
+    thead.appendChild(hr); t.appendChild(thead);
+    var tb = el('tbody');
+    D.STATES.forEach(function (st) {
+      if (!s.stateCounts[st]) return;
+      var tr = el('tr');
+      tr.appendChild(el('th', null, D.STATE_LABEL[st]));
+      D.SEVERITIES.forEach(function (x) { tr.appendChild(el('td', 'n', s.matrix[st][x] ? String(s.matrix[st][x]) : '')); });
+      tr.appendChild(el('td', 'n', String(s.stateCounts[st])));
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb);
+  }
+
+  function renderNotes(s) {
+    clear($('notes'));
+    var stale = Object.keys(s.freshness).filter(function (k) { return s.freshness[k].expired; });
+    if (stale.length) note('warn', '悪用の情報（' + stale.map(function (k) { return k.toUpperCase(); }).join('・') + '）が古くなっています。取り直してから作り直すと、件数が変わることがあります。');
+    if (!Object.keys(s.freshness).length) note('warn', '悪用の情報（KEV・EPSS）が付いていないデータです。悪用の確認と見込みは数えていません。');
+  }
+
+  function renderNow(s) {
+    var box = $('now'); clear(box);
+    if (!s.now.length) { $('now-sub').textContent = ''; box.appendChild(el('p', 'empty', 'いま急いで決めることはありません。')); return; }
+    $('now-sub').textContent = '悪用が確認されているもの、判断を待って止まっているものです。急ぐ順に並べています。行を開くと理由が読めます。';
+    fillItems(box, s.now);
+  }
+
+  function renderSoon(s) {
+    var box = $('soon'), more = $('soon-more'); clear(box); clear(more);
+    if (!s.soon.length) { $('soon-sub').textContent = ''; box.appendChild(el('p', 'empty', '早めに対応するものはありません。')); return; }
+    var oldest = s.soon.reduce(function (m, r) { return Math.max(m, r.a.overdueDays || 0); }, 0);
+    $('soon-sub').textContent = '期限を過ぎた重大・高のもの、悪用の見込みが高いものです。' + (oldest ? 'いちばん古いものは、期限を ' + oldest + ' 日過ぎています。' : '');
+    var n = state.soonAll ? s.soon.length : Math.min(s.rules.top_n, s.soon.length);
+    fillItems(box, s.soon.slice(0, n));
+    if (s.soon.length > s.rules.top_n) {
+      var b = el('button', 'btn ghost', state.soonAll ? '最初の ' + s.rules.top_n + ' 件だけに戻す' : '残りの ' + (s.soon.length - n) + ' 件も見る');
+      b.type = 'button';
+      b.addEventListener('click', function () { state.soonAll = !state.soonAll; renderSoon(state.sum); });
+      more.appendChild(b);
+    }
+  }
+
+  function changeFold(dot, title, rows, describe) {
+    var d = el('details', 'fold' + (rows.length ? '' : ' none'));
+    var s = el('summary');
+    s.appendChild(el('span', 'dot ' + dot)); s.appendChild(el('span', null, title));
+    s.appendChild(el('span', 'count', rows.length ? rows.length + ' 件' : 'なし'));
+    if (rows.length) { var chev = el('span', 'chev'); chev.setAttribute('aria-hidden', 'true'); s.appendChild(chev); }
+    else s.addEventListener('click', function (e) { e.preventDefault(); });
+    d.appendChild(s);
+    if (rows.length) {
+      var body = el('div', 'fold-body'), ul = el('ul');
+      rows.slice(0, 30).forEach(function (r) { ul.appendChild(el('li', null, describe(r))); });
+      body.appendChild(ul);
+      if (rows.length > 30) body.appendChild(el('p', 'small muted', 'ほか ' + (rows.length - 30) + ' 件は「すべての課題」で探せます。'));
+      d.appendChild(body);
+    }
+    return d;
+  }
+
+  function renderChanges(s, v) {
+    var g = $('changes'); clear(g);
+    $('sec-changes').hidden = !s.hasPrevious;
+    if (!s.hasPrevious) return;
+    $('changes-sub').textContent = when(v.previous.created_at) + ' のデータと比べました。';
+    function move(r) { return nameOf(r.item) + '（' + (r.item.prev_state_label || D.STATE_LABEL[r.item.prev_state] || '') + ' → ' + D.stateLabel(r.item) + '）'; }
+    g.appendChild(changeFold('done', '片付いた', s.changes.closed, move));
+    g.appendChild(changeFold('in_progress', '状態が変わった', s.changes.stateChanged, move));
+    g.appendChild(changeFold('accent', '新しく入った', s.changes.added, function (r) { return nameOf(r.item) + '（' + D.SEV_LABEL[r.item.severity] + '・' + D.stateLabel(r.item) + '）'; }));
+    g.appendChild(changeFold('open', 'なくなった', s.changes.removed, function (x) { return (x.ref ? x.ref + ' ' : '') + (x.title || '') + '（前は ' + (x.prev_state_label || D.STATE_LABEL[x.prev_state] || '') + '）'; }));
+  }
+
+  function renderAll(s) {
+    var q = $('q').value.trim().toLowerCase(), fv = $('f-sev').value;
+    var rows = s.rows.filter(function (r) {
+      var it = r.item;
+      if (state.fState === 'active' && !r.a.active) return false;
+      if (state.fState === 'closed' && r.a.active) return false;
+      if (fv && it.severity !== fv) return false;
+      if (state.fKev && !it.kev) return false;
+      if (q && ((it.title || '') + ' ' + (it.ref || '')).toLowerCase().indexOf(q) < 0) return false;
+      return true;
+    });
+    $('all-sub').textContent = rows.length + ' 件が当てはまります。急ぐ順に並べています。';
+    fillItems($('all'), rows.slice(0, state.allLimit));
+    if (!rows.length) $('all').appendChild(el('p', 'muted', '当てはまる課題はありません。'));
+    var more = $('all-more'); clear(more);
+    if (rows.length > state.allLimit) {
+      var b = el('button', 'btn ghost', '続きを見る（残り ' + (rows.length - state.allLimit) + ' 件）'); b.type = 'button';
+      b.addEventListener('click', function () { state.allLimit += 50; renderAll(state.sum); });
+      more.appendChild(b);
+    }
+  }
+
+  function renderFoot(v) {
+    var f = $('foot'); clear(f);
+    f.appendChild(el('span', null, 'このデータは ' + when(v.generated_at) + ' 時点のものです。' + (v.previous ? when(v.previous.created_at) + ' のデータと比べています。' : '')));
+    f.appendChild(el('span', null, '期限の日数は、この画面を開いた日を今日として数えています。'));
+  }
+
+  function show(view) {
+    clear($('notes'));
+    try {
+      D.validate(view);
+      state.view = view; state.sum = D.summarize(view, todayLocal()); state.soonAll = false; state.allLimit = 30;
+    } catch (e) { note('err', '読み込めませんでした。' + e.message); return; }
+    $('loader').hidden = true; $('view').hidden = false;
+    renderNotes(state.sum); renderSummary(state.sum, view); renderNow(state.sum); renderSoon(state.sum);
+    renderChanges(state.sum, view); renderAll(state.sum); renderFoot(view);
+  }
+
+  function readFile(f) {
+    if (!f) return;
+    if (f.size > 20 * 1024 * 1024) { clear($('notes')); note('err', 'ファイルが大きすぎます（20MB まで）。'); return; }
+    var fr = new FileReader();
+    fr.onload = function () { try { show(JSON.parse(fr.result)); } catch (e) { clear($('notes')); note('err', '読み込めませんでした。JSON として読めません。'); } };
+    fr.readAsText(f);
+  }
+
+  function fetchView(url) {
+    return fetch(url, { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+  }
+
+  D.SEVERITIES.forEach(function (x) { var o = el('option', null, '重大度: ' + D.SEV_LABEL[x]); o.value = x; $('f-sev').appendChild(o); });
+  function setState(which) {
+    state.fState = which; state.allLimit = 30;
+    $('f-active').setAttribute('aria-pressed', String(which === 'active'));
+    $('f-any').setAttribute('aria-pressed', String(which === 'any'));
+    $('f-closed').setAttribute('aria-pressed', String(which === 'closed'));
+    if (state.sum) renderAll(state.sum);
+  }
+  $('f-active').addEventListener('click', function () { setState('active'); });
+  $('f-any').addEventListener('click', function () { setState('any'); });
+  $('f-closed').addEventListener('click', function () { setState('closed'); });
+  $('f-kev').addEventListener('click', function () {
+    state.fKev = !state.fKev; state.allLimit = 30;
+    $('f-kev').setAttribute('aria-pressed', String(state.fKev));
+    if (state.sum) renderAll(state.sum);
+  });
+  ['q', 'f-sev'].forEach(function (id) { $(id).addEventListener('input', function () { state.allLimit = 30; if (state.sum) renderAll(state.sum); }); });
+  $('file').addEventListener('change', function (e) { readFile(e.target.files[0]); });
+  var drop = $('drop');
+  ['dragenter', 'dragover'].forEach(function (t) { drop.addEventListener(t, function (e) { e.preventDefault(); drop.classList.add('over'); }); });
+  ['dragleave', 'drop'].forEach(function (t) { drop.addEventListener(t, function (e) { e.preventDefault(); drop.classList.remove('over'); }); });
+  drop.addEventListener('drop', function (e) { readFile(e.dataTransfer && e.dataTransfer.files[0]); });
+
+  var params = new URLSearchParams(location.search);
+  var src = params.get('data'), campaign = params.get('campaign');
+  if (campaign && /^[A-Za-z0-9_-]{1,64}$/.test(campaign)) src = '/api/campaigns/' + encodeURIComponent(campaign) + '/decision-view';
+  if (src && (src.indexOf('//') >= 0 || /^[a-z]+:/i.test(src))) { note('err', 'data には、同じ配信元のパスだけを指定できます。'); src = null; }
+  if (src) {
+    fetchView(src).then(show).catch(function (e) { note('err', 'データを取れませんでした（' + src + '、' + e.message + '）。'); });
+  } else {
+    fetchView('decision-sample.json').then(function () { $('sample').hidden = false; }).catch(function () {});
+    $('sample').addEventListener('click', function () { fetchView('decision-sample.json').then(show).catch(function (e) { note('err', '見本を開けませんでした（' + e.message + '）。'); }); });
+  }
+})();
+</script>
+</body>
+</html>
