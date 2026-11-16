@@ -30,11 +30,16 @@ AIへの指示や作業の予算を過去の失敗から自動で調整し、改
 
 Obsidianのノート、Notionのページ、GitHub Issueを、出典・関連リンク付きの参考資料として手動で取り込めます。ファイルとMCPの読取に対応し、モニターの「資料と出典」で本文を確認できます。[設定と使い方](docs/SOURCES.md)を参照してください。
 
-## 判断の画面（独立プレビュー）
+## 判断の画面とモニター（2画面）
 
-オペレーター向けの既存モニターとは別に、結果を読む人が優先順位と対応状況を判断できる[判断の画面](decision_view/README.md)を用意しました。Campaignから読み取り専用でJSONを書き出し、独立HTMLで表示します。架空データの見本付きです。
+`aym monitor serve --bind 127.0.0.1:8765` の同じサーバーから、次の2画面を開けます。
 
-**現時点では既存サーバーのURLやAPIには接続していません。** `?campaign=` の自動取得経路も未実装です。書き出したJSONをHTMLへ読み込む使い方と、検収状況を[専用README](decision_view/README.md)で確認してください。
+- **モニター（`http://127.0.0.1:8765/`）** — QA/セキュリティ担当者がCampaign、Run、検知の証拠や評価を細かく確認する画面。
+- **判断の画面（`http://127.0.0.1:8765/decision`）** — Campaignを選び、いま判断すべきこと・未完了件数・KEV/EPSS・未検査の範囲を読み取る画面。対象を指定するには `/decision?campaign=<campaign_id>`。
+
+両画面の先頭の「判断の画面」「モニター」で対象Campaignを保って行き来できます。判断の画面に更新・承認・実行機能はなく、`GET /api/campaigns/<campaign_id>/decision-view` を読むだけです。`view=blue` は非公開情報を返しません。評価がない場合は「未評価」、古い評価や未検査の範囲は注意を表示します。**進捗率は表示しません。**
+
+ファイルでの判断用JSON書き出しも維持しています。[判断の画面の手順と契約](decision_view/README.md)、[2画面の要件](docs/requirements/REQUIREMENTS-DUAL-VIEW.md)、[仕様](docs/requirements/SPEC-DUAL-VIEW.md)を参照してください。
 
 ## 動作の流れ
 
