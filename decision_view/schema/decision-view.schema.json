@@ -4,85 +4,381 @@
  "title": "判断の画面のデータ（aym.decision-view/1）",
  "description": "作成: Claude (Opus 5.5) / 2026-11-16。tools/aym_decision_view.py の build_view() が作り、web/decision.html が読む。判断に使う列だけを持つ。",
  "type": "object",
- "required": ["schema", "generated_at", "campaign", "previous", "freshness", "rules", "items", "removed"],
+ "required": [
+  "schema",
+  "generated_at",
+  "campaign",
+  "previous",
+  "freshness",
+  "rules",
+  "items",
+  "removed"
+ ],
  "additionalProperties": false,
  "properties": {
-  "schema": {"const": "aym.decision-view/1"},
-  "generated_at": {"type": "string", "format": "date-time", "description": "このデータを作った時刻（UTC）"},
+  "schema": {
+   "const": "aym.decision-view/1"
+  },
+  "generated_at": {
+   "type": "string",
+   "format": "date-time",
+   "description": "このデータを作った時刻（UTC）"
+  },
   "campaign": {
-   "type": "object", "required": ["id", "name", "created_at"], "additionalProperties": false,
+   "type": "object",
+   "required": [
+    "id",
+    "name",
+    "created_at"
+   ],
+   "additionalProperties": false,
    "properties": {
-    "id": {"type": ["string", "null"]},
-    "name": {"type": ["string", "null"], "description": "画面に出す名前。既定は intent_id"},
-    "created_at": {"type": ["string", "null"]}
+    "id": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "name": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "画面に出す名前。既定は intent_id"
+    },
+    "created_at": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "status": {
+     "type": [
+      "string",
+      "null"
+     ]
+    }
    }
   },
   "previous": {
    "description": "比べた相手。比べていなければ null",
    "oneOf": [
-    {"type": "null"},
-    {"type": "object", "required": ["id", "created_at"], "additionalProperties": false,
-     "properties": {"id": {"type": ["string", "null"]}, "created_at": {"type": ["string", "null"]}}}
+    {
+     "type": "null"
+    },
+    {
+     "type": "object",
+     "required": [
+      "id",
+      "created_at"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "id": {
+       "type": [
+        "string",
+        "null"
+       ]
+      },
+      "created_at": {
+       "type": [
+        "string",
+        "null"
+       ]
+      }
+     }
+    }
    ]
   },
   "freshness": {
-   "type": "object", "additionalProperties": false,
+   "type": "object",
+   "additionalProperties": false,
    "description": "悪用の情報（KEV・EPSS）の取得日と期限。付いていなければ空",
    "properties": {
-    "kev": {"$ref": "#/$defs/fresh"},
-    "epss": {"$ref": "#/$defs/fresh"}
+    "kev": {
+     "$ref": "#/$defs/fresh"
+    },
+    "epss": {
+     "$ref": "#/$defs/fresh"
+    }
    }
   },
   "rules": {
-   "type": "object", "additionalProperties": false,
+   "type": "object",
+   "additionalProperties": false,
    "properties": {
-    "epss_high": {"type": "number", "minimum": 0, "maximum": 1, "description": "これ以上なら「悪用される見込みが高い」（既定 0.1）"},
-    "due_soon_days": {"type": "integer", "minimum": 0, "description": "期限まで何日以内を「近い」とするか（既定 7）"},
-    "top_n": {"type": "integer", "minimum": 1, "description": "「早めに対応すること」を最初に何件見せるか（既定 5）"}
+    "epss_high": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 1,
+     "description": "これ以上なら「悪用される見込みが高い」（既定 0.1）"
+    },
+    "due_soon_days": {
+     "type": "integer",
+     "minimum": 0,
+     "description": "期限まで何日以内を「近い」とするか（既定 7）"
+    },
+    "top_n": {
+     "type": "integer",
+     "minimum": 1,
+     "description": "「早めに対応すること」を最初に何件見せるか（既定 5）"
+    }
    }
   },
-  "items": {"type": "array", "items": {"$ref": "#/$defs/item"}},
+  "items": {
+   "type": "array",
+   "items": {
+    "$ref": "#/$defs/item"
+   }
+  },
   "removed": {
-   "type": "array", "description": "前回はあって今回はない行",
-   "items": {"type": "object", "required": ["key", "title", "prev_state"], "additionalProperties": false,
-    "properties": {"key": {"type": "string"}, "ref": {"type": ["string", "null"]}, "title": {"type": "string"},
-     "prev_state": {"$ref": "#/$defs/state"}, "prev_state_label": {"type": ["string", "null"]}}}
+   "type": "array",
+   "description": "前回はあって今回はない行",
+   "items": {
+    "type": "object",
+    "required": [
+     "key",
+     "title",
+     "prev_state"
+    ],
+    "additionalProperties": false,
+    "properties": {
+     "key": {
+      "type": "string"
+     },
+     "ref": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "title": {
+      "type": "string"
+     },
+     "prev_state": {
+      "$ref": "#/$defs/state"
+     },
+     "prev_state_label": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    }
+   }
+  },
+  "assessment": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "present",
+    "historical",
+    "coverage"
+   ],
+   "properties": {
+    "present": {
+     "type": "boolean"
+    },
+    "historical": {
+     "type": "boolean"
+    },
+    "coverage": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "executed",
+      "not_executed",
+      "failed"
+     ],
+     "properties": {
+      "executed": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "not_executed": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "failed": {
+       "type": "integer",
+       "minimum": 0
+      }
+     }
+    }
+   }
   }
  },
  "$defs": {
-  "state": {"enum": ["open", "in_progress", "waiting", "done", "wont_fix", "other"]},
-  "severity": {"enum": ["critical", "high", "medium", "low", "info"]},
+  "state": {
+   "enum": [
+    "open",
+    "in_progress",
+    "waiting",
+    "done",
+    "wont_fix",
+    "other"
+   ]
+  },
+  "severity": {
+   "enum": [
+    "critical",
+    "high",
+    "medium",
+    "low",
+    "info"
+   ]
+  },
   "fresh": {
-   "type": "object", "additionalProperties": false,
+   "type": "object",
+   "additionalProperties": false,
    "properties": {
-    "source_version": {"type": ["string", "null"]},
-    "fetched_at": {"type": ["string", "null"]},
-    "expires_at": {"type": ["string", "null"]},
-    "expired": {"type": "boolean"}
+    "source_version": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "fetched_at": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "expires_at": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "expired": {
+     "type": "boolean"
+    }
    }
   },
   "item": {
    "type": "object",
-   "required": ["key", "title", "severity", "state", "kev", "kev_cves", "cve_count"],
+   "required": [
+    "key",
+    "title",
+    "severity",
+    "state",
+    "kev",
+    "kev_cves",
+    "cve_count"
+   ],
    "additionalProperties": false,
    "properties": {
-    "key": {"type": "string", "description": "前回と突き合わせるための鍵（finding の location.path、なければ finding_id）"},
-    "ref": {"type": ["string", "null"], "description": "元のデータでの番号（mapping の fields.key）"},
-    "title": {"type": "string"},
-    "severity": {"$ref": "#/$defs/severity"},
-    "state": {"$ref": "#/$defs/state"},
-    "state_label": {"type": ["string", "null"], "description": "元のデータの状態の言葉（そのまま画面に出す）"},
-    "due": {"type": ["string", "null"], "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
-    "link": {"type": ["string", "null"], "description": "元の行への http(s) のリンク"},
-    "cve_count": {"type": "integer", "minimum": 0},
-    "kev": {"type": "boolean", "description": "CISA KEV に載った CVE を 1 つ以上含む"},
-    "kev_cves": {"type": "array", "items": {"type": "string"}},
-    "epss_max": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
-    "epss_cve": {"type": ["string", "null"]},
-    "epss_percentile": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
-    "change": {"enum": ["new", "state_changed", "unchanged"], "description": "previous があるときだけ"},
-    "prev_state": {"$ref": "#/$defs/state"},
-    "prev_state_label": {"type": ["string", "null"]}
+    "key": {
+     "type": "string",
+     "description": "前回と突き合わせるための鍵（finding の location.path、なければ finding_id）"
+    },
+    "ref": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "元のデータでの番号（mapping の fields.key）"
+    },
+    "title": {
+     "type": "string"
+    },
+    "severity": {
+     "$ref": "#/$defs/severity"
+    },
+    "state": {
+     "$ref": "#/$defs/state"
+    },
+    "state_label": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "元のデータの状態の言葉（そのまま画面に出す）"
+    },
+    "due": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "link": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "元の行への http(s) のリンク"
+    },
+    "cve_count": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "kev": {
+     "type": "boolean",
+     "description": "CISA KEV に載った CVE を 1 つ以上含む"
+    },
+    "kev_cves": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "epss_max": {
+     "type": [
+      "number",
+      "null"
+     ],
+     "minimum": 0,
+     "maximum": 1
+    },
+    "epss_cve": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "epss_percentile": {
+     "type": [
+      "number",
+      "null"
+     ],
+     "minimum": 0,
+     "maximum": 1
+    },
+    "change": {
+     "enum": [
+      "new",
+      "state_changed",
+      "unchanged"
+     ],
+     "description": "previous があるときだけ"
+    },
+    "prev_state": {
+     "$ref": "#/$defs/state"
+    },
+    "prev_state_label": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "assessment_status": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "enum": [
+      "confirmed",
+      "candidate",
+      "refuted",
+      "retested",
+      "proposed",
+      "undetermined",
+      "historical",
+      "unknown",
+      null
+     ]
+    }
    }
   }
  }
