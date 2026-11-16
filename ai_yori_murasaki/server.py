@@ -35,6 +35,7 @@ ALLOWED_HOSTS = ("127.0.0.1", "localhost")
 # Fixed endpoint patterns.  No arbitrary path segments are accepted.
 ROUTES: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("index", re.compile(r"^/$")),
+    ("decision", re.compile(r"^/decision$")),
     ("health", re.compile(r"^/api/health$")),
     ("sources", re.compile(r"^/api/sources$")),
     ("source", re.compile(r"^/api/sources/(src-[0-9a-f]{32})$")),
@@ -43,6 +44,7 @@ ROUTES: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("campaign_runs", re.compile(r"^/api/campaigns/([a-z0-9][a-z0-9-]{0,63})/runs$")),
     ("campaign_rsi", re.compile(r"^/api/campaigns/([a-z0-9][a-z0-9-]{0,63})/rsi$")),
     ("campaign_assessment", re.compile(r"^/api/campaigns/([a-z0-9][a-z0-9-]{0,63})/assessment$")),
+    ("campaign_decision_view", re.compile(r"^/api/campaigns/([a-z0-9][a-z0-9-]{0,63})/decision-view$")),
     ("run", re.compile(r"^/api/runs/([a-z0-9][a-z0-9-]{0,63})$")),
     ("run_events", re.compile(r"^/api/runs/([a-z0-9][a-z0-9-]{0,63})/events$")),
     ("verification", re.compile(r"^/api/verification/([a-z0-9][a-z0-9-]{0,63})$")),
@@ -597,6 +599,14 @@ def _check_origin(origin: str | None, port: int) -> bool:
     return origin in allowed
 
 
+def _load_decision_html() -> bytes:
+    try:
+        data = resources.files("ai_yori_murasaki").joinpath("web/decision.html").read_bytes()
+    except (FileNotFoundError, ModuleNotFoundError, OSError):
+        return b""
+    return data if len(data) <= MAX_HTML_BYTES else b""
+
+
 def _load_index_html() -> bytes:
     try:
         data = resources.files("ai_yori_murasaki").joinpath("web/index.html").read_bytes()
@@ -706,6 +716,15 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
             hdrs["Content-Length"] = str(len(html))
             return 200, hdrs, html
 
+        if name == "decision":
+            html = _load_decision_html()
+            if not html:
+                return _error(500, "index_unavailable")
+            hdrs = _security_headers(html)
+            hdrs["Content-Type"] = "text/html; charset=utf-8"
+            hdrs["Content-Length"] = str(len(html))
+            return 200, hdrs, html
+
         if name == "health":
             return _json_response(200, {"status": "ok"})
 
@@ -724,6 +743,21 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
         if name == "campaigns":
             campaigns = [_project_campaign(c, runtime) for c in runtime.list_campaigns()]
             return _json_response(200, {"campaigns": campaigns})
+
+        if name == "campaign_decision_view":
+            if view == "blue":
+                return _json_response(200, {"decision_view": {"status": "withheld", "reason": "評価情報はBlueに非公開"}})
+            cid = groups[0]
+            try:
+                runtime.get_campaign(cid)
+            except DataError:
+                return _error(404, "not_found")
+            from .decision_view import read_decision_view
+            try:
+                projected = read_decision_view(runtime, cid)
+            except (DataError, OSError, ValueError, KeyError, TypeError):
+                return _json_response(200, {"decision_view": None, "status": "hold", "reason": "記録を確認できません"})
+            return _json_response(200, {"decision_view": projected})
 
         if name == "campaign_assessment":
             cid = groups[0]
