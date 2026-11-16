@@ -662,16 +662,58 @@ dl.terms dd { margin: 0; }
   ['dragleave', 'drop'].forEach(function (t) { drop.addEventListener(t, function (e) { e.preventDefault(); drop.classList.remove('over'); }); });
   drop.addEventListener('drop', function (e) { readFile(e.dataTransfer && e.dataTransfer.files[0]); });
 
-  var params = new URLSearchParams(location.search);
-  var src = params.get('data'), campaign = params.get('campaign');
-  if (campaign && /^[A-Za-z0-9_-]{1,64}$/.test(campaign)) src = '/api/campaigns/' + encodeURIComponent(campaign) + '/decision-view';
-  if (src && (src.indexOf('//') >= 0 || /^[a-z]+:/i.test(src))) { note('err', 'data には、同じ配信元のパスだけを指定できます。'); src = null; }
-  if (src) {
-    fetchView(src).then(show).catch(function (e) { note('err', 'データを取れませんでした（' + src + '、' + e.message + '）。'); });
-  } else {
-    fetchView('decision-sample.json').then(function () { $('sample').hidden = false; }).catch(function () {});
-    $('sample').addEventListener('click', function () { fetchView('decision-sample.json').then(show).catch(function (e) { note('err', '見本を開けませんでした（' + e.message + '）。'); }); });
+  var params=new URLSearchParams(location.search),src=params.get('data'),campaign=params.get('campaign');
+  var campaignOK=campaign&&/^[a-z0-9][a-z0-9-]{0,63}$/.test(campaign);
+  if(src&&(src.indexOf('//')>=0||/^[a-z]+:/i.test(src))){note('err','data には、同じ配信元のパスだけを指定できます。');src=null;}
+  function showResponse(d){
+    if(d&&d.decision_view===null&&d.status==='hold'){clear($('notes'));note('warn','記録を確認できません。');return;}
+    if(d&&d.decision_view&&d.decision_view.status==='withheld'){clear($('notes'));note('warn','評価情報はBlueに非公開です。');return;}
+    show(d&&d.decision_view?d.decision_view:d);
   }
+  function chooseCampaigns(){
+    $('view').hidden=true;$('loader').hidden=true;$('campaign-picker').hidden=false;
+    $('campaign-message').textContent='Campaign を読み込んでいます。';clear($('campaign-list'));
+    fetchView('/api/campaigns').then(function(data){
+      if(!data||!Array.isArray(data.campaigns))throw Error('bad response');
+      var cs=data.campaigns.slice().sort(function(a,b){return (b.created_at||'').localeCompare(a.created_at||'');});
+      $('campaign-message').textContent=cs.length?'判断したい Campaign を選んでください。':'Campaign はまだありません。';
+      var labels={created:'作成済み',review_pending:'レビュー待ち',completed:'完了',failed:'未完了',planned:'計画中',cancelled:'中止'};
+      cs.forEach(function(c){
+        if(!c||!/^[a-z0-9][a-z0-9-]{0,63}$/.test(c.campaign_id||''))return;
+        var a=el('a',null,(c.intent_id||'名前未記録')+' ・ '+(c.created_at?when(c.created_at):'日時不明')+' ・ 課題 '+
+          (Number.isInteger(c.finding_count)?c.finding_count:'未確認')+' 件 ・ '+(labels[c.status]||'状態未確認'));
+        a.href='/decision?campaign='+encodeURIComponent(c.campaign_id);$('campaign-list').appendChild(a);
+      });
+    }).catch(function(){$('campaign-message').textContent='Campaign を取得できませんでした。画面を読み直してください。';});
+  }
+  function loadCampaign(){
+    state.campaign=campaign;
+    if(!campaignOK){chooseCampaigns();return;}
+    $('to-monitor').href='/#/campaign/'+encodeURIComponent(campaign);
+    fetchView('/api/campaigns/'+encodeURIComponent(campaign)+'/decision-view').then(showResponse).catch(function(e){
+      clear($('notes'));
+      if(e.message==='HTTP 404'){note('err','この Campaign は見つかりません');var a=el('a','btn ghost','Campaign を選ぶ画面へ');a.href='/decision';$('notes').appendChild(a);}
+      else if(e.message==='HTTP 500')note('err','件数が多く、この画面では出せません。');
+      else note('err','記録を取得できませんでした。');
+    });
+  }
+  $('refresh-view').addEventListener('click',function(){if(state.isAYM&&state.campaign)loadCampaign();});
+  function outsideAYM(){
+    if(campaign){note('err','この開き方では Campaign を読めません。JSON のファイルを選んでください。');return;}
+    if(src){fetchView(src).then(showResponse).catch(function(){note('err','データを取得できませんでした。');});return;}
+    fetchView('decision-sample.json').then(function(){$('sample').hidden=false;}).catch(function(){});
+    $('sample').addEventListener('click',function(){fetchView('decision-sample.json').then(showResponse).catch(function(){note('err','見本を開けませんでした。');});});
+  }
+  var controller=new AbortController(),deadline=setTimeout(function(){controller.abort();},5000);
+  fetch('/api/health',{signal:controller.signal,credentials:'same-origin'}).then(function(r){if(!r.ok)throw Error('not AYM');return r.json();})
+    .then(function(health){
+      if(!health||health.status!=='ok')throw Error('not AYM');
+      state.isAYM=true;$('view-switch').hidden=false;
+      if(campaign){if(!campaignOK){note('err','Campaign の指定を確認できません。');chooseCampaigns();}else loadCampaign();}
+      else if(src)fetchView(src).then(showResponse).catch(function(){note('err','データを取得できませんでした。');});
+      else chooseCampaigns();
+    }).catch(outsideAYM).finally(function(){clearTimeout(deadline);});
+
 })();
 </script>
 </body>
