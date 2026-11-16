@@ -402,7 +402,7 @@ dl.terms dd { margin: 0; }
 (function () {
   'use strict';
   var D = window.AYMDecision;
-  var state = { view: null, sum: null, soonAll: false, allLimit: 30, fState: 'active', fKev: false };
+  var state = { view: null, sum: null, nowAll: false, soonAll: false, allLimit: 30, fState: 'active', fKev: false, isAYM: false, campaign: null };
   function $(id) { return document.getElementById(id); }
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
   function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); }
@@ -413,7 +413,7 @@ dl.terms dd { margin: 0; }
 
   function note(kind, text) { var n = el('div', 'note ' + kind, text); n.setAttribute('role', kind === 'err' ? 'alert' : 'status'); $('notes').appendChild(n); }
 
-  function nameOf(it) { return (it.ref ? it.ref + ' ' : '') + (it.title || ''); }
+  function nameOf(it) { return it.title || '（名前なし）'; }
 
   function reasonSentences(it, a) {
     var out = [];
@@ -421,7 +421,8 @@ dl.terms dd { margin: 0; }
       if (r.code === 'kev') {
         var ids = (it.kev_cves || []).slice(0, 3).join('、');
         out.push('実際の攻撃に使われたと確認されている脆弱性を含みます' + (ids ? '（' + ids + ((it.kev_cves || []).length > 3 ? ' ほか' : '') + '）' : '') + '。');
-      } else if (r.code === 'waiting') out.push('誰かの判断を待って止まっています。');
+      } else if (r.code === 'assessment') out.push(r.text);
+      else if (r.code === 'waiting') out.push('誰かの判断を待って止まっています。');
       else if (r.code === 'overdue') out.push('期限（' + D.shortDate(it.due) + '）を ' + a.overdueDays + ' 日過ぎています。');
       else if (r.code === 'due_soon') out.push(a.dueInDays === 0 ? '期限は今日です。' : '期限（' + D.shortDate(it.due) + '）まであと ' + a.dueInDays + ' 日です。');
       else if (r.code === 'epss') out.push('今後 30 日のうちに攻撃に使われる見込みが ' + pct(it.epss_max) + '% と見積もられている脆弱性' + (it.epss_cve ? '（' + it.epss_cve + '）' : '') + 'を含みます。');
@@ -439,7 +440,6 @@ dl.terms dd { margin: 0; }
     var main = el('span', 'item-main');
     main.appendChild(el('span', 'item-title', it.title || '（名前なし）'));
     var meta = [];
-    if (it.ref) meta.push(it.ref);
     meta.push(D.stateLabel(it));
     if (it.due) meta.push('期限 ' + D.shortDate(it.due));
     main.appendChild(el('span', 'item-meta', meta.join(' ・ ')));
@@ -462,9 +462,22 @@ dl.terms dd { margin: 0; }
         if (typeof it.epss_max === 'number') t += '悪用の見込みは、いちばん高いもので ' + pct(it.epss_max) + '% です。';
         fact(dl, '脆弱性', t);
       }
-      fact(dl, '状態', D.stateLabel(it));
-      fact(dl, '期限', it.due ? it.due : '決まっていません');
+      fact(dl,'評価の状態',D.stateLabel(it));
+      fact(dl,'次の行動',it.assessment_status!=null?D.nextActionFor(it.assessment_status):'元の状態を担当者に確認してください。');
+      if(it.assessment_status==='retested')fact(dl,'注意','運用への反映は、別に確かめてください。');
+      fact(dl,'元のデータでの状態',D.originalStateLabel(it));
+      fact(dl,'期限',it.due||'決まっていません');
       more.appendChild(dl);
+      if(state.isAYM&&state.campaign){
+        var monitor=el('a','btn ghost','モニターでこの Campaign を見る');
+        monitor.href='/#/campaign/'+encodeURIComponent(state.campaign);more.appendChild(monitor);
+      }
+      var tech=el('details','fold inline'),head=el('summary',null,'技術の詳細'),body=el('div','fold-body'),ids=el('dl','facts');
+      fact(ids,'課題の識別子',String(it.key||'未記録'));
+      if(it.ref)fact(ids,'元の番号',String(it.ref));
+      fact(ids,'元の状態コード',String(it.state||'未記録'));
+      if(it.assessment_status)fact(ids,'評価の状態コード',it.assessment_status);
+      body.appendChild(ids);tech.appendChild(head);tech.appendChild(body);more.appendChild(tech);
       var href = D.safeLink(it.link);
       if (href) { var b = el('a', 'btn ghost', '元のデータを開く'); b.href = href; b.target = '_blank'; b.rel = 'noopener noreferrer'; more.appendChild(b); }
       d.appendChild(more);
@@ -480,61 +493,35 @@ dl.terms dd { margin: 0; }
     return a;
   }
 
-  function renderSummary(s, v) {
-    var c = s.counts;
-    $('sum-name').textContent = (v.campaign && v.campaign.name) || '';
-    $('h-sum').textContent = c.now ? 'いま決めることは ' + c.now + ' 件です' : '急ぎの判断はありません';
-    var lead = [];
-    if (c.now) {
-      var parts = [];
-      if (c.kev) parts.push('悪用が確認されたものが ' + c.kev + ' 件');
-      if (c.waiting) parts.push('判断待ちが ' + c.waiting + ' 件');
-      lead.push(parts.join('、') + 'あります。');
-    }
-    if (c.soon) lead.push((c.now ? 'ほかに、' : '') + '早めに対応することが ' + c.soon + ' 件あります。');
-    if (!c.now && !c.soon) lead.push(c.active ? '終わっていないものは ' + c.active + ' 件です。' : 'すべて片付いています。');
-    $('sum-lead').textContent = lead.join('');
-    var j = $('jump'); clear(j);
-    j.appendChild(jumpPill(c.now ? 'rose' : 'plain', 'いま決めること', c.now, 'sec-now'));
-    j.appendChild(jumpPill(c.soon ? 'amber' : 'plain', '早めに対応すること', c.soon, 'sec-soon'));
-    if (s.hasPrevious) j.appendChild(jumpPill('', '前回から変わったこと', c.changed, 'sec-changes'));
-    $('progress-text').textContent = c.total + ' 件のうち ' + c.closed + ' 件が片付いています（' + (c.total ? pct(c.closed / c.total) : 0) + '%）。'
-      + (s.stateCounts.wont_fix ? 'このうち ' + s.stateCounts.wont_fix + ' 件は、対応しないと決めたものです。' : '');
-    var bar = $('bar'), legend = $('legend'); clear(bar); clear(legend);
-    var order = ['done', 'wont_fix', 'in_progress', 'waiting', 'open', 'other'], spoken = [];
-    order.forEach(function (st) {
-      var n = s.stateCounts[st];
-      if (!n) return;
-      var seg = el('span', 'seg ' + st); seg.style.flexGrow = String(n); bar.appendChild(seg);
-      var li = el('li'); li.appendChild(el('span', 'dot ' + st)); li.appendChild(el('span', null, D.STATE_LABEL[st])); li.appendChild(el('b', null, String(n)));
-      legend.appendChild(li);
-      spoken.push(D.STATE_LABEL[st] + ' ' + n + ' 件');
-    });
-    bar.setAttribute('aria-label', spoken.join('、'));
-    var since = $('since');
-    if (!s.hasPrevious) since.textContent = '前回のデータがないので、変化は比べていません。';
-    else {
-      var bits = [];
-      if (s.changes.closed.length) bits.push(s.changes.closed.length + ' 件が片付き');
-      if (s.changes.added.length) bits.push(s.changes.added.length + ' 件が新しく入り');
-      since.textContent = '前回（' + day(v.previous.created_at) + '）から、' + (bits.length ? bits.join('、') + 'ました。' : '片付いたものも、新しく入ったものもありません。');
-    }
-    var t = $('matrix'); clear(t);
-    var thead = el('thead'), hr = el('tr');
-    hr.appendChild(el('th', null, '状態'));
-    D.SEVERITIES.forEach(function (x) { hr.appendChild(el('th', 'n', D.SEV_LABEL[x])); });
-    hr.appendChild(el('th', 'n', '計'));
-    thead.appendChild(hr); t.appendChild(thead);
-    var tb = el('tbody');
-    D.STATES.forEach(function (st) {
-      if (!s.stateCounts[st]) return;
-      var tr = el('tr');
-      tr.appendChild(el('th', null, D.STATE_LABEL[st]));
-      D.SEVERITIES.forEach(function (x) { tr.appendChild(el('td', 'n', s.matrix[st][x] ? String(s.matrix[st][x]) : '')); });
-      tr.appendChild(el('td', 'n', String(s.stateCounts[st])));
-      tb.appendChild(tr);
-    });
-    t.appendChild(tb);
+  function renderSummary(s,v){
+    var c=s.counts,hints=[],assessment=v.assessment||null;
+    $('sum-name').textContent=(v.campaign&&v.campaign.name)||'';
+    if(!assessment||!assessment.present)hints.push('この Campaign には評価の記録がありません。検査の範囲は分かりません。取り込んだ元の状態で並べています。');
+    if(assessment&&assessment.historical)hints.push('評価の記録は、対象が変わる前のものです。いまの状態は確かめ直してください。');
+    var cov=assessment&&assessment.coverage||{},untested=(cov.not_executed||0)+(cov.failed||0);
+    if(untested)hints.push('検査していない範囲が '+untested+' 類型あります。安全とは限りません。');
+    if(v.campaign&&v.campaign.status==='review_pending')hints.push('この Campaign は、人のレビューを待っています。モニターで確かめてください。');
+    var fresh=s.freshness||{};
+    if(!fresh.kev||!fresh.epss||fresh.kev.expired||fresh.epss.expired)
+      hints.push('悪用の情報が古い、または付いていません。悪用されないことを意味しません。');
+    $('h-sum').textContent=c.now?'いま決めることは '+c.now+' 件、終わっていない課題は全部で '+c.active+' 件です'
+      :c.active?'急いで決めることはありませんが、終わっていない課題が '+c.active+' 件あります'
+      :hints.length?'終わっていない課題は記録にありませんが、確かめていないことがあります':'終わっていない課題はありません';
+    $('sum-lead').textContent=hints.join(' ');
+    var j=$('jump');clear(j);
+    j.appendChild(jumpPill(c.now?'rose':'plain','いま決めること',c.now,'sec-now'));
+    j.appendChild(jumpPill(c.soon?'amber':'plain','早めに対応すること',c.soon,'sec-soon'));
+    if(s.hasPrevious)j.appendChild(jumpPill('','前回から変わったこと',c.changed,'sec-changes'));
+    var legend=$('legend'),byState={};clear(legend);
+    s.rows.forEach(function(row){var label=D.stateLabel(row.item);byState[label]=(byState[label]||0)+1;});
+    Object.keys(byState).sort(function(a,b){
+      return Number(a==='再検証済み'||a==='反証済み')-Number(b==='再検証済み'||b==='反証済み');
+    }).forEach(function(label){var li=el('li');li.appendChild(el('span',null,label));li.appendChild(el('b',null,byState[label]+' 件'));legend.appendChild(li);});
+    var since=$('since');
+    if(!s.hasPrevious)since.textContent='前回のデータがないので、変化は比べていません。';
+    else{var bits=[];if(s.changes.closed.length)bits.push(s.changes.closed.length+' 件が片付き');
+      if(s.changes.added.length)bits.push(s.changes.added.length+' 件が新しく入り');
+      since.textContent='前回（'+day(v.previous.created_at)+'）から、'+(bits.length?bits.join('、')+'ました。':'片付いたものも、新しく入ったものもありません。');}
   }
 
   function renderNotes(s) {
@@ -548,7 +535,10 @@ dl.terms dd { margin: 0; }
     var box = $('now'); clear(box);
     if (!s.now.length) { $('now-sub').textContent = ''; box.appendChild(el('p', 'empty', 'いま急いで決めることはありません。')); return; }
     $('now-sub').textContent = '悪用が確認されているもの、判断を待って止まっているものです。急ぐ順に並べています。行を開くと理由が読めます。';
-    fillItems(box, s.now);
+    var n=state.nowAll?s.now.length:Math.min(10,s.now.length);fillItems(box,s.now.slice(0,n));
+    var more=$('now-more');clear(more);
+    if(s.now.length>10){var b=el('button','btn ghost',state.nowAll?'最初の 10 件に戻す':'残りの '+(s.now.length-n)+' 件も見る');
+      b.type='button';b.addEventListener('click',function(){state.nowAll=!state.nowAll;renderNow(state.sum);});more.appendChild(b);}
   }
 
   function renderSoon(s) {
@@ -628,11 +618,12 @@ dl.terms dd { margin: 0; }
     clear($('notes'));
     try {
       D.validate(view);
-      state.view = view; state.sum = D.summarize(view, todayLocal()); state.soonAll = false; state.allLimit = 30;
+      state.view = view; state.sum = D.summarize(view, todayLocal()); state.nowAll = false; state.soonAll = false; state.allLimit = 30;
     } catch (e) { note('err', '読み込めませんでした。' + e.message); return; }
-    $('loader').hidden = true; $('view').hidden = false;
+    $('loader').hidden = true; $('campaign-picker').hidden = true; $('view').hidden = false;
     renderNotes(state.sum); renderSummary(state.sum, view); renderNow(state.sum); renderSoon(state.sum);
     renderChanges(state.sum, view); renderAll(state.sum); renderFoot(view);
+    $('refresh-view').hidden=!(state.isAYM&&state.campaign);
   }
 
   function readFile(f) {
