@@ -1,104 +1,67 @@
-# 判断の画面（aym-decision-view）
+# 判断の画面（AYMの2画面構成）
 
-作成: Claude (Opus 5.5 → Fable 5.2) / 2026-11-16 / 入力: 作者の依頼「AI オーケストレータの人でなくても判断できるように丸める画面」「無骨すぎる、もう少しやわらかく」、AYM 538e228 の web/index.html（CSP の流儀と紫の色）、storage.Store・runtime.Runtime と取り込み済み finding の形。
+2026-11-16 / 適用: [R-064〜R-070](../docs/requirements/REQUIREMENTS-DUAL-VIEW.md)・[SPEC-DUAL-VIEW](../docs/requirements/SPEC-DUAL-VIEW.md)。
 
-AYM のモニターは、記録を回す人のための画面になっている。こちらは結果を読む人のための画面で、決めることを先に見せる。AYM の Campaign から判断に要る列だけを JSON に書き出し、それを 1 枚の HTML で見せる。
+AYMには、結果を判断する人向けの**判断の画面**と、実行・証拠を詳しく調べる人向けの**モニター**があります。両方とも既存のAYM monitor serveと同じloopbackサーバーに置き、読み取りだけで行き来します。判断画面に承認・実行・編集・Run/RSIの管理機能は設けていません。
 
-## 画面で見えるもの
+## 起動と画面
 
-| 場所 | 出るもの |
+ルートの[README](../README.md)の起動手順に従い、AYM monitorを起動します。画面用の追加ポートやコマンドは不要です。
+
+| URL（127.0.0.1:8765） | 内容 |
 | --- | --- |
-| 先頭の 1 枚 | 「いま決めることは 8 件です」のように、状況を文で言う。その下に、片付いた割合の帯と、前回から片付いた件数を出す |
-| いま決めること | 終わっていないもののうち、悪用が確認されているものと、判断待ちのもの。急ぐ順に並べる |
-| 早めに対応すること | 期限を過ぎた重大・高のものと、悪用の見込みが高いもの。最初は 5 件だけ出し、残りはボタンで開く |
-| 前回から変わったこと | 片付いた・状態が変わった・新しく入った・なくなった。件数だけ出し、開くと名前が読める |
-| すべての課題 | 名前や番号で探せる一覧。「終わっていない」「すべて」「片付いた」で絞れる |
-| 言葉の説明 | KEV・EPSS などを 1 行ずつ説明する |
+| / | モニターのCampaign一覧 |
+| /#/campaign/＜ID＞ | モニターのCampaign詳細 |
+| /#/run/＜ID＞ | モニターのRun詳細 |
+| /decision | 判断の画面のCampaign選択 |
+| /decision?campaign=＜ID＞ | 指定Campaignの判断の画面 |
 
-どの課題も、行を開くと急ぐ理由が文で読める（「期限（11/6）を 10 日過ぎています。」など）。元のデータの状態の言葉（「未対応」など）は、そのまま画面に出す。
+どちらにも先頭に切り替えがあり、CampaignとRunから切り替えた場合は対象Campaignを保ちます。モニターの一覧や資料からはCampaign選択へ移ります。戻る操作は同じタブの通常のページ遷移です。
 
-## 見た目
+## 判断の画面
 
-藤色の地に白い面を置き、色は紫を 1 色だけ使う。急ぐものは、やわらかい紅と琥珀で示す。明るい画面と暗い画面の両方に色を用意してある。
+- **先頭の文**: 「いま決めることは N 件、終わっていない課題は全部で M 件です」など。**進捗率と割合の帯は出しません**。
+- **いま決めること**: KEV収録済み、評価「確認済み」「修正提案」、未評価で元の状態が「判断待ち」の課題。最初は10件。
+- **早めに対応すること**: 上記以外で、重大/高かつ期限切れ、またはEPSSが基準以上。最初は5件（設定で変更可）。
+- **前回から変わったこと**: 片付いた・変わった・新規・なくなった課題の件数。
+- **すべての課題**: 検索・絞り込み・続きを表示。
+- **言葉の説明**: KEV/EPSSや判断の基準。
 
-文字は OS に入っている丸ゴシック（macOS ではヒラギノ丸ゴ）を使う。AYM の CSP では外部のフォントを読めないため、丸ゴシックが入っていない OS ではふつうのゴシックになる。
+評価レポートが対象課題を含む場合はモニターと同じ評価状態（確認済み、候補、反証済み、再検証済み、修正提案、判定不能、古い証跡、未確認）および同じ次の行動を使います。再検証済みと反証済みだけ完了側に数えますが、再検証済みでも本番への反映や承認とは別です。
 
-## 使い方
+評価がない場合は「未評価」を出し、元の状態のdone/wont_fixのみ完了側に数えます。それ以外（読めないものを含む）は未完了側です。古い評価は全部「古い証跡」とし、完了扱いしません。未実施/失敗の類型があればその件数と注意を出し、安全だと誤解させない文にします。並びは判断補助であり業務の優先度ではありません。
 
-1. 判断用の JSON を作る（読み取りだけ。AYM の環境で動かす）
+識別子・内部の状態値は課題の「技術の詳細」折りたたみに表示し、詳しい調査はモニターへ案内します。
 
-   ```sh
-   python decision_view/tools/aym_decision_view.py --campaign <campaign_id> --previous auto \
-     --map decision_view/tools/mapping.example.json --out decision.json \
-     --workspace "$AYM_WORKSPACE" --trusted "$AYM_TRUSTED_ROOT"
-   ```
+## 読み取り専用 API
 
-   `--previous auto` は、intent_id の末尾の日付（`-YYYYMMDD` と英字 1 つ）を除いた部分が同じで、それより前に作られた最新の Campaign と比べる。`none` で比べない。ID を直接渡してもよい。
-
-2. `decision_view/web/decision.html` を開いて JSON を選ぶか、画面に落とす。同じ配信元に置いたなら `decision.html?data=decision.json` でも読める。
-
-`decision_view/web/decision.html` と同じ場所に、見本の `decision-sample.json`（架空のデータ）がある。配信して開くと「見本のデータで試す」が出る。
-
-## AYM に組み込むとき
-
-画面の `decision_view/web/decision.html` は、外部のファイルを読まない 1 枚の HTML。`style` 属性もインラインのイベントも使っていないので、`server._security_headers()` の CSP（インラインはハッシュで許可）のまま配れる。`_load_index_html()` と同じ読み方で、`/decision` などの経路を足せばよい。
-
-`?campaign=<ID>` を付けて開くと、画面は `GET /api/campaigns/<ID>/decision-view` を読みにいく。この API は現行リポジトリには実装していないので、現時点では `?campaign=` は使えない。足すなら `decision_view/tools/aym_decision_view.py` の `build_view()` をそのまま使える。`build_view()` は I/O を持たない純粋な関数で、AYM に依存するのは `_load()` と `main()` だけ。`aym decision-view` のような CLI の入り口を足すなら、`main()` をそのまま使える。
-
-試験は 2 つある。`node --test decision_view/tests/` は画面の計算を試す（HTML の `<script id="decision-core">` だけを取り出す）。`python -m pytest decision_view/tests/` は JSON の作り方を試す。
-
-## データの形
-
-JSON の形は `decision_view/schema/decision-view.schema.json`（`aym.decision-view/1`）に書いてある。判断に使う列だけを持つ。
-
-`decision_view/tools/mapping.example.json` には、元の行の列名（状態・番号・期限）と、状態の言葉の対応を書く。状態は open・in_progress・waiting・done・wont_fix・other のどれかに寄せる。自分のデータベースに合わせて書き換える。
-
-KEV・EPSS は、AYM の取り込みが付けた `extensions.enrichment.records` から読む。付いていなければ数えず、画面にその旨を出す。
-
-## 判断の決まり（今の実装）
-
-| 言葉 | 決まり |
+| method/path | 結果 |
 | --- | --- |
-| 終わっていないもの | 状態が open・in_progress・waiting |
-| いま決めること | 終わっていないもので、悪用が確認されている（KEV）か、判断待ちのもの |
-| 早めに対応すること | 終わっていないもののうち、上に入らず、期限を過ぎていて重大度が重大か高のもの。または、悪用の見込み（EPSS の最大値）が `epss_high` 以上（既定 0.1）のもの |
-| 並び | 悪用の確認 → 判断待ち → 期限の過ぎ方（60 日で頭打ち）→ 期限が近い（`due_soon_days`、既定 7 日）→ 重大度 → 悪用の見込み |
-| 期限の基準 | 画面を開いたブラウザの今日。データを作った時刻は、画面の下に別に出す |
+| GET /api/campaigns/＜ID＞/decision-view | 正常200、decision_viewオブジェクトを返す |
+| 同じAPIのview=blue | 200、status=withheld。Campaignの存在も開示しない |
+| Campaignなし | 404 |
+| 保存データ・評価・列の対応が破損 | HTTP 200、status=hold |
+| 応答1MiB超 | 500 |
+| POSTなど | 405 |
 
-`rules`（`epss_high`・`due_soon_days`・`top_n`）は mapping に書くと JSON に入り、画面はその値を使う。`top_n` は「早めに対応すること」を最初に何件出すかで、既定は 5。
+課題はfinding_idで重複除去し、評価はassessment.load_reportから投影します。KEV/EPSSは評価レポートを優先します。元の証拠やログ・プロンプトの全文は出しません。保存内容も書き換えません。
 
-## 作者に決めてほしいこと
+列名の対応はWorkspaceの decision-view/mapping.json があればそれを使用します。ファイルがない場合だけ同梱のdecision_mapping.jsonにフォールバックします。破損・リンク・1MiB超の場合はholdです。
 
-- 「いま決めること」「早めに対応すること」の分け方と、並びの重み（`decision-core` の `assess()`）
-- 前回の選び方（intent_id の末尾の日付で寄せている）
-- `/decision-view` の API と画面の経路を足すか、足すならどこに置くか
-- 画面の言葉と色（普段の言葉とやわらかい色に寄せた。AYM のモニターに合わせ直すかどうか）
+## 以前のスタンドアロン運用
 
-## 確かめたこと
+以前の書き出しCLIは decision_view/tools/aym_decision_view.py として残し、JSON生成処理を ai_yori_murasaki/decision_view.py に一本化しています。引数は旧版と互換です（campaign / previous / map / out / workspace / trusted）。出力したJSONは、静的HTTPサーバーの同じ配信元にHTMLと置き、ファイル選択やdataクエリで読み込めます。
 
-- 試験は Python 11 本、JS 13 本が通る
-- AYM 538e228 の `_security_headers()` と同じ CSP を付けて配り、CSP の違反なしで表示できる（`style` 属性は使っていない。帯の幅だけ、スクリプトから CSSOM で指定している）
-- 375px の幅と暗い画面で崩れない（横にはみ出さない）。行を開いたときの表示も確かめた
-- 作者の手元の実データ（266 件、前回あり）でも作れて、画面に出せる（そのデータは同梱していない）
-- 画面の言葉とこの README は、yomiyasu の検査に通した
+**HTMLの正本は ai_yori_murasaki/web/decision.html の1か所**です。以前の decision_view/web/decision.html は削除しました。見本JSONは配布するHTMLの隣に置けます。AYM外でcampaignクエリを指定してもAYMのAPIは呼びません。
 
-## ファイル
+## 検証
 
-```
-README.md
-web/decision.html            画面（1 枚。CSS と JS を中に持つ）
-web/decision-sample.json     見本（架空）
-tools/aym_decision_view.py   判断用の JSON を作る（読み取りだけ）
-tools/mapping.example.json   列名と状態の対応の例
-schema/decision-view.schema.json
-samples/decision-sample.json 見本（架空。web/ のものと同じ）
-samples/make_sample.py       見本を作り直す
-tests/decision-core.test.mjs 画面の計算の試験（node --test）
-tests/test_aym_decision_view.py  JSON の作り方の試験（pytest）
-```
+Python: python -m pytest -q tests/ decision_view/tests/test_aym_decision_view.py
 
-## 導入範囲（2026-11-16）
+JavaScript: node --test decision_view/tests/*.mjs
 
-- リポジトリ直下の `decision_view/` に独立して追加。AYMの既存モニター/API/CLIは変更しない。
-- `--previous auto` はintent ID末尾の日付規則に依存する。実データのID規則が異なる場合は `--previous <campaign_id>` または `none` を選ぶ。
-- 表示数値は出力されたJSON時点の状態であり、ブラウザ画面からAYMへ書き戻しはしない。保存済みのenrichmentの鮮度と元データの権限を確認する。
+実ブラウザー: GitHub Actionsのdual-view validationでChromiumによる1440px/390pxの表示と切り替え、本文、技術の詳細を確認します。
+
+[Task](../docs/tasks/TASK.dual-view-implementation-11-16-2026.md) / [Acceptance](../docs/acceptance/AC-20261116-02.md)。
+
+以前の独立プレビューの実測は[AC-20261116-01](../docs/acceptance/AC-20261116-01.md)に残します。今回の統合版は別のAcceptanceで管理します。
