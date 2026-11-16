@@ -44,3 +44,48 @@ test('monitor switcher source supports campaign and run routes',()=>{
   assert.match(monitor,/state\.detail\.data\.run\.campaign_id/);
   assert.match(monitor,/switch-to-decision/);
 });
+
+test('T38: decision HTML does not reproduce operator-only APIs or controls',()=>{
+  for(const forbidden of ['/api/runs/','/api/approvals','/api/verification/','/rsi','承認する','実行する']){
+    assert.equal(html.includes(forbidden),false,'unexpected operator API/control '+forbidden);
+  }
+  for(const required of ['/api/health','/api/campaigns','/decision-view']){
+    assert.equal(html.includes(required),true,'missing read API '+required);
+  }
+});
+
+test('T41: Python assessment status derives exactly as the monitor JS on shared inputs', async()=>{
+  const monitor = readFileSync('ai_yori_murasaki/web/index.html','utf8');
+  const extract=(name)=>{
+    const start=monitor.indexOf('function '+name+'(');
+    assert.ok(start>=0,name+' missing');
+    const begin=monitor.indexOf('{',start), end=monitor.indexOf('\n  }',begin)+4;
+    assert.ok(end>begin);
+    return monitor.slice(start,end);
+  };
+  const ctx = {};
+  vm.runInNewContext(extract('deriveFindingStatus') + '\n' + extract('nextActionFor') +
+    '\nthis.deriveFindingStatus=deriveFindingStatus;this.nextActionFor=nextActionFor;',ctx);
+  const cases=[
+    [{claims:[{status:'confirmed'}]},false],
+    [{claims:[{status:'hypothesis'}]},false],
+    [{claims:[{status:'refuted'}]},false],
+    [{validation:{result:'success'}},false],
+    [{remediation:{proposal_ref:'x'}},false],
+    [{validation:{result:'undetermined'}},false],
+    [{},true],
+    [{},false],
+    [{claims:[{status:'confirmed'}],remediation:{proposal_ref:'x'}},false],
+    [{classification:{cve:{status:'candidate'}}},false],
+    [{validation:{result:'success'}},true]
+  ];
+  const monitorResults=cases.map(([finding,historical])=>ctx.deriveFindingStatus(finding,historical));
+  const {spawnSync}=await import('node:child_process');
+  const pyCode='import json,sys\nfrom ai_yori_murasaki.decision_view import derive_assessment_status\ncases=json.load(sys.stdin)\nprint(json.dumps([derive_assessment_status(f,h) for f,h in cases]))';
+  const py=spawnSync('python',['-c',pyCode],{input:JSON.stringify(cases),encoding:'utf8'});
+  assert.equal(py.status,0,py.stderr);
+  assert.deepEqual(JSON.parse(py.stdout),monitorResults);
+  for(const status of ['confirmed','candidate','refuted','retested','proposed','undetermined','historical','unknown']){
+    assert.equal(D.nextActionFor(status),ctx.nextActionFor(status));
+  }
+});
