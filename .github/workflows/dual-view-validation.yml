@@ -15,7 +15,7 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -32,3 +32,20 @@ jobs:
         run: python -m pytest -q tests/ decision_view/tests/test_aym_decision_view.py
       - name: All decision-view JavaScript tests
         run: node --test decision_view/tests/*.mjs
+
+      - name: Install Chromium for real UI acceptance
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Browser smoke at 1440px and 390px
+        run: |
+          python tests/fixtures/dual_view_browser_server.py > /tmp/aym-browser-server.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
+          ready=0
+          for i in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8765/api/health > /dev/null; then ready=1; break; fi
+            sleep 1
+          done
+          if [ "$ready" != "1" ]; then cat /tmp/aym-browser-server.log; exit 1; fi
+          node decision_view/browser/dual-view.browser.mjs
