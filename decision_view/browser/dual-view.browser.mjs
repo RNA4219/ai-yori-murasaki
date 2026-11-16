@@ -1,0 +1,88 @@
+import assert from 'node:assert/strict';
+import { chromium } from 'playwright';
+
+const base = process.env.AYM_BROWSER_URL || 'http://127.0.0.1:8765';
+const response = await fetch(base + '/api/campaigns');
+assert.equal(response.status, 200);
+const campaigns = (await response.json()).campaigns;
+assert.ok(campaigns.length >= 1);
+const cid = campaigns[0].campaign_id;
+assert.match(cid, /^[a-z0-9][a-z0-9-]{0,63}$/);
+const runResponse = await fetch(base + '/api/campaigns/' + cid + '/runs');
+assert.equal(runResponse.status, 200);
+const runs = (await runResponse.json()).runs;
+assert.ok(runs.length > 0, 'campaign has an initialization run');
+const rid = runs[0].run_id;
+
+const browser = await chromium.launch({headless:true});
+try {
+  for(const width of [1440,390]) {
+    const context = await browser.newContext({viewport:{width,height:900}});
+    const page = await context.newPage();
+    const errors = [];
+    page.on('pageerror', e => errors.push(String(e)));
+    try {
+      await page.goto(base + '/decision');
+      await page.getByRole('heading',{name:'Campaign を選ぶ'}).waitFor({timeout:15000});
+      const candidate=page.locator('#campaign-list a[href="/decision?campaign='+cid+'"]');
+      await candidate.waitFor({timeout:15000});
+      assert.equal(await page.locator('#view-switch [aria-current="page"]').count(),1);
+      assert.equal(await page.locator('#to-monitor').getAttribute('href'),'/#/');
+      await candidate.click();
+      await page.waitForURL('**/decision?campaign='+cid);
+      await page.locator('#h-sum').waitFor({state:'visible'});
+      assert.match(await page.locator('#h-sum').innerText(),/確かめていないことがあります/);
+      assert.match(await page.locator('#sum-lead').innerText(),/評価の記録がありません/);
+      assert.equal(await page.locator('#to-monitor').getAttribute('href'),' /#/campaign/'.trim()+cid);
+      assert.equal(await page.locator('#progress-text').count(),0);
+      assert.equal(await page.locator('#bar').count(),0);
+      await page.locator('#to-monitor').click();
+      await page.waitForURL('**/#/campaign/'+cid);
+      assert.equal(await page.locator('#switch-to-decision').getAttribute('href'),'/decision?campaign='+cid);
+      await page.locator('#switch-to-decision').click();
+      await page.waitForURL('**/decision?campaign='+cid);
+      await page.goto(base + '/#/run/' + rid);
+      await page.waitForFunction(expected =>
+        document.getElementById('switch-to-decision')?.getAttribute('href') === expected,
+        '/decision?campaign='+cid,{timeout:15000});
+
+      // Mock only the list payload to test the assessment display and fold.
+      const mock = {
+        schema:'aym.decision-view/1',generated_at:'2026-11-16T00:00:00Z',
+        campaign:{id:cid,name:'INT-DUAL-BROWSER',status:'review_pending',created_at:'2026-11-16T00:00:00Z'},
+        previous:null,removed:[],rules:{},freshness:{},assessment:{
+          present:true,historical:false,coverage:{executed:3,not_executed:2,failed:1}},
+        items:[{key:'internal-finding-abc',ref:'hidden-9001',title:'確認が必要な課題',
+          state:'done',state_label:'修正済',assessment_status:'confirmed',
+          severity:'high',due:null,link:null,kev:false,kev_cves:[],epss_max:null,cve_count:0}]
+      };
+      await page.route('**/api/campaigns/'+cid+'/decision-view',r=>r.fulfill({
+        status:200,contentType:'application/json',body:JSON.stringify({decision_view:mock})}));
+      await page.goto(base+'/decision?campaign='+cid);
+      await page.locator('#h-sum').waitFor({state:'visible'});
+      assert.match(await page.locator('#h-sum').innerText(),/終わっていない課題は全部で 1 件です/);
+      assert.match(await page.locator('#sum-lead').innerText(),/検査していない範囲が 3 類型あります。安全とは限りません/);
+      assert.equal((await page.locator('main').innerText()).includes('internal-finding-abc'),false);
+      await page.locator('#now .item > summary').first().click();
+      await page.locator('#now .item .item-more').first().waitFor();
+      assert.match(await page.locator('#now .item .item-more').first().innerText(),/修正案を確認してください/);
+      assert.equal(await page.getByText('internal-finding-abc').first().isVisible(),false);
+      await page.locator('#now .item details').first().evaluate(e=>{e.open=true;});
+      assert.equal(await page.getByText('internal-finding-abc').first().isVisible(),true);
+      assert.equal(await page.locator('#now .item a').first().getAttribute('href'),'/#/campaign/'+cid);
+      const size=await page.locator('#to-monitor').evaluate(e=>e.getBoundingClientRect().height);
+      assert.ok(size>=44,'switch target >= 44px, got '+size);
+      await page.keyboard.press('Tab');
+      assert.ok(await page.evaluate(()=>document.activeElement?.tagName),'keyboard focus');
+      const dims=await page.evaluate(()=>({
+        width:document.documentElement.clientWidth,scroll:document.documentElement.scrollWidth}));
+      assert.ok(dims.scroll<=dims.width+2,'overflow at '+width+'px '+JSON.stringify(dims));
+      assert.deepEqual(errors,[],'no JavaScript errors');
+      console.log('PASS real Chromium '+width+'px: routes, accessibility, state and layout');
+    } finally {
+      await context.close();
+    }
+  }
+} finally {
+  await browser.close();
+}

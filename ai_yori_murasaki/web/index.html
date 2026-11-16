@@ -435,6 +435,10 @@ td, th { font-variant-numeric: tabular-nums; }
 
 
 .source-body { white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--font-stack); font-size: var(--font-body); line-height: 1.75; padding-block: var(--space-16); }
+.view-switcher {display:flex;flex-wrap:wrap;gap:8px;padding:8px 20px}
+.view-switcher a,.view-switcher [aria-current]{display:inline-flex;min-height:44px;align-items:center;border:1px solid #d4d7e0;border-radius:9px;padding:8px 14px;text-decoration:none}
+.view-switcher [aria-current]{background:var(--color-surface,#fff);font-weight:700}
+.view-switcher a:focus-visible{outline:3px solid #7b4fa0;outline-offset:2px}
 </style>
 </head>
 <body>
@@ -472,13 +476,17 @@ td, th { font-variant-numeric: tabular-nums; }
         <button type="button" class="refresh" id="refresh-btn" aria-label="データを手動更新">手動更新</button>
       </div>
     </header>
+    <nav class="view-switcher" aria-label="画面を切り替える" data-key="view-switcher">
+      <a id="switch-to-decision" data-key="switch-to-decision" href="/decision">判断の画面</a>
+      <span aria-current="page" data-key="current-monitor">モニター</span>
+    </nav>
     <div class="banner-area" id="banner-area"></div>
     <div id="view-root"></div>
     <details class="details-block">
       <summary>補足情報（データ形式・API一覧・read-onlyについて）</summary>
       <div class="content">
         <p>本画面は operator ローカル専用の read-only モニターです。承認・再verify・反映などの更新操作は提供しません。</p>
-        <p>参照API: <code>GET /api/campaigns</code>, <code>GET /api/campaigns/&lt;id&gt;</code>, <code>GET /api/campaigns/&lt;id&gt;/runs</code>, <code>GET /api/campaigns/&lt;id&gt;/rsi</code>, <code>GET /api/runs/&lt;id&gt;</code>, <code>GET /api/runs/&lt;id&gt;/events</code>, <code>GET /api/verification/&lt;id&gt;</code>, <code>GET /api/approvals</code>, <code>GET /api/models</code>, <code>GET /api/adapters</code>, <code>GET /api/health</code></p>
+        <p>参照API: <code>GET /api/campaigns</code>, <code>GET /api/campaigns/&lt;id&gt;</code>, <code>GET /api/campaigns/&lt;id&gt;/runs</code>, <code>GET /api/campaigns/&lt;id&gt;/rsi</code>, <code>GET /api/runs/&lt;id&gt;</code>, <code>GET /api/runs/&lt;id&gt;/events</code>, <code>GET /api/verification/&lt;id&gt;</code>, <code>GET /api/approvals</code>, <code>GET /api/models</code>, <code>GET /api/adapters</code>, <code>GET /api/health</code>, <code>GET /api/campaigns/&lt;id&gt;/decision-view</code></p>
         <p>権限により非表示となる項目は「権限により非表示」と表示します。status名のみから未提供データを推測しません。</p>
         <p>15秒ごとに自動更新します（タブ非表示時は休止）。手動更新ボタンでも取得できます。応答は5秒でタイムアウト、1MiBを超える応答は破棄します。</p>
         <p>API内部名（projection名・reason_code等）は本補足に集約し、通常UI文言からは排除しています。</p>
@@ -2680,7 +2688,18 @@ td, th { font-variant-numeric: tabular-nums; }
     frag.appendChild(panel); return frag;
   }
 
+  function updateDecisionSwitch() {
+    var link=document.getElementById('switch-to-decision');
+    if(!link)return;
+    var r=state.route||{},cid=null;
+    if(r.name==='campaign')cid=r.params&&r.params.id;
+    if(r.name==='run'&&state.detail&&state.detail.kind==='run'&&state.detail.data&&state.detail.data.run)
+      cid=state.detail.data.run.campaign_id;
+    link.href=cid&&/^[a-z0-9][a-z0-9-]{0,63}$/.test(cid)?'/decision?campaign='+encodeURIComponent(cid):'/decision';
+  }
+
   function render() {
+    updateDecisionSwitch();
     var activeBefore = document.activeElement;
     var fk = captureFocusKey();
     renderNav();
