@@ -1,4 +1,4 @@
-// web/decision.html の <script id="decision-core"> だけを取り出して試す。
+// packaged ai_yori_murasaki/web/decision.html の decision-core を取り出して試す。
 // 作成: Claude (Opus 5.5) / 2026-11-16。実行: node --test tests/
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const html = readFileSync(join(root, 'web', 'decision.html'), 'utf8');
+const html = readFileSync(join(root, '..', 'ai_yori_murasaki', 'web', 'decision.html'), 'utf8');
 const m = /<script id="decision-core">([\s\S]*?)<\/script>/.exec(html);
 assert.ok(m, 'decision-core の script がない');
 const sandbox = { URL };
