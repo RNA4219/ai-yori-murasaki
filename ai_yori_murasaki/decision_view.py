@@ -21,6 +21,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from importlib import resources
 from .jsonio import DataError
+from .storage import sanitize
 from urllib.parse import urlsplit
 from typing import Any
 
@@ -207,7 +208,7 @@ def load_mapping(store) -> dict:
     """Workspaceの明示設定が壊れていれば既定にフォールバックしない。"""
     path = store.workspace / "decision-view" / "mapping.json"
     try:
-        if path.is_symlink():
+        if path.parent.is_symlink() or path.is_symlink():
             raise ValueError("mapping symlink")
         if path.exists():
             raw = path.read_bytes()
@@ -223,6 +224,15 @@ def load_mapping(store) -> dict:
             raise ValueError("mapping field names")
         if any(not isinstance(k, str) or v not in STATES for k, v in mapping["status_values"].items()):
             raise ValueError("mapping status values")
+        rules = mapping.get("rules", {})
+        if not isinstance(rules, dict) or set(rules) - {"epss_high", "due_soon_days", "top_n"}:
+            raise ValueError("mapping rules")
+        if "epss_high" in rules and (type(rules["epss_high"]) not in (int, float) or
+                                     not 0 <= rules["epss_high"] <= 1):
+            raise ValueError("mapping epss_high")
+        for key, lower in (("due_soon_days", 0), ("top_n", 1)):
+            if key in rules and (type(rules[key]) is not int or rules[key] < lower):
+                raise ValueError("mapping rule bounds")
         return mapping
     except (OSError, ValueError, UnicodeDecodeError, TypeError) as exc:
         raise DataError("decision-view mapping unavailable", "hold") from exc
@@ -237,9 +247,10 @@ def read_decision_view(runtime, campaign_id: str) -> dict:
     if prev_id:
         pc, pf, pr = _load(runtime, runtime.store, prev_id)
         previous = {"campaign": pc, "findings": pf, "records": pr}
-    return build_view(campaign, findings, records,
-                      mapping=load_mapping(runtime.store), now=datetime.now(timezone.utc),
-                      previous=previous, assessment=report if report is not None else {})
+    result = build_view(campaign, findings, records,
+                        mapping=load_mapping(runtime.store), now=datetime.now(timezone.utc),
+                        previous=previous, assessment=report if report is not None else {})
+    return sanitize(result, runtime.store.secrets)
 
 
 def build_view(campaign: dict, findings: list[dict], records: dict[str, dict] | None = None, *,
