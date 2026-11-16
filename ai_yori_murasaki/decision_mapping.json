@@ -1,0 +1,20 @@
+{
+ "_note": "元の行（Notion など）の列名と、状態の値の対応。自分のデータベースの列名・値に合わせて書き換える。状態は open（手つかず）・in_progress（対応中）・waiting（判断待ち）・done（終わった）・wont_fix（対応しない）・other のどれかに寄せる。",
+ "fields": {
+  "status": "ステータス",
+  "key": "棚卸キー",
+  "due": "date:対応期限:start"
+ },
+ "status_values": {
+  "未対応": "open",
+  "対応中": "in_progress",
+  "判断待ち": "waiting",
+  "修正済": "done",
+  "対応しない": "wont_fix"
+ },
+ "rules": {
+  "epss_high": 0.1,
+  "due_soon_days": 7,
+  "top_n": 5
+ }
+}
