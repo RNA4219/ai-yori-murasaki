@@ -373,8 +373,11 @@ def main(argv: list[str] | None = None) -> int:
     if prev_id:
         pc, pf, pr = _load(runtime, store, prev_id)
         previous = {"campaign": pc, "findings": pf, "records": pr}
-    view = build_view(campaign, findings, records, mapping=mapping, now=datetime.now(timezone.utc),
-                      previous=previous, name=args.name)
+    from .assessment import load_report
+    report = load_report(runtime, args.campaign)
+    view = sanitize(build_view(campaign, findings, records, mapping=mapping,
+                               now=datetime.now(timezone.utc), previous=previous, name=args.name,
+                               assessment=report if report is not None else {}), store.secrets)
     out = Path(args.out)
     out.write_text(json.dumps(view, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     print(json.dumps({"out": str(out), "items": len(view["items"]), "previous": prev_id,
