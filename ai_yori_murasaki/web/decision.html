@@ -234,8 +234,8 @@ dl.terms dd { margin: 0; }
           <dt>重大度</dt><dd>元のデータに付いている重大度です（重大・高・中・低・情報）。</dd>
           <dt>期限</dt><dd>元のデータの対応期限です。この画面を開いた日を今日として、過ぎた日数を数えます。</dd>
           <dt>終わっていない</dt><dd>評価の状態を優先します。評価がない場合だけ元の状態を使い、分からない課題も終わっていない側に数えます。</dd>
-          <dt>いま決めること</dt><dd>終わっていないもののうち、悪用が確認されているもの、または判断待ちのものです。</dd>
-          <dt>早めに対応すること</dt><dd>終わっていないもののうち、期限を過ぎた重大・高のもの、または悪用の見込みが高いものです。</dd>
+          <dt>いま決めること</dt><dd>終わっていない課題のうち、悪用が確認されたもの、評価が確認済み・修正提案のもの、未評価で判断待ちのものです。</dd>
+          <dt>早めに対応すること</dt><dd>終わっていない課題で、期限を過ぎた重大・高のもの、または悪用の見込みが高いものです。業務への影響は、担当者が決めます。</dd>
         </dl>
       </details>
     </section>
@@ -534,7 +534,7 @@ dl.terms dd { margin: 0; }
   function renderNow(s) {
     var box = $('now'); clear(box);
     if (!s.now.length) { $('now-sub').textContent = ''; box.appendChild(el('p', 'empty', 'いま急いで決めることはありません。')); return; }
-    $('now-sub').textContent = '悪用が確認されているもの、判断を待って止まっているものです。急ぐ順に並べています。行を開くと理由が読めます。';
+    $('now-sub').textContent = '悪用が確認されたもの、評価で確認済み・修正提案となったもの、未評価で判断待ちのものです。行を開くと理由が読めます。';
     var n=state.nowAll?s.now.length:Math.min(10,s.now.length);fillItems(box,s.now.slice(0,n));
     var more=$('now-more');clear(more);
     if(s.now.length>10){var b=el('button','btn ghost',state.nowAll?'最初の 10 件に戻す':'残りの '+(s.now.length-n)+' 件も見る');
@@ -583,7 +583,7 @@ dl.terms dd { margin: 0; }
     g.appendChild(changeFold('done', '片付いた', s.changes.closed, move));
     g.appendChild(changeFold('in_progress', '状態が変わった', s.changes.stateChanged, move));
     g.appendChild(changeFold('accent', '新しく入った', s.changes.added, function (r) { return nameOf(r.item) + '（' + D.SEV_LABEL[r.item.severity] + '・' + D.stateLabel(r.item) + '）'; }));
-    g.appendChild(changeFold('open', 'なくなった', s.changes.removed, function (x) { return (x.ref ? x.ref + ' ' : '') + (x.title || '') + '（前は ' + (x.prev_state_label || D.STATE_LABEL[x.prev_state] || '') + '）'; }));
+    g.appendChild(changeFold('open', 'なくなった', s.changes.removed, function (x) { return (x.title || '') + '（前は ' + (x.prev_state_label || D.STATE_LABEL[x.prev_state] || '') + '）'; }));
   }
 
   function renderAll(s) {
