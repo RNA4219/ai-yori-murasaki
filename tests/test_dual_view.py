@@ -100,6 +100,35 @@ class DecisionViewTests(unittest.TestCase):
         except (OSError,NotImplementedError):self.skipTest("symlink unsupported")
         self.assertRaises(DataError,load_mapping,self.store)
 
+    def test_api_finding_count_matches_monitor_deduplicated(self):
+        from unittest.mock import patch
+        cid = self.campaign()["campaign_id"]
+        a = {"finding_id":"f1","title":"first","severity":"high","location":{"path":"file1"}}
+        b = {"finding_id":"f1","title":"duplicate","severity":"low","location":{"path":"file2"}}
+        c = {"finding_id":"f2","title":"another","severity":"medium","location":{"path":"file3"}}
+        obj = {"a":a, "b":b, "c":c}
+        def refs(campaign_id, kind):
+            return ["a","b","c"] if kind == "finding" else []
+        with patch.object(self.runtime, "list_records", side_effect=refs), \
+             patch.object(self.store, "get_object", side_effect=lambda ref: obj[ref]):
+            status, _, campaign = self.request("GET", "/api/campaigns/"+cid)
+            self.assertEqual(status, 200)
+            status, _, decision = self.request("GET", "/api/campaigns/"+cid+"/decision-view")
+            self.assertEqual(status, 200)
+            self.assertEqual(len(campaign["findings"]), 2)
+            self.assertEqual(len(decision["decision_view"]["items"]), 2)
+            self.assertEqual(decision["decision_view"]["items"][0]["title"], "first")
+
+    def test_mapping_invalid_rules_is_hold(self):
+        cid = self.campaign()["campaign_id"]
+        directory = self.store.workspace/"decision-view"
+        directory.mkdir()
+        p = directory/"mapping.json"
+        p.write_text('{"fields":{},"status_values":{},"rules":{"epss_high":true}}',encoding="utf-8")
+        status, _, body = self.request("GET", "/api/campaigns/"+cid+"/decision-view")
+        self.assertEqual(status, 200)
+        self.assertEqual(body["status"], "hold")
+
     def test_finding_id_dedup_before_previous_comparison(self):
         rows=[f("same","判断待ち"),f("same","対応済み"),f("other","対応済み")]
         self.assertEqual(len(_unique_findings(rows)),2)
