@@ -44,7 +44,13 @@
 body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.75 var(--font); -webkit-font-smoothing: antialiased; }
 .wrap { max-width: 860px; margin: 0 auto; padding-block: 24px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 28px; }
 #view { display: grid; gap: 36px; }
-.top { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 14px; }
+.top { display:flex; align-items:center; gap:10px; color:var(--muted); font-size:14px; }
+.view-switch{display:flex;gap:8px;flex-wrap:wrap}
+.view-switch a,.view-switch [aria-current]{min-height:44px;display:inline-flex;align-items:center;border-radius:999px;padding:9px 18px;border:1px solid var(--line);text-decoration:none}
+.view-switch [aria-current]{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.campaign-list{display:grid;gap:10px}
+.campaign-list a{display:block;padding:12px 16px;border-radius:12px;border:1px solid var(--line);background:var(--panel-soft)}
+
 .mark { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: var(--panel); font-weight: 700; font-size: 15px; }
 h1 { font-size: 26px; line-height: 1.4; margin: 0; text-wrap: balance; letter-spacing: .01em; }
 h2 { font-size: 19px; line-height: 1.4; margin: 0; text-wrap: balance; }
@@ -69,12 +75,6 @@ a { color: var(--accent); }
 .pill.amber { background: var(--amber-soft); color: var(--amber); }
 .pill.plain { background: var(--panel-soft); color: var(--muted); box-shadow: inset 0 0 0 1px var(--line); }
 .pill[aria-pressed="true"] { background: var(--accent); color: var(--panel); box-shadow: none; }
-.progress { display: grid; gap: 10px; }
-.bar { display: flex; height: 14px; border-radius: 999px; overflow: hidden; background: var(--line); gap: 2px; }
-.seg { min-width: 4px; }
-.seg.done { background: var(--leaf); } .seg.wont_fix { background: var(--muted); }
-.seg.in_progress { background: var(--indigo); } .seg.waiting { background: var(--amber); }
-.seg.open { background: var(--mist); } .seg.other { background: var(--line); }
 .legend { display: flex; flex-wrap: wrap; gap: 4px 18px; list-style: none; margin: 0; padding: 0; font-size: 13px; color: var(--muted); }
 .legend li { display: inline-flex; align-items: center; gap: 6px; }
 .legend b { color: var(--fg); font-variant-numeric: tabular-nums; }
@@ -168,7 +168,9 @@ dl.terms dd { margin: 0; }
 <body>
 <main class="wrap" id="app">
   <header class="top"><span class="mark" aria-hidden="true">紫</span><span>判断の画面</span></header>
+  <nav id="view-switch" class="view-switch" aria-label="画面を切り替える" hidden><span aria-current="page">判断の画面</span><a id="to-monitor" href="/#/">モニター</a></nav>
   <div id="notes"></div>
+  <section class="card" id="campaign-picker" hidden><h1>Campaign を選ぶ</h1><p id="campaign-message" class="muted">Campaign を読み込んでいます。</p><div id="campaign-list" class="campaign-list"></div></section>
 
   <section class="card" id="loader">
     <h1>判断用のデータを読み込みます</h1>
@@ -187,21 +189,15 @@ dl.terms dd { margin: 0; }
       <h1 id="h-sum"></h1>
       <p class="lead" id="sum-lead"></p>
       <nav class="jump" id="jump" aria-label="画面の中の行き先"></nav>
-      <div class="progress">
-        <p id="progress-text"></p>
-        <div class="bar" id="bar" role="img"></div>
-        <ul class="legend" id="legend"></ul>
-      </div>
+      <ul class="legend" id="legend" aria-label="状態ごとの課題数"></ul>
+      <button type="button" class="btn ghost" id="refresh-view" hidden>読み直す</button>
       <p class="muted" id="since"></p>
-      <details class="fold inline">
-        <summary><span>重大度ごとの内訳を見る</span><span class="chev" aria-hidden="true"></span></summary>
-        <div class="fold-body scroll"><table id="matrix"></table></div>
-      </details>
+
     </section>
 
     <section class="sec" id="sec-now" aria-labelledby="h-now">
       <div class="sec-head"><h2 id="h-now">いま決めること</h2><p class="sec-sub" id="now-sub"></p></div>
-      <div class="items" id="now"></div>
+      <div class="items" id="now"></div><div class="more" id="now-more"></div>
     </section>
 
     <section class="sec" id="sec-soon" aria-labelledby="h-soon">
@@ -237,7 +233,7 @@ dl.terms dd { margin: 0; }
           <dt>悪用の見込み</dt><dd>今後 30 日のうちに攻撃に使われる確率の見積もりです（FIRST の EPSS）。脆弱性が複数あるときは、いちばん高い値を出します。</dd>
           <dt>重大度</dt><dd>元のデータに付いている重大度です（重大・高・中・低・情報）。</dd>
           <dt>期限</dt><dd>元のデータの対応期限です。この画面を開いた日を今日として、過ぎた日数を数えます。</dd>
-          <dt>終わっていない</dt><dd>状態が「手つかず」「対応中」「判断待ち」のものです。元のデータの言葉は、そのまま出します。</dd>
+          <dt>終わっていない</dt><dd>評価の状態を優先します。評価がない場合だけ元の状態を使い、分からない課題も終わっていない側に数えます。</dd>
           <dt>いま決めること</dt><dd>終わっていないもののうち、悪用が確認されているもの、または判断待ちのものです。</dd>
           <dt>早めに対応すること</dt><dd>終わっていないもののうち、期限を過ぎた重大・高のもの、または悪用の見込みが高いものです。</dd>
         </dl>
@@ -261,7 +257,24 @@ dl.terms dd { margin: 0; }
   var STATE_LABEL = { open: '手つかず', in_progress: '対応中', waiting: '判断待ち', done: '片付いた', wont_fix: '対応しない', other: 'その他' };
   var ACTIVE = { open: true, in_progress: true, waiting: true };
 
-  function isActive(state) { return ACTIVE[state] === true; }
+  var ASSESSMENT_LABELS={confirmed:'確認済み',candidate:'候補',refuted:'反証済み',retested:'再検証済み',proposed:'修正提案',undetermined:'判定不能',historical:'古い証跡',unknown:'未確認'};
+  function nextActionFor(status) {
+    if(status==='confirmed')return '修正案を確認してください。';
+    if(status==='candidate')return '追加の証拠を確認してください。';
+    if(status==='refuted')return 'この仮説は反証されています。残る仮説と未確認範囲を確認してください。';
+    if(status==='proposed')return '修正案の適用と再検証を進めてください。';
+    if(status==='retested')return '再検証結果を記録し、未検証範囲を確認してください。';
+    if(status==='undetermined')return '証拠不足のため判定できませんでした。追加の証拠を確認してください。';
+    if(status==='historical')return '古い証跡です。現在の状態を再確認してください。';
+    return '状態が未確認のため、担当者に確認してください。';
+  }
+  function isActive(state) {
+    if(state&&typeof state==='object') {
+      if(state.assessment_status!=null)return state.assessment_status!=='retested'&&state.assessment_status!=='refuted';
+      return state.state!=='done'&&state.state!=='wont_fix';
+    }
+    return ACTIVE[state]===true;
+  }
 
   function dayNumber(ymd) {
     var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(ymd || '');
@@ -290,7 +303,7 @@ dl.terms dd { margin: 0; }
   /* 1 件について、急ぐ理由と段（now: いま決める / soon: 早めに / null）を出す */
   function assess(item, today, rules) {
     var reasons = [];
-    var active = isActive(item.state);
+    var active = isActive(item);
     var t = dayNumber(today), d = dayNumber(item.due);
     var overdueDays = null, dueInDays = null;
     if (active && t !== null && d !== null) {
@@ -300,17 +313,19 @@ dl.terms dd { margin: 0; }
     var epssHigh = typeof item.epss_max === 'number' && item.epss_max >= rules.epss_high;
     var dueSoon = dueInDays !== null && dueInDays <= rules.due_soon_days;
     if (active && item.kev) reasons.push({ code: 'kev', text: '悪用が確認されている', tone: 'crit' });
-    if (active && item.state === 'waiting') reasons.push({ code: 'waiting', text: '判断待ち', tone: 'warn' });
+    if(active&&(item.assessment_status==='confirmed'||item.assessment_status==='proposed'))
+      reasons.push({code:'assessment',text:ASSESSMENT_LABELS[item.assessment_status]+'・'+nextActionFor(item.assessment_status),tone:'crit'});
+    if(active&&item.assessment_status==null&&item.state==='waiting')reasons.push({code:'waiting',text:'判断待ち',tone:'warn'});
     if (overdueDays !== null) reasons.push({ code: 'overdue', text: '期限を ' + overdueDays + ' 日過ぎた', tone: severe ? 'crit' : 'warn' });
     if (dueSoon) reasons.push({ code: 'due_soon', text: dueInDays === 0 ? '期限は今日' : '期限まであと ' + dueInDays + ' 日', tone: 'warn' });
     if (active && epssHigh) reasons.push({ code: 'epss', text: '悪用の見込み ' + Math.round(item.epss_max * 100) + '%', tone: 'warn' });
     var tier = null;
-    if (active && (item.kev || item.state === 'waiting')) tier = 'now';
+    if(active&&(item.kev||item.assessment_status==='confirmed'||item.assessment_status==='proposed'||(item.assessment_status==null&&item.state==='waiting')))tier='now';
     else if (active && ((overdueDays !== null && severe) || epssHigh)) tier = 'soon';
     var score = 0;
     if (active) {
       score += item.kev ? 1000 : 0;
-      score += item.state === 'waiting' ? 500 : 0;
+      score += (item.assessment_status==='confirmed'||item.assessment_status==='proposed'||(item.assessment_status==null&&item.state==='waiting'))?500:0;
       score += overdueDays !== null ? Math.min(overdueDays, 60) * 2 : 0;
       score += dueSoon ? 50 : 0;
       score += SEV_WEIGHT[item.severity] || 0;
@@ -343,7 +358,7 @@ dl.terms dd { margin: 0; }
       var it = r.item, a = r.a;
       if (a.active) counts.active++;
       if (a.active && it.kev) counts.kev++;
-      if (a.active && it.state === 'waiting') counts.waiting++;
+      if (a.active && it.assessment_status==null && it.state === 'waiting') counts.waiting++;
       if (a.overdueDays !== null) { counts.overdue++; if (it.severity === 'critical' || it.severity === 'high') counts.overdueSevere++; }
       var st = STATES.indexOf(it.state) >= 0 ? it.state : 'other';
       var sv = SEVERITIES.indexOf(it.severity) >= 0 ? it.severity : 'info';
@@ -351,10 +366,10 @@ dl.terms dd { margin: 0; }
       matrix[st][sv]++;
       if (it.change === 'new') changes.added.push(r);
       else if (it.change === 'state_changed') {
-        if (!isActive(it.state) && isActive(it.prev_state)) changes.closed.push(r); else changes.stateChanged.push(r);
+        if (!a.active && isActive(it.prev_state)) changes.closed.push(r); else changes.stateChanged.push(r);
       }
     });
-    counts.closed = stateCounts.done + stateCounts.wont_fix;
+    counts.closed = counts.total-counts.active;
     counts.changed = changes.added.length + changes.closed.length + changes.stateChanged.length + changes.removed.length;
     var fresh = {};
     ['kev', 'epss'].forEach(function (k) {
@@ -365,7 +380,8 @@ dl.terms dd { margin: 0; }
              matrix: matrix, stateCounts: stateCounts, freshness: fresh, hasPrevious: !!view.previous };
   }
 
-  function stateLabel(item) { return item.state_label || STATE_LABEL[item.state] || STATE_LABEL.other; }
+  function stateLabel(item){return item.assessment_status!=null?(ASSESSMENT_LABELS[item.assessment_status]||'未確認'):'未評価';}
+  function originalStateLabel(item){return item.state_label||STATE_LABEL[item.state]||'不明';}
 
   function safeLink(url) {
     if (typeof url !== 'string') return null;
@@ -378,7 +394,7 @@ dl.terms dd { margin: 0; }
 
   root.AYMDecision = { SCHEMA: SCHEMA, DEFAULT_RULES: DEFAULT_RULES, SEVERITIES: SEVERITIES, SEV_LABEL: SEV_LABEL,
     STATES: STATES, STATE_LABEL: STATE_LABEL, isActive: isActive, dayNumber: dayNumber, shortDate: shortDate, validate: validate,
-    assess: assess, summarize: summarize, stateLabel: stateLabel, safeLink: safeLink, rulesOf: rulesOf };
+    assess: assess, summarize: summarize, stateLabel: stateLabel, originalStateLabel: originalStateLabel, nextActionFor: nextActionFor, safeLink: safeLink, rulesOf: rulesOf };
 })(typeof globalThis !== 'undefined' ? globalThis : this);
 </script>
 
