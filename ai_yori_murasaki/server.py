@@ -40,6 +40,7 @@ ROUTES: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("sources", re.compile(r"^/api/sources$")),
     ("source", re.compile(r"^/api/sources/(src-[0-9a-f]{32})$")),
     ("campaigns", re.compile(r"^/api/campaigns$")),
+    ("campaign_relations", re.compile(r"^/api/campaign-relations$")),
     ("campaign", re.compile(r"^/api/campaigns/([a-z0-9][a-z0-9-]{0,63})$")),
     ("campaign_runs", re.compile(r"^/api/campaigns/([a-z0-9][a-z0-9-]{0,63})/runs$")),
     ("campaign_rsi", re.compile(r"^/api/campaigns/([a-z0-9][a-z0-9-]{0,63})/rsi$")),
@@ -743,6 +744,18 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
         if name == "campaigns":
             campaigns = [_project_campaign(c, runtime) for c in runtime.list_campaigns()]
             return _json_response(200, {"campaigns": campaigns})
+
+        if name == "campaign_relations":
+            if view == "blue":
+                return _json_response(200, {"status": "withheld"})
+            from .decision_view import previous_campaign_ids
+            from .storage import sanitize
+            campaigns = runtime.list_campaigns()
+            previous = previous_campaign_ids(campaigns)
+            rows = [{"campaign_id": c["campaign_id"], "intent_id": _safe_str(c.get("intent_id")),
+                     "created_at": _safe_str(c.get("created_at")), "previous_id": previous.get(c["campaign_id"])}
+                    for c in campaigns]
+            return _json_response(200, {"campaigns": sanitize(rows, store.secrets)})
 
         if name == "campaign_decision_view":
             if view == "blue":

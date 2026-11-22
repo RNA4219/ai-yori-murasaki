@@ -4,6 +4,7 @@ import tempfile
 import unittest
 from datetime import datetime, timezone
 from pathlib import Path
+from unittest.mock import patch
 
 from ai_yori_murasaki.decision_view import (
     build_view, derive_assessment_status, load_mapping, _unique_findings,
@@ -45,6 +46,24 @@ class DecisionViewTests(unittest.TestCase):
         auth = {"operator_id":"op1","granted_at":"2026-01-01T00:00:00Z",
                 "expires_at":"2099-01-01T00:00:00Z","scope_digest":digest(scope)}
         return self.runtime.create_campaign("INT-TEST-20261116",scope,auth,"idem-dec")
+
+    def test_campaign_relations_match_comparison_order_and_visibility(self):
+        def case(cid, name, when):
+            return dict(campaign_id=cid, intent_id=name, created_at=when, scope="unpublished")
+        cases = [case("late", "A-20261201", "2026-12-01"),
+                 case("first-tie", "A-20261122B", "2026-11-22"),
+                 case("base", "A", "2026-11-01"),
+                 case("second-tie", "A-20261122", "2026-11-22"),
+                 case("other", "AB-20261112", "2026-11-12")]
+        with patch.object(self.runtime, "list_campaigns", return_value=cases):
+            status, _, result = self.request("GET", "/api/campaign-relations")
+            self.assertEqual(status, 200)
+            rows = result["campaigns"]
+            self.assertEqual({c["campaign_id"]:c["previous_id"] for c in rows},
+                             {"late":"first-tie","first-tie":"base","base":None,"second-tie":"base","other":None})
+            self.assertEqual(set(rows[0]), {"campaign_id","intent_id","created_at","previous_id"})
+        self.assertEqual(self.request("GET", "/api/campaign-relations?view=blue")[2], {"status":"withheld"})
+        self.assertEqual(self.request("POST", "/api/campaign-relations")[0], 405)
 
     def test_serve_both_html_with_csp(self):
         for path in ("/","/decision"):

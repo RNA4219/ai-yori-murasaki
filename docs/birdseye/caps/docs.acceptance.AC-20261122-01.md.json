@@ -15,14 +15,14 @@
   ],
   "risks": [],
   "tests": [],
-  "summary": "案件の切り替え、判断と証跡の往復、失敗応答、画面幅、キーボード、axe-coreとAPI試験の検収。デモ画面と適用範囲を示す。",
-  "source_sha256": "a6d88fe87bb6736fd5013d80733bcc6ea03d62475e5c52b88dbcc52efe47038a",
-  "generated_at": "00033",
+  "summary": "案件間の比較元を実APIで照合し、2画面の往復・失敗応答・画面幅・キーボード・アクセシビリティを検収した記録と画面例。",
+  "source_sha256": "2707bb62e9c4c68112f41ff4a4d35f3f5f1a9d1209bd43ba045138b3cd3f64e5",
+  "generated_at": "00034",
   "review": {
-    "reviewed_at": "2026-11-22T14:10:15+00:00",
+    "reviewed_at": "2026-11-22T14:25:57+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "a6d88fe87bb6736fd5013d80733bcc6ea03d62475e5c52b88dbcc52efe47038a",
-    "summary_sha256": "17d32d56a5e0fe8de5aa53c25790e6c9c21b99c535d254ced491dfd9cb4f7b1e",
+    "source_sha256": "2707bb62e9c4c68112f41ff4a4d35f3f5f1a9d1209bd43ba045138b3cd3f64e5",
+    "summary_sha256": "d7b97f05d6038fee35432525bb835d6d9e4bb9e2c506daebc49da8648c7567ba",
     "scope": "案件の選択と検知、判断が必要な課題の表示条件・画面例・検収記録を原文と照合。"
   }
 }

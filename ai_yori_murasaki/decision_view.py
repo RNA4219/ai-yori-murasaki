@@ -20,6 +20,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from importlib import resources
+from itertools import groupby
 from .jsonio import DataError
 from .storage import sanitize
 from urllib.parse import urlsplit
@@ -335,17 +336,41 @@ def _load(runtime, store, campaign_id: str) -> tuple[dict, list[dict], dict[str,
     return campaign, findings, records
 
 
+def _series(campaign: dict) -> str:
+    return _INTENT_DATE.sub("", campaign.get("intent_id") or "")
+
+
+def previous_campaign_ids(campaigns: list[dict]) -> dict[str, str]:
+    """判断の画面で比較する各案件と、その前回の案件IDを返す。"""
+    families: dict[str, list[dict]] = {}
+    for campaign in campaigns:
+        name = _series(campaign)
+        if name and campaign.get("campaign_id"):
+            families.setdefault(name, []).append(campaign)
+    parents: dict[str, str] = {}
+
+    def created(campaign: dict) -> str:
+        return campaign.get("created_at") or ""
+
+    for name, family in families.items():
+        previous = None
+        for _, entries in groupby(sorted(family, key=created), key=created):
+            same_time = list(entries)
+            for campaign in same_time:
+                if previous is not None and campaign["intent_id"] != name:
+                    parents[campaign["campaign_id"]] = previous
+            # 同時刻の案件間に辺を作らず、次回は元の一覧順で最初の案件を使う。
+            previous = same_time[0]["campaign_id"]
+    return parents
+
+
 def pick_previous(campaigns: list[dict], current: dict) -> str | None:
-    """intent_id の末尾の日付（-YYYYMMDD と英字 1 つ）を除いた部分が同じで、current より前に作られた最新の Campaign。"""
-    intent = current.get("intent_id") or ""
-    prefix = _INTENT_DATE.sub("", intent)
-    if not prefix or prefix == intent:
+    name = _series(current)
+    if not name or name == current.get("intent_id"):
         return None
-    older = [c for c in campaigns
-             if c.get("campaign_id") != current.get("campaign_id")
-             and _INTENT_DATE.sub("", c.get("intent_id") or "") == prefix
-             and (c.get("created_at") or "") < (current.get("created_at") or "")]
-    return max(older, key=lambda c: c.get("created_at") or "")["campaign_id"] if older else None
+    cid = current.get("campaign_id")
+    family = [c for c in campaigns if c.get("campaign_id") != cid and _series(c) == name]
+    return previous_campaign_ids([*family, current]).get(cid)
 
 
 def main(argv: list[str] | None = None) -> int:

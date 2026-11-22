@@ -137,6 +137,7 @@ intent_id: INT-AYM-PRODUCT-20261106 / owner: RNA4219 / status: reviewed
 | GET | `/` | - | HTML index | 500 | 256 KiB |
 | GET | `/assets/<path>` | - | static asset | 404 | 1 MiB |
 | GET | `/api/campaigns` | - | `{campaigns: [...]}` | 500 | 1 MiB |
+| GET | `/api/campaign-relations` | `?view=operator\|blue` | operatorは案件ID、目的名、作成日時、比較元の案件ID（`previous_id`）の一覧。比較元がなければnull。Blueは `{"status":"withheld"}` | 500 | 1 MiB |
 | GET | `/api/campaigns/<campaign_id>` | - | `{campaign: {...}}` | 404 | 256 KiB |
 | GET | `/api/runs/<run_id>` | - | `{run: {...}}` | 404 | 256 KiB |
 | GET | `/api/runs/<run_id>/events` | `?after=<sequence>&limit=<int>` | `{events: [...]}`（public projection） | 404 | 1 MiB |

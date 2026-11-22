@@ -36,6 +36,12 @@ try {
       assert.equal(await page.locator('#to-monitor').getAttribute('href'),' /#/campaign/'.trim()+cid);
       assert.equal(await page.locator('#progress-text').count(),0);
       assert.equal(await page.locator('#bar').count(),0);
+      await page.locator('#related-cases').click();
+      await page.waitForURL('**/#/relations/'+cid);
+      await page.locator('#view-root .relation-case').first().waitFor();
+      assert.equal(await page.locator('#switch-to-decision').getAttribute('href'),'/decision?campaign='+cid);
+      await page.goBack();
+      await page.locator('#h-sum').waitFor();
       await page.locator('#to-monitor').click();
       await page.waitForURL('**/#/campaign/'+cid);
       assert.equal(await page.locator('#switch-to-decision').getAttribute('href'),'/decision?campaign='+cid);
@@ -148,6 +154,27 @@ try {
       await page.locator('#refresh-btn').click();
       await page.getByText('この案件の検知記録を表示する権限がありません。').waitFor();
       assert.equal(await visibleFinding.count(),0);
+      const series = [
+        {campaign_id:cid,intent_id:'権限点検',created_at:'2026-10-01',previous_id:null},
+        {campaign_id:'round-two',intent_id:'権限点検-20261122',created_at:'2026-11-22',previous_id:cid},
+        {campaign_id:'standalone',intent_id:'ログ保管',created_at:'2026-11-20',previous_id:null}
+      ];
+      await page.route('**/api/campaign-relations',r=>r.fulfill({json:{campaigns:series}}));
+      await page.locator('#desk-relations').click();
+      const pair=page.locator('.relation-pair');
+      await pair.waitFor();
+      assert.equal(await pair.getByRole('link').first().getAttribute('href'),'#/campaign/'+cid);
+      assert.equal(await pair.getByRole('link').last().getAttribute('href'),'#/campaign/round-two');
+      assert.match(await page.locator('.relation-single').innerText(),/ログ保管/);
+      assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+      await pair.getByRole('link').first().click();
+      await page.locator('.detail-head').waitFor();
+      await page.goBack();
+      await pair.waitFor();
+      await page.route('**/api/campaign-relations',r=>r.fulfill({json:{status:'withheld'}}));
+      await page.locator('#refresh-btn').click();
+      await page.getByText('案件のつながりはこの表示では非公開です。').waitFor();
+      assert.equal(await pair.count(),0);
       assert.deepEqual(errors,[],'no JavaScript errors');
       console.log('PASS real Chromium '+width+'px: routes, accessibility, state and layout');
     } finally {

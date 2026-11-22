@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "変更と版の記録。0024では案件を選択して検知と証跡を読み、判断が必要な課題の次の行動を確かめる2画面の変更を記す。",
+  "summary": "変更と版の記録。0024では検知本文、案件間の比較元の一覧、判断が必要な課題とその次の行動を示す画面を記す。",
   "deps_out": [
     "docs/SOURCES.md",
     "docs/acceptance/AC-20261106-01.md",
@@ -59,13 +59,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "612d9863de25737d9f7c55954a92330f74e401b6f36c9c3e9b88a103e500c050",
-  "generated_at": "00033",
+  "source_sha256": "cd3b01580ba5cc8922b3089cb21e23754810ebeaf7e65a81bbed5b4c4c6a7446",
+  "generated_at": "00034",
   "review": {
-    "reviewed_at": "2026-11-22T14:10:15+00:00",
+    "reviewed_at": "2026-11-22T14:25:57+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "612d9863de25737d9f7c55954a92330f74e401b6f36c9c3e9b88a103e500c050",
-    "summary_sha256": "bbf7ccc3ab55a6be3b316733e7f70726585fdbf02b8bd0195e50fa08c3032a73",
+    "source_sha256": "cd3b01580ba5cc8922b3089cb21e23754810ebeaf7e65a81bbed5b4c4c6a7446",
+    "summary_sha256": "56a5ef2879b039ebfe0c68f29d8b7da9afbef066ecba28edf48a84a5a534263b",
     "scope": "案件の選択と検知、判断が必要な課題の表示条件・画面例・検収記録を原文と照合。"
   }
 }

@@ -2,7 +2,7 @@
   "id": "README.md",
   "role": "overview",
   "public_api": [],
-  "summary": "製品概要、起動、制約、既存の実験と検証。モニターで案件の検知を読んでから、その証跡と判断の画面へ進む使い方を架空の案件の画面例で示す。",
+  "summary": "製品概要、起動、制約と検証。画面例を使って検知から証跡・判断へ進む操作と、案件間の前回比較をたどる操作を案内する。",
   "deps_out": [
     "BLUEPRINT.md",
     "CHANGELOG.md",
@@ -42,13 +42,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "60402408400fed71147bb2fd846ebff1c696044c699b555420aa6f86d1f682d4",
-  "generated_at": "00033",
+  "source_sha256": "3054475e966503ed19fe183d5d4120fb9bfa103fdd9fe1610c738821b189d02f",
+  "generated_at": "00034",
   "review": {
-    "reviewed_at": "2026-11-22T14:10:15+00:00",
+    "reviewed_at": "2026-11-22T14:25:57+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "60402408400fed71147bb2fd846ebff1c696044c699b555420aa6f86d1f682d4",
-    "summary_sha256": "d07d8e3c7de5ac7d82a609146e83238122471a1e53697dc006c2dd89cdcd7b5f",
+    "source_sha256": "3054475e966503ed19fe183d5d4120fb9bfa103fdd9fe1610c738821b189d02f",
+    "summary_sha256": "94557c4532ff874ae21babb4ba01266f696265b667184763c3f7709ff26c7350",
     "scope": "案件の選択と検知、判断が必要な課題の表示条件・画面例・検収記録を原文と照合。"
   }
 }

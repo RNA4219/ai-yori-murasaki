@@ -1,5 +1,5 @@
 {
-  "generated_at": "00033",
+  "generated_at": "00034",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -16,7 +16,7 @@
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
       "mtime": "00003",
-      "source_sha256": "612d9863de25737d9f7c55954a92330f74e401b6f36c9c3e9b88a103e500c050"
+      "source_sha256": "cd3b01580ba5cc8922b3089cb21e23754810ebeaf7e65a81bbed5b4c4c6a7446"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -43,7 +43,7 @@
       "role": "overview",
       "caps": "docs/birdseye/caps/README.md.json",
       "mtime": "00008",
-      "source_sha256": "60402408400fed71147bb2fd846ebff1c696044c699b555420aa6f86d1f682d4"
+      "source_sha256": "3054475e966503ed19fe183d5d4120fb9bfa103fdd9fe1610c738821b189d02f"
     },
     "RUNBOOK.md": {
       "role": "operations",
@@ -291,7 +291,7 @@
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.requirements.API-CONTRACTS.md.json",
       "mtime": "00053",
-      "source_sha256": "d0bcc46bca713f77d754c008c48a5563c826ea6198d83ccd8ba2217d55cd36a6"
+      "source_sha256": "b383ef804a9445cea8588dedf2a9bc3a42a1261bfb25ed12054a99cc6857b32c"
     },
     "docs/requirements/COMPACTION-01.md": {
       "role": "doc",
@@ -358,7 +358,7 @@
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.requirements.MONITOR-REDESIGN.md.json",
       "mtime": "00066",
-      "source_sha256": "53f3dd10efb33d17b89a712a518453466fad2aa22ddbea90fa54194926f53afb"
+      "source_sha256": "d7d23f4666ec867ac6287ce2a9413132e8eaa15adfed90bee428f58156fe012a"
     },
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md": {
       "role": "doc",
@@ -563,13 +563,13 @@
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.acceptance.AC-20261122-01.md.json",
       "mtime": "00031",
-      "source_sha256": "a6d88fe87bb6736fd5013d80733bcc6ea03d62475e5c52b88dbcc52efe47038a"
+      "source_sha256": "2707bb62e9c4c68112f41ff4a4d35f3f5f1a9d1209bd43ba045138b3cd3f64e5"
     },
     "docs/tasks/TASK.frontend-review-11-22-2026.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.tasks.TASK.frontend-review-11-22-2026.md.json",
       "mtime": "00031",
-      "source_sha256": "884239b6dd31cf5f15c0e854c9963e8260a956c90b050d3cc184f7d1301bdbd7"
+      "source_sha256": "5aff9cab4f49a8520aa1adcf426983be3a80f32bc1ce1161f43112f7f924485f"
     }
   },
   "edges": [
