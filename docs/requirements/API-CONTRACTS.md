@@ -139,6 +139,7 @@ intent_id: INT-AYM-PRODUCT-20261106 / owner: RNA4219 / status: reviewed
 | GET | `/architecture/<asset>` | - | 同梱した `map.mjs`、`model.mjs`、`js-yaml.mjs`、`sample.json`、`product.json` | 404 | 1 MiB |
 | GET | `/assets/<path>` | - | static asset | 404 | 1 MiB |
 | GET | `/api/campaigns` | - | `{campaigns: [...]}` | 500 | 1 MiB |
+| GET | `/api/campaigns?page=1` | 1始まり、1ページ50案件 | `campaigns, page, pages, total, checked_at`。確認済み索引の先頭は作成日時降順、同日時は案件ID順。Blueには検知抜粋・未集計の実行IDを含めない | 400 / 409 / 500 | 1 MiB |
 | GET | `/api/campaign-relations` | `?view=operator\|blue` | operatorは案件ID、目的名、作成日時、確定できる比較元の `previous_id`。同時刻の複数候補は `previous_candidates` にID順で列挙し、`previous_id` はnull。Blueは `{"status":"withheld"}` | 500 | 1 MiB |
 | GET | `/api/campaigns/<campaign_id>/decision-view` | `?previous=<id>` | 複数候補の中で選んだIDを照合して比較。未選択・候補外は比較を保留する。今回の集計が不完全ならhold、前回が不完全なら今回分だけを返す。Blueには比較を公開しない | 404 | 1 MiB |
 | GET | `/api/campaigns/<campaign_id>` | - | `{campaign: {...}}` | 404 | 256 KiB |

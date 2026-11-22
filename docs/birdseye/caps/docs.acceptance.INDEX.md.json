@@ -2,7 +2,7 @@
   "id": "docs/acceptance/INDEX.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "技術検収と公開状態の一覧。文書整合性の検収と、実機結果が記録されていないLLM接続の検収計画を区別して掲載する。",
+  "summary": "検収と公開状態の一覧。AC-20261123-04は案件一覧と台帳検証のローカル技術検収。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -23,6 +23,7 @@
     "docs/acceptance/AC-20261123-01.md",
     "docs/acceptance/AC-20261123-02.md",
     "docs/acceptance/AC-20261123-03.md",
+    "docs/acceptance/AC-20261123-04.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
     "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
@@ -30,6 +31,7 @@
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
     "docs/tasks/TASK.llm-remote-11-09-2026.md",
     "docs/tasks/TASK.monitor-counts-11-23-2026.md",
+    "docs/tasks/TASK.monitor-index-11-23-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
     "docs/tasks/TASK.product-clarity-11-07-2026.md",
     "docs/tasks/TASK.product-completion-11-06-2026.md",
@@ -52,13 +54,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "1094169cf96d87d1a319c8f50877b5e56096e7cc7ed03278d292ba0196d68888",
-  "generated_at": "00038",
+  "source_sha256": "1e02ce032135d307654ff3b690c70dc14198e1b63dc645fb98293616aeab62ec",
+  "generated_at": "00039",
   "review": {
-    "reviewed_at": "2026-11-23T01:17:45+09:00",
+    "reviewed_at": "2026-11-22T22:54:07+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "1094169cf96d87d1a319c8f50877b5e56096e7cc7ed03278d292ba0196d68888",
-    "summary_sha256": "1d0a54763c3d4ae46f35bf54056c63ed142d4c303de7f0e3c37234b4199c7b53",
-    "scope": "文書検査の新規行と既存のLLM接続の未検収行を照合。"
+    "source_sha256": "1e02ce032135d307654ff3b690c70dc14198e1b63dc645fb98293616aeab62ec",
+    "summary_sha256": "3403ff7490a47a65c5e38ffc5386e61a559b0c1aebd45f468c8a3cf01a452cfd",
+    "scope": "案件一覧・台帳検証の変更、参照先と適用範囲を原文に照合。"
   }
 }

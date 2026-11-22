@@ -198,6 +198,10 @@ def _project_campaign(cid: str, summary: CampaignSummary, view: str = "operator"
     }
 
 
+def _project_finding(obj: dict) -> dict:
+    return {key: _safe_str(obj.get(key)) for key in ("finding_id", "severity", "title", "source")}
+
+
 def _project_lab_metrics(runtime: Runtime, cid: str) -> dict | None:
     """Return aggregated lab metrics for a campaign, or None if absent.
 
@@ -733,9 +737,32 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
                 return _error(409, "source_unavailable")
 
         if name == "campaigns":
+            if "page" in query:
+                from itertools import islice
+                from .monitor_index import PAGE_SIZE, read_page
+                from .jsonio import MAX_JSON_BYTES
+
+                value = query["page"]
+                if not re.fullmatch(r"[1-9][0-9]{0,8}", value):
+                    return _error(400, "invalid_page")
+                page = int(value)
+                result = read_page(store, page, view)
+                if result is not None:
+                    return _json_response(200, result)
+                catalog = store._catalog_path()
+                runs = store.workspace / "runs"
+                if ((catalog.exists() and catalog.stat().st_size > MAX_JSON_BYTES) or
+                        (runs.is_dir() and next(islice(runs.iterdir(), 1000, None), None) is not None)):
+                    return _error(409, "monitor_index_required")
             campaigns = [_project_campaign(cid, summary, view)
                          for cid, summary in campaign_summaries(store).items()]
             campaigns.sort(key=lambda c: not c["created_at"])
+            if "page" in query:
+                total = len(campaigns)
+                pages = max(1, (total + PAGE_SIZE - 1) // PAGE_SIZE)
+                page = min(page, pages)
+                return _json_response(200, {"campaigns": campaigns[(page-1)*PAGE_SIZE:page*PAGE_SIZE],
+                                            "total": total, "page": page, "pages": pages, "checked_at": None})
             return _json_response(200, {"campaigns": campaigns})
 
         if name == "campaign_relations":
@@ -808,15 +835,7 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
             summary = campaign_summaries(store).get(cid)
             if summary is None:
                 return _error(404, "not_found")
-            findings = []
-            for obj in summary.findings.values():
-                fid = _safe_str(obj.get("finding_id"))
-                findings.append({
-                    "finding_id": fid,
-                    "severity": _safe_str(obj.get("severity")),
-                    "title": _safe_str(obj.get("title")),
-                    "source": _safe_str(obj.get("source")),
-                })
+            findings = [_project_finding(obj) for obj in summary.findings.values()]
             remediations = []
             for ref in summary.remediation_refs:
                 try:

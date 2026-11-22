@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.1",
+  "profile": "performance",
+  "manifest_id": "eval:20261123-04",
+  "task_id": "20261123-04",
+  "owner": "RNA4219",
+  "purpose": "comparison",
+  "status": "completed",
+  "freeze_date": "2026-11-23",
+  "hypothesis": "10万案件の確認済み索引で50件のページを取得できる。",
+  "action_delta": "モニターの読み取り時にRust製スキーマ検証器を適用し、検証結果をSQLiteへ投影する。",
+  "negative_control": "全2,000ページの案件IDと完全に集計した0件を入力と照合する。",
+  "identity": {
+    "legacy": {
+      "label": "main",
+      "source_path": "ai_yori_murasaki",
+      "source_revision": "782912282937bd8030d2eab12375626e5257c105",
+      "source_sha256": "sha256:97a1a191bac64061f8dac8077a0c5088561a5d8fad465615d69b80bea76be10b",
+      "input_sha256": "sha256:a83596d262e7efeda7a5b99b953883d252b0ced4c507d23813a740a63c333b83"
+    },
+    "candidate": {
+      "label": "monitor index",
+      "source_path": "ai_yori_murasaki",
+      "source_revision": "782912282937bd8030d2eab12375626e5257c105+bundle-f3d13c3fc002",
+      "source_sha256": "sha256:f3d13c3fc002bd9acc009d69e870d780ef820952dfe2f278f61296917f898d40",
+      "input_sha256": "sha256:a83596d262e7efeda7a5b99b953883d252b0ced4c507d23813a740a63c333b83"
+    },
+    "runner": {
+      "id": "Windows Python 3.11.9 / measure-monitor-scale.py",
+      "sha256": "sha256:cf0c3818e7a0db3482e472eaf1e66b05443631d7d23453308f713ba117998998"
+    }
+  },
+  "evaluation": {
+    "dataset_id": "100000-distinct-campaigns-1-ledger-each",
+    "dataset_sha256": "sha256:a83596d262e7efeda7a5b99b953883d252b0ced4c507d23813a740a63c333b83",
+    "measurement_unit": "operation",
+    "primary_metric": "first_page_ms",
+    "model_version": "not_used:read_only_api",
+    "policy_version": "monitor-snapshot-v1",
+    "configuration": {
+      "page_size": 50,
+      "warmup": 1,
+      "repetitions": 11,
+      "timed_pages": [
+        1,
+        1000,
+        2000
+      ],
+      "timing": "in-process API, warm filesystem; index build reported separately",
+      "source_files": [
+        "ai_yori_murasaki/monitor_summary.py",
+        "ai_yori_murasaki/server.py",
+        "ai_yori_murasaki/storage.py",
+        "ai_yori_murasaki/cli.py",
+        "ai_yori_murasaki/jsonio.py",
+        "ai_yori_murasaki/contracts.py",
+        "ai_yori_murasaki/monitor_index.py",
+        "ai_yori_murasaki/monitor_validation.py",
+        "uv.lock"
+      ]
+    }
+  },
+  "external_mutations": {
+    "registry_frozen": true,
+    "submission_frozen": true
+  },
+  "outcome": {
+    "artifact_path": "../evidence/monitor-index-20261123/results.json",
+    "artifact_sha256": "sha256:392f8dc2b42935ab85c1c3484897a4605c7738f43585828dc4904d085d1bb8fd",
+    "records": 2036,
+    "metrics": {
+      "first_page_ms": 1.281,
+      "build_seconds": 714.42
+    },
+    "error_count": 0,
+    "timeout_count": 0,
+    "crash_count": 0
+  }
+}

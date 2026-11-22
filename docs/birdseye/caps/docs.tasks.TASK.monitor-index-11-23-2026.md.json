@@ -1,0 +1,27 @@
+{
+  "id": "docs/tasks/TASK.monitor-index-11-23-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/AC-20261123-04.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "docs/acceptance/AC-20261123-04.md"
+  ],
+  "summary": "台帳検証と10万案件の一覧の要件。Rustによる形式検証、50件単位の表示と検証条件を記録する。",
+  "source_sha256": "1d1e8e96fcb36e514b92d35baf52703f410c2c4307f6ede93485228ae838141d",
+  "generated_at": "00039",
+  "review": {
+    "reviewed_at": "2026-11-22T22:54:07+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "1d1e8e96fcb36e514b92d35baf52703f410c2c4307f6ede93485228ae838141d",
+    "summary_sha256": "fefd4cdb30a5cff91e1846b4c817a033e4634f7e89973205208c674cd15a094a",
+    "scope": "案件一覧・台帳検証の変更、参照先と適用範囲を原文に照合。"
+  }
+}

@@ -9,6 +9,8 @@
 | パッケージ | 版 | ライセンス（メタデータ実物） | 用途 |
 | --- | --- | --- | --- |
 | jsonschema | 4.26.0 | License-Expression: MIT | 証跡・assessment reportのJSON Schema検証 |
+| jsonschema-rs | 0.61.2 | MIT | モニター読み取り時の証跡イベント検証（Rust実装） |
+| ijson | 3.6.0 | BSD-3-Clause AND ISC | 案件一覧の構築時に既存の実行索引を逐次読み込み |
 | referencing | 0.37.0 | License-Expression: MIT | jsonschemaの参照解決（動的依存） |
 | cvss | 3.6 | License: LGPLv3+ | CVSS v4.0ベクトルの算出（R-056） |
 | packaging | 26.0 | License-Expression: Apache-2.0 OR BSD-2-Clause | 依存CVEのPEP440版範囲判定（advisories） |

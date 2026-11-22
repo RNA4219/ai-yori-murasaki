@@ -9,7 +9,7 @@ description = "Offline Blue/Purple contracts, evidence and deterministic Oracle"
 license = {file = "LICENSE"}
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = ["jsonschema==4.26.0", "referencing==0.37.0", "cvss==3.6", "packaging==26.0"]
+dependencies = ["jsonschema==4.26.0", "jsonschema-rs==0.61.2", "ijson==3.6.0", "referencing==0.37.0", "cvss==3.6", "packaging==26.0"]
 
 [project.optional-dependencies]
 mcp = ["mcp==2.3.0"]

@@ -16,7 +16,7 @@ import tempfile
 import threading
 import time
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Any, Callable, Iterator
 
 from .jsonio import MAX_JSON_BYTES, DataError, canonical, digest, loads
 
@@ -447,20 +447,25 @@ class Store:
 
     def read_verified_events(self, run_id: str) -> list[dict]:
         """検証に使ったイベント列をそのまま読み取り側に渡す。"""
+        from .monitor_validation import validate_monitor_event
+
         events = self.read_events(run_id)
         if not events:
             raise DataError("empty ledger")
-        self._inspect_chain(run_id, events)
+        self._inspect_chain(run_id, events, validate_event=validate_monitor_event)
         return events
 
-    def _inspect_chain(self, run_id: str, events: list[dict]) -> dict:
+    def _inspect_chain(self, run_id: str, events: list[dict], *,
+                       validate_event: Callable[[dict], None] | None = None) -> dict:
+        if validate_event is None:
+            validate_event = _validate_evidence_event
         head = ZERO
         for sequence, event in enumerate(events, 1):
             if not isinstance(event, dict):
                 raise DataError("event must be an object")
             if event.get("run_id") != run_id:
                 raise DataError("event run_id mismatch")
-            _validate_evidence_event(event)
+            validate_event(event)
             if event.get("sequence") != sequence:
                 raise DataError("event sequence mismatch")
             if event.get("previous_event_hash") != head:

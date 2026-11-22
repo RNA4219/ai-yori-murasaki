@@ -2,7 +2,7 @@
   "id": "docs/requirements/API-CONTRACTS.md",
   "role": "doc",
   "public_api": [],
-  "summary": "CLI・読み取りAPI・画面配信の契約。案件投影の集計状態と件数、比較候補、比較保留・表示境界の扱いを規定する。",
+  "summary": "CLI・読み取りAPIと画面の契約。案件一覧の50件単位の取得・確認時刻・Blueの公開範囲を含む。",
   "deps_out": [
     "docs/PRODUCT-ACCEPTANCE.md",
     "docs/SOURCES.md",
@@ -16,13 +16,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "ea50e942717344033f99853500173707bb15348c5f073e5e532d9801d3e95a92",
-  "generated_at": "00037",
+  "source_sha256": "f149adb8f6eb2d3dceaf4b1afbc5ff5be5d649a0c6177df4acb31fa612a09e64",
+  "generated_at": "00039",
   "review": {
-    "reviewed_at": "2026-11-22T15:56:44+00:00",
+    "reviewed_at": "2026-11-22T22:54:07+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "ea50e942717344033f99853500173707bb15348c5f073e5e532d9801d3e95a92",
-    "summary_sha256": "072675cb230435b593de3eabcb79f44c9310f85e5083034b67a41dc695c3cae7",
-    "scope": "案件の集計状態、比較元の選択、台帳の実測結果と検収・索引を照合。"
+    "source_sha256": "f149adb8f6eb2d3dceaf4b1afbc5ff5be5d649a0c6177df4acb31fa612a09e64",
+    "summary_sha256": "76aaf6c18a98efa10750c0ac9ba5fdd8911a841b6006144c438d12c1e2ec8f61",
+    "scope": "案件一覧・台帳検証の変更、参照先と適用範囲を原文に照合。"
   }
 }
