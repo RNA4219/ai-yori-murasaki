@@ -1,0 +1,28 @@
+{
+  "id": "docs/acceptance/AC-20261122-01.md",
+  "role": "doc",
+  "public_api": [],
+  "deps_out": [
+    "CHANGELOG.md",
+    "docs/tasks/TASK.frontend-review-11-22-2026.md"
+  ],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.frontend-review-11-22-2026.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "summary": "3回の履歴の線・画面幅ごとの向き・選択中の回と分岐を確認した結果。2画面の往復、応答異常、アクセシビリティの検収と画面例。",
+  "source_sha256": "94668a82371384fd2ad9ad45f76776540563b87652ad0a8ed53f136275e57b20",
+  "generated_at": "00035",
+  "review": {
+    "reviewed_at": "2026-11-22T14:35:45+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "94668a82371384fd2ad9ad45f76776540563b87652ad0a8ed53f136275e57b20",
+    "summary_sha256": "da013811646fdb2c9374b0811caf97a9a6774faaf71480b0f7c6e6b8f790ddf8",
+    "scope": "初回からの履歴、分岐、途中の回を選んだ表示と検収結果を原文と照合。"
+  }
+}

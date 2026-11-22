@@ -2,7 +2,7 @@
   "id": "docs/requirements/API-CONTRACTS.md",
   "role": "doc",
   "public_api": [],
-  "summary": "CLIと読取監視API。sources操作の結果、operator用一覧・本文、Blueの存在非公開と既存の認証・raw CAS境界を定める。",
+  "summary": "CLI・読み取りAPI・画面配信の契約。案件投影の集計状態と件数、比較候補、比較保留・表示境界の扱いを規定する。",
   "deps_out": [
     "docs/PRODUCT-ACCEPTANCE.md",
     "docs/SOURCES.md",
@@ -16,13 +16,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "d0bcc46bca713f77d754c008c48a5563c826ea6198d83ccd8ba2217d55cd36a6",
-  "generated_at": "00030",
+  "source_sha256": "ea50e942717344033f99853500173707bb15348c5f073e5e532d9801d3e95a92",
+  "generated_at": "00037",
   "review": {
-    "reviewed_at": "2026-11-09T05:32:05.041815+00:00",
+    "reviewed_at": "2026-11-22T15:56:44+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "d0bcc46bca713f77d754c008c48a5563c826ea6198d83ccd8ba2217d55cd36a6",
-    "summary_sha256": "7d82974cb4d1812c9b9ce4beac1eefad30cdca421b1d1efbb556f1ee140b262b",
-    "scope": "今回の原文・要約・参照を照合。MCPローカル試験、実サービス未検証、画面実測、参考情報と判定証拠の分離を確認。"
+    "source_sha256": "ea50e942717344033f99853500173707bb15348c5f073e5e532d9801d3e95a92",
+    "summary_sha256": "072675cb230435b593de3eabcb79f44c9310f85e5083034b67a41dc695c3cae7",
+    "scope": "案件の集計状態、比較元の選択、台帳の実測結果と検収・索引を照合。"
   }
 }

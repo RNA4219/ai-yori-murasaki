@@ -1,0 +1,31 @@
+{
+  "schema": "aym.architecture/v1",
+  "name": "ai-yori-murasaki の構成 · 案件と証跡",
+  "nodes": [
+    {"id":"summary","kind":"service","type":"monitor_summary.py","name":"検知件数の集計","description":"リクエストごとに各台帳を1回読み、検証済みのイベントで件数を計算する。全件確認・一部未集計・未集計を区別する。同じ4案件で台帳の読み込みは16回から4回になった。"},
+    {"id":"views","kind":"service","type":"ブラウザー","name":"モニター・判断画面","description":"モニターで確認済みの検知件数と未集計の実行を表示する。同時刻の前回候補を選ぶと、このブラウザーに案件IDの組を保存し、履歴の線と判断画面の比較に反映する。"},
+    {"id":"api","kind":"service","type":"server.py","name":"読み取りAPI","description":"確認した件数に集計状態と未集計の実行数を添えて返す。全ての対象実行を確認できなければ、最終件数は確定しない。"},
+    {"id":"history","kind":"service","type":"decision_view.py","name":"前回との比較","description":"直前の時刻に2件以上あれば候補をすべて返す。選択は候補に含まれる案件IDだけを受け付ける。比較元に未集計があれば差分を保留する。"},
+    {"id":"runtime","kind":"service","type":"cli.py / runtime.py","name":"案件・実行の登録","description":"CLIで受け取った案件や実行記録を検証し、記録本体と台帳に保存する。判断画面が評価報告を取り出す際にもRuntimeを利用する。"},
+    {"id":"store","kind":"store","type":"storage.py","name":"証跡ストア","description":"実行ごとのevents.jsonl、検知本体objects、実行索引をローカルに保持する。読み取り側にはハッシュ列を検証したイベント列を返す。"},
+    {"id":"project","kind":"repository","type":"RNA4219","name":"ai-yori-murasaki","description":"案件の登録、読み取りAPI、モニター、判断画面と構成図を配布するリポジトリ。図の対象は案件の記録・表示と関連する依存関係。"},
+    {"id":"jsonschema","kind":"repository","type":"python-jsonschema","name":"jsonschema","description":"Python側で案件・実行・証跡のJSON Schemaを検証する実行時依存。"},
+    {"id":"jsyaml","kind":"repository","type":"nodeca","name":"js-yaml","description":"構成図のYAML入力をブラウザーで読み込むために同梱する。"}
+  ],
+  "connections": [
+    {"from":"views","to":"api","label":"件数・集計状態・候補を取得","evidence":"web/index.html の loadCore・loadRelations・caseSheet と web/decision.html の loadCampaign。"},
+    {"from":"api","to":"summary","label":"確認済みの件数と未集計の実行を取得","evidence":"server.py の campaigns / campaign / campaign_decision_view は campaign_summaries を呼ぶ。"},
+    {"from":"summary","to":"store","label":"検証した台帳を一度の集計に再利用","evidence":"monitor_summary.py の campaign_summaries と storage.py の read_verified_events。件数は重複する finding_id をまとめる。"},
+    {"from":"api","to":"history","label":"前回候補と選択を照合","evidence":"server.py の campaign_relations と campaign_decision_view、decision_view.py の previous_candidates・read_decision_view。"},
+    {"from":"history","to":"summary","label":"今回と前回の集計結果を参照","evidence":"decision_view.py の read_decision_view と _load がAPIから受け取った集計済みデータを利用する。"},
+    {"from":"history","to":"runtime","label":"評価報告を取得","evidence":"decision_view.py の read_decision_view が assessment.load_report にRuntimeを渡す。"},
+    {"from":"history","to":"store","label":"元資料の実体を確認","evidence":"decision_view.py の _load が元資料への参照を get_object で読み込む。"},
+    {"from":"api","to":"store","label":"個別の実行と証跡を取得","evidence":"server.py の run_events と campaign_runs。集計結果から未集計の実行を開ける。"},
+    {"from":"runtime","to":"store","label":"案件・実行と検知の証跡を保存","evidence":"runtime.py の create_campaign・register_record・record_event。"},
+    {"from":"project","to":"views","label":"画面を同梱","evidence":"pyproject.toml の package-data と server.py のHTML配信。"},
+    {"from":"project","to":"runtime","label":"CLIを公開","evidence":"pyproject.toml の project.scripts と cli.py の案件登録処理。"},
+    {"from":"project","to":"jsonschema","label":"記録の形式を検証","evidence":"pyproject.toml の実行時依存と contracts.py の Draft202012Validator。"},
+    {"from":"project","to":"jsyaml","label":"構成図のYAMLを解析","evidence":"THIRD_PARTY_NOTICES.md と web/architecture/model.mjs の parseFile。"}
+  ],
+  "findings": []
+}

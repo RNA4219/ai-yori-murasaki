@@ -1,0 +1,28 @@
+{
+  "id": "docs/acceptance/AC-20261123-01.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.architecture-map-11-23-2026.md"
+  ],
+  "deps_out": [
+    "CHANGELOG.md",
+    "docs/tasks/TASK.architecture-map-11-23-2026.md"
+  ],
+  "summary": "構成図の技術検収。見本の関係と指摘の表示、ファイル読み込み、モバイル表示、アクセシビリティ、配布物の証跡を記す。",
+  "source_sha256": "539bbcb98f75475dd2836ec501445c62a9de1d595459e2e83c510e260e8d836c",
+  "generated_at": "00036",
+  "review": {
+    "reviewed_at": "2026-11-22T15:14:19+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "539bbcb98f75475dd2836ec501445c62a9de1d595459e2e83c510e260e8d836c",
+    "summary_sha256": "33446f2cec6fcde52b2e811bd2bffadd7e504455b799d30790ae060e26691bed",
+    "scope": "構成図の操作、入力仕様、検収の根拠と文書間の参照を照合。"
+  }
+}

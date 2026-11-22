@@ -2,7 +2,7 @@
   "id": "docs/acceptance/INDEX.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "技術検収一覧。資料取り込み・出典リンク・画面変更をAC-20261109-02として追跡し、追加のソース反映承認RA-20261109-02を記録する。",
+  "summary": "技術検収と公開状態の一覧。文書整合性の検収と、実機結果が記録されていないLLM接続の検収計画を区別して掲載する。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -17,7 +17,19 @@
     "docs/acceptance/AC-20261108-03.md",
     "docs/acceptance/AC-20261109-01.md",
     "docs/acceptance/AC-20261109-02.md",
+    "docs/acceptance/AC-20261109-07.md",
+    "docs/acceptance/AC-20261111-01.md",
+    "docs/acceptance/AC-20261122-01.md",
+    "docs/acceptance/AC-20261123-01.md",
+    "docs/acceptance/AC-20261123-02.md",
+    "docs/acceptance/AC-20261123-03.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
+    "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
+    "docs/tasks/TASK.architecture-map-11-23-2026.md",
+    "docs/tasks/TASK.document-consistency-11-23-2026.md",
+    "docs/tasks/TASK.frontend-review-11-22-2026.md",
+    "docs/tasks/TASK.llm-remote-11-09-2026.md",
+    "docs/tasks/TASK.monitor-counts-11-23-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
     "docs/tasks/TASK.product-clarity-11-07-2026.md",
     "docs/tasks/TASK.product-completion-11-06-2026.md",
@@ -40,13 +52,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "9d3faeaefdba3195db1d16e488fef4160348b1111711268eb7e8eabb4582e249",
-  "generated_at": "00030",
+  "source_sha256": "1094169cf96d87d1a319c8f50877b5e56096e7cc7ed03278d292ba0196d68888",
+  "generated_at": "00038",
   "review": {
-    "reviewed_at": "2026-11-09T05:32:05.052039+00:00",
+    "reviewed_at": "2026-11-23T01:17:45+09:00",
     "reviewed_by": "Codex",
-    "source_sha256": "9d3faeaefdba3195db1d16e488fef4160348b1111711268eb7e8eabb4582e249",
-    "summary_sha256": "2039b7895ead5cd52ae83c3aac7f540c38c0f8ba2b5c478be37ea5b30e56a878",
-    "scope": "今回の原文・要約・参照を照合。MCPローカル試験、実サービス未検証、画面実測、参考情報と判定証拠の分離を確認。"
+    "source_sha256": "1094169cf96d87d1a319c8f50877b5e56096e7cc7ed03278d292ba0196d68888",
+    "summary_sha256": "1d0a54763c3d4ae46f35bf54056c63ed142d4c303de7f0e3c37234b4199c7b53",
+    "scope": "文書検査の新規行と既存のLLM接続の未検収行を照合。"
   }
 }

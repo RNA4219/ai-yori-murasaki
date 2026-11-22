@@ -16,6 +16,8 @@
  ],
  "additionalProperties": false,
  "properties": {
+  "comparison_status": {"enum": ["ambiguous", "incomplete"]},
+  "previous_candidates": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "string"}},
   "schema": {
    "const": "aym.decision-view/1"
   },

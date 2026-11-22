@@ -1,0 +1,29 @@
+{
+  "id": "docs/tasks/TASK.frontend-review-11-22-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "deps_out": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261122-01.md",
+    "docs/requirements/MONITOR-REDESIGN.md"
+  ],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/AC-20261122-01.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "summary": "検知から証跡・判断へ進む操作と、途中の回からも初回・後続・分岐を確認できる案件履歴の受入条件、参照作例、検収。",
+  "source_sha256": "9277bec9fcfbb384b4412e05c0c4cb9fc52a812a8a314e310d35e5055fd3f0b8",
+  "generated_at": "00035",
+  "review": {
+    "reviewed_at": "2026-11-22T14:35:45+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "9277bec9fcfbb384b4412e05c0c4cb9fc52a812a8a314e310d35e5055fd3f0b8",
+    "summary_sha256": "94d4a8b9dbc80a85a0ec7f673c073051eac710b9103bb24cab4dca9559733954",
+    "scope": "初回からの履歴、分岐、途中の回を選んだ表示と検収結果を原文と照合。"
+  }
+}

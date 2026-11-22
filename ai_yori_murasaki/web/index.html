@@ -7,7 +7,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%237b4fa0'/%3E%3C/svg%3E">
 <style>
 :root {
-  --color-bg: #f7f8fc;
+  --color-bg: #faf9fb;
   --color-bg-sidebar: #ffffff;
   --color-bg-topbar: #ffffff;
   --color-surface: #ffffff;
@@ -17,13 +17,13 @@
   --color-text: #202638;
   --color-text-muted: #576174;
   --color-text-faint: #576174;
-  --color-brand: #6d38c3;
-  --color-brand-dim: #5830a3;
+  --color-brand: #63447e;
+  --color-brand-dim: #4e335f;
   --color-review: #82520b;
   --color-ok: #176b46;
   --color-err: #b82b3e;
-  --color-focus: #6d38c3;
-  --color-accent: #6d38c3;
+  --color-focus: #63447e;
+  --color-accent: #63447e;
   --color-accent-soft: #f0edf8;
   --color-surface-alt: #ffffff;
   --color-ok-bg: transparent;
@@ -114,18 +114,6 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
   overflow-y: auto;
   z-index: var(--z-sidebar);
 }
-.sidebar-brand {
-  display: flex; align-items: center; gap: var(--space-8);
-  padding: 0 var(--space-16) var(--space-16);
-  border-bottom: 1px solid var(--color-border-subtle);
-  margin-bottom: var(--space-12);
-}
-.brand-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--color-brand); flex: none;
-}
-.brand-name { font-size: var(--font-small); font-weight: 600; color: var(--color-text); }
-.brand-desc { font-size: var(--font-small); color: var(--color-text-muted); letter-spacing: 0.08em; }
 .sidebar-label {
   font-size: var(--font-small); margin: 0 var(--space-16) var(--space-8);
   color: var(--color-text-muted); text-transform: uppercase;
@@ -153,17 +141,6 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
   display: block; font-size: var(--font-small); color: var(--color-text-muted);
   font-family: var(--font-stack); margin-top: var(--space-2);
 }
-.data-status {
-  font-size: var(--font-small); color: var(--color-text-muted);
-  border-top: 1px solid var(--color-border-subtle);
-  padding: var(--space-12) var(--space-16) 0;
-  margin: 0;
-}
-.data-status dt { font-weight: 600; color: var(--color-text-muted); font-size: var(--font-small); }
-.data-status dd { margin: 0 0 var(--space-6); font-family: var(--font-mono); font-size: var(--font-small); }
-.data-status dt, .data-status dd { min-width: 0; }
-.data-status dd { overflow-wrap: anywhere; word-break: break-all; }
-
 main { min-width: 0; padding: var(--space-24); }
 
 /* Topbar */
@@ -177,10 +154,6 @@ header.page-header {
   display: flex; flex-wrap: wrap; gap: var(--space-12); align-items: center; justify-content: space-between;
 }
 .header-left { display: flex; align-items: center; gap: var(--space-12); min-width: 0; }
-.header-brand { display: flex; align-items: center; gap: var(--space-6); }
-.header-brand .brand-name { font-size: var(--font-small); }
-.header-brand-text { color: var(--color-text-muted); font-size: var(--font-small); }
-.header-sep { width: 1px; height: 16px; background: var(--color-border); }
 header.page-header h1 { font-size: var(--font-heading); font-weight: 600; margin: 0; }
 .header-meta { font-size: var(--font-small); color: var(--color-text-muted); display: flex; flex-wrap: wrap; gap: var(--space-8); align-items: center; }
 .header-meta strong { color: var(--color-text); font-family: var(--font-mono); font-weight: 500; }
@@ -373,7 +346,6 @@ td, th { font-variant-numeric: tabular-nums; }
     border-right: none; border-bottom: 1px solid var(--color-border-subtle);
     padding: var(--space-12) 0;
   }
-  .sidebar-brand { padding: 0 var(--space-16) var(--space-12); margin-bottom: var(--space-8); }
   .sidebar-label { display: none; }
   .nav-list {
     display: flex; flex-wrap: nowrap; gap: 0; margin-bottom: 0;
@@ -387,20 +359,12 @@ td, th { font-variant-numeric: tabular-nums; }
   }
   .nav-list a[aria-current="page"] { border-left: none; border-bottom-color: var(--color-brand); }
   .nav-list .meta { display: none; }
-  .data-status {
-    display: flex; flex-wrap: wrap; gap: var(--space-12);
-    border-top: none; padding: var(--space-8) var(--space-16) 0;
-  }
-  .data-status dt, .data-status dd { display: inline; margin: 0; }
-  .data-status dd { margin-right: var(--space-12); }
   main { padding: var(--space-16); }
   header.page-header { margin: calc(-1 * var(--space-16)) calc(-1 * var(--space-16)) var(--space-16); }
 }
 
 @media (max-width: 767px) {
   .sidebar { padding: var(--space-8) 0; }
-  .sidebar > .data-status { display: none; }
-  .header-brand-text, .header-sep { display: none; }
   .nav-list { display: none; }
   .mobile-nav { display: block; padding: 0 var(--space-12); }
   .mobile-nav summary {
@@ -426,7 +390,6 @@ td, th { font-variant-numeric: tabular-nums; }
   .summary-metrics .metric-value { font-size: var(--font-metric); }
   .incident-row { grid-template-columns: auto minmax(0, 1fr); }
   .incident-status { grid-column: 2; }
-  .data-status { flex-direction: column; gap: var(--space-2); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -435,61 +398,220 @@ td, th { font-variant-numeric: tabular-nums; }
 
 
 .source-body { white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--font-stack); font-size: var(--font-body); line-height: 1.75; padding-block: var(--space-16); }
-.view-switcher {display:flex;flex-wrap:wrap;gap:8px;padding:8px 20px}
-.view-switcher a,.view-switcher [aria-current]{display:inline-flex;min-height:44px;align-items:center;border:1px solid #d4d7e0;border-radius:9px;padding:8px 14px;text-decoration:none}
-.view-switcher [aria-current]{background:var(--color-surface,#fff);font-weight:700}
-.view-switcher a:focus-visible{outline:3px solid #7b4fa0;outline-offset:2px}
+.layout { max-width: 1500px; margin-inline: auto; min-height: calc(100vh - 76px); }
+.sidebar { max-height: 100dvh; padding-block-start: 32px; }
+.nav-list a { font-family: var(--font-stack); }
+.nav-list a[aria-current="page"] { background: var(--color-accent-soft); }
+body { background: #f6f5f8; }
+main { padding: 32px clamp(20px,3vw,48px) 64px; }
+header.page-header { position: static; background: transparent; border: 0; padding: 0; margin: 0 0 24px; }
+header.page-header h1 { font: 740 clamp(28px,3vw,42px)/1.3 var(--font-stack); letter-spacing: -.045em; color: #29222e; }
+.header-meta { gap: 8px 16px; }
+#header-conn::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 6px; border: 1px solid currentColor; border-radius: 50%; }
+#header-conn.conn-ok::before { background: currentColor; }
+#desk-sources { display: none; }
+.header-left { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 18px; }
+#desk-relations { display: none; }
+body[data-screen="list"] #desk-relations { display: inline-flex; align-items: center; min-height: 44px; font-size: 16px; text-decoration: underline; text-underline-offset: 4px; }
+body[data-screen="relations"] .layout { display: block; max-width: 1240px; }
+body[data-screen="relations"] .sidebar { display: none; }
+body[data-screen="relations"] main { padding: clamp(20px,3.4vw,48px) clamp(16px,5vw,72px) 64px; }
+.relations-intro { margin-bottom: 24px; }
+.relations-intro p { margin: 8px 0; }
+.relation-back, .relation-case { text-decoration: underline; text-underline-offset: 4px; }
+.relation-back { display: inline-flex; align-items: center; min-height: 44px; }
+.relation-list { list-style: none; padding: 0; margin: 12px 0 28px; display: grid; gap: 12px; }
+.history-sheet { margin: 0 0 24px; padding: clamp(16px,3vw,32px); border: 1px solid #dcd5e1; border-radius: 12px; background: #fff; }
+.history-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; padding-bottom: 16px; margin-bottom: 20px; border-bottom: 1px solid #e5dfe8; }
+.history-head h2 { margin: 0; font-size: clamp(19px,2vw,26px); overflow-wrap: anywhere; }
+.history-count { color: #65586d; font-size: 16px; }
+.history-steps { list-style: none; padding: 0; margin: 0; }
+.history-step { position: relative; min-width: 0; padding: 0 0 22px 32px; }
+.history-step:last-child { padding-bottom: 0; }
+.history-step:not(:last-child)::before { content: ""; position: absolute; left: 7px; top: 12px; bottom: -12px; border-left: 2px solid #8c719b; }
+.history-branch { margin-top: 12px; }
+.history-branch > li:first-child::after { content: ""; position: absolute; left: -24px; top: 12px; width: 32px; border-top: 2px solid #8c719b; }
+.history-dot { position: absolute; z-index: 1; top: 5px; left: 1px; width: 14px; height: 14px; border: 3px solid #705184; background: #fff; border-radius: 50%; }
+.history-sheet > .history-steps > li:first-child > .relation-case > .history-dot { background: #705184; }
+.relation-case[aria-current] .history-dot { box-shadow: 0 0 0 3px #dfd2e8; }
+.history-phase { color: #604673; font-size: 16px; font-weight: 700; }
+.history-phase small { margin-left: 8px; font-size: 14px; color: #493451; }
+.history-fork-label { font-size: 16px; color: #604673; margin: 8px 0 0; }
+@media(min-width: 800px) {
+  .history-short { display: flex; }
+  .history-short > li { flex: 1 1 0; padding: 30px 16px 0 0; }
+  .history-short > li:not(:last-child)::before { left: 8px; right: -8px; top: 12px; bottom: auto; border: 0; border-top: 2px solid #8c719b; }
+}
+.relation-case { display: grid; align-content: center; min-height: 44px; min-width: 0; gap: 3px; overflow-wrap: anywhere; }
+.relation-case time { font-size: 16px; font-weight: 400; color: #595260; }
+.relation-case { text-decoration: none; }
+.relation-case strong { text-decoration: underline; text-underline-offset: 4px; }
+.relation-single { border-top: 1px solid #ded9e3; padding: 10px 0; }
+body[data-screen="list"] .layout { display: block; max-width: 1440px; }
+body[data-screen="list"] .sidebar { display: none; }
+body[data-screen="list"] main { padding: clamp(24px,3.4vw,48px) clamp(16px,5vw,72px) 64px; }
+body[data-screen="list"] #desk-sources { display: inline-flex; align-items: center; min-height: 44px; text-decoration: underline; text-underline-offset: 4px; }
+.panel h2 { color: var(--color-text); }
+.case-desk { display: grid; grid-template-columns: minmax(245px, .82fr) minmax(0,1.8fr); gap: clamp(16px,2.4vw,32px); align-items: start; margin-bottom: 32px; }
+.case-desk .ledger { padding: 0; margin: 0; border: 0; }
+.ledger h2 { display: flex; align-items: baseline; gap: 8px; margin: 0 0 12px; font-size: 20px; letter-spacing: 0; }
+.ledger-count { color: var(--color-text-muted); font-size: 16px; font-weight: 500; }
+.compact-picker { display: none; }
+.record-list, .excerpt-list { list-style: none; margin: 0; padding: 0; }
+.record-list { display: grid; gap: 8px; }
+.record-list button {
+  width: 100%; display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 8px;
+  padding: 16px 20px; border: 1px solid #dcd7e2; border-radius: 10px; background: white; color: #302a37;
+  text-align: left; font: 400 16px/1.5 var(--font-stack); cursor: pointer; overflow-wrap: anywhere;
+}
+.record-list button:hover { border-color: #aa99bc; background: #f9f6fb; }
+.record-list button[aria-pressed="true"] { background: #f0eaf6; border-color: #85649c; box-shadow: inset 4px 0 #775088; }
+.record-identity { grid-column: 1/-1; display: block; }
+.record-identity strong { font-size: 18px; }
+.record-identity small { display: none; }
+.record-list .badge { grid-column: 1; font-size: 16px; }
+.record-time { grid-column: 1/-1; grid-row: 3; color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+.record-count { grid-row: 2; grid-column: 2; white-space: nowrap; }
+.record-list small { font-size: 16px; margin-right: 6px; }
+.record-count b { font-weight: 650; }
+.record-arrow { display: none; }
+.case-sheet { min-width: 0; overflow: clip; border: 1px solid #dbd3df; border-radius: 16px; background: #fff; box-shadow: 0 5px 18px #3e25400a; }
+.sheet-head { position: relative; isolation: isolate; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 16px 24px; align-items: start; padding: clamp(24px,3vw,40px); color: white; background: #40324d; overflow: hidden; }
+.sheet-head::before, .sheet-head::after { position: absolute; z-index: -1; content: ""; border: 1px solid #ffffff24; width: 184px; height: 234px; border-radius: 14px; transform: rotate(24deg); inset: -92px -78px auto auto; pointer-events: none; }
+.sheet-head::after { transform: translate(-19px,16px) rotate(24deg); }
+.sheet-label { display: block; font: 600 16px/1.5 var(--font-stack); letter-spacing: .025em; color: #e2d6eb; overflow-wrap: anywhere; }
+.sheet-identity h2 { margin: 12px 0 0; font: 680 clamp(23px,2.4vw,36px)/1.5 var(--font-stack); letter-spacing: -.035em; overflow-wrap: anywhere; text-wrap: pretty; }
+.sheet-number { display: grid; grid-template-columns: auto auto; align-items: baseline; gap: 0 4px; justify-content: end; padding-left: 16px; border-left: 1px solid #ffffff40; }
+.sheet-number span { color: #e6daed; font-size: 16px; }
+.sheet-number span:first-child { grid-column: 1/-1; }
+.sheet-number strong { font: 500 clamp(36px,4vw,60px)/1.1 Georgia,serif; font-variant-numeric: lining-nums tabular-nums; }
+.count-pending { color:var(--color-review); max-width:12em; font-size:1rem; line-height:1.5; }
+.previous-choice { border-inline-start:3px solid var(--color-review); padding:8px 14px; margin:12px 0; }
+.previous-choice button { margin:4px 8px 4px 0; min-height:40px; }
+.sheet-meta { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; grid-column: 1/-1; font-size: 16px; color: #e4dce9; }
+.sheet-meta .badge { color: inherit; }
+.sheet-identity .unrecorded { color: inherit; }
+.sheet-meta .first-severity { color: white; padding: 1px 8px; border: 1px solid #c6afcf; border-radius: 4px; }
+.sheet-body { padding: 0 clamp(16px,2.5vw,32px) 18px; }
+.sheet-body:empty { display: none; }
+.sheet-body h3 { margin: 0; font-size: 17px; font-weight: 650; color: #5a5062; }
+.sheet-body p { font-size: 16px; }
+.excerpt-list { margin-top: 8px; }
+.excerpt-list li { display: grid; grid-template-columns: 3.2em minmax(0,1fr); gap: 12px; align-items: baseline; padding: 12px 0; border-top: 1px solid #e9e5ed; }
+.excerpt-title { overflow-wrap: anywhere; font-weight: 600; }
+.severity-tag { padding: 1px 6px; text-align: center; border-radius: 4px; font: 650 16px/1.6 var(--font-stack); background: #efebf4; color: #5b4c6c; }
+.severity-tag[data-level="high"], .severity-tag[data-level="critical"] { color: #843a2b; background: #fae7dd; }
+.severity-tag[data-level="medium"] { color: #77521b; background: #f9edd5; }
+.sheet-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; padding: 16px clamp(16px,2.5vw,32px) 24px; }
+.sheet-actions a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; font-weight: 650; font-size: 16px; }
+.action-main { padding: 8px 16px; color: white; background: #503865; border-radius: 7px; }
+.action-main:hover { background: #392644; color: white; }
+.action-secondary { text-decoration: underline; text-underline-offset: 4px; }
+.empty-ledger, .empty-approvals { margin: 0; padding: 12px 16px; color: var(--color-text-muted); background: #fff; border-left: 3px solid #ded5e5; font-size: 16px; }
+.excerpt-notice { background: #fff3d7; color: #704800; padding: 8px 12px; }
+.approval-group { background: var(--color-surface); border-top: 1px solid var(--color-border-subtle); }
+.approval-group > p, .approval-group > summary { padding: 8px 16px; margin: 0; min-height: 44px; font-size: 16px; }
+.approval-group b { float: right; margin-left: 8px; font-variant-numeric: tabular-nums; }
+.approval-group summary { cursor: pointer; color: var(--color-brand); font-weight: 600; }
+.environment { margin-top: 0; }
+.environment > summary { font-size: var(--font-body); }
+.detail-head h2 { font-family: var(--font-stack); }
+.metric-denominator { font-size: var(--font-small); }
+.summary-metrics { background: white; border-block-start: 2px solid var(--color-brand); }
+.view-tabs button[aria-pressed="true"] { background: var(--color-accent-soft); }
+.table-wrap { max-width: 100%; }
+@media (max-width: 1024px) {
+  .sidebar { padding: 0; height: auto; }
+  .sidebar > .nav-list { max-width: 100vw; }
+  .layout { grid-template-columns: minmax(0,1fr); }
+}
+@media (max-width: 767px) {
+  main { padding: 16px 16px 32px; }
+  header.page-header { margin: 0 0 16px; gap: 6px; }
+  .header-meta { gap: 0 12px; }
+  .header-meta strong { font-family: inherit; }
+  .case-desk { grid-template-columns: minmax(0,1fr); gap: 12px; margin-bottom: 20px; }
+  .ledger:has(select) h2, .record-list { display: none; }
+  .compact-picker { display: grid; gap: 4px; font-size: 16px; color: #504759; }
+  .compact-picker select { min-width: 0; width: 100%; padding: 10px 12px; min-height: 44px; border: 1px solid #b7a9c3; border-radius: 7px; font: 600 16px var(--font-stack); background: #fff; color: #36263f; }
+  .sheet-head { padding: 20px 16px; gap: 12px; }
+  .sheet-meta { gap: 6px 12px; }
+  .sheet-meta > span:last-child { flex-basis: 100%; }
+  .sheet-number { padding-left: 8px; }
+  .view-tabs { flex-wrap: wrap; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes sheet-in { from { opacity: .75; transform: translateX(4px); } to { opacity: 1; transform: none; } }
+  .case-sheet { animation: sheet-in .16s ease-out; }
+  .record-list button, .view-tabs button { transition: background-color .14s ease-out, border-color .14s ease-out; }
+}
+
+/* 二つの製品画面が共有する切替。単独HTMLでも利用できる。 */
+.masthead { color: #302642; background: #fff; border-bottom: 1px solid #ded9e4; }
+.mast-inner { max-width: 1440px; min-height: 76px; padding-inline: clamp(16px,5vw,72px); margin-inline: auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.wordmark { display: flex; align-items: center; gap: 12px; font: 700 16px/1.2 system-ui, sans-serif; letter-spacing: .105em; }
+.seal { width: 40px; height: 40px; display: inline-grid; place-items: center; position: relative; isolation: isolate; color: white; font: 600 25px/1 "Yu Mincho", "Hiragino Mincho ProN", serif; letter-spacing: 0; }
+.seal::before, .seal::after { content: ""; position: absolute; inset: 2px; border-radius: 2px 8px 2px 8px; z-index: -1; }
+.seal::before { background: #baa9d5; transform: translate(-3px,2px) rotate(-7deg); }
+.seal::after { background: #50346c; transform: translate(1px,-1px); }
+.view-switch { display: inline-flex; align-items: center; border: 1px solid #e1dce7; border-radius: 99px; padding: 3px; background: #f5f3f7; }
+.view-switch > * { min-height: 44px; padding-inline: 20px; display: inline-flex; align-items: center; justify-content: center; border-radius: 99px; color: #5e566b; font: 650 16px/1.4 system-ui,sans-serif; text-decoration: none; }
+.view-switch [aria-current] { color: white; background: #463254; }
+.view-switch a:hover { background: #e8e1ee; color: #382944; text-decoration: none; }
+.masthead :focus-visible { outline: 3px solid #8055ab; outline-offset: 1px; }
+@media (max-width: 767px) {
+  .mast-inner { min-height: 64px; }
+  .wordmark { gap: 6px; font-size: 12px; letter-spacing: .06em; }
+  .seal { width: 32px; height: 32px; font-size: 21px; }
+  .view-switch > * { padding-inline: 10px; font-size: 14px; }
+}
+@media (max-width: 360px) { .wordmark > span:last-child { max-width: 7em; } }
+
 </style>
 </head>
 <body>
 <a class="skip-link" href="#main">本文へスキップ</a>
+<header class="masthead">
+  <div class="mast-inner">
+    <div class="wordmark"><span class="seal" aria-hidden="true">紫</span><span>AI YORI MURASAKI</span></div>
+    <nav class="view-switch" aria-label="画面を切り替える" data-key="view-switcher">
+      <a id="switch-to-decision" data-key="switch-to-decision" href="/decision">判断の画面</a>
+      <span aria-current="page" data-key="current-monitor">モニター</span>
+    </nav>
+  </div>
+</header>
 <div class="layout">
   <aside class="sidebar" aria-label="ナビゲーション">
-    <div class="sidebar-brand">
-      <span class="brand-dot" aria-hidden="true"></span>
-      <div>
-        <div class="brand-name">紫</div>
-        <div class="brand-desc">AI YORI MURASAKI</div>
-      </div>
-    </div>
-    <p class="sidebar-label">Campaign</p>
+    <p class="sidebar-label">ワークスペース</p>
     <details class="mobile-nav">
       <summary>メニュー</summary>
       <ul class="nav-list" id="nav-list-mobile"></ul>
     </details>
     <ul class="nav-list" id="nav-list" aria-label="Campaign一覧"></ul>
-    <dl class="data-status" id="data-status">
-      <dt>最終取得</dt><dd id="status-fetched">未取得</dd>
-      <dt>接続</dt><dd id="status-conn">未確認</dd>
-    </dl>
   </aside>
   <main id="main" tabindex="-1">
     <header class="page-header">
       <div class="header-left">
-        <span class="header-brand-text">ワークスペース</span>
-        <span class="header-sep" aria-hidden="true"></span>
-        <h1>製品実行モニター</h1>
+        <h1 id="monitor-heading">案件と検知</h1>
+        <a id="desk-relations" href="#/relations">案件のつながり</a>
+        <a class="relation-back" href="/architecture">システム構成図</a>
       </div>
       <div class="header-meta">
+        <a id="desk-sources" href="#/sources">資料と出典</a>
         <span id="header-conn">未確認</span>
         <span>最終取得: <strong id="header-fetched">未取得</strong></span>
         <button type="button" class="refresh" id="refresh-btn" aria-label="データを手動更新">手動更新</button>
       </div>
     </header>
-    <nav class="view-switcher" aria-label="画面を切り替える" data-key="view-switcher">
-      <a id="switch-to-decision" data-key="switch-to-decision" href="/decision">判断の画面</a>
-      <span aria-current="page" data-key="current-monitor">モニター</span>
-    </nav>
     <div class="banner-area" id="banner-area"></div>
     <div id="view-root"></div>
     <details class="details-block">
-      <summary>補足情報（データ形式・API一覧・read-onlyについて）</summary>
+      <summary>データ形式と更新のしくみ</summary>
       <div class="content">
         <p>本画面は operator ローカル専用の read-only モニターです。承認・再verify・反映などの更新操作は提供しません。</p>
-        <p>参照API: <code>GET /api/campaigns</code>, <code>GET /api/campaigns/&lt;id&gt;</code>, <code>GET /api/campaigns/&lt;id&gt;/runs</code>, <code>GET /api/campaigns/&lt;id&gt;/rsi</code>, <code>GET /api/runs/&lt;id&gt;</code>, <code>GET /api/runs/&lt;id&gt;/events</code>, <code>GET /api/verification/&lt;id&gt;</code>, <code>GET /api/approvals</code>, <code>GET /api/models</code>, <code>GET /api/adapters</code>, <code>GET /api/health</code>, <code>GET /api/campaigns/&lt;id&gt;/decision-view</code></p>
+        <p>参照API: <code>GET /api/campaigns</code>, <code>GET /api/campaign-relations</code>, <code>GET /api/campaigns/&lt;id&gt;</code>, <code>GET /api/campaigns/&lt;id&gt;/runs</code>, <code>GET /api/campaigns/&lt;id&gt;/rsi</code>, <code>GET /api/runs/&lt;id&gt;</code>, <code>GET /api/runs/&lt;id&gt;/events</code>, <code>GET /api/verification/&lt;id&gt;</code>, <code>GET /api/approvals</code>, <code>GET /api/models</code>, <code>GET /api/adapters</code>, <code>GET /api/health</code>, <code>GET /api/campaigns/&lt;id&gt;/decision-view</code></p>
         <p>権限により非表示となる項目は「権限により非表示」と表示します。status名のみから未提供データを推測しません。</p>
         <p>15秒ごとに自動更新します（タブ非表示時は休止）。手動更新ボタンでも取得できます。応答は5秒でタイムアウト、1MiBを超える応答は破棄します。</p>
-        <p>API内部名（projection名・reason_code等）は本補足に集約し、通常UI文言からは排除しています。</p>
       </div>
     </details>
   </main>
@@ -519,12 +641,17 @@ td, th { font-variant-numeric: tabular-nums; }
     lastFetched: null,
     route: { name: 'list', params: {} },
     detail: null,
+    detailVersion: 0,
     detailError: null,
     detailLoading: false,
     assessment: null,
     inflight: {},
     focusKey: null,
-    campaignViews: {}
+    campaignViews: {},
+    selectedCase: null,
+    excerpt: null,
+    excerptError: null,
+    excerptVersion: 0
   };
 
   var el = {
@@ -533,8 +660,6 @@ td, th { font-variant-numeric: tabular-nums; }
     navList: document.getElementById('nav-list'),
     navListMobile: document.getElementById('nav-list-mobile'),
     refreshBtn: document.getElementById('refresh-btn'),
-    statusFetched: document.getElementById('status-fetched'),
-    statusConn: document.getElementById('status-conn'),
     headerFetched: document.getElementById('header-fetched')
   };
 
@@ -696,7 +821,7 @@ td, th { font-variant-numeric: tabular-nums; }
         out.push(banner('error', 'サーバーに接続できません。' + state.healthError));
       }
     }
-    if (state.detailError) {
+    if (state.detailError && state.route.name !== 'relations') {
       out.push(banner('error', '詳細の取得に失敗しました: ' + state.detailError));
     }
     if (state.detailStale) {
@@ -801,6 +926,9 @@ td, th { font-variant-numeric: tabular-nums; }
 
   function isTimeout(err) { return !!(err && err.aborted); }
   function isHttp(err) { return !!(err && err.httpStatus); }
+  function canShowPrevious(err) {
+    return isTimeout(err) || isNetwork(err) || [502, 503, 504].indexOf(err.httpStatus) >= 0;
+  }
   function isNetwork(err) { return !!(err && !err.aborted && !err.httpStatus && (err.name === 'TypeError' || (err.message && err.message.indexOf('fetch') >= 0))); }
 
   function setBusy(busy) {
@@ -820,11 +948,14 @@ td, th { font-variant-numeric: tabular-nums; }
     var p1 = fetchJSON('/api/campaigns', 'campaigns').then(function (d) {
       if (!isCurrent()) return;
       if (d && Array.isArray(d.campaigns)) { state.campaigns = d.campaigns; state.campaignsError = null; }
-      else { state.campaignsError = '応答形式が不正です'; }
+      else { state.campaigns = null; state.campaignsError = '応答形式が不正です'; }
     }).catch(function (e) {
       if (!isCurrent()) return;
       var m = errMsg(e); if (m === null) return;
       state.campaignsError = m;
+      if (!canShowPrevious(e)) state.campaigns = null;
+    }).then(function () {
+      if (isCurrent() && state.route.name === 'list') return loadExcerpt();
     });
     var p2 = fetchJSON('/api/models', 'models').then(function (d) {
       if (!isCurrent()) return;
@@ -878,6 +1009,7 @@ td, th { font-variant-numeric: tabular-nums; }
 
   function loadDetail() {
     var r = state.route;
+    if (r.name === 'relations') return loadRelations();
     if (r.name === 'source') {
       var sourceId = r.params.id;
       var sourceVersion = (state.detailVersion || 0) + 1;
@@ -1040,6 +1172,8 @@ td, th { font-variant-numeric: tabular-nums; }
 
   function parseHash() {
     var h = location.hash || '#/';
+    var relation = h.match(/^#\/relations(?:\/([a-z0-9][a-z0-9-]{0,63}))?$/);
+    if (relation) return { name: 'relations', params: { id: relation[1] || null } };
     if (h === '#/sources') return { name: 'sources', params: {} };
     var sourceMatch = h.match(/^#\/sources\/(src-[0-9a-f]{32})$/);
     if (sourceMatch) return { name: 'source', params: { id: sourceMatch[1] } };
@@ -1078,7 +1212,8 @@ td, th { font-variant-numeric: tabular-nums; }
     if (mainEl && typeof mainEl.focus === 'function') {
       try { mainEl.focus({ preventScroll: true }); } catch (e) { mainEl.focus(); }
     }
-    loadDetail();
+    if (next.name === 'list') loadExcerpt();
+    else loadDetail();
   }
 
   function renderNav() {
@@ -1091,10 +1226,17 @@ td, th { font-variant-numeric: tabular-nums; }
       var homeA = document.createElement('a');
       homeA.href = '#/';
       homeA.setAttribute('data-key', list.id + '-home');
-      homeA.textContent = 'すべてのCampaign';
+      homeA.textContent = '案件と検知';
       if (state.route.name === 'list') homeA.setAttribute('aria-current', 'page');
       homeLi.appendChild(homeA);
       items.push(homeLi);
+      var relationsLi = text('li');
+      relationsLi.setAttribute('data-key', list.id + '-relations');
+      var relationsA = text('a', '案件のつながり');
+      relationsA.href = '#/relations';
+      if (state.route.name === 'relations') relationsA.setAttribute('aria-current', 'page');
+      relationsLi.appendChild(relationsA);
+      items.push(relationsLi);
       var sourcesLi = document.createElement('li');
       var sourcesA = text('a', '資料と出典');
       sourcesA.href = '#/sources';
@@ -1102,7 +1244,7 @@ td, th { font-variant-numeric: tabular-nums; }
       sourcesLi.setAttribute('data-key', list.id + '-sources');
       sourcesLi.appendChild(sourcesA);
       items.push(sourcesLi);
-      if (state.campaigns) {
+      if (state.campaigns && state.route.name !== 'list') {
         for (var i = 0; i < state.campaigns.length; i++) {
           var c = state.campaigns[i];
           if (!c || !c.campaign_id) continue;
@@ -1111,11 +1253,11 @@ td, th { font-variant-numeric: tabular-nums; }
           var a = document.createElement('a');
           a.href = '#/campaign/' + encodeURIComponent(c.campaign_id);
           a.setAttribute('data-key', list.id + '-campaign-' + c.campaign_id);
-          a.textContent = c.campaign_id;
+          a.textContent = c.intent_id || c.campaign_id;
           if (state.route.name === 'campaign' && state.route.params.id === c.campaign_id) a.setAttribute('aria-current', 'page');
           var meta = document.createElement('span');
           meta.className = 'meta';
-          meta.textContent = (c.status || '未記録') + ' ／ 検知 ' + (c.finding_count === null || c.finding_count === undefined ? '未記録' : c.finding_count);
+          meta.textContent = '検知 ' + findingCount(c);
           a.appendChild(meta);
           li2.appendChild(a);
           items.push(li2);
@@ -1127,13 +1269,11 @@ td, th { font-variant-numeric: tabular-nums; }
 
   function renderStatus() {
     var f = state.lastFetched ? fmtTime(state.lastFetched) : '未取得';
-    el.statusFetched.textContent = f;
     el.headerFetched.textContent = f;
     var connText, connClass;
     if (state.healthError) { connText = '接続不可'; connClass = 'conn-err'; }
     else if (state.health) { connText = '接続中'; connClass = 'conn-ok'; }
     else { connText = '未確認'; connClass = ''; }
-    el.statusConn.textContent = connText;
     var hc = document.getElementById('header-conn');
     if (hc) {
       hc.textContent = connText;
@@ -1474,6 +1614,11 @@ td, th { font-variant-numeric: tabular-nums; }
     unverified: { label: '未確認', tone: 'warn', shape: '○' },
     immutable: { label: '不変', tone: 'info', shape: '●' },
     created: { label: '作成済み', tone: 'info', shape: '●' },
+    running: { label: '実行中', tone: 'info', shape: '●' },
+    blind_completed: { label: '独立評価済み', tone: 'info', shape: '●' },
+    purple_open: { label: '共同確認中', tone: 'info', shape: '●' },
+    remediation_in_progress: { label: '修復中', tone: 'warn', shape: '○' },
+    cancelled: { label: '中止', tone: 'info', shape: '○' },
     review_pending: { label: 'レビュー待ち', tone: 'warn', shape: '○' },
     completed: { label: '完了', tone: 'ok', shape: '●' },
     incomplete: { label: '未完了', tone: 'warn', shape: '○' },
@@ -1491,8 +1636,7 @@ td, th { font-variant-numeric: tabular-nums; }
   function renderApprovals() {
     var p = document.createElement('section');
     p.className = 'panel';
-    p.appendChild(text('h2', '承認（approvals）'));
-    p.appendChild(text('p', 'レビュー待ち・承認済み（未反映・未確認）・反映済みを区別して表示します。反映済みと確認できたものを表示します。', 'lead'));
+    p.appendChild(text('h2', '承認と反映の記録'));
     if (state.approvalsError) {
       p.appendChild(text('p', '取得に失敗しました: ' + state.approvalsError, 'muted'));
       if (!state.approvals) {
@@ -1507,6 +1651,10 @@ td, th { font-variant-numeric: tabular-nums; }
       p.appendChild(oA);
       return p;
     }
+    if (state.approvals.length === 0) {
+      p.appendChild(text('p', '承認の記録はまだありません。', 'empty-approvals'));
+      return p;
+    }
     var pending = [], approved = [], applied = [], other = [];
     for (var i = 0; i < state.approvals.length; i++) {
       var a = state.approvals[i];
@@ -1517,9 +1665,13 @@ td, th { font-variant-numeric: tabular-nums; }
       else other.push(a);
     }
     function section(title, list) {
-      var h = document.createElement('h3');
-      h.textContent = title + '（' + list.length + '）';
-      p.appendChild(h);
+      var group = text(list.length ? 'details' : 'div', null, 'approval-group');
+      group.setAttribute('data-key', 'approval-' + title);
+      var heading = text(list.length ? 'summary' : 'p', title);
+      heading.appendChild(text('b', list.length + ' 件'));
+      group.appendChild(heading);
+      p.appendChild(group);
+      if (!list.length) return;
       var rows = [];
       for (var j = 0; j < list.length; j++) {
         var it = list[j];
@@ -1531,7 +1683,7 @@ td, th { font-variant-numeric: tabular-nums; }
           orUnrecorded(fmtTime(it.decided_at || it.created_at))
         ]);
       }
-      p.appendChild(makeTable(['approval_id', 'remediation_id', 'decision', 'applied', 'decided_at'], rows, '承認一覧（' + title + '）'));
+      group.appendChild(makeTable(['approval_id', 'remediation_id', 'decision', 'applied', 'decided_at'], rows, '承認一覧（' + title + '）'));
     }
     section('レビュー待ち', pending);
     section('承認済み（未反映/未確認）', approved);
@@ -1540,12 +1692,332 @@ td, th { font-variant-numeric: tabular-nums; }
     return p;
   }
 
+  function loadExcerpt(requestedId) {
+    var version = ++state.excerptVersion;
+    var cases = Array.isArray(state.campaigns) ? state.campaigns : [];
+    var selectedId = requestedId || state.selectedCase;
+    var chosen = cases.find(function (c) { return c.campaign_id === selectedId; })
+      || cases.find(function (c) { return c.finding_count > 0; }) || cases[0];
+    if (!chosen || chosen.campaign_id !== state.selectedCase) {
+      state.selectedCase = chosen ? chosen.campaign_id : null;
+      state.excerpt = null;
+      state.excerptError = null;
+    }
+    render();
+    if (!chosen) return Promise.resolve();
+    function current() {
+      return state.route.name === 'list' && state.excerptVersion === version;
+    }
+    return fetchJSON('/api/campaigns/' + encodeURIComponent(chosen.campaign_id), 'case-excerpt')
+      .then(function (record) {
+        if (!current()) return;
+        if (!record || !record.campaign || record.campaign.campaign_id !== chosen.campaign_id || !Array.isArray(record.findings))
+          throw new Error('記録の形式を確認できません。');
+        state.excerpt = record.findings;
+        Object.assign(chosen, record.campaign);
+        state.excerptError = null;
+        render();
+      }).catch(function (error) {
+        if (!current() || error.superseded) return;
+        if (!canShowPrevious(error)) state.excerpt = null;
+        if (error.httpStatus === 403) state.excerptError = 'この案件の検知記録を表示する権限がありません。';
+        else if (error.httpStatus === 404) state.excerptError = 'この案件の記録が見つかりません。案件一覧を更新してください。';
+        else state.excerptError = state.excerpt ? '更新できませんでした。前回取得した検知記録を表示しています。' : '検知記録を取得できませんでした。上の更新ボタンで再試行できます。';
+        render();
+      });
+  }
+
+  var severityNames = { critical:'重大', high:'高', medium:'中', low:'低', info:'情報' };
+
+  function findingCount(c, compact) {
+    if (c.finding_count_status === 'unavailable' || !Number.isInteger(c.finding_count)) return '未集計';
+    if (c.finding_count_status === 'partial') return compact ? '一部未集計' : '一部未集計（確認済み ' + c.finding_count + ' 件）';
+    return c.finding_count + ' 件';
+  }
+
+  function appendCoverage(parent, c) {
+    if (!c.unverified_run_count) return;
+    var box = text('div', null, 'excerpt-notice');
+    box.appendChild(text('p', '集計済み ' + c.verified_run_count + ' 実行 ／ 未集計 ' + c.unverified_run_count + ' 実行'));
+    (c.unverified_run_ids || []).forEach(function (rid) {
+      var a = text('a', '未集計の実行を確認　' + rid);
+      a.href = '#/run/' + encodeURIComponent(rid);
+      box.appendChild(a);
+      box.appendChild(document.createElement('br'));
+    });
+    parent.appendChild(box);
+  }
+
+  function caseSheet(c) {
+    var sheet = text('section', null, 'case-sheet');
+    sheet.setAttribute('data-key', 'sheet-' + c.campaign_id);
+    sheet.id = 'case-sheet';
+    sheet.setAttribute('aria-label', '選択中の案件の検知記録');
+    var head = text('div', null, 'sheet-head');
+    var identity = text('div', null, 'sheet-identity');
+    var first = state.excerpt && state.excerpt[0];
+    var caseName = c.intent_id || c.campaign_id;
+    identity.appendChild(text('span', first ? caseName + '　·　検知 1 件目' : caseName, 'sheet-label'));
+    var heading = text('h2');
+    heading.appendChild(first ? orUnrecorded(first.title) : document.createTextNode('案件の記録'));
+    identity.appendChild(heading);
+    head.appendChild(identity);
+    var stats = text('div', null, 'sheet-number');
+    stats.appendChild(text('span', '検知'));
+    if (c.finding_count_status === 'partial' || c.finding_count_status === 'unavailable' || !Number.isInteger(c.finding_count)) {
+      stats.appendChild(text('b', findingCount(c), 'count-pending'));
+    } else {
+      stats.appendChild(text('strong', c.finding_count));
+      stats.appendChild(text('span', '件'));
+    }
+    head.appendChild(stats);
+    var meta = text('div', null, 'sheet-meta');
+    if (first) meta.appendChild(text('span', '重大度　' + (severityNames[first.severity] || '未記録'), 'first-severity'));
+    var caseStatus = text('span', '案件の状態　');
+    caseStatus.appendChild(statusBadge(c.status));
+    meta.appendChild(caseStatus);
+    meta.appendChild(text('span', '最終実行　' + (fmtTime(c.last_run_at) || '未記録')));
+    head.appendChild(meta);
+    sheet.appendChild(head);
+    var body = text('div', null, 'sheet-body');
+    body.setAttribute('aria-live','polite');
+    body.setAttribute('data-key','excerpt-body');
+    appendCoverage(body,c);
+    if (state.excerptError) body.appendChild(text('p', state.excerptError, 'excerpt-notice'));
+    if (state.excerpt === null && !state.excerptError) body.appendChild(text('p','記録を読み込んでいます。','muted'));
+    if (state.excerpt) {
+      if (!state.excerpt.length && !c.unverified_run_count && Number.isInteger(c.finding_count)) body.appendChild(text('p','この案件に登録された検知項目はまだありません。','muted'));
+      else if (state.excerpt.length > 1) {
+        body.appendChild(text('h3','同じ案件のほかの検知'));
+        var findings = text('ul', null, 'excerpt-list');
+        state.excerpt.slice(1,4).forEach(function (finding) {
+          if (!finding) return;
+          var item = text('li');
+          var sev = text('span', severityNames[finding.severity] || '未記録', 'severity-tag');
+          sev.setAttribute('data-level', finding.severity || '');
+          sev.setAttribute('aria-label','重大度 ' + sev.textContent);
+          item.appendChild(sev);
+          var title = text('span', null, 'excerpt-title');
+          title.appendChild(orUnrecorded(finding.title));
+          item.appendChild(title);
+          findings.appendChild(item);
+        });
+        body.appendChild(findings);
+        if (state.excerpt.length > 4) body.appendChild(text('p', '全 ' + state.excerpt.length + ' 件のうち、先頭の4件を表示しています。','muted'));
+      }
+    }
+    var links = text('div', null, 'sheet-actions');
+    var evidence = text('a', '証跡を開く', 'action-main');
+    evidence.href = '#/campaign/' + encodeURIComponent(c.campaign_id);
+    var decision = text('a', 'この案件の判断を見る', 'action-secondary');
+    decision.href = '/decision?campaign=' + encodeURIComponent(c.campaign_id);
+    links.appendChild(evidence); links.appendChild(decision); sheet.appendChild(links);
+    sheet.appendChild(body);
+    return sheet;
+  }
+
+  function loadRelations() {
+    var version = ++state.detailVersion;
+    var query = new URLSearchParams(location.search).get('view') === 'blue' ? '?view=blue' : '';
+    function current() { return state.route.name === 'relations' && state.detailVersion === version; }
+    return fetchJSON('/api/campaign-relations' + query, 'campaign-relations').then(function (data) {
+      if (!current()) return;
+      if (data && data.status === 'withheld') {
+        state.detail = null;
+        state.detailError = '案件のつながりはこの表示では非公開です。';
+      } else {
+        if (!data || !Array.isArray(data.campaigns) || data.campaigns.some(function (c) {
+          return !c || typeof c.campaign_id !== 'string' || !/^[a-z0-9][a-z0-9-]{0,63}$/.test(c.campaign_id);
+        })) throw new Error('案件の応答形式が不正です。');
+        state.detail = campaignHistories(data.campaigns);
+        state.detailError = null;
+      }
+      render();
+    }).catch(function (error) {
+      if (!current() || error.superseded) return;
+      if (!canShowPrevious(error)) state.detail = null;
+      state.detailError = state.detail ? '更新できませんでした。前回取得したつながりを表示しています。' : '案件のつながりを取得できませんでした。手動更新で再試行できます。';
+      render();
+    });
+  }
+
+  function campaignHistories(cases) {
+    var byId = new Map();
+    var roots = [];
+    cases.forEach(function (c) {
+      var parent = c.previous_id;
+      if (Array.isArray(c.previous_candidates) && c.previous_candidates.length > 1) {
+        var chosen = null;
+        try { chosen = localStorage.getItem('aym.previous.' + c.campaign_id); } catch (_) {}
+        parent = c.previous_candidates.includes(chosen) ? chosen : null;
+      }
+      byId.set(c.campaign_id, { record:c, parent:parent, children:[], count:1, latest:c.created_at || '' });
+    });
+    if (byId.size !== cases.length) throw new Error('案件IDが重複しています。');
+    byId.forEach(function (node) {
+      var parent = node.parent;
+      if (parent == null) roots.push(node);
+      else if (byId.has(parent)) byId.get(parent).children.push(node);
+      else throw new Error('比較元の案件が見つかりません。');
+    });
+    var order = roots.slice();
+    for (var i = 0; i < order.length; i++) {
+      var node = order[i];
+      node.root = node.root || node;
+      node.children.forEach(function (child) { child.root = node.root; order.push(child); });
+    }
+    if (order.length !== cases.length) throw new Error('案件の比較元が循環しています。');
+    // 後続の案件が最も多い側を幹に置き、他の枝は実際の比較元から引く。
+    for (var j = order.length - 1; j >= 0; j--) {
+      var entry = order[j];
+      entry.children.forEach(function (child) {
+        entry.count += child.count;
+        if (child.latest > entry.latest) entry.latest = child.latest;
+      });
+      entry.children.sort(function (a,b) {
+        return b.count - a.count || a.record.campaign_id.localeCompare(b.record.campaign_id);
+      });
+    }
+    roots.sort(function (a,b) { return b.latest.localeCompare(a.latest); });
+    return { byId:byId, roots:roots };
+  }
+
+  function relationCase(c, ordinal, selectedId) {
+    var link = text('a', null, 'relation-case');
+    link.href = '#/campaign/' + encodeURIComponent(c.campaign_id);
+    link.setAttribute('data-key', 'relation-link-' + c.campaign_id);
+    if (ordinal) {
+      var dot = text('span', null, 'history-dot');
+      dot.setAttribute('aria-hidden','true');
+      link.appendChild(dot);
+      var uncertain = ordinal === 1 && (c.previous_candidates || []).length > 1;
+      var phase = text('span', uncertain ? '前回未選択' : ordinal === 1 ? '初回' : ordinal + '回目', 'history-phase');
+      if (c.campaign_id === selectedId) {
+        phase.appendChild(text('small', '選択中'));
+        link.setAttribute('aria-current','true');
+      }
+      link.appendChild(phase);
+    }
+    var name = text('strong');
+    name.appendChild(orUnrecorded(c.intent_id || c.campaign_id));
+    link.appendChild(name);
+    var when = text('time', '作成　' + (fmtTime(c.created_at) || '未記録'));
+    if (c.created_at) when.dateTime = c.created_at;
+    link.appendChild(when);
+    return link;
+  }
+
+  function historySheet(root, selectedId) {
+    var sheet = text('section', null, 'history-sheet');
+    sheet.setAttribute('data-key','history-' + root.record.campaign_id);
+    var head = text('div', null, 'history-head');
+    var name = root.record.intent_id || root.record.campaign_id;
+    head.appendChild(text('h2', name.replace(/-\d{8}[A-Z]?$/, '') || name));
+    head.appendChild(text('span', root.count + ' 件の履歴', 'history-count'));
+    sheet.appendChild(head);
+    var steps = text('ol', null, 'history-steps');
+    steps.setAttribute('aria-label','比較元から順に並べた案件');
+    sheet.appendChild(steps);
+    var pending = [{ node:root, ordinal:1, list:steps }];
+    var branched = false;
+    while (pending.length) {
+      var track = pending.pop();
+      var node = track.node;
+      var ordinal = track.ordinal;
+      while (node) {
+        var row = text('li', null, 'history-step');
+        row.setAttribute('data-key', 'step-' + node.record.campaign_id);
+        row.appendChild(relationCase(node.record, ordinal, selectedId));
+        track.list.appendChild(row);
+        if (node.children.length > 1) {
+          branched = true;
+          row.appendChild(text('p', 'ここから ' + node.children.length + ' 件に分岐', 'history-fork-label'));
+          node.children.slice(1).forEach(function (child) {
+            var branch = text('ol', null, 'history-steps history-branch');
+            branch.setAttribute('aria-label', (node.record.intent_id || node.record.campaign_id) + ' からの分岐');
+            row.appendChild(branch);
+            pending.push({ node:child, ordinal:ordinal + 1, list:branch });
+          });
+        }
+        ordinal++;
+        node = node.children[0];
+      }
+    }
+    if (!branched && root.count <= 4) steps.classList.add('history-short');
+    return sheet;
+  }
+
+  function renderRelations() {
+    var view = document.createDocumentFragment();
+    var id = state.route.params.id;
+    var intro = text('div', null, 'relations-intro');
+    var back = text('a', id ? 'すべての案件のつながりを見る' : '案件と検知に戻る', 'relation-back');
+    back.href = id ? '#/relations' : '#/';
+    intro.appendChild(back);
+    view.appendChild(intro);
+    if (state.detailError) {
+      var notice = text('p', state.detailError, 'excerpt-notice');
+      notice.setAttribute('role','status');
+      intro.appendChild(notice);
+    }
+    if (!state.detail) {
+      if (!state.detailError) intro.appendChild(text('p', '案件のつながりを読み込んでいます。'));
+      return view;
+    }
+    var history = state.detail;
+    if (id && !history.byId.has(id)) { intro.appendChild(text('p', '指定された案件は一覧にありません。')); return view; }
+    if (!history.roots.length) { intro.appendChild(text('p', '案件はまだありません。')); return view; }
+    var roots = id ? [history.byId.get(id).root] : history.roots;
+    intro.appendChild(text('p', '線は、判断画面で比較に使う前回の案件と、その次の案件を結んでいます。'));
+    history.byId.forEach(function (node) {
+      var candidates = node.record.previous_candidates;
+      if (!Array.isArray(candidates) || candidates.length < 2 || (id && node.root !== roots[0])) return;
+      var box = text('section', null, 'previous-choice');
+      var cid = node.record.campaign_id;
+      box.appendChild(text('h3', (node.record.intent_id || cid) + ' の前回候補　' + candidates.length + ' 件'));
+      var decision = text('a', 'この案件の判断を見る');
+      decision.href = '/decision?campaign=' + encodeURIComponent(cid);
+      box.appendChild(decision);
+      box.appendChild(text('p', node.parent ? 'このブラウザーで選んだ案件と比較します。' : '同時刻の候補があります。前回にあたる案件を選ぶと、このブラウザーに保存します。'));
+      candidates.forEach(function (candidate) {
+        var other = history.byId.get(candidate);
+        if (!other) return;
+        var button = text('button', (candidate === node.parent ? '選択中　' : '') + (other.record.intent_id || candidate) + '　' + candidate);
+        button.type = 'button'; button.dataset.previousFor = cid; button.dataset.previousId = candidate;
+        button.setAttribute('aria-pressed', String(candidate === node.parent));
+        box.appendChild(button);
+      });
+      if (node.parent) {
+        var reset = text('button', '選択を解除'); reset.type = 'button'; reset.dataset.previousFor = cid; box.appendChild(reset);
+      }
+      view.appendChild(box);
+    });
+    roots.forEach(function (root) {
+      if (root.count > 1) view.appendChild(historySheet(root, id));
+    });
+    var singles = roots.filter(function (root) { return root.count === 1 && !(root.record.previous_candidates || []).length; });
+    if (singles.length) {
+      view.appendChild(text('h2', '比較相手のない案件　' + singles.length + ' 件'));
+      var rest = text('ul', null, 'relation-list');
+      singles.forEach(function (node) {
+        var row = text('li', null, 'relation-single');
+        row.appendChild(relationCase(node.record));
+        rest.appendChild(row);
+      });
+      view.appendChild(rest);
+    }
+    return view;
+  }
+
   function renderList() {
     var frag = document.createDocumentFragment();
     var p1 = document.createElement('section');
-    p1.className = 'panel';
-    p1.appendChild(text('h2', 'Campaign一覧'));
-    p1.appendChild(text('p', '各Campaignの状態・最終実行日時・検知件数を表示します。詳細はリンクから遷移します。', 'lead'));
+    p1.className = 'panel ledger';
+    var desk = text('div', null, 'case-desk');
+    desk.setAttribute('data-key','case-desk');
+    var title = text('h2', '案件一覧');
+    if (Array.isArray(state.campaigns)) title.appendChild(text('span', state.campaigns.length + ' 件', 'ledger-count'));
+    p1.appendChild(title);
     if (state.campaignsError) {
       p1.appendChild(text('p', '取得に失敗しました: ' + state.campaignsError, 'muted'));
       if (state.campaigns) {
@@ -1559,21 +2031,56 @@ td, th { font-variant-numeric: tabular-nums; }
         oC.className = 'muted';
         p1.appendChild(oC);
       }
+    } else if (!state.campaigns.length) {
+      p1.appendChild(text('p', '案件はまだありません。記録が作成されると、ここに表示されます。', 'empty-ledger'));
     } else {
-      var rows = [];
+      var compact = text('label', '表示する案件', 'compact-picker');
+      var select = document.createElement('select');
+      select.id = 'case-choice';
+      compact.appendChild(select);
+      p1.appendChild(compact);
+      var records = document.createElement('ul');
+      records.className = 'record-list';
+      records.setAttribute('aria-label', '案件一覧');
       for (var i = 0; i < state.campaigns.length; i++) {
         var c = state.campaigns[i];
         if (!c || !c.campaign_id) continue;
-        var link = document.createElement('a');
-        link.href = '#/campaign/' + encodeURIComponent(c.campaign_id);
+        var active = c.campaign_id === state.selectedCase;
+        var option = text('option', (c.intent_id || c.campaign_id) + '　·　検知 ' + findingCount(c,true));
+        option.value = c.campaign_id;
+        if (active) option.setAttribute('selected', '');
+        select.appendChild(option);
+        var link = document.createElement('button');
+        link.type = 'button';
+        link.setAttribute('data-select-case',c.campaign_id);
+        link.setAttribute('aria-pressed',String(active));
+        link.setAttribute('aria-controls','case-sheet');
         link.setAttribute('data-key', 'list-campaign-' + c.campaign_id);
-        link.textContent = c.campaign_id;
-        var blind = c.status === 'blind' ? badge('Blind', 'warn', '○') : badge(c.status || '未記録', 'info', '●');
-        rows.push([link, blind, orUnrecorded(fmtTime(c.last_run_at)), orUnrecorded(c.finding_count)]);
+        var row = document.createElement('li');
+        row.setAttribute('data-key', 'record-' + c.campaign_id);
+        var identity = text('span', null, 'record-identity');
+        identity.appendChild(text('strong', c.intent_id || c.campaign_id));
+        if (c.intent_id) identity.appendChild(text('small', c.campaign_id));
+        link.appendChild(identity);
+        link.appendChild(c.status === 'blind' ? badge('Blind', 'warn', '○') : statusBadge(c.status));
+        var time = text('span', null, 'record-time');
+        time.appendChild(text('small', '最終実行'));
+        time.appendChild(orUnrecorded(fmtTime(c.last_run_at)));
+        link.appendChild(time);
+        var count = text('span', null, 'record-count');
+        count.appendChild(text('small', '検知'));
+        count.appendChild(text('b', findingCount(c,true)));
+        link.appendChild(count);
+        var arrow = text('span', '→', 'record-arrow');
+        arrow.setAttribute('aria-hidden', 'true'); link.appendChild(arrow);
+        row.appendChild(link); records.appendChild(row);
       }
-      p1.appendChild(makeTable(['Campaign', '状態', '最終実行日時', '検知件数'], rows, 'キャンペーン一覧'));
+      p1.appendChild(records);
     }
-    frag.appendChild(p1);
+    desk.appendChild(p1);
+    var selected = (state.campaigns || []).find(function (c) { return c.campaign_id === state.selectedCase; });
+    if (selected) desk.appendChild(caseSheet(selected));
+    frag.appendChild(desk);
 
     var p2 = document.createElement('section');
     p2.className = 'panel';
@@ -1608,7 +2115,6 @@ td, th { font-variant-numeric: tabular-nums; }
       }
       p2.appendChild(makeTable(['役割', '要求モデル', '登録状態', '開発呼び出し状態', '製品接続状態', 'モデル版の固定'], mrows, 'モデル状態'));
     }
-    frag.appendChild(p2);
 
     var p3 = document.createElement('section');
     p3.className = 'panel';
@@ -1635,9 +2141,13 @@ td, th { font-variant-numeric: tabular-nums; }
       }
       p3.appendChild(makeTable(['name', 'status', 'mode', 'checked_at'], arows, '接続先一覧'));
     }
-    frag.appendChild(p3);
-
     frag.appendChild(renderApprovals());
+    var environment = text('details', null, 'details-block environment');
+    environment.setAttribute('data-key', 'environment');
+    environment.appendChild(text('summary', 'モデルと接続先の状態'));
+    environment.appendChild(p2);
+    environment.appendChild(p3);
+    frag.appendChild(environment);
 
     return frag;
   }
@@ -1739,16 +2249,16 @@ td, th { font-variant-numeric: tabular-nums; }
     var head = document.createElement('div');
     head.className = 'detail-head';
     head.setAttribute('data-key', 'campaign-head-' + id);
-    var h2 = text('h2', id);
+    var h2 = text('h2', c.intent_id || id);
     head.appendChild(h2);
     var dl = document.createElement('dl');
     dl.className = 'detail-meta';
     var fields = [
-      ['intent_id', c.intent_id],
+      ['campaign_id', id],
       ['status', c.status],
       ['created_at', fmtTime(c.created_at)],
       ['last_run_at', fmtTime(c.last_run_at)],
-      ['finding_count', c.finding_count]
+      ['finding_count', findingCount(c)]
     ];
     for (var i = 0; i < fields.length; i++) {
       var pair = document.createElement('div');
@@ -1766,6 +2276,7 @@ td, th { font-variant-numeric: tabular-nums; }
       dl.appendChild(pair);
     }
     head.appendChild(dl);
+    appendCoverage(head,c);
     p.appendChild(head);
 
     // Summary metrics (4)
@@ -1794,8 +2305,7 @@ td, th { font-variant-numeric: tabular-nums; }
       m.appendChild(mv);
       if (res.denom) {
         var dn = document.createElement('div');
-        dn.className = 'muted';
-        dn.style.fontSize = '12px';
+        dn.className = 'metric-denominator muted';
         dn.appendChild(res.denom);
         m.appendChild(dn);
       }
@@ -1865,7 +2375,7 @@ td, th { font-variant-numeric: tabular-nums; }
     var pFind = document.createElement('section');
     pFind.className = 'panel';
     pFind.setAttribute('data-key', 'campaign-findings-' + id);
-    pFind.appendChild(text('h2', '検知（findings）'));
+    pFind.appendChild(text('h2', '検知の記録'));
     var findings = Array.isArray(d.findings) ? d.findings : [];
     var assessStatusById = null;
     var aRep = state.detail.assessment;
@@ -1877,7 +2387,7 @@ td, th { font-variant-numeric: tabular-nums; }
       }
     }
     if (findings.length === 0) {
-      pFind.appendChild(text('p', '該当なし', 'muted'));
+      pFind.appendChild(text('p', c.unverified_run_count ? '検知の集計が完了していません。' : '該当なし', 'muted'));
     } else {
       var ul = document.createElement('ul');
       ul.className = 'incident-list';
@@ -2692,7 +3202,7 @@ td, th { font-variant-numeric: tabular-nums; }
     var link=document.getElementById('switch-to-decision');
     if(!link)return;
     var r=state.route||{},cid=null;
-    if(r.name==='campaign')cid=r.params&&r.params.id;
+    if(r.name==='campaign'||r.name==='relations')cid=r.params&&r.params.id;
     if(r.name==='run'&&state.detail&&state.detail.kind==='run'&&state.detail.data&&state.detail.data.run)
       cid=state.detail.data.run.campaign_id;
     link.href=cid&&/^[a-z0-9][a-z0-9-]{0,63}$/.test(cid)?'/decision?campaign='+encodeURIComponent(cid):'/decision';
@@ -2700,6 +3210,9 @@ td, th { font-variant-numeric: tabular-nums; }
 
   function render() {
     updateDecisionSwitch();
+    var titles = { list:'案件と検知', relations:'案件のつながり', campaign:'案件の記録', run:'実行の記録', sources:'資料と出典', source:'資料の詳細' };
+    document.body.dataset.screen = state.route.name;
+    document.getElementById('monitor-heading').textContent = titles[state.route.name] || '記録モニター';
     var activeBefore = document.activeElement;
     var fk = captureFocusKey();
     renderNav();
@@ -2707,6 +3220,7 @@ td, th { font-variant-numeric: tabular-nums; }
     setBanners(buildBanners());
     var frag;
     if (state.route.name === 'sources' || state.route.name === 'source') frag = renderSources();
+    else if (state.route.name === 'relations') frag = renderRelations();
     else if (state.route.name === 'campaign') frag = renderCampaignDetail();
     else if (state.route.name === 'run') frag = renderRunDetail();
     else frag = renderList();
@@ -2716,6 +3230,8 @@ td, th { font-variant-numeric: tabular-nums; }
       applyCampaignView(frag, state.route.params.id);
     }
     reconcileChildren(el.viewRoot, frag.childNodes);
+    var selector = document.getElementById('case-choice');
+    if (selector && selector.value !== state.selectedCase) selector.value = state.selectedCase;
     // Only restore focus if the previously focused node was lost from the DOM.
     if (fk && activeBefore && activeBefore !== document.body && !document.contains(activeBefore)) {
       restoreFocusKey(fk);
@@ -2730,7 +3246,8 @@ td, th { font-variant-numeric: tabular-nums; }
     setBusy(true);
     if (manual === true) el.refreshBtn.setAttribute('data-manual-busy', '');
     var p = loadCore();
-    if (state.route.name !== 'list') p = p.then(function () { return loadDetail(); });
+    if (state.route.name === 'relations') p = Promise.all([p,loadRelations()]);
+    else if (state.route.name !== 'list') p = p.then(function () { return loadDetail(); });
     refreshInProgress = p.then(function () {
       refreshInProgress = null;
       setBusy(false);
@@ -2761,7 +3278,30 @@ td, th { font-variant-numeric: tabular-nums; }
   });
 
   el.viewRoot.addEventListener('click', onViewRootClick);
+  el.viewRoot.addEventListener('click', function (event) {
+    var previous = event.target.closest('button[data-previous-for]');
+    if (previous && state.detail && state.detail.byId) {
+      var key = 'aym.previous.' + previous.dataset.previousFor;
+      try {
+        if (previous.dataset.previousId) localStorage.setItem(key,previous.dataset.previousId);
+        else localStorage.removeItem(key);
+        state.detail = campaignHistories(Array.from(state.detail.byId.values(), function (node) { return node.record; }));
+        state.detailError = null;
+      } catch (_) { state.detailError = '前回の選択をこのブラウザーに保存できませんでした。'; }
+      render();
+      return;
+    }
+    var choice = event.target.closest('button[data-select-case]');
+    if (choice && choice.dataset.selectCase !== state.selectedCase) loadExcerpt(choice.dataset.selectCase);
+  });
+  el.viewRoot.addEventListener('change', function (event) {
+    if (event.target.id === 'case-choice') loadExcerpt(event.target.value);
+  });
 
+  document.querySelector('.skip-link').addEventListener('click', function (event) {
+    event.preventDefault();
+    document.getElementById('main').focus();
+  });
   window.addEventListener('hashchange', navigate);
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) stopAuto();

@@ -12,7 +12,15 @@ Keep a Changelog の区分で管理する。記録には既存最大番号 +1 �
 
 ## [Unreleased]
 
+### Changed
+
+- 0027 — 2026-11-23。索引設定、RSI方針、製品ガイドの要約を原文に合わせ、LLM接続の検収計画に管理項目と証跡への参照を補った。[Task 20261123-03](docs/tasks/TASK.document-consistency-11-23-2026.md)・[文書検査](docs/acceptance/AC-20261123-03.md)
+- 0024 — 2026-11-22。モニターの入口で案件を選ぶと検知名と重大度を読めるようにした。「案件のつながり」では初回から各回を線で結び、分岐と選択中の案件を表示する。各回からその記録を開ける。判断画面には判断が必要な課題、次の行動、未検査の範囲を表示する。非公開となった記録の表示も修正した。[Task 20261122-01](docs/tasks/TASK.frontend-review-11-22-2026.md) / [AC-20261122-01](docs/acceptance/AC-20261122-01.md)
+
 ### Added
+
+- 0026 — 2026-11-23。未集計と検知0件を区別し、同時刻の前回候補を選択式にした。案件一覧は各台帳を1回だけ読んで集計する。[Task 20261123-02](docs/tasks/TASK.monitor-counts-11-23-2026.md)・[技術検収](docs/acceptance/AC-20261123-02.md)
+- 0025 — 2026-11-23。「システム構成図」でリポジトリ同士とAWSリソースの関係をたどり、指摘のある部品・根拠・対応を確認できる。架空の見本とローカル構成ファイルの読み込みに対応した。[Task 20261123-01](docs/tasks/TASK.architecture-map-11-23-2026.md)・[技術検収](docs/acceptance/AC-20261123-01.md)
 
 - 0023 — 2026-11-16: 非技術者・意思決定者向けの読み取り専用「判断の画面」を `decision_view/` へ独立追加。Campaignのfindingと前回差分をJSON化し、優先度・期限・KEV/EPSS・状態をHTMLで表示。既存モニター、server API、CLIルーティングを変更しない。添付ZIPを元にURL・日付検証を補強。Python 13 passed、Node 13 passed（単体検証）。リポジトリ全体回帰・ブラウザー実測・実Campaign連携は未実行で技術検収保留。
   [Task 20261116-01](docs/tasks/TASK.decision-view-11-16-2026.md) / [AC-20261116-01](docs/acceptance/AC-20261116-01.md) / [使用方法](decision_view/README.md)。

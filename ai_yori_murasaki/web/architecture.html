@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>システム構成図 | AI YORI MURASAKI</title>
+<style>
+:root {color-scheme:light;--ink:#2f2737;--muted:#625b69;--line:#dad4df;--purple:#543b65;--paper:#faf9fb;--rust:#983819;--tint:#f9ece4}
+* {box-sizing:border-box}
+body {margin:0;background:#f6f4f7;color:var(--ink);font:16px/1.55 "Yu Gothic UI","Hiragino Kaku Gothic ProN",Meiryo,sans-serif}
+[hidden] {display:none!important}
+button,select,input {font:inherit}
+button,select,.file {cursor:pointer}
+button,a,select {touch-action:manipulation}
+a {color:var(--purple);text-underline-offset:3px}
+:focus-visible {outline:3px solid #87639c;outline-offset:3px}
+.skip {position:absolute;top:-80px;left:16px;background:#fff;padding:8px;z-index:5}
+.skip:focus {top:12px}
+.top {background:#fff;border-bottom:1px solid var(--line)}
+.top-inner,main {width:min(100% - 48px,1380px);margin:auto}
+.top-inner {min-height:66px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand {display:flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none;font-size:14px;font-weight:750;letter-spacing:.075em}
+.seal {display:grid;place-items:center;width:32px;height:32px;border-radius:5px;background:var(--purple);color:white;font:700 22px/1 serif;box-shadow:-3px 3px #cfc0d7}
+.top nav {display:flex;gap:16px}.top nav a {display:inline-flex;align-items:center;min-height:44px}
+main {padding:24px 0 48px}
+.heading,.toolbar,.panel-head,.picker,.source-row,.mode,.flag-list {display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.heading {justify-content:space-between;align-items:end}
+h1,h2,h3,p {margin:0}
+h1 {margin-top:2px;font-size:clamp(26px,3.2vw,42px);line-height:1.25;letter-spacing:-.035em;overflow-wrap:anywhere}
+h2 {font-size:20px;line-height:1.45} h3 {font-size:17px}
+.context,.meta,.kind,.hint {font-size:15px;color:var(--muted)}
+.source-row {margin-top:10px;gap:8px 16px}.source {display:inline-flex;align-items:center;gap:6px;font-weight:650}
+.source:before {content:"";width:8px;height:8px;border-radius:50%;background:var(--purple)}
+.toolbar {gap:8px}.btn,.file,.mode button,.chip {display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:7px 12px;border:1px solid #bcb1c3;border-radius:7px;background:#fff;color:var(--purple);font-weight:650;text-decoration:none}
+.file {background:var(--purple);color:#fff;border-color:var(--purple);position:relative;overflow:hidden}
+.file input {position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.file:focus-within {outline:3px solid #87639c;outline-offset:3px}
+.guide {margin:12px 0 16px;color:var(--muted);max-width:88ch}
+summary {cursor:pointer;width:fit-content;padding:5px 0;color:var(--purple);text-decoration:underline;text-underline-offset:3px}
+.guide p {margin:5px 0}.notice {margin:12px 0;padding:10px 14px;border-left:3px solid var(--rust);background:var(--tint);overflow-wrap:anywhere}
+.workspace {display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,340px);gap:16px;align-items:start}
+.map-panel,.detail {background:white;border:1px solid var(--line);border-radius:12px;min-width:0}
+.panel-head {justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line)}
+.mode {gap:2px;padding:3px;border-radius:9px;background:#f1eef3}.mode button {min-height:38px;border:0;background:transparent;font-size:15px}.mode button[aria-pressed=true] {background:var(--purple);color:white}
+.map-frame {overflow:auto;max-height:min(68vh,720px);background-color:var(--paper);background-image:radial-gradient(#d7d0dc .9px,transparent 1px);background-size:16px 16px;overscroll-behavior:contain}
+#diagram {display:block;max-width:none}
+.lane {fill:#fff;fill-opacity:.61;stroke:#d9d3dd;stroke-dasharray:4 5}
+.lane-title {fill:#55475f;font-size:14px;font-weight:700}
+.edge {fill:none;stroke:#8c8192;stroke-width:1.8;vector-effect:non-scaling-stroke}.edge.near {stroke:#674779;stroke-width:2.7}
+.node {cursor:pointer;outline:none}.node .box {fill:#fff;stroke:#afa4b6;stroke-width:1.5}
+.node.near .box {stroke:#80648e}.node.flagged .box {stroke:#bd714e}.node.selected .box {stroke:#604076;stroke-width:3;fill:#faf6fd}
+.node.selected.flagged .box {stroke:#a44624;fill:#fff7f0}
+.node:focus-visible .box,.node:hover .box {stroke:#36263f;stroke-width:3}
+.node-title {fill:var(--ink);font-size:15px;font-weight:700}.node-type {fill:#615668;font-size:12px}
+.glyph {fill:none;stroke:currentColor;stroke-width:1.65;stroke-linejoin:round;stroke-linecap:round}
+.alert-icon {fill:#9b3c1d}.alert-text {fill:white;font-size:12px;font-weight:800}
+.node-issue {fill:#873a1d;font-size:12px}
+.graph-footer {padding:12px 18px 15px;border-top:1px solid var(--line)}
+.flag-list {gap:6px 8px}.flag-list h3 {margin-right:4px}.chip {min-height:36px;border-color:#d6ab94;background:#fff7f1;color:#84381e;font-size:14px}
+.flag-list:not(:empty) {padding:9px 18px;border-bottom:1px solid var(--line)}
+.detail {padding:18px}.detail h2 {font-size:24px;overflow-wrap:anywhere}.detail p,.detail dd,.detail li,.meta {overflow-wrap:anywhere}
+.detail .description {margin:5px 0 16px}.detail section {border-top:1px solid var(--line);padding-top:14px;margin-top:14px}
+.finding {margin-top:10px;padding:12px;border-left:3px solid #af5638;background:#fcf3ed;border-radius:0 6px 6px 0}
+.finding h3 {margin:4px 0 8px}.level {color:#783016;font-size:14px;font-weight:750}
+dl {margin:0}dt {font-weight:700;font-size:14px;color:#624e46}dd {margin:0 0 8px}dd:last-child {margin:0}
+.links {list-style:none;margin:8px 0 0;padding:0}.links li {padding:8px 0;border-top:1px solid #ece8ee}.links li:first-child {border:0}
+.link {border:0;background:transparent;padding:3px 0;color:var(--purple);font-weight:650;text-decoration:underline;text-align:left}
+.link-evidence {font-size:14px;color:var(--muted)}
+.picker {padding:0 18px 12px;align-items:center}.picker label {font-size:14px;font-weight:650}.picker select {width:min(100%,280px);min-height:40px;padding:5px 7px;border:1px solid #b9abbf;background:#fff;border-radius:5px;color:var(--ink)}
+.sr {clip-path:inset(50%);position:absolute;width:1px;height:1px;overflow:hidden;white-space:nowrap}
+.return-map {display:none}.btn:hover,.chip:hover {border-color:#6d497c}
+@media(min-width:901px){.detail {position:sticky;top:12px}}
+@media(max-width:900px){.workspace{grid-template-columns:1fr}.return-map{display:inline-flex;margin-top:12px}.detail {scroll-margin-top:8px}}
+@media(max-width:620px){.top-inner,main{width:calc(100% - 24px)}.top-inner{min-height:56px}.top nav{gap:9px}.brand{font-size:11px;gap:6px}.top nav a{font-size:14px}main{padding-top:16px}.heading{gap:12px}.panel-head{padding:10px 12px;gap:8px}.mode button{font-size:14px}.picker{padding:0 12px 12px}.graph-footer{padding:10px 12px}.mode{gap:0}.map-frame{max-height:420px}.detail{padding:14px}}
+@media(prefers-reduced-motion:no-preference){.node .box,.edge{transition:stroke .14s ease,fill .14s ease}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">本文へ移る</a>
+<header class="top"><div class="top-inner"><a class="brand" href="/"><span class="seal" aria-hidden="true">紫</span> AI YORI MURASAKI</a><nav aria-label="製品の画面"><a href="/">モニター</a><a href="/decision">判断の画面</a></nav></div></header>
+<main id="main" tabindex="-1">
+<div class="heading"><div><p class="context">システム構成図</p><h1 id="name">構成図を読み込み中</h1><div class="source-row"><span class="source" id="source"></span><span class="meta" id="counts"></span></div></div>
+<div class="toolbar"><button type="button" class="btn" id="reset" hidden>見本に戻す</button><label class="file">構成ファイルを開く<input id="file" type="file" multiple accept=".json,.yaml,.yml" aria-label="構成ファイルを開く"></label></div></div>
+<details class="guide"><summary>読み込めるファイルと見本</summary>
+<p>構成図（JSON・YAML）では、リポジトリ、AWSリソース、接続の理由、対象ごとの指摘を指定できます。<a href="/architecture/sample.json" download="architecture-sample.json">編集用の見本JSONを保存</a></p>
+<p>CloudFormation（JSON・YAML）はリソースと設定上の依存関係を読み取ります。package.json は repository を指定したものを順に追加すると、読み込んだリポジトリ間の依存が線になります。</p>
+<p>ファイルはこのタブで処理します。上限は1ファイル1 MiB、構成要素100件、接続300件です。<a href="/architecture?system=aym">ai-yori-murasaki の改修後の構成図を開く</a></p></details>
+<p id="error" class="notice" role="alert" hidden></p><span class="sr" id="status" role="status"></span>
+<div class="workspace" id="workspace" hidden>
+<section class="map-panel" aria-labelledby="map-title"><div class="panel-head"><h2 id="map-title">構成と接続</h2>
+<div class="mode" role="group" aria-label="図の表示範囲"><button id="all" aria-pressed="true">構成全体</button><button id="repos" aria-pressed="false">リポジトリ間</button></div></div>
+<div id="flags" class="flag-list"></div>
+<div class="map-frame" id="frame" tabindex="0" role="region" aria-label="構成図。構成要素を選ぶと接続と指摘を確認できます"><svg id="diagram" role="group" aria-label="構成要素と依存関係の図"></svg></div>
+<div class="graph-footer"><p id="note" class="hint"></p></div>
+<div class="picker"><label for="choose">構成要素を選択</label><select id="choose"></select><label><input type="checkbox" id="nearby"> 直接つながる要素だけ表示</label></div></section>
+<aside class="detail" id="detail" tabindex="-1" aria-labelledby="detail-name"><p class="kind" id="detail-kind"></p><h2 id="detail-name"></h2><p class="description" id="description"></p><section><h3 id="finding-count"></h3><div id="findings"></div></section><section><h3>この要素の接続</h3><ul class="links" id="links"></ul></section><button class="btn return-map" id="return">図に戻る</button></aside>
+</div></main>
+<script type="module" src="/architecture/map.mjs"></script>
+</body></html>

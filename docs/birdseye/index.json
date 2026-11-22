@@ -1,5 +1,5 @@
 {
-  "generated_at": "00030",
+  "generated_at": "00038",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -15,8 +15,8 @@
     "CHANGELOG.md": {
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
-      "mtime": "00003",
-      "source_sha256": "2faf00d417c3a234ea7950a2a4e486b47832eccd442c6173c623f3787d687a46"
+      "mtime": "00038",
+      "source_sha256": "418089a88da68adabb1aad802ec08cfadf338fadcc7fdce2abe5f4e25c43ae87"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -36,14 +36,14 @@
     "HUB.codex.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
-      "mtime": "00007",
-      "source_sha256": "83fd97690e4824e3028e756de3ee52f3a6b6e0a936dc0d61dad474f527ee50d1"
+      "mtime": "00038",
+      "source_sha256": "9f13c91a15868a5e6e5492a6465604d4d4a28e6e57e46377cc77d11ee0af229e"
     },
     "README.md": {
       "role": "overview",
       "caps": "docs/birdseye/caps/README.md.json",
-      "mtime": "00008",
-      "source_sha256": "cf00d09830a28250b4e448e859694d3901b5d5550f8846d7f1830644def65faf"
+      "mtime": "00038",
+      "source_sha256": "3a95439a5c6d10d6e6810d57d9e02bd7327af984a5206369bcc41de4d9cd8a60"
     },
     "RUNBOOK.md": {
       "role": "operations",
@@ -70,8 +70,8 @@
     "docs/acceptance/INDEX.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
-      "mtime": "00013",
-      "source_sha256": "9d3faeaefdba3195db1d16e488fef4160348b1111711268eb7e8eabb4582e249"
+      "mtime": "00038",
+      "source_sha256": "1094169cf96d87d1a319c8f50877b5e56096e7cc7ed03278d292ba0196d68888"
     },
     "docs/acceptance/README.md": {
       "role": "guide",
@@ -113,8 +113,8 @@
     "docs/tasks/README.md": {
       "role": "operations",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
-      "mtime": "00022",
-      "source_sha256": "976d8ff28fe2be759bcc1623f1d908f8005ad7db80b8cc238750d5ce5fd50e2b"
+      "mtime": "00038",
+      "source_sha256": "f9a821648b31fb00ee7fde489f74ac05909163a604af6863c2c4a3bee0badb9e"
     },
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md": {
       "role": "task",
@@ -144,8 +144,8 @@
     "codemap.config.json": {
       "role": "configuration",
       "caps": "docs/birdseye/caps/codemap.config.json.json",
-      "mtime": "00028",
-      "source_sha256": "1b08339e12ca6456b91acf829036f10592b2120a59d6da3a00cf0b5379164221"
+      "mtime": "00038",
+      "source_sha256": "88e8755d02e53fd2dab832bf29fc6733014dfd5d92c853ad86f2c7a0b3206396"
     },
     ".github/PULL_REQUEST_TEMPLATE.md": {
       "role": "template",
@@ -193,7 +193,8 @@
     "docs/RSI.md": {
       "role": "policy",
       "caps": "docs/birdseye/caps/docs.RSI.md.json",
-      "mtime": "00034"
+      "mtime": "00038",
+      "source_sha256": "625aa5defee17c9adb8c872e3313407458d92a0812757151c3c076212baaf7ee"
     },
     "docs/tasks/TASK.rsi-policy-11-06-2026.md": {
       "role": "task",
@@ -280,7 +281,8 @@
     "docs/PRODUCT-GUIDE.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.PRODUCT-GUIDE.md.json",
-      "mtime": "00051"
+      "mtime": "00038",
+      "source_sha256": "47d39e9f88e9857d29cbf42e9e096e601a182ec0b07e479b4e9f393b107f093f"
     },
     "docs/requirements/ACCEPTANCE-PLAN.md": {
       "role": "doc",
@@ -290,8 +292,8 @@
     "docs/requirements/API-CONTRACTS.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.requirements.API-CONTRACTS.md.json",
-      "mtime": "00053",
-      "source_sha256": "d0bcc46bca713f77d754c008c48a5563c826ea6198d83ccd8ba2217d55cd36a6"
+      "mtime": "00037",
+      "source_sha256": "ea50e942717344033f99853500173707bb15348c5f073e5e532d9801d3e95a92"
     },
     "docs/requirements/COMPACTION-01.md": {
       "role": "doc",
@@ -358,7 +360,7 @@
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.requirements.MONITOR-REDESIGN.md.json",
       "mtime": "00066",
-      "source_sha256": "efbc47d806937348470d2d81fe9aa2a69d172e70ce469429a268900ae9aca0ad"
+      "source_sha256": "0fa2c3ac35671a66d77daf432abd8978b7496e7d395562f8bfbcbefe76c8e0e6"
     },
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md": {
       "role": "doc",
@@ -432,8 +434,8 @@
     "THIRD_PARTY_NOTICES.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/THIRD_PARTY_NOTICES.md.json",
-      "mtime": "00083",
-      "source_sha256": "66a13d25d47c353bb93aac94fcda5f9f42f5f6e1b7d4730bb4f8165675071c1f"
+      "mtime": "00036",
+      "source_sha256": "ec9a4a70f3c0b232b12b72bfb370f9bf3d57e6af84f7a95f39b73cfa08eb2af1"
     },
     "docs/acceptance/AC-20261108-02.md": {
       "role": "doc",
@@ -558,6 +560,84 @@
       "caps": "docs/birdseye/caps/docs.releases.RA-20261109-02.md.json",
       "mtime": "00105",
       "source_sha256": "5a40192f36ea3a3aea4ae4d050f60d8ac4291e73b9fc6d5cba0ee076751f8043"
+    },
+    "docs/acceptance/AC-20261122-01.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261122-01.md.json",
+      "mtime": "00031",
+      "source_sha256": "94668a82371384fd2ad9ad45f76776540563b87652ad0a8ed53f136275e57b20"
+    },
+    "docs/tasks/TASK.frontend-review-11-22-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.frontend-review-11-22-2026.md.json",
+      "mtime": "00031",
+      "source_sha256": "9277bec9fcfbb384b4412e05c0c4cb9fc52a812a8a314e310d35e5055fd3f0b8"
+    },
+    "docs/tasks/TASK.architecture-map-11-23-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.architecture-map-11-23-2026.md.json",
+      "source_sha256": "9bd73bedd770f974b435b5c0eaef4f2dffd952355537a19881c448f68f08510b",
+      "mtime": "00036"
+    },
+    "docs/acceptance/AC-20261123-01.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261123-01.md.json",
+      "source_sha256": "539bbcb98f75475dd2836ec501445c62a9de1d595459e2e83c510e260e8d836c",
+      "mtime": "00036"
+    },
+    "docs/tasks/TASK.monitor-counts-11-23-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.monitor-counts-11-23-2026.md.json",
+      "source_sha256": "479ebba328d8207fd495c93f5817e1af6705bbce39236deea39ccc287d4ad622",
+      "mtime": "00037"
+    },
+    "docs/acceptance/AC-20261123-02.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261123-02.md.json",
+      "source_sha256": "da0b6b6071213fa2c51ccfbbebbee1bfd8abf2f8cccd02a0a2247953735a4233",
+      "mtime": "00037"
+    },
+    "docs/INSTALL-DGX.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.INSTALL-DGX.md.json",
+      "mtime": "00038",
+      "source_sha256": "60d866451d6b8b19b300e4c8919110b7611b23a6433d1f3987cf468e95822443"
+    },
+    "docs/acceptance/AC-20261109-07.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261109-07.md.json",
+      "mtime": "00038",
+      "source_sha256": "b850103f1c09eb1f6dfa7e42facfb31a7c8376a2f71e0117c3f91ee97ae42c03"
+    },
+    "docs/acceptance/AC-20261111-01.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261111-01.md.json",
+      "mtime": "00038",
+      "source_sha256": "3aceec9d04d74d5191df4cab147375ab35f619974fbccdfc6f7dd5d45b2c6ed0"
+    },
+    "docs/acceptance/AC-20261123-03.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261123-03.md.json",
+      "mtime": "00038",
+      "source_sha256": "29178df6d007885b95ecc8a76300eb3f42534f7c49c86b730291cdcf3c4cf6de"
+    },
+    "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.agent-rsi-pin-11-11-2026.md.json",
+      "mtime": "00038",
+      "source_sha256": "f4b67e146b4c03ae6cef0098f7e6b5ac68ac1751a87c1e64eae258c72e469452"
+    },
+    "docs/tasks/TASK.document-consistency-11-23-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.document-consistency-11-23-2026.md.json",
+      "mtime": "00038",
+      "source_sha256": "087f181f6c09314cea87c1897846aab79733dde046b9b713342a349ab6b3f737"
+    },
+    "docs/tasks/TASK.llm-remote-11-09-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.llm-remote-11-09-2026.md.json",
+      "mtime": "00038",
+      "source_sha256": "56baf6067501d742929eaf18d48a2b0f75fb9a6a75154cb7e4286c322f2bb004"
     }
   },
   "edges": [
@@ -671,11 +751,51 @@
     ],
     [
       "CHANGELOG.md",
+      "docs/acceptance/AC-20261111-01.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/acceptance/AC-20261122-01.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/acceptance/AC-20261123-01.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/acceptance/AC-20261123-02.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/acceptance/AC-20261123-03.md"
+    ],
+    [
+      "CHANGELOG.md",
       "docs/evidence/wazuh-live-20261108.md"
     ],
     [
       "CHANGELOG.md",
       "docs/tasks/TASK.agent-core-11-08-2026.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.architecture-map-11-23-2026.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.document-consistency-11-23-2026.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.frontend-review-11-22-2026.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.monitor-counts-11-23-2026.md"
     ],
     [
       "CHANGELOG.md",
@@ -883,6 +1003,10 @@
     ],
     [
       "HUB.codex.md",
+      "docs/INSTALL-DGX.md"
+    ],
+    [
+      "HUB.codex.md",
       "docs/PRODUCT-GUIDE.md"
     ],
     [
@@ -907,6 +1031,26 @@
     ],
     [
       "HUB.codex.md",
+      "docs/acceptance/AC-20261109-07.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/acceptance/AC-20261122-01.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/acceptance/AC-20261123-01.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/acceptance/AC-20261123-02.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/acceptance/AC-20261123-03.md"
+    ],
+    [
+      "HUB.codex.md",
       "docs/acceptance/INDEX.md"
     ],
     [
@@ -928,6 +1072,22 @@
     [
       "HUB.codex.md",
       "docs/tasks/README.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/tasks/TASK.architecture-map-11-23-2026.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/tasks/TASK.document-consistency-11-23-2026.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/tasks/TASK.frontend-review-11-22-2026.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/tasks/TASK.monitor-counts-11-23-2026.md"
     ],
     [
       "HUB.codex.md",
@@ -960,6 +1120,10 @@
     [
       "README.md",
       "RUNBOOK.md"
+    ],
+    [
+      "README.md",
+      "docs/INSTALL-DGX.md"
     ],
     [
       "README.md",
@@ -1012,6 +1176,10 @@
     [
       "README.md",
       "docs/tasks/README.md"
+    ],
+    [
+      "README.md",
+      "docs/tasks/TASK.architecture-map-11-23-2026.md"
     ],
     [
       "README.md",
@@ -1247,7 +1415,15 @@
     ],
     [
       "docs/RSI.md",
+      "docs/acceptance/AC-20261111-01.md"
+    ],
+    [
+      "docs/RSI.md",
       "docs/evidence/rsi-reference-snapshot-20261106.json"
+    ],
+    [
+      "docs/RSI.md",
+      "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md"
     ],
     [
       "docs/RSI.md",
@@ -1362,6 +1538,66 @@
       "docs/tasks/TASK.agent-core-11-08-2026.md"
     ],
     [
+      "docs/acceptance/AC-20261109-07.md",
+      "docs/INSTALL-DGX.md"
+    ],
+    [
+      "docs/acceptance/AC-20261109-07.md",
+      "docs/tasks/TASK.llm-remote-11-09-2026.md"
+    ],
+    [
+      "docs/acceptance/AC-20261111-01.md",
+      "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md"
+    ],
+    [
+      "docs/acceptance/AC-20261122-01.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "docs/acceptance/AC-20261122-01.md",
+      "docs/tasks/TASK.frontend-review-11-22-2026.md"
+    ],
+    [
+      "docs/acceptance/AC-20261123-01.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "docs/acceptance/AC-20261123-01.md",
+      "docs/tasks/TASK.architecture-map-11-23-2026.md"
+    ],
+    [
+      "docs/acceptance/AC-20261123-02.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "docs/acceptance/AC-20261123-02.md",
+      "docs/tasks/TASK.monitor-counts-11-23-2026.md"
+    ],
+    [
+      "docs/acceptance/AC-20261123-03.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "docs/acceptance/AC-20261123-03.md",
+      "codemap.config.json"
+    ],
+    [
+      "docs/acceptance/AC-20261123-03.md",
+      "docs/PRODUCT-GUIDE.md"
+    ],
+    [
+      "docs/acceptance/AC-20261123-03.md",
+      "docs/RSI.md"
+    ],
+    [
+      "docs/acceptance/AC-20261123-03.md",
+      "docs/acceptance/AC-20261109-07.md"
+    ],
+    [
+      "docs/acceptance/AC-20261123-03.md",
+      "docs/tasks/TASK.document-consistency-11-23-2026.md"
+    ],
+    [
       "docs/acceptance/ACCEPTANCE_TEMPLATE.md",
       "docs/releases/README.md"
     ],
@@ -1403,7 +1639,55 @@
     ],
     [
       "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261109-07.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261111-01.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261122-01.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261123-01.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261123-02.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261123-03.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
       "docs/tasks/TASK.agent-core-11-08-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.architecture-map-11-23-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.document-consistency-11-23-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.frontend-review-11-22-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.llm-remote-11-09-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.monitor-counts-11-23-2026.md"
     ],
     [
       "docs/acceptance/INDEX.md",
@@ -1611,6 +1895,30 @@
     ],
     [
       "docs/tasks/README.md",
+      "docs/acceptance/AC-20261109-07.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261111-01.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261122-01.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261123-01.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261123-02.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261123-03.md"
+    ],
+    [
+      "docs/tasks/README.md",
       "docs/acceptance/README.md"
     ],
     [
@@ -1620,6 +1928,30 @@
     [
       "docs/tasks/README.md",
       "docs/tasks/TASK.agent-core-11-08-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.architecture-map-11-23-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.document-consistency-11-23-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.frontend-review-11-22-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.llm-remote-11-09-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.monitor-counts-11-23-2026.md"
     ],
     [
       "docs/tasks/README.md",
@@ -1664,6 +1996,46 @@
     [
       "docs/tasks/TASK.agent-core-11-08-2026.md",
       "docs/evidence/wazuh-live-20261108.md"
+    ],
+    [
+      "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
+      "docs/acceptance/AC-20261111-01.md"
+    ],
+    [
+      "docs/tasks/TASK.architecture-map-11-23-2026.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "docs/tasks/TASK.architecture-map-11-23-2026.md",
+      "docs/acceptance/AC-20261123-01.md"
+    ],
+    [
+      "docs/tasks/TASK.document-consistency-11-23-2026.md",
+      "docs/acceptance/AC-20261109-07.md"
+    ],
+    [
+      "docs/tasks/TASK.document-consistency-11-23-2026.md",
+      "docs/acceptance/AC-20261123-03.md"
+    ],
+    [
+      "docs/tasks/TASK.frontend-review-11-22-2026.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "docs/tasks/TASK.frontend-review-11-22-2026.md",
+      "docs/acceptance/AC-20261122-01.md"
+    ],
+    [
+      "docs/tasks/TASK.frontend-review-11-22-2026.md",
+      "docs/requirements/MONITOR-REDESIGN.md"
+    ],
+    [
+      "docs/tasks/TASK.llm-remote-11-09-2026.md",
+      "docs/acceptance/AC-20261109-07.md"
+    ],
+    [
+      "docs/tasks/TASK.monitor-counts-11-23-2026.md",
+      "docs/acceptance/AC-20261123-02.md"
     ],
     [
       "docs/tasks/TASK.monitor-redesign-11-07-2026.md",

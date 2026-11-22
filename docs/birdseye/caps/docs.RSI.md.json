@@ -2,7 +2,7 @@
   "id": "docs/RSI.md",
   "role": "policy",
   "public_api": [],
-  "summary": "再帰的自己改善の9項目と実装・比較・未見課題・経験・レビュー・反映の分離を定め、実検収へ案内する。",
+  "summary": "自己改善の9項目、評価条件の固定、採用と反映の区別を定める。旧版と同一の候補は比較を省き、モデル固定には事前に定めたdigestと実行時の観測の一致を求める。",
   "deps_out": [
     "EVALUATION.md",
     "RUNBOOK.md",
@@ -11,7 +11,9 @@
     "docs/PRODUCT-GUIDE.md",
     "docs/acceptance/AC-20261106-02.md",
     "docs/acceptance/AC-20261106-06.md",
+    "docs/acceptance/AC-20261111-01.md",
     "docs/evidence/rsi-reference-snapshot-20261106.json",
+    "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
     "docs/tasks/TASK.rsi-policy-11-06-2026.md"
   ],
   "deps_in": [
@@ -26,6 +28,7 @@
     "TASK.codex.md",
     "docs/ADR/0002-rsi-policy.md",
     "docs/CONTRACTS.md",
+    "docs/acceptance/AC-20261123-03.md",
     "docs/tasks/TASK.rsi-policy-11-06-2026.md",
     "governance/policy.yaml"
   ],
@@ -35,13 +38,13 @@
   "tests": [
     "RUNBOOK の文書ゲートと RSI-DOC-01〜06 を照合する。"
   ],
-  "source_sha256": "e6fb02186ec0aa4420b8ec522726dfb4b7c6589fdc8e9c8f78e1041633ad3692",
-  "generated_at": "00021",
+  "source_sha256": "625aa5defee17c9adb8c872e3313407458d92a0812757151c3c076212baaf7ee",
+  "generated_at": "00038",
   "review": {
-    "reviewed_at": "2026-11-06T19:30:36.760596+00:00",
+    "reviewed_at": "2026-11-23T01:17:45+09:00",
     "reviewed_by": "Codex",
-    "source_sha256": "e6fb02186ec0aa4420b8ec522726dfb4b7c6589fdc8e9c8f78e1041633ad3692",
-    "summary_sha256": "e4697ba20eee17351f3008fc2f5c704bc771d26fc34017ac49485d3b58ca1458",
-    "scope": "原文と要約・導線を照合。製品の実測範囲と未検証の区別を維持。"
+    "source_sha256": "625aa5defee17c9adb8c872e3313407458d92a0812757151c3c076212baaf7ee",
+    "summary_sha256": "f02412982fac840e2baa000e3367af5a1ee189d39c1e9638ad0811909ba52b14",
+    "scope": "11月11日追記の同一候補・モデル固定の扱い、関連Task・検収、従来の9項目を照合。"
   }
 }

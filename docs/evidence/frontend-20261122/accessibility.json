@@ -1,0 +1,119 @@
+[
+  {
+    "screen": "monitor",
+    "width": 1440,
+    "layout": {
+      "client": 1440,
+      "scroll": 1440
+    },
+    "violations": []
+  },
+  {
+    "screen": "assessment",
+    "width": 1440,
+    "layout": {
+      "client": 1440,
+      "scroll": 1440
+    },
+    "violations": []
+  },
+  {
+    "screen": "picker",
+    "width": 1440,
+    "layout": {
+      "client": 1440,
+      "scroll": 1440
+    },
+    "violations": []
+  },
+  {
+    "screen": "decision",
+    "width": 1440,
+    "layout": {
+      "client": 1440,
+      "scroll": 1440
+    },
+    "violations": []
+  },
+  {
+    "screen": "monitor",
+    "width": 390,
+    "layout": {
+      "client": 390,
+      "scroll": 390
+    },
+    "violations": []
+  },
+  {
+    "screen": "assessment",
+    "width": 390,
+    "layout": {
+      "client": 390,
+      "scroll": 390
+    },
+    "violations": []
+  },
+  {
+    "screen": "picker",
+    "width": 390,
+    "layout": {
+      "client": 390,
+      "scroll": 390
+    },
+    "violations": []
+  },
+  {
+    "screen": "decision",
+    "width": 390,
+    "layout": {
+      "client": 390,
+      "scroll": 390
+    },
+    "violations": []
+  },
+  {
+    "screen": "decision-dark",
+    "width": 390,
+    "layout": {
+      "client": 390,
+      "scroll": 390
+    },
+    "violations": []
+  },
+  {
+    "screen": "decision-dark",
+    "width": 320,
+    "layout": {
+      "client": 320,
+      "scroll": 320
+    },
+    "violations": []
+  },
+  {
+    "screen": "monitor-with-findings",
+    "width": 1440,
+    "layout": {
+      "client": 1440,
+      "scroll": 1440
+    },
+    "violations": []
+  },
+  {
+    "screen": "monitor-with-findings",
+    "width": 390,
+    "layout": {
+      "client": 390,
+      "scroll": 390
+    },
+    "violations": []
+  },
+  {
+    "screen": "monitor-with-findings",
+    "width": 320,
+    "layout": {
+      "client": 320,
+      "scroll": 320
+    },
+    "violations": []
+  }
+]

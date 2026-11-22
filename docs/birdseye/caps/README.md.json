@@ -2,7 +2,7 @@
   "id": "README.md",
   "role": "overview",
   "public_api": [],
-  "summary": "製品概要と起動。資料の手動読取取り込み、出典リンク、白基調と文字拡大、657件成功を案内し、実サービス未接続と既存の性能限界を分ける。",
+  "summary": "製品概要、起動、検知・判断・構成図の使い方。集計状態、同時刻の比較元選択と改修後の図へ案内する。",
   "deps_out": [
     "BLUEPRINT.md",
     "CHANGELOG.md",
@@ -10,6 +10,7 @@
     "GUARDRAILS.md",
     "HUB.codex.md",
     "RUNBOOK.md",
+    "docs/INSTALL-DGX.md",
     "docs/PRODUCT-GUIDE.md",
     "docs/RSI.md",
     "docs/SOURCES.md",
@@ -26,6 +27,7 @@
     "docs/requirements/SPEC-CORE.md",
     "docs/requirements/SPEC-EVALUATION.md",
     "docs/tasks/README.md",
+    "docs/tasks/TASK.architecture-map-11-23-2026.md",
     "docs/workflow-adoption.md"
   ],
   "deps_in": [
@@ -42,13 +44,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "cf00d09830a28250b4e448e859694d3901b5d5550f8846d7f1830644def65faf",
-  "generated_at": "00030",
+  "source_sha256": "3a95439a5c6d10d6e6810d57d9e02bd7327af984a5206369bcc41de4d9cd8a60",
+  "generated_at": "00038",
   "review": {
-    "reviewed_at": "2026-11-09T05:32:05.052545+00:00",
+    "reviewed_at": "2026-11-23T01:17:45+09:00",
     "reviewed_by": "Codex",
-    "source_sha256": "cf00d09830a28250b4e448e859694d3901b5d5550f8846d7f1830644def65faf",
-    "summary_sha256": "441df81b24be5e9ec26a5503d553f8ccaff8a5b3af9eaa3dd6231a4260a34fc6",
-    "scope": "今回の原文・要約・参照を照合。MCPローカル試験、実サービス未検証、画面実測、参考情報と判定証拠の分離を確認。"
+    "source_sha256": "3a95439a5c6d10d6e6810d57d9e02bd7327af984a5206369bcc41de4d9cd8a60",
+    "summary_sha256": "c1a1f60a33c2fd35ded5bbfaacbd8d129ed741bb234a94371457760074405898",
+    "scope": "既存READMEの導入手順への参照と索引の対応を確認。"
   }
 }

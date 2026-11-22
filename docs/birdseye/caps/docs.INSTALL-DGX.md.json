@@ -1,0 +1,23 @@
+{
+  "id": "docs/INSTALL-DGX.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "HUB.codex.md",
+    "README.md",
+    "docs/acceptance/AC-20261109-07.md"
+  ],
+  "deps_out": [],
+  "summary": "認証付きOpenAI互換接続の設定、秘密情報の扱い、接続設定のテストと実環境で確認する項目を記す導入手順。",
+  "generated_at": "00038",
+  "source_sha256": "60d866451d6b8b19b300e4c8919110b7611b23a6433d1f3987cf468e95822443",
+  "review": {
+    "reviewed_at": "2026-11-23T01:17:45+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "60d866451d6b8b19b300e4c8919110b7611b23a6433d1f3987cf468e95822443",
+    "summary_sha256": "8daa6e5514cbac69b296fbce8fa9c29441efc28591bdd7f77b4d1d7c43ad8050",
+    "scope": "設定・セキュリティ・検証の各節が検収計画の参照先に合うことを確認。"
+  }
+}
