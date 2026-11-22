@@ -2,7 +2,7 @@
   "id": "README.md",
   "role": "overview",
   "public_api": [],
-  "summary": "製品概要と起動。資料の手動読取取り込み、出典リンク、白基調と文字拡大、657件成功を案内し、実サービス未接続と既存の性能限界を分ける。",
+  "summary": "製品概要、起動、判断の画面・記録モニターと制約。架空の案件を使った画面例と、既存の実験・検証記録に案内する。",
   "deps_out": [
     "BLUEPRINT.md",
     "CHANGELOG.md",
@@ -42,13 +42,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "cf00d09830a28250b4e448e859694d3901b5d5550f8846d7f1830644def65faf",
-  "generated_at": "00030",
+  "source_sha256": "82852156da56f217f3ab855f9d931cfbdac36bb9f67ecd2bf142788ecd01bffa",
+  "generated_at": "00032",
   "review": {
-    "reviewed_at": "2026-11-09T05:32:05.052545+00:00",
+    "reviewed_at": "2026-11-22T13:38:04+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "cf00d09830a28250b4e448e859694d3901b5d5550f8846d7f1830644def65faf",
-    "summary_sha256": "441df81b24be5e9ec26a5503d553f8ccaff8a5b3af9eaa3dd6231a4260a34fc6",
-    "scope": "今回の原文・要約・参照を照合。MCPローカル試験、実サービス未検証、画面実測、参考情報と判定証拠の分離を確認。"
+    "source_sha256": "82852156da56f217f3ab855f9d931cfbdac36bb9f67ecd2bf142788ecd01bffa",
+    "summary_sha256": "92fdde99c311a8c0aaafc91e34baec2cef1929153ab6bd2c6738cc4e29ebd134",
+    "scope": "今回の画面改修の記載、要約、Task・技術検収への参照を照合。"
   }
 }

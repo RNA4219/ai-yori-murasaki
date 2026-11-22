@@ -2,7 +2,7 @@
   "id": "docs/acceptance/INDEX.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "技術検収一覧。資料取り込み・出典リンク・画面変更をAC-20261109-02として追跡し、追加のソース反映承認RA-20261109-02を記録する。",
+  "summary": "技術検収の一覧。案件と証跡の画面改修はAC-20261122-01から確認でき、各項目の公開状態を併記する。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -17,7 +17,9 @@
     "docs/acceptance/AC-20261108-03.md",
     "docs/acceptance/AC-20261109-01.md",
     "docs/acceptance/AC-20261109-02.md",
+    "docs/acceptance/AC-20261122-01.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
+    "docs/tasks/TASK.frontend-review-11-22-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
     "docs/tasks/TASK.product-clarity-11-07-2026.md",
     "docs/tasks/TASK.product-completion-11-06-2026.md",
@@ -40,13 +42,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "9d3faeaefdba3195db1d16e488fef4160348b1111711268eb7e8eabb4582e249",
-  "generated_at": "00030",
+  "source_sha256": "9b4a5800d085425f8ba81257cc888f5d2bd4f980535702738d1efa4d28e07a2f",
+  "generated_at": "00032",
   "review": {
-    "reviewed_at": "2026-11-09T05:32:05.052039+00:00",
+    "reviewed_at": "2026-11-22T13:38:04+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "9d3faeaefdba3195db1d16e488fef4160348b1111711268eb7e8eabb4582e249",
-    "summary_sha256": "2039b7895ead5cd52ae83c3aac7f540c38c0f8ba2b5c478be37ea5b30e56a878",
-    "scope": "今回の原文・要約・参照を照合。MCPローカル試験、実サービス未検証、画面実測、参考情報と判定証拠の分離を確認。"
+    "source_sha256": "9b4a5800d085425f8ba81257cc888f5d2bd4f980535702738d1efa4d28e07a2f",
+    "summary_sha256": "ef780aedb27786dd026f5285e4147ff3d5c94262ef1df0de74fe71fc5a4211f5",
+    "scope": "今回の画面改修の記載、要約、Task・技術検収への参照を照合。"
   }
 }

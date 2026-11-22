@@ -12,6 +12,10 @@ Keep a Changelog の区分で管理する。記録には既存最大番号 +1 �
 
 ## [Unreleased]
 
+### Changed
+
+- 0024 — 2026-11-22。判断待ちの件数から課題と理由を読めるようにし、モニターの案件一覧に目的名・状態・検知件数・最終実行をまとめた。非公開応答を受けた際の再表示と、スマートフォンでの案件選択も修正した。[Task 20261122-01](docs/tasks/TASK.frontend-review-11-22-2026.md) / [AC-20261122-01](docs/acceptance/AC-20261122-01.md)
+
 ### Added
 
 - 0023 — 2026-11-16: 非技術者・意思決定者向けの読み取り専用「判断の画面」を `decision_view/` へ独立追加。Campaignのfindingと前回差分をJSON化し、優先度・期限・KEV/EPSS・状態をHTMLで表示。既存モニター、server API、CLIルーティングを変更しない。添付ZIPを元にURL・日付検証を補強。Python 13 passed、Node 13 passed（単体検証）。リポジトリ全体回帰・ブラウザー実測・実Campaign連携は未実行で技術検収保留。

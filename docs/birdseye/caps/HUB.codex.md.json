@@ -2,7 +2,7 @@
   "id": "HUB.codex.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "文書の用途別入口。資料取り込みガイド、追加Taskと検収、既存の品質修正・評価・運用へ案内する。",
+  "summary": "作業の索引。課題を判断して証跡を読む画面、製品操作、既存の評価と運用のTask・検収へ案内する。",
   "deps_out": [
     ".agents/skills/security-audit/SKILL.md",
     "AGENTS.md",
@@ -28,6 +28,7 @@
     "docs/acceptance/AC-20261107-03.md",
     "docs/acceptance/AC-20261109-01.md",
     "docs/acceptance/AC-20261109-02.md",
+    "docs/acceptance/AC-20261122-01.md",
     "docs/acceptance/INDEX.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
@@ -38,6 +39,7 @@
     "docs/requirements/SPEC-ASSESSMENT.md",
     "docs/reviews/REVIEW-INTAKE-20261107.md",
     "docs/tasks/README.md",
+    "docs/tasks/TASK.frontend-review-11-22-2026.md",
     "docs/tasks/TASK.sources-light-ui-11-09-2026.md",
     "docs/workflow-adoption.md",
     "governance/policy.yaml"
@@ -52,13 +54,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "83fd97690e4824e3028e756de3ee52f3a6b6e0a936dc0d61dad474f527ee50d1",
-  "generated_at": "00030",
+  "source_sha256": "1934620c1b797c38f641553cf1903dd46ca0fd7983197c4232569507ca8b7f1d",
+  "generated_at": "00032",
   "review": {
-    "reviewed_at": "2026-11-09T05:32:05.054668+00:00",
+    "reviewed_at": "2026-11-22T13:38:04+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "83fd97690e4824e3028e756de3ee52f3a6b6e0a936dc0d61dad474f527ee50d1",
-    "summary_sha256": "c06fba06b15076f9898a56f9be476bafe72f39dd6af4d568ea78a2fb98e70e25",
-    "scope": "今回の原文・要約・参照を照合。MCPローカル試験、実サービス未検証、画面実測、参考情報と判定証拠の分離を確認。"
+    "source_sha256": "1934620c1b797c38f641553cf1903dd46ca0fd7983197c4232569507ca8b7f1d",
+    "summary_sha256": "4107688e6b34ebc04c65a802233b7ee8bd57073a9d5b9019a3ba677f02a4931d",
+    "scope": "今回の画面改修の記載、要約、Task・技術検収への参照を照合。"
   }
 }

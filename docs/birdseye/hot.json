@@ -1,5 +1,5 @@
 {
-  "generated_at": "00030",
+  "generated_at": "00031",
   "index_snapshot": "docs/birdseye/index.json",
   "refresh_command": "RUNBOOK.md#execute と docs/BIRDSEYE.md の PowerShell 手順を参照",
   "curation_notes": "ローカル製品、要件、検収、文書運用の入口。生成世代と原文・要約の内容確認を区別する。",
@@ -7,7 +7,7 @@
     {
       "id": "README.md",
       "role": "overview",
-      "reason": "隔離ラボの起動、エージェント実動作とWazuh追補の確認範囲への案内。",
+      "reason": "製品の起動、2画面の使い分けと画面例、実測と制約の入口。",
       "caps": "docs/birdseye/caps/README.md.json",
       "edges": [
         "BLUEPRINT.md",
@@ -31,12 +31,12 @@
         "docs/tasks/README.md",
         "docs/workflow-adoption.md"
       ],
-      "last_verified_at": "2026-11-06T21:40:29.654233+00:00"
+      "last_verified_at": "2026-11-22T13:39:00+00:00"
     },
     {
       "id": "HUB.codex.md",
       "role": "navigation",
-      "reason": "製品操作、要件の再評価、調査、RSI、文書運用、検収の原文へ案内する。",
+      "reason": "画面改修と検収、製品操作、要件・評価・運用の原文へ案内する。",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
       "edges": [
         ".agents/skills/security-audit/SKILL.md",
@@ -59,16 +59,18 @@
         "docs/UPSTREAM.md",
         "docs/acceptance/AC-20261106-06.md",
         "docs/acceptance/AC-20261107-01.md",
+        "docs/acceptance/AC-20261122-01.md",
         "docs/acceptance/INDEX.md",
         "docs/acceptance/README.md",
         "docs/releases/README.md",
         "docs/requirements/MONITOR-REDESIGN.md",
         "docs/reviews/REVIEW-INTAKE-20261107.md",
         "docs/tasks/README.md",
+        "docs/tasks/TASK.frontend-review-11-22-2026.md",
         "docs/workflow-adoption.md",
         "governance/policy.yaml"
       ],
-      "last_verified_at": "2026-11-06T21:40:29.654233+00:00"
+      "last_verified_at": "2026-11-22T13:39:00+00:00"
     },
     {
       "id": "GUARDRAILS.md",

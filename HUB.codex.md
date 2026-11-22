@@ -27,6 +27,7 @@ template_version: 1.0.0
 
 | 依頼 | 入口 | 続けて読むもの |
 | --- | --- | --- |
+| 課題の優先順位と証跡を画面で確認する | [2画面の改修要件](docs/tasks/TASK.frontend-review-11-22-2026.md) | [画面と操作の検収](docs/acceptance/AC-20261122-01.md) |
 | 結果を読む人向けの判断の画面 | [判断ビュー](decision_view/README.md) | [Task 20261116-01](docs/tasks/TASK.decision-view-11-16-2026.md)、[AC-20261116-01](docs/acceptance/AC-20261116-01.md)（未検収） |
 | RSIシナリオ起動・Red課題文・失敗時呼び出し計測 | [Task 20261112-01](docs/tasks/TASK.rsi-scenarios-11-12-2026.md) | [AC-20261112-01](docs/acceptance/AC-20261112-01.md) |
 | 実ログのBlind Blue／Oracle CLI／macOS試験 | [製品操作ガイド](docs/PRODUCT-GUIDE.md#実ログを使った-blind-blue-と-oracle-cli) | [Task](docs/tasks/TASK.ops-imported-blue-11-11-2026.md)、[検収](docs/acceptance/AC-20261111-02.md) |

@@ -10,6 +10,7 @@ next_review_due: 2026-12-06
 
 | Acceptance | Task | 対象 | 公開 |
 | --- | --- | --- | --- |
+| [AC-20261122-01](AC-20261122-01.md) | [20261122-01](../tasks/TASK.frontend-review-11-22-2026.md) | 判断の画面と記録モニターの構成、操作、狭幅表示 | ローカル技術検収 |
 | [AC-20261116-01](AC-20261116-01.md) | [20261116-01](../tasks/TASK.decision-view-11-16-2026.md) | 読み取り専用判断ビュー・JSON出力・独立HTML | 未検収、非公開プレビュー |
 | [AC-20261112-01](AC-20261112-01.md) | [20261112-01](../tasks/TASK.rsi-scenarios-11-12-2026.md) | RSIシナリオのreadonly起動・課題URL・失敗時LLM呼び出し集計 | 未検収 |
 | [AC-20261111-03](AC-20261111-03.md) | [20261111-03](../tasks/TASK.read-target-range-11-11-2026.md) | read_target_fileの範囲切り詰めと継続位置 | 未検収 |

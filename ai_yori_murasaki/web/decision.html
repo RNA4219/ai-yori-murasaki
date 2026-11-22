@@ -10,16 +10,15 @@
   AYM 538e228 の web/index.html（CSP の流儀と、紫の色）。
   外部のファイルは読まない（AYM のサーバーの CSP: インラインはハッシュで許可、connect-src 'self'、style 属性は不可）。
   文字は OS に入っている丸ゴシックを使う（外部のフォントは CSP で読めない）。
-  データの読み方: ?data=<同じ配信元の JSON の URL> / ?campaign=<ID>（/api/campaigns/<ID>/decision-view を読む。API は未実装） / ファイルを選ぶ・落とす。
+  データの読み方: 同じ配信元のJSON、指定Campaignの読み取り専用API、またはファイルを選ぶ・落とす。
 -->
 <style>
-/* 並べ方: 1 列。先頭に「いまの状況」を 1 枚で言い、その下に「いま決めること」「早めに対応すること」を置く。色は藤色の地に、紫を 1 色だけ。 */
+/* 判断の本文、課題の索引、状態の色を分ける。 */
 :root {
-  --bg: #f6f3fa; --panel: #ffffff; --panel-soft: #faf8fd; --fg: #2b2733; --muted: #6f6a7d; --line: #e8e3f0;
-  --accent: #7b4fa0; --accent-soft: #f0e9f7;
+  --bg: #f8f6f9; --panel: #ffffff; --panel-soft: #f4eff7; --fg: #2b2733; --muted: #6f6a7d; --line: #e8e3f0;
+  --accent: #684781; --accent-soft: #f0e9f7;
   --rose: #ae3f55; --rose-soft: #fbeaee; --amber: #8a5f14; --amber-soft: #fbf2df;
   --leaf: #357050; --leaf-soft: #e7f4ec; --indigo: #4d5fa3; --indigo-soft: #eaeefa; --mist: #c9c3d8;
-  --shadow: 0 1px 2px rgba(64, 44, 92, .05), 0 10px 28px rgba(64, 44, 92, .07);
   --font: "Hiragino Maru Gothic ProN", "Tsukushi A Round Gothic", "BIZ UDPGothic", "Yu Gothic UI", "Meiryo", system-ui, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
@@ -29,7 +28,7 @@
     --accent: #c3a6e6; --accent-soft: #33294a;
     --rose: #f0a3b0; --rose-soft: #40232b; --amber: #ecc27a; --amber-soft: #3a2e17;
     --leaf: #8fd3a8; --leaf-soft: #1c3526; --indigo: #a9b6ee; --indigo-soft: #232a48; --mist: #5a546b;
-    --shadow: 0 1px 2px rgba(0, 0, 0, .25); color-scheme: dark;
+    color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
@@ -37,142 +36,186 @@
   --accent: #c3a6e6; --accent-soft: #33294a;
   --rose: #f0a3b0; --rose-soft: #40232b; --amber: #ecc27a; --amber-soft: #3a2e17;
   --leaf: #8fd3a8; --leaf-soft: #1c3526; --indigo: #a9b6ee; --indigo-soft: #232a48; --mist: #5a546b;
-  --shadow: 0 1px 2px rgba(0, 0, 0, .25); color-scheme: dark;
+  color-scheme: dark;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.75 var(--font); -webkit-font-smoothing: antialiased; }
-.wrap { max-width: 860px; margin: 0 auto; padding-block: 24px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 28px; }
-#view { display: grid; gap: 36px; }
-.top { display:flex; align-items:center; gap:10px; color:var(--muted); font-size:14px; }
-.view-switch{display:flex;gap:8px;flex-wrap:wrap}
-.view-switch a,.view-switch [aria-current]{min-height:44px;display:inline-flex;align-items:center;border-radius:999px;padding:9px 18px;border:1px solid var(--line);text-decoration:none}
-.view-switch [aria-current]{background:var(--accent-soft);color:var(--accent);font-weight:700}
-.campaign-list{display:grid;gap:10px}
-.campaign-list a{display:block;padding:12px 16px;border-radius:12px;border:1px solid var(--line);background:var(--panel-soft)}
-
-.mark { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: var(--panel); font-weight: 700; font-size: 15px; }
-h1 { font-size: 26px; line-height: 1.4; margin: 0; text-wrap: balance; letter-spacing: .01em; }
-h2 { font-size: 19px; line-height: 1.4; margin: 0; text-wrap: balance; }
-p { margin: 0; }
-a { color: var(--accent); }
-.muted { color: var(--muted); }
-.small { font-size: 13px; }
-.card { background: var(--panel); border-radius: 22px; box-shadow: var(--shadow); padding: 26px 28px; display: grid; gap: 16px; min-width: 0; }
-.eyebrow { color: var(--accent); font-size: 13px; font-weight: 600; }
-.lead { font-size: 16px; max-width: 38em; }
-.note { border-radius: 16px; padding: 12px 16px; font-size: 14px; }
-.note.warn { background: var(--amber-soft); color: var(--amber); }
-.note.err { background: var(--rose-soft); color: var(--rose); }
-#notes { display: grid; gap: 8px; }
-#notes:empty { display: none; }
-
-/* 先頭の 1 枚 */
-.jump { display: flex; flex-wrap: wrap; gap: 8px; }
-.pill { display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; padding: 6px 14px; background: var(--accent-soft); color: var(--accent); font: inherit; font-size: 14px; border: 0; text-decoration: none; cursor: pointer; }
-.pill b { font-variant-numeric: tabular-nums; }
-.pill.rose { background: var(--rose-soft); color: var(--rose); }
-.pill.amber { background: var(--amber-soft); color: var(--amber); }
-.pill.plain { background: var(--panel-soft); color: var(--muted); box-shadow: inset 0 0 0 1px var(--line); }
-.pill[aria-pressed="true"] { background: var(--accent); color: var(--panel); box-shadow: none; }
-.legend { display: flex; flex-wrap: wrap; gap: 4px 18px; list-style: none; margin: 0; padding: 0; font-size: 13px; color: var(--muted); }
-.legend li { display: inline-flex; align-items: center; gap: 6px; }
-.legend b { color: var(--fg); font-variant-numeric: tabular-nums; }
-.dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
-.dot.done { background: var(--leaf); } .dot.wont_fix { background: var(--muted); } .dot.in_progress { background: var(--indigo); }
-.dot.waiting { background: var(--amber); } .dot.open { background: var(--mist); } .dot.other { background: var(--line); }
-.dot.accent { background: var(--accent); }
-
-/* 見出しと説明 */
-.sec { display: grid; gap: 14px; scroll-margin-top: 16px; }
-.sec-head { display: grid; gap: 4px; padding-inline: 6px; }
-.sec-sub { color: var(--muted); font-size: 14px; max-width: 42em; }
-
-/* 課題の 1 行（開くと理由が読める） */
-.items { display: grid; gap: 10px; }
-.item { background: var(--panel); border-radius: 18px; box-shadow: var(--shadow); min-width: 0; }
-.item > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: start; padding: 16px 20px; border-radius: 18px; }
-.item > summary::-webkit-details-marker { display: none; }
-.item-main { display: grid; gap: 6px; min-width: 0; }
-.item-title { font-weight: 600; font-size: 15.5px; line-height: 1.5; overflow-wrap: anywhere; }
-.item-meta { color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
-.chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chips:empty { display: none; }
-.chip { font-size: 12.5px; border-radius: 999px; padding: 2px 11px; background: var(--accent-soft); color: var(--accent); }
-.chip.crit { background: var(--rose-soft); color: var(--rose); }
-.chip.warn { background: var(--amber-soft); color: var(--amber); }
-.sev { font-size: 12.5px; font-weight: 600; border-radius: 999px; padding: 2px 0; margin-top: 2px; white-space: nowrap; min-width: 4.2em; text-align: center; }
-.sev.critical { background: var(--rose-soft); color: var(--rose); }
-.sev.high { background: var(--amber-soft); color: var(--amber); }
-.sev.medium { background: var(--indigo-soft); color: var(--indigo); }
-.sev.low, .sev.info { background: var(--panel-soft); color: var(--muted); box-shadow: inset 0 0 0 1px var(--line); }
-.chev { width: 9px; height: 9px; margin: 8px 4px 0; border-right: 2px solid var(--mist); border-bottom: 2px solid var(--mist); transform: rotate(45deg); transition: transform .15s ease; }
-.item[open] .chev { transform: rotate(225deg); margin-top: 12px; }
-.item-more { margin: 0 20px; padding: 16px 0 20px; border-top: 1px solid var(--line); display: grid; gap: 14px; font-size: 14px; }
-.facts { display: grid; grid-template-columns: max-content 1fr; gap: 8px 18px; margin: 0; }
-.facts dt { color: var(--muted); }
-.facts dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
-.facts ul { margin: 0; padding-left: 1.2em; }
-.btn { display: inline-flex; align-items: center; gap: 6px; justify-self: start; border-radius: 999px; padding: 7px 18px; background: var(--accent); color: var(--panel); text-decoration: none; font: inherit; font-size: 14px; border: 0; cursor: pointer; }
-.btn.ghost { background: var(--accent-soft); color: var(--accent); }
-.more { display: flex; justify-content: center; }
-.empty { background: var(--leaf-soft); color: var(--leaf); border-radius: 18px; padding: 18px 22px; }
-
-/* 前回から変わったこと */
-.changes { display: grid; gap: 10px; }
-.fold { background: var(--panel); border-radius: 18px; box-shadow: var(--shadow); }
-.fold > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 14px 20px; border-radius: 18px; font-weight: 600; }
-.fold > summary::-webkit-details-marker { display: none; }
-.fold > summary .count { margin-left: auto; color: var(--muted); font-weight: 400; font-variant-numeric: tabular-nums; }
-.fold > summary .chev { margin: 0 4px 4px 8px; }
-.fold[open] > summary .chev { margin: 4px 4px 0 8px; }
-.fold-body { margin: 0 20px; padding: 12px 0 18px; border-top: 1px solid var(--line); font-size: 14px; }
-.fold-body ul { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
-.fold.none { box-shadow: none; background: transparent; }
-.fold.none > summary { cursor: default; color: var(--muted); font-weight: 400; padding-block: 4px; }
-.fold.inline { box-shadow: none; background: var(--panel-soft); }
-.fold.inline > summary { font-weight: 400; color: var(--muted); font-size: 14px; padding: 10px 16px; }
-
-/* 絞り込み */
-.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.filters input[type=search] { flex: 1 1 220px; min-width: 0; }
-input[type=search], select { font: inherit; color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 7px 16px; }
-.scroll { overflow-x: auto; }
-table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
-th, td { border-bottom: 1px solid var(--line); padding: 8px 10px; text-align: left; }
-tr:last-child th, tr:last-child td { border-bottom: 0; }
-th { color: var(--muted); font-weight: 400; white-space: nowrap; }
-td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
-
-/* 読み込み */
-.drop { display: grid; justify-items: center; gap: 12px; border: 2px dashed var(--line); border-radius: 18px; padding: 32px 20px; color: var(--muted); background: var(--panel-soft); cursor: pointer; text-align: center; }
-.drop.over, .drop:focus-within { border-color: var(--accent); color: var(--accent); }
-.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-dl.terms { display: grid; grid-template-columns: max-content 1fr; gap: 8px 18px; margin: 0; }
-dl.terms dt { font-weight: 600; }
-dl.terms dd { margin: 0; }
-.foot { color: var(--muted); font-size: 13px; padding-inline: 6px; display: grid; gap: 2px; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-@media (max-width: 560px) {
-  .card { padding: 22px 20px; border-radius: 20px; }
-  h1 { font-size: 22px; }
-  .item > summary { grid-template-columns: 1fr auto; padding: 14px 16px; }
-  .item > summary .sev { grid-column: 1 / -1; justify-self: start; }
-  .item-more { margin: 0 16px; }
-  .facts, dl.terms { grid-template-columns: 1fr; gap: 2px 0; }
-  .facts dd, dl.terms dd { margin-bottom: 8px; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.65 var(--font); -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1160px; margin-inline: auto; padding: clamp(20px, 3vw, 40px) clamp(16px, 4vw, 48px) 64px; }
+#view { display: grid; gap: 32px; min-width: 0; }
+p, h1, h2, dl, dd { margin: 0; }
+h1, h2 { line-height: 1.45; overflow-wrap: anywhere; }
+h1 { font-size: clamp(26px, 3vw, 42px); letter-spacing: -.025em; }
+h2 { font-size: clamp(21px, 2vw, 28px); }
+a { color: var(--accent); text-underline-offset: .2em; }
+.muted, .small, .foot { color: var(--muted); }
+.small, .foot { font-size: 14px; }
+.card, .brief { min-width: 0; background: var(--panel); }
+.card { border: 1px solid var(--line); border-radius: 12px; padding: clamp(16px, 3vw, 32px); }
+.picker { border-block-start: 4px solid var(--accent); display: grid; gap: 12px; }
+.picker h1, .brief h1, .sec h2 { font-family: "Yu Mincho", "Hiragino Mincho ProN", "BIZ UDPMincho", serif; }
+.brief {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(212px, 27%);
+  border: 1px solid var(--line); border-block-start: 4px solid var(--accent);
+  border-radius: 4px 4px 12px 12px; overflow-wrap: anywhere;
 }
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+.brief-heading { padding: clamp(20px, 3vw, 40px); margin: 0; }
+.case-line { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 16px; margin-bottom: 12px; color: var(--accent); font-weight: 700; }
+.case-line a { font-size: 14px; font-weight: 500; }
+.brief h1 { max-width: 22em; line-height: 1.45; text-wrap: balance; }
+.brief h1 em { color: var(--accent); font-style: normal; font-variant-numeric: lining-nums tabular-nums; }
+.headline-rest { display: block; font-size: .72em; margin-top: 4px; }
+.lead { margin-top: 16px; color: var(--muted); font-size: 16px; }
+.lead:empty { display: none; }
+.jump { padding: 16px 24px; display: grid; align-content: center; border-left: 1px solid var(--line); background: var(--panel-soft); }
+.jump a { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 48px; padding: 4px; border-bottom: 1px solid var(--line); color: var(--fg); font-size: 15px; text-decoration: none; }
+.jump a:last-child { border: 0; }
+.jump a:hover, .campaign-list a:hover { color: var(--accent); background: var(--accent-soft); }
+.jump b { font: 600 24px/1.1 Georgia, serif; font-variant-numeric: tabular-nums; color: var(--accent); }
+.jump .rose b { color: var(--rose); }
+.jump .amber b { color: var(--amber); }
+.brief-meta { grid-column: 1 / -1; border-top: 1px solid var(--line); padding: 4px 24px; display: flex; align-items: start; justify-content: space-between; gap: 12px; }
+summary { cursor: pointer; }
+.brief-meta summary, .glossary summary { padding-block: 10px; min-height: 44px; font-weight: 600; color: var(--accent); }
+.brief-meta #since { margin: 4px 0 12px; font-size: 14px; }
+.legend { list-style: none; display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 0; padding: 0; font-size: 14px; }
+.legend li { display: inline-flex; gap: 6px; color: var(--muted); }
+.legend b { color: var(--fg); }
+.note, .empty { background: var(--panel-soft); color: var(--muted); border-inline-start: 3px solid var(--line); padding: 12px 16px; }
+.note.warn { border-color: var(--amber); background: var(--amber-soft); color: var(--amber); }
+.note.err { border-color: var(--rose); background: var(--rose-soft); color: var(--rose); }
+#notes { display: grid; gap: 8px; margin-bottom: 16px; }
+#notes:empty, .more:empty { display: none; }
+.sec { display: grid; gap: 12px; min-width: 0; scroll-margin-top: 16px; }
+.sec-head { display: grid; gap: 4px; }
+.sec-sub, .item-meta { color: var(--muted); font-size: 14px; }
+.items, .changes, .campaign-list { border-block-start: 2px solid var(--line); }
+.items:empty, .campaign-list:empty { display: none; }
+.item, .fold, .campaign-list a { min-width: 0; border-bottom: 1px solid var(--line); background: var(--panel); }
+.item > summary, .campaign-list a {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: start; gap: 8px 16px;
+  padding: 16px 20px; list-style: none; min-height: 48px;
+}
+.item > summary:hover, .fold > summary:hover { background: var(--panel-soft); }
+.item > summary::-webkit-details-marker, .fold > summary::-webkit-details-marker { display: none; }
+.item-main { display: grid; min-width: 0; gap: 4px; }
+.item-title, .case-name { font-size: 18px; line-height: 1.5; font-weight: 700; overflow-wrap: anywhere; }
+.item-meta, .facts dd, .case-name, .case-info { overflow-wrap: anywhere; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px 8px; }
+.chips:empty { display: none; }
+.chip, .sev, .case-state { border-radius: 4px; padding: 2px 8px; font-size: 13px; color: var(--accent); background: var(--accent-soft); }
+.sev { text-align: center; min-width: 3.8em; font-weight: 700; }
+.chip.crit, .sev.critical { color: var(--rose); background: var(--rose-soft); }
+.chip.warn, .sev.high { color: var(--amber); background: var(--amber-soft); }
+.sev.medium { color: var(--indigo); background: var(--indigo-soft); }
+.sev.low, .sev.info { color: var(--muted); background: var(--panel-soft); }
+.chev { width: 9px; height: 9px; border-inline-end: 2px solid var(--accent); border-bottom: 2px solid var(--accent); margin: 6px; transform: rotate(45deg); transition: transform 160ms ease-out; }
+.item[open] > summary .chev, .fold[open] > summary .chev { transform: rotate(225deg); }
+.item[open] { box-shadow: inset 3px 0 var(--accent); }
+.item-more, .fold-body { margin: 0 20px; padding: 16px 0; border-top: 1px solid var(--line); display: grid; gap: 16px; }
+.facts, .terms { display: grid; grid-template-columns: fit-content(12em) minmax(0, 1fr); gap: 8px 20px; }
+.facts dt, .terms dt { font-weight: 600; color: var(--muted); }
+.facts ul, .fold-body ul { margin: 0; padding-inline-start: 1.4em; }
+.btn, .pill, .filters input, .filters select { border: 1px solid var(--line); border-radius: 6px; font: inherit; font-size: 15px; min-height: 44px; padding: 8px 12px; color: var(--fg); background: var(--panel); }
+.btn, .pill { display: inline-flex; align-items: center; justify-self: start; cursor: pointer; font-weight: 600; text-decoration: none; }
+.btn:hover, .pill:hover { background: var(--accent-soft); }
+.pill[aria-pressed="true"] { background: var(--accent); color: var(--panel); border-color: var(--accent); }
+.brief-meta .btn { color: var(--accent); background: transparent; border-color: transparent; }
+.more { display: flex; justify-content: center; }
+.fold > summary { display: flex; align-items: center; min-height: 44px; gap: 8px; padding: 12px 16px; list-style: none; }
+.fold .count { margin-left: auto; }
+.fold.inline > summary, .fold.none { color: var(--muted); }
+.fold.inline { border: 1px solid var(--line); }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mist); }
+.dot.accent { background: var(--accent); } .dot.done { background: var(--leaf); } .dot.in_progress { background: var(--indigo); }
+.filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.filters input { flex: 1 1 12em; min-width: 0; }
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
+.n { text-align: end; font-variant-numeric: tabular-nums; }
+.drop { display: grid; justify-items: center; gap: 12px; border: 2px dashed var(--line); border-radius: 8px; padding: 32px 20px; background: var(--panel-soft); cursor: pointer; }
+.drop.over, .drop:focus-within { border-color: var(--accent); }
+.campaign-list a { grid-template-columns: minmax(0,1fr) auto auto; align-items: center; color: var(--fg); text-decoration: none; }
+.case-info { display: grid; gap: 4px; }
+.case-info small { font-size: 14px; color: var(--muted); }
+.case-arrow { color: var(--accent); }
+.foot { display: grid; gap: 2px; }
+.visually-hidden, .skip:not(:focus) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.skip:focus { position: absolute; z-index: 2; background: var(--panel); padding: 12px; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 767px) {
+  #view { gap: 24px; }
+  .brief { grid-template-columns: minmax(0,1fr); }
+  .brief-heading { padding: 16px; }
+  .jump { border-left: 0; border-top: 1px solid var(--line); grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; padding: 0 16px; }
+  .jump a { gap: 6px; font-size: 14px; border: 0; padding: 0; min-height: 44px; }
+  .jump b { font-size: 18px; }
+  .brief-meta { padding-inline: 12px; font-size: 14px; }
+  .item > summary { padding: 12px; gap: 4px 8px; grid-template-columns: minmax(0, 1fr) auto; }
+  .item > summary .sev { grid-column: 1; justify-self: start; min-width: 0; }
+  .item-main { grid-column: 1; }
+  .item > summary .chev { grid-row: 1 / 3; grid-column: 2; align-self: center; }
+  .facts, .terms { grid-template-columns: 1fr; gap: 2px; }
+  .facts dd, .terms dd { margin-bottom: 8px; }
+  .campaign-list a { padding-inline: 8px; gap: 8px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes reveal { from { opacity: .55; transform: translateY(-2px); } to { opacity: 1; transform: none; } }
+  .item[open] > .item-more, .fold[open] > .fold-body { animation: reveal 160ms ease-out; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+
+.masthead { background: #30243e; color: #fff; }
+.mast-inner {
+  max-width: 1440px; margin-inline: auto; min-height: 64px; padding-inline: clamp(16px, 4vw, 56px);
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.wordmark { display: flex; align-items: center; gap: 12px; font: 600 15px/1.2 Georgia, "Yu Mincho", serif; letter-spacing: .11em; }
+.seal {
+  display: inline-grid; place-items: center; width: 36px; height: 36px;
+  border: 1px solid #cbbcd9; border-radius: 9px 2px 9px 2px; color: #f5ecff;
+  font: 600 23px/1 "Yu Mincho", "Hiragino Mincho ProN", serif; letter-spacing: 0;
+}
+.view-switch { display: flex; align-self: stretch; align-items: stretch; gap: 4px; }
+.view-switch > * {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 44px;
+  padding: 0 16px; color: #ded4e6; font: 600 16px/1.5 system-ui, sans-serif;
+  border-block-end: 3px solid transparent; text-decoration: none;
+}
+.view-switch [aria-current] { color: #fff; border-color: #ddbcf3; background: #41324f; }
+.view-switch a:hover { color: #fff; background: #463652; text-decoration: none; }
+.masthead :focus-visible { outline: 2px solid #fff; outline-offset: -4px; }
+@media (max-width: 767px) {
+  .mast-inner { min-height: 56px; padding-inline: 12px; gap: 8px; }
+  .wordmark { gap: 8px; font-size: 12px; letter-spacing: .05em; }
+  .seal { width: 32px; height: 32px; font-size: 21px; }
+  .view-switch { gap: 0; }
+  .view-switch > * { padding-inline: 8px; font-size: 14px; }
+}
+@media (max-width: 360px) {
+  .wordmark > span:last-child { max-width: 8em; }
+}
 </style>
 </head>
 <body>
-<main class="wrap" id="app">
-  <header class="top"><span class="mark" aria-hidden="true">紫</span><span>判断の画面</span></header>
+<a class="skip" href="#app">本文へスキップ</a>
+<header class="masthead">
+  <div class="mast-inner">
+  <div class="wordmark"><span class="seal" aria-hidden="true">紫</span><span>AI YORI MURASAKI</span></div>
   <nav id="view-switch" class="view-switch" aria-label="画面を切り替える" hidden><span aria-current="page">判断の画面</span><a id="to-monitor" href="/#/">モニター</a></nav>
+  </div>
+</header>
+<main class="wrap" id="app" tabindex="-1">
   <div id="notes"></div>
-  <section class="card" id="campaign-picker" hidden><h1>Campaign を選ぶ</h1><p id="campaign-message" class="muted">Campaign を読み込んでいます。</p><div id="campaign-list" class="campaign-list"></div></section>
+  <section class="card picker" id="campaign-picker" hidden>
+    <h1>確認する案件を選ぶ</h1>
+    <p id="campaign-message" class="muted" role="status">Campaign を読み込んでいます。</p>
+    <div id="campaign-list" class="campaign-list"></div>
+  </section>
 
-  <section class="card" id="loader">
+  <p id="initial-status" role="status">記録を読み込んでいます。</p>
+  <section class="card picker" id="loader" hidden>
     <h1>判断用のデータを読み込みます</h1>
     <p class="muted">AYM で作った JSON（aym.decision-view/1）を選ぶか、下の枠に落としてください。読んだデータはこのページの中だけで使い、どこにも送りません。</p>
     <label class="drop" id="drop" for="file">
@@ -184,15 +227,19 @@ dl.terms dd { margin: 0; }
   </section>
 
   <div id="view" hidden>
-    <section class="card" aria-labelledby="h-sum">
-      <p class="eyebrow" id="sum-name"></p>
-      <h1 id="h-sum"></h1>
-      <p class="lead" id="sum-lead"></p>
+    <section class="brief" aria-labelledby="h-sum">
+      <div class="brief-heading">
+        <div class="case-line"><p id="sum-name"></p><a href="/decision" id="back-picker" hidden>案件を選び直す</a></div>
+        <h1 id="h-sum"></h1>
+        <p class="lead" id="sum-lead"></p>
+      </div>
       <nav class="jump" id="jump" aria-label="画面の中の行き先"></nav>
-      <ul class="legend" id="legend" aria-label="状態ごとの課題数"></ul>
-      <button type="button" class="btn ghost" id="refresh-view" hidden>読み直す</button>
-      <p class="muted" id="since"></p>
-
+      <div class="brief-meta">
+        <details><summary>状態の内訳と前回の記録</summary>
+          <ul class="legend" id="legend" aria-label="状態ごとの課題数"></ul><p class="muted" id="since"></p>
+        </details>
+        <button type="button" class="btn ghost" id="refresh-view" hidden>読み直す</button>
+      </div>
     </section>
 
     <section class="sec" id="sec-now" aria-labelledby="h-now">
@@ -225,7 +272,7 @@ dl.terms dd { margin: 0; }
       <div class="more" id="all-more"></div>
     </section>
 
-    <section class="card">
+    <section class="card glossary">
       <details>
         <summary>言葉の説明</summary>
         <dl class="terms">
@@ -436,7 +483,7 @@ dl.terms dd { margin: 0; }
     var it = r.item, a = r.a;
     var d = el('details', 'item');
     var s = el('summary');
-    s.appendChild(el('span', 'sev ' + (D.SEVERITIES.indexOf(it.severity) >= 0 ? it.severity : 'info'), D.SEV_LABEL[it.severity] || '情報'));
+    s.appendChild(el('span', 'sev ' + (D.SEVERITIES.indexOf(it.severity) >= 0 ? it.severity : 'info'), D.SEV_LABEL[it.severity] || '重大度不明'));
     var main = el('span', 'item-main');
     main.appendChild(el('span', 'item-title', it.title || '（名前なし）'));
     var meta = [];
@@ -488,7 +535,7 @@ dl.terms dd { margin: 0; }
   function fillItems(node, rows) { clear(node); rows.forEach(function (r) { node.appendChild(itemCard(r)); }); }
 
   function jumpPill(cls, label, n, target) {
-    var a = el('a', 'pill ' + cls); a.href = '#' + target;
+    var a = el('a', cls); a.href = '#' + target;
     a.appendChild(el('span', null, label)); a.appendChild(el('b', null, String(n)));
     return a;
   }
@@ -496,22 +543,41 @@ dl.terms dd { margin: 0; }
   function renderSummary(s,v){
     var c=s.counts,hints=[],assessment=v.assessment||null;
     $('sum-name').textContent=(v.campaign&&v.campaign.name)||'';
-    if(!assessment||!assessment.present)hints.push('この Campaign には評価の記録がありません。検査の範囲は分かりません。取り込んだ元の状態で並べています。');
+    if(!assessment||!assessment.present)hints.push('この案件には評価の記録がありません。課題は取り込み時の状態で並べています。');
     if(assessment&&assessment.historical)hints.push('評価の記録は、対象が変わる前のものです。いまの状態は確かめ直してください。');
     var cov=assessment&&assessment.coverage||{},untested=(cov.not_executed||0)+(cov.failed||0);
+    if(!untested && !(cov.executed > 0))
+      hints.push('検査した範囲を確認できません。');
     if(untested)hints.push('検査していない範囲が '+untested+' 類型あります。安全とは限りません。');
-    if(v.campaign&&v.campaign.status==='review_pending')hints.push('この Campaign は、人のレビューを待っています。モニターで確かめてください。');
-    var fresh=s.freshness||{};
-    if(!fresh.kev||!fresh.epss||fresh.kev.expired||fresh.epss.expired)
-      hints.push('悪用の情報が古い、または付いていません。悪用されないことを意味しません。');
-    $('h-sum').textContent=c.now?'いま決めることは '+c.now+' 件、終わっていない課題は全部で '+c.active+' 件です'
-      :c.active?'急いで決めることはありませんが、終わっていない課題が '+c.active+' 件あります'
-      :hints.length?'終わっていない課題は記録にありませんが、確かめていないことがあります':'終わっていない課題はありません';
+    if(v.campaign&&v.campaign.status==='review_pending')hints.push('この案件はレビュー待ちです。モニターで記録を確認してください。');
+    var freshness=s.freshness||{};
+    var missing=['kev','epss'].filter(function(k){ return !freshness[k]; });
+    var expired=['kev','epss'].filter(function(k){ return freshness[k] && freshness[k].expired; });
+    if(missing.length) hints.push('悪用の情報（'+missing.join('・').toUpperCase()+'）は未取得です。');
+    if(expired.length) hints.push('悪用の情報（'+expired.join('・').toUpperCase()+'）は有効期限を過ぎています。');
+    var heading=$('h-sum'); clear(heading);
+    if(c.now){
+      heading.append('いま決めることは ', el('em', null, c.now), ' 件です');
+      var rest=el('span','headline-rest');
+      rest.append('終わっていない課題は全部で ', el('em', null, c.active), ' 件です');
+      heading.appendChild(rest);
+    } else if(c.active){
+      heading.append('急いで決めることはありませんが、終わっていない課題が ', el('em', null, c.active), ' 件あります');
+    } else {
+      heading.textContent=hints.length?'終わっていない課題は記録にありませんが、確かめていないことがあります':'終わっていない課題はありません';
+    }
     $('sum-lead').textContent=hints.join(' ');
     var j=$('jump');clear(j);
     j.appendChild(jumpPill(c.now?'rose':'plain','いま決めること',c.now,'sec-now'));
     j.appendChild(jumpPill(c.soon?'amber':'plain','早めに対応すること',c.soon,'sec-soon'));
     if(s.hasPrevious)j.appendChild(jumpPill('','前回から変わったこと',c.changed,'sec-changes'));
+    var all = jumpPill('','すべての課題',s.rows.length,'sec-all');
+    all.addEventListener('click', function(){
+      $('q').value = ''; $('f-sev').value = ''; state.fKev = false;
+      $('f-kev').setAttribute('aria-pressed','false');
+      setState('any');
+    });
+    j.appendChild(all);
     var legend=$('legend'),byState={};clear(legend);
     s.rows.forEach(function(row){var label=D.stateLabel(row.item);byState[label]=(byState[label]||0)+1;});
     Object.keys(byState).sort(function(a,b){
@@ -524,19 +590,11 @@ dl.terms dd { margin: 0; }
       since.textContent='前回（'+day(v.previous.created_at)+'）から、'+(bits.length?bits.join('、')+'ました。':'片付いたものも、新しく入ったものもありません。');}
   }
 
-  function renderNotes(s) {
-    clear($('notes'));
-    var stale = Object.keys(s.freshness).filter(function (k) { return s.freshness[k].expired; });
-    if (stale.length) note('warn', '悪用の情報（' + stale.map(function (k) { return k.toUpperCase(); }).join('・') + '）が古くなっています。取り直してから作り直すと、件数が変わることがあります。');
-    if (!Object.keys(s.freshness).length) note('warn', '悪用の情報（KEV・EPSS）が付いていないデータです。悪用の確認と見込みは数えていません。');
-  }
-
   function renderNow(s) {
-    var box = $('now'); clear(box);
+    var box = $('now'), more = $('now-more'); clear(box); clear(more);
     if (!s.now.length) { $('now-sub').textContent = ''; box.appendChild(el('p', 'empty', 'いま急いで決めることはありません。')); return; }
-    $('now-sub').textContent = '悪用が確認されたもの、評価で確認済み・修正提案となったもの、未評価で判断待ちのものです。行を開くと理由が読めます。';
+    $('now-sub').textContent = '課題を開くと、急ぐ理由と次に確かめることを読めます。';
     var n=state.nowAll?s.now.length:Math.min(10,s.now.length);fillItems(box,s.now.slice(0,n));
-    var more=$('now-more');clear(more);
     if(s.now.length>10){var b=el('button','btn ghost',state.nowAll?'最初の 10 件に戻す':'残りの '+(s.now.length-n)+' 件も見る');
       b.type='button';b.addEventListener('click',function(){state.nowAll=!state.nowAll;renderNow(state.sum);});more.appendChild(b);}
   }
@@ -618,12 +676,18 @@ dl.terms dd { margin: 0; }
     clear($('notes'));
     try {
       D.validate(view);
-      state.view = view; state.sum = D.summarize(view, todayLocal()); state.nowAll = false; state.soonAll = false; state.allLimit = 30;
-    } catch (e) { note('err', '読み込めませんでした。' + e.message); return; }
+      state.sum = D.summarize(view, todayLocal()); state.view = view;
+      state.nowAll = false; state.soonAll = false; state.allLimit = 30;
+    } catch (e) {
+      if (state.isAYM) unavailable('err','記録の形式を読み取れませんでした。');
+      else note('err', '判断用のJSONを読み取れませんでした。ファイルの形式を確認してください。');
+      return;
+    }
     $('loader').hidden = true; $('campaign-picker').hidden = true; $('view').hidden = false;
-    renderNotes(state.sum); renderSummary(state.sum, view); renderNow(state.sum); renderSoon(state.sum);
+    renderSummary(state.sum, view); renderNow(state.sum); renderSoon(state.sum);
     renderChanges(state.sum, view); renderAll(state.sum); renderFoot(view);
     $('refresh-view').hidden=!(state.isAYM&&state.campaign);
+    $('back-picker').hidden=!(state.isAYM&&state.campaign);
   }
 
   function readFile(f) {
@@ -665,23 +729,45 @@ dl.terms dd { margin: 0; }
   var params=new URLSearchParams(location.search),src=params.get('data'),campaign=params.get('campaign');
   var campaignOK=campaign&&/^[a-z0-9][a-z0-9-]{0,63}$/.test(campaign);
   if(src&&(src.indexOf('//')>=0||/^[a-z]+:/i.test(src))){note('err','data には、同じ配信元のパスだけを指定できます。');src=null;}
+  function unavailable(kind, message) {
+    state.view = null;
+    state.sum = null;
+    $('view').hidden = true;
+    clear($('notes'));
+    note(kind, message);
+    if (state.isAYM) {
+      var back = el('a', 'btn', '案件一覧へ戻る');
+      back.href = '/decision';
+      $('notes').appendChild(back);
+    }
+  }
   function showResponse(d){
-    if(d&&d.decision_view===null&&d.status==='hold'){clear($('notes'));note('warn','記録を確認できません。');return;}
-    if(d&&d.decision_view&&d.decision_view.status==='withheld'){clear($('notes'));note('warn','評価情報はBlueに非公開です。');return;}
+    if(d&&d.decision_view===null&&d.status==='hold'){unavailable('warn','記録を確認できません。');return;}
+    if(d&&d.decision_view&&d.decision_view.status==='withheld'){unavailable('warn','評価情報はBlueに非公開です。');return;}
     show(d&&d.decision_view?d.decision_view:d);
   }
   function chooseCampaigns(){
     $('view').hidden=true;$('loader').hidden=true;$('campaign-picker').hidden=false;
+    $('initial-status').hidden=true;
     $('campaign-message').textContent='Campaign を読み込んでいます。';clear($('campaign-list'));
-    fetchView('/api/campaigns').then(function(data){
+    return fetchView('/api/campaigns').then(function(data){
       if(!data||!Array.isArray(data.campaigns))throw Error('bad response');
       var cs=data.campaigns.slice().sort(function(a,b){return (b.created_at||'').localeCompare(a.created_at||'');});
-      $('campaign-message').textContent=cs.length?'判断したい Campaign を選んでください。':'Campaign はまだありません。';
-      var labels={created:'作成済み',review_pending:'レビュー待ち',completed:'完了',failed:'未完了',planned:'計画中',cancelled:'中止'};
+      $('campaign-message').textContent=cs.length?'課題と評価を確認する案件を選んでください。':'登録された案件はまだありません。';
+      var labels = {
+        created:'作成済み', running:'実行中', blind_completed:'独立評価済み', purple_open:'共同確認中',
+        remediation_in_progress:'修復中', review_pending:'レビュー待ち', completed:'完了',
+        failed:'失敗', incomplete:'未完了', planned:'計画中', cancelled:'中止'
+      };
       cs.forEach(function(c){
         if(!c||!/^[a-z0-9][a-z0-9-]{0,63}$/.test(c.campaign_id||''))return;
-        var a=el('a',null,(c.intent_id||'名前未記録')+' ・ '+(c.created_at?when(c.created_at):'日時不明')+' ・ 課題 '+
-          (Number.isInteger(c.finding_count)?c.finding_count:'未確認')+' 件 ・ '+(labels[c.status]||'状態未確認'));
+        var a = el('a'), info = el('span', 'case-info');
+        info.appendChild(el('strong', 'case-name', c.intent_id || '名前未記録'));
+        var count = Number.isInteger(c.finding_count) ? c.finding_count + ' 件' : '未確認';
+        info.appendChild(el('small', null, '作成 ' + (c.created_at ? when(c.created_at) : '日時不明') + '　·　課題 ' + count));
+        a.appendChild(info);
+        a.appendChild(el('span', 'case-state', labels[c.status] || '状態未確認'));
+        var arrow = el('span', 'case-arrow', '→'); arrow.setAttribute('aria-hidden', 'true'); a.appendChild(arrow);
         a.href='/decision?campaign='+encodeURIComponent(c.campaign_id);$('campaign-list').appendChild(a);
       });
     }).catch(function(){$('campaign-message').textContent='Campaign を取得できませんでした。画面を読み直してください。';});
@@ -690,15 +776,19 @@ dl.terms dd { margin: 0; }
     state.campaign=campaign;
     if(!campaignOK){chooseCampaigns();return;}
     $('to-monitor').href='/#/campaign/'+encodeURIComponent(campaign);
-    fetchView('/api/campaigns/'+encodeURIComponent(campaign)+'/decision-view').then(showResponse).catch(function(e){
+    if ($('refresh-view').disabled) return;
+    $('refresh-view').disabled = true;
+    return fetchView('/api/campaigns/'+encodeURIComponent(campaign)+'/decision-view').then(showResponse).catch(function(e){
       clear($('notes'));
-      if(e.message==='HTTP 404'){note('err','この Campaign は見つかりません');var a=el('a','btn ghost','Campaign を選ぶ画面へ');a.href='/decision';$('notes').appendChild(a);}
-      else if(e.message==='HTTP 500')note('err','件数が多く、この画面では出せません。');
-      else note('err','記録を取得できませんでした。');
-    });
+      if(e.message==='HTTP 404') unavailable('err','この Campaign は見つかりません。');
+      else if(e.message==='HTTP 500') unavailable('err','この画面では記録を表示できません。件数が多い場合はモニターで確認してください。');
+      else if(!state.view) unavailable('err','記録を取得できませんでした。案件を選び直してください。');
+      else note('warn','更新できませんでした。前回取得した記録を表示しています。「読み直す」で再試行できます。');
+    }).finally(function(){ $('refresh-view').disabled = false; });
   }
   $('refresh-view').addEventListener('click',function(){if(state.isAYM&&state.campaign)loadCampaign();});
   function outsideAYM(){
+    $('loader').hidden = false;
     if(campaign){note('err','この開き方では Campaign を読めません。JSON のファイルを選んでください。');return;}
     if(src){fetchView(src).then(showResponse).catch(function(){note('err','データを取得できませんでした。');});return;}
     fetchView('decision-sample.json').then(function(){$('sample').hidden=false;}).catch(function(){});
@@ -709,10 +799,10 @@ dl.terms dd { margin: 0; }
     .then(function(health){
       if(!health||health.status!=='ok')throw Error('not AYM');
       state.isAYM=true;$('view-switch').hidden=false;
-      if(campaign){if(!campaignOK){note('err','Campaign の指定を確認できません。');chooseCampaigns();}else loadCampaign();}
-      else if(src)fetchView(src).then(showResponse).catch(function(){note('err','データを取得できませんでした。');});
-      else chooseCampaigns();
-    }).catch(outsideAYM).finally(function(){clearTimeout(deadline);});
+      if(campaign){if(!campaignOK){note('err','Campaign の指定を確認できません。');return chooseCampaigns();}return loadCampaign();}
+      if(src)return fetchView(src).then(showResponse).catch(function(){unavailable('err','データを取得できませんでした。');});
+      return chooseCampaigns();
+    }).catch(outsideAYM).finally(function(){clearTimeout(deadline);$('initial-status').hidden=true;});
 
 })();
 </script>

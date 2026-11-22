@@ -14,16 +14,16 @@ const runs = (await runResponse.json()).runs;
 assert.ok(runs.length > 0, 'campaign has an initialization run');
 const rid = runs[0].run_id;
 
-const browser = await chromium.launch({headless:true});
+const browser = await chromium.launch({headless:true,channel:process.env.AYM_BROWSER_CHANNEL || undefined});
 try {
-  for(const width of [1440,390]) {
+  for(const width of [1440,768,390]) {
     const context = await browser.newContext({viewport:{width,height:900}});
     const page = await context.newPage();
     const errors = [];
     page.on('pageerror', e => errors.push(String(e)));
     try {
       await page.goto(base + '/decision');
-      await page.getByRole('heading',{name:'Campaign を選ぶ'}).waitFor({timeout:15000});
+      await page.getByRole('heading',{name:'確認する案件を選ぶ'}).waitFor({timeout:15000});
       const candidate=page.locator('#campaign-list a[href="/decision?campaign='+cid+'"]');
       await candidate.waitFor({timeout:15000});
       assert.equal(await page.locator('#view-switch [aria-current="page"]').count(),1);
@@ -77,6 +77,35 @@ try {
       const dims=await page.evaluate(()=>({
         width:document.documentElement.clientWidth,scroll:document.documentElement.scrollWidth}));
       assert.ok(dims.scroll<=dims.width+2,'overflow at '+width+'px '+JSON.stringify(dims));
+      await page.locator('#q').fill('存在しない課題');
+      await page.locator('#jump a[href="#sec-all"]').click();
+      assert.equal(await page.locator('#q').inputValue(),'');
+      assert.equal(await page.locator('#f-any').getAttribute('aria-pressed'),'true');
+      assert.equal(await page.locator('#all .item').count(),mock.items.length);
+
+      // 公開済みの画面を読み直しても、非公開応答の後に以前の件数を残さない。
+      await page.route('**/api/campaigns/'+cid+'/decision-view',
+        route=>route.fulfill({json:{decision_view:{status:'withheld'}}}));
+      await page.locator('#refresh-view').click();
+      await page.getByText('評価情報はBlueに非公開です。').waitFor();
+      assert.equal(await page.locator('#view').isVisible(),false);
+      await page.locator('#notes a').click();
+      await candidate.waitFor();
+
+      await page.goto(base+'/');
+      const record=page.locator('.record-list a[href="#/campaign/'+cid+'"]');
+      await record.waitFor();
+      assert.match(await record.innerText(),/最終実行/);
+      const count=await record.locator('.record-count').boundingBox();
+      assert.ok(count && count.x>=0 && count.x+count.width<=width);
+      const environment=page.locator('details.environment');
+      await environment.locator('summary').click();
+      await Promise.all([
+        page.waitForResponse(r=>r.url()===base+'/api/campaigns'),
+        page.locator('#refresh-btn').click()
+      ]);
+      await page.waitForFunction(()=>!document.querySelector('#refresh-btn').hasAttribute('data-manual-busy'));
+      assert.equal(await environment.evaluate(node=>node.open),true);
       assert.deepEqual(errors,[],'no JavaScript errors');
       console.log('PASS real Chromium '+width+'px: routes, accessibility, state and layout');
     } finally {

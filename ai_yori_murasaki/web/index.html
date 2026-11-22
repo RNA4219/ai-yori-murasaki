@@ -7,7 +7,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%237b4fa0'/%3E%3C/svg%3E">
 <style>
 :root {
-  --color-bg: #f7f8fc;
+  --color-bg: #faf9fb;
   --color-bg-sidebar: #ffffff;
   --color-bg-topbar: #ffffff;
   --color-surface: #ffffff;
@@ -17,13 +17,13 @@
   --color-text: #202638;
   --color-text-muted: #576174;
   --color-text-faint: #576174;
-  --color-brand: #6d38c3;
-  --color-brand-dim: #5830a3;
+  --color-brand: #63447e;
+  --color-brand-dim: #4e335f;
   --color-review: #82520b;
   --color-ok: #176b46;
   --color-err: #b82b3e;
-  --color-focus: #6d38c3;
-  --color-accent: #6d38c3;
+  --color-focus: #63447e;
+  --color-accent: #63447e;
   --color-accent-soft: #f0edf8;
   --color-surface-alt: #ffffff;
   --color-ok-bg: transparent;
@@ -114,18 +114,6 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
   overflow-y: auto;
   z-index: var(--z-sidebar);
 }
-.sidebar-brand {
-  display: flex; align-items: center; gap: var(--space-8);
-  padding: 0 var(--space-16) var(--space-16);
-  border-bottom: 1px solid var(--color-border-subtle);
-  margin-bottom: var(--space-12);
-}
-.brand-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--color-brand); flex: none;
-}
-.brand-name { font-size: var(--font-small); font-weight: 600; color: var(--color-text); }
-.brand-desc { font-size: var(--font-small); color: var(--color-text-muted); letter-spacing: 0.08em; }
 .sidebar-label {
   font-size: var(--font-small); margin: 0 var(--space-16) var(--space-8);
   color: var(--color-text-muted); text-transform: uppercase;
@@ -153,17 +141,6 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
   display: block; font-size: var(--font-small); color: var(--color-text-muted);
   font-family: var(--font-stack); margin-top: var(--space-2);
 }
-.data-status {
-  font-size: var(--font-small); color: var(--color-text-muted);
-  border-top: 1px solid var(--color-border-subtle);
-  padding: var(--space-12) var(--space-16) 0;
-  margin: 0;
-}
-.data-status dt { font-weight: 600; color: var(--color-text-muted); font-size: var(--font-small); }
-.data-status dd { margin: 0 0 var(--space-6); font-family: var(--font-mono); font-size: var(--font-small); }
-.data-status dt, .data-status dd { min-width: 0; }
-.data-status dd { overflow-wrap: anywhere; word-break: break-all; }
-
 main { min-width: 0; padding: var(--space-24); }
 
 /* Topbar */
@@ -177,10 +154,6 @@ header.page-header {
   display: flex; flex-wrap: wrap; gap: var(--space-12); align-items: center; justify-content: space-between;
 }
 .header-left { display: flex; align-items: center; gap: var(--space-12); min-width: 0; }
-.header-brand { display: flex; align-items: center; gap: var(--space-6); }
-.header-brand .brand-name { font-size: var(--font-small); }
-.header-brand-text { color: var(--color-text-muted); font-size: var(--font-small); }
-.header-sep { width: 1px; height: 16px; background: var(--color-border); }
 header.page-header h1 { font-size: var(--font-heading); font-weight: 600; margin: 0; }
 .header-meta { font-size: var(--font-small); color: var(--color-text-muted); display: flex; flex-wrap: wrap; gap: var(--space-8); align-items: center; }
 .header-meta strong { color: var(--color-text); font-family: var(--font-mono); font-weight: 500; }
@@ -373,7 +346,6 @@ td, th { font-variant-numeric: tabular-nums; }
     border-right: none; border-bottom: 1px solid var(--color-border-subtle);
     padding: var(--space-12) 0;
   }
-  .sidebar-brand { padding: 0 var(--space-16) var(--space-12); margin-bottom: var(--space-8); }
   .sidebar-label { display: none; }
   .nav-list {
     display: flex; flex-wrap: nowrap; gap: 0; margin-bottom: 0;
@@ -387,20 +359,12 @@ td, th { font-variant-numeric: tabular-nums; }
   }
   .nav-list a[aria-current="page"] { border-left: none; border-bottom-color: var(--color-brand); }
   .nav-list .meta { display: none; }
-  .data-status {
-    display: flex; flex-wrap: wrap; gap: var(--space-12);
-    border-top: none; padding: var(--space-8) var(--space-16) 0;
-  }
-  .data-status dt, .data-status dd { display: inline; margin: 0; }
-  .data-status dd { margin-right: var(--space-12); }
   main { padding: var(--space-16); }
   header.page-header { margin: calc(-1 * var(--space-16)) calc(-1 * var(--space-16)) var(--space-16); }
 }
 
 @media (max-width: 767px) {
   .sidebar { padding: var(--space-8) 0; }
-  .sidebar > .data-status { display: none; }
-  .header-brand-text, .header-sep { display: none; }
   .nav-list { display: none; }
   .mobile-nav { display: block; padding: 0 var(--space-12); }
   .mobile-nav summary {
@@ -426,7 +390,6 @@ td, th { font-variant-numeric: tabular-nums; }
   .summary-metrics .metric-value { font-size: var(--font-metric); }
   .incident-row { grid-template-columns: auto minmax(0, 1fr); }
   .incident-status { grid-column: 2; }
-  .data-status { flex-direction: column; gap: var(--space-2); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -435,40 +398,128 @@ td, th { font-variant-numeric: tabular-nums; }
 
 
 .source-body { white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--font-stack); font-size: var(--font-body); line-height: 1.75; padding-block: var(--space-16); }
-.view-switcher {display:flex;flex-wrap:wrap;gap:8px;padding:8px 20px}
-.view-switcher a,.view-switcher [aria-current]{display:inline-flex;min-height:44px;align-items:center;border:1px solid #d4d7e0;border-radius:9px;padding:8px 14px;text-decoration:none}
-.view-switcher [aria-current]{background:var(--color-surface,#fff);font-weight:700}
-.view-switcher a:focus-visible{outline:3px solid #7b4fa0;outline-offset:2px}
+.layout { max-width: 1600px; margin-inline: auto; min-height: calc(100vh - 64px); }
+.sidebar { height: 100dvh; max-height: 100%; padding-top: var(--space-32); }
+.nav-list a { font-family: var(--font-stack); }
+.nav-list a[aria-current="page"] { background: var(--color-accent-soft); }
+main { padding: var(--space-32) clamp(20px, 3vw, 48px) var(--space-64); }
+header.page-header {
+  position: static; padding: 0 0 var(--space-16); margin: 0 0 var(--space-24);
+  background: transparent; border-bottom: 2px solid var(--color-text);
+}
+header.page-header h1 { font: 700 clamp(28px, 2.6vw, 40px)/1.35 "Yu Mincho", "Hiragino Mincho ProN", serif; letter-spacing: -.03em; }
+.header-meta { gap: var(--space-12); }
+#header-conn::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 6px; border: 1px solid currentColor; border-radius: 50%; }
+#header-conn.conn-ok::before { background: currentColor; }
+.panel h2 { color: var(--color-text); letter-spacing: 0; }
+.ledger { margin-bottom: var(--space-16); }
+.ledger h2 { display: flex; align-items: baseline; gap: var(--space-12); }
+.ledger-count { font: 500 var(--font-small)/1 var(--font-stack); color: var(--color-text-muted); }
+.record-list { list-style: none; padding: 0; margin: 0; border-block: 1px solid var(--color-border); }
+.record-list li + li { border-block-start: 1px solid var(--color-border-subtle); }
+.record-list a {
+  display: grid; grid-template-columns: minmax(140px,1fr) minmax(80px,auto) minmax(140px,auto) minmax(48px,auto) 1em;
+  gap: var(--space-16); align-items: center; padding: var(--space-16);
+  color: var(--color-text); background: var(--color-surface); overflow-wrap: anywhere;
+}
+.record-list a:hover { background: var(--color-surface-hover); text-decoration: none; }
+.record-identity, .record-time, .record-count { display: grid; gap: 2px; }
+.record-identity strong, .record-arrow { color: var(--color-brand); }
+.record-list small, .record-time, .metric-denominator { font-size: var(--font-small); }
+.record-list small { color: var(--color-text-muted); }
+.record-identity small, .record-count b { font-family: var(--font-mono); }
+.record-list .badge { justify-self: start; border-radius: 4px; background: var(--color-accent-soft); padding: 2px 8px; white-space: normal; }
+.record-list .badge .shape { display: inline; padding-inline-end: 4px; }
+.empty-ledger { padding: var(--space-20); background: var(--color-surface); border-inline-start: 3px solid var(--color-border); }
+.approval-group { background: var(--color-surface); border-top: 1px solid var(--color-border-subtle); }
+.approval-group > p, .approval-group > summary { padding: var(--space-8) var(--space-16); margin: 0; min-height: 44px; font-size: var(--font-small); }
+.approval-group > p { color: var(--color-text-muted); }
+.approval-group b { float: right; margin-left: 8px; font-variant-numeric: tabular-nums; }
+.approval-group summary { cursor: pointer; color: var(--color-brand); font-weight: 600; }
+.environment { margin-top: 0; }
+.environment > summary { font-size: var(--font-body); }
+.detail-head h2 { font-family: var(--font-stack); }
+.summary-metrics { background: var(--color-surface); border-block-start: 2px solid var(--color-brand); }
+.view-tabs button { transition: border-color 140ms ease-out, background-color 140ms ease-out; }
+.view-tabs button[aria-pressed="true"] { background: var(--color-accent-soft); }
+.table-wrap { max-width: 100%; }
+@media (max-width: 1024px) {
+  .sidebar { padding: 0; height: auto; }
+  .sidebar > .nav-list { padding: var(--space-4) var(--space-12); max-width: 100vw; }
+  .layout { grid-template-columns: minmax(0,1fr); }
+}
+@media (max-width: 767px) {
+  .mobile-nav summary { color: var(--color-brand); border: 0; }
+  main { padding: var(--space-16) var(--space-16) var(--space-32); }
+  header.page-header { gap: var(--space-8); margin-bottom: var(--space-16); }
+  .header-meta { width: 100%; gap: var(--space-4) var(--space-8); }
+  .header-meta strong { font-family: var(--font-stack); }
+  .record-list a { grid-template-columns: minmax(0,1fr) auto; gap: var(--space-8); padding: var(--space-12); }
+  .record-identity { grid-column: 1; }
+  .record-list .badge { justify-self: end; }
+  .record-time, .record-count { align-content: end; }
+  .record-count { justify-items: end; }
+  .record-arrow { display: none; }
+  .view-tabs { flex-wrap: wrap; }
+}
+@media (prefers-reduced-motion: reduce) { .view-tabs button { transition: none; } }
+
+.masthead { background: #30243e; color: #fff; }
+.mast-inner {
+  max-width: 1440px; margin-inline: auto; min-height: 64px; padding-inline: clamp(16px, 4vw, 56px);
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.wordmark { display: flex; align-items: center; gap: 12px; font: 600 15px/1.2 Georgia, "Yu Mincho", serif; letter-spacing: .11em; }
+.seal {
+  display: inline-grid; place-items: center; width: 36px; height: 36px;
+  border: 1px solid #cbbcd9; border-radius: 9px 2px 9px 2px; color: #f5ecff;
+  font: 600 23px/1 "Yu Mincho", "Hiragino Mincho ProN", serif; letter-spacing: 0;
+}
+.view-switch { display: flex; align-self: stretch; align-items: stretch; gap: 4px; }
+.view-switch > * {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 44px;
+  padding: 0 16px; color: #ded4e6; font: 600 16px/1.5 system-ui, sans-serif;
+  border-block-end: 3px solid transparent; text-decoration: none;
+}
+.view-switch [aria-current] { color: #fff; border-color: #ddbcf3; background: #41324f; }
+.view-switch a:hover { color: #fff; background: #463652; text-decoration: none; }
+.masthead :focus-visible { outline: 2px solid #fff; outline-offset: -4px; }
+@media (max-width: 767px) {
+  .mast-inner { min-height: 56px; padding-inline: 12px; gap: 8px; }
+  .wordmark { gap: 8px; font-size: 12px; letter-spacing: .05em; }
+  .seal { width: 32px; height: 32px; font-size: 21px; }
+  .view-switch { gap: 0; }
+  .view-switch > * { padding-inline: 8px; font-size: 14px; }
+}
+@media (max-width: 360px) {
+  .wordmark > span:last-child { max-width: 8em; }
+}
 </style>
 </head>
 <body>
 <a class="skip-link" href="#main">本文へスキップ</a>
+<header class="masthead">
+  <div class="mast-inner">
+    <div class="wordmark"><span class="seal" aria-hidden="true">紫</span><span>AI YORI MURASAKI</span></div>
+    <nav class="view-switch" aria-label="画面を切り替える" data-key="view-switcher">
+      <a id="switch-to-decision" data-key="switch-to-decision" href="/decision">判断の画面</a>
+      <span aria-current="page" data-key="current-monitor">モニター</span>
+    </nav>
+  </div>
+</header>
 <div class="layout">
   <aside class="sidebar" aria-label="ナビゲーション">
-    <div class="sidebar-brand">
-      <span class="brand-dot" aria-hidden="true"></span>
-      <div>
-        <div class="brand-name">紫</div>
-        <div class="brand-desc">AI YORI MURASAKI</div>
-      </div>
-    </div>
-    <p class="sidebar-label">Campaign</p>
+    <p class="sidebar-label">閲覧メニュー</p>
     <details class="mobile-nav">
       <summary>メニュー</summary>
       <ul class="nav-list" id="nav-list-mobile"></ul>
     </details>
     <ul class="nav-list" id="nav-list" aria-label="Campaign一覧"></ul>
-    <dl class="data-status" id="data-status">
-      <dt>最終取得</dt><dd id="status-fetched">未取得</dd>
-      <dt>接続</dt><dd id="status-conn">未確認</dd>
-    </dl>
   </aside>
   <main id="main" tabindex="-1">
     <header class="page-header">
       <div class="header-left">
-        <span class="header-brand-text">ワークスペース</span>
-        <span class="header-sep" aria-hidden="true"></span>
-        <h1>製品実行モニター</h1>
+        <h1>記録モニター</h1>
       </div>
       <div class="header-meta">
         <span id="header-conn">未確認</span>
@@ -476,20 +527,15 @@ td, th { font-variant-numeric: tabular-nums; }
         <button type="button" class="refresh" id="refresh-btn" aria-label="データを手動更新">手動更新</button>
       </div>
     </header>
-    <nav class="view-switcher" aria-label="画面を切り替える" data-key="view-switcher">
-      <a id="switch-to-decision" data-key="switch-to-decision" href="/decision">判断の画面</a>
-      <span aria-current="page" data-key="current-monitor">モニター</span>
-    </nav>
     <div class="banner-area" id="banner-area"></div>
     <div id="view-root"></div>
     <details class="details-block">
-      <summary>補足情報（データ形式・API一覧・read-onlyについて）</summary>
+      <summary>データ形式と更新のしくみ</summary>
       <div class="content">
         <p>本画面は operator ローカル専用の read-only モニターです。承認・再verify・反映などの更新操作は提供しません。</p>
         <p>参照API: <code>GET /api/campaigns</code>, <code>GET /api/campaigns/&lt;id&gt;</code>, <code>GET /api/campaigns/&lt;id&gt;/runs</code>, <code>GET /api/campaigns/&lt;id&gt;/rsi</code>, <code>GET /api/runs/&lt;id&gt;</code>, <code>GET /api/runs/&lt;id&gt;/events</code>, <code>GET /api/verification/&lt;id&gt;</code>, <code>GET /api/approvals</code>, <code>GET /api/models</code>, <code>GET /api/adapters</code>, <code>GET /api/health</code>, <code>GET /api/campaigns/&lt;id&gt;/decision-view</code></p>
         <p>権限により非表示となる項目は「権限により非表示」と表示します。status名のみから未提供データを推測しません。</p>
         <p>15秒ごとに自動更新します（タブ非表示時は休止）。手動更新ボタンでも取得できます。応答は5秒でタイムアウト、1MiBを超える応答は破棄します。</p>
-        <p>API内部名（projection名・reason_code等）は本補足に集約し、通常UI文言からは排除しています。</p>
       </div>
     </details>
   </main>
@@ -533,8 +579,6 @@ td, th { font-variant-numeric: tabular-nums; }
     navList: document.getElementById('nav-list'),
     navListMobile: document.getElementById('nav-list-mobile'),
     refreshBtn: document.getElementById('refresh-btn'),
-    statusFetched: document.getElementById('status-fetched'),
-    statusConn: document.getElementById('status-conn'),
     headerFetched: document.getElementById('header-fetched')
   };
 
@@ -1091,7 +1135,7 @@ td, th { font-variant-numeric: tabular-nums; }
       var homeA = document.createElement('a');
       homeA.href = '#/';
       homeA.setAttribute('data-key', list.id + '-home');
-      homeA.textContent = 'すべてのCampaign';
+      homeA.textContent = '案件一覧';
       if (state.route.name === 'list') homeA.setAttribute('aria-current', 'page');
       homeLi.appendChild(homeA);
       items.push(homeLi);
@@ -1111,11 +1155,11 @@ td, th { font-variant-numeric: tabular-nums; }
           var a = document.createElement('a');
           a.href = '#/campaign/' + encodeURIComponent(c.campaign_id);
           a.setAttribute('data-key', list.id + '-campaign-' + c.campaign_id);
-          a.textContent = c.campaign_id;
+          a.textContent = c.intent_id || c.campaign_id;
           if (state.route.name === 'campaign' && state.route.params.id === c.campaign_id) a.setAttribute('aria-current', 'page');
           var meta = document.createElement('span');
           meta.className = 'meta';
-          meta.textContent = (c.status || '未記録') + ' ／ 検知 ' + (c.finding_count === null || c.finding_count === undefined ? '未記録' : c.finding_count);
+          meta.textContent = '検知 ' + (Number.isInteger(c.finding_count) ? c.finding_count + ' 件' : '未記録');
           a.appendChild(meta);
           li2.appendChild(a);
           items.push(li2);
@@ -1127,13 +1171,11 @@ td, th { font-variant-numeric: tabular-nums; }
 
   function renderStatus() {
     var f = state.lastFetched ? fmtTime(state.lastFetched) : '未取得';
-    el.statusFetched.textContent = f;
     el.headerFetched.textContent = f;
     var connText, connClass;
     if (state.healthError) { connText = '接続不可'; connClass = 'conn-err'; }
     else if (state.health) { connText = '接続中'; connClass = 'conn-ok'; }
     else { connText = '未確認'; connClass = ''; }
-    el.statusConn.textContent = connText;
     var hc = document.getElementById('header-conn');
     if (hc) {
       hc.textContent = connText;
@@ -1474,6 +1516,11 @@ td, th { font-variant-numeric: tabular-nums; }
     unverified: { label: '未確認', tone: 'warn', shape: '○' },
     immutable: { label: '不変', tone: 'info', shape: '●' },
     created: { label: '作成済み', tone: 'info', shape: '●' },
+    running: { label: '実行中', tone: 'info', shape: '●' },
+    blind_completed: { label: '独立評価済み', tone: 'info', shape: '●' },
+    purple_open: { label: '共同確認中', tone: 'info', shape: '●' },
+    remediation_in_progress: { label: '修復中', tone: 'warn', shape: '○' },
+    cancelled: { label: '中止', tone: 'info', shape: '○' },
     review_pending: { label: 'レビュー待ち', tone: 'warn', shape: '○' },
     completed: { label: '完了', tone: 'ok', shape: '●' },
     incomplete: { label: '未完了', tone: 'warn', shape: '○' },
@@ -1491,8 +1538,7 @@ td, th { font-variant-numeric: tabular-nums; }
   function renderApprovals() {
     var p = document.createElement('section');
     p.className = 'panel';
-    p.appendChild(text('h2', '承認（approvals）'));
-    p.appendChild(text('p', 'レビュー待ち・承認済み（未反映・未確認）・反映済みを区別して表示します。反映済みと確認できたものを表示します。', 'lead'));
+    p.appendChild(text('h2', '承認と反映の記録'));
     if (state.approvalsError) {
       p.appendChild(text('p', '取得に失敗しました: ' + state.approvalsError, 'muted'));
       if (!state.approvals) {
@@ -1517,9 +1563,13 @@ td, th { font-variant-numeric: tabular-nums; }
       else other.push(a);
     }
     function section(title, list) {
-      var h = document.createElement('h3');
-      h.textContent = title + '（' + list.length + '）';
-      p.appendChild(h);
+      var group = text(list.length ? 'details' : 'div', null, 'approval-group');
+      group.setAttribute('data-key', 'approval-' + title);
+      var heading = text(list.length ? 'summary' : 'p', title);
+      heading.appendChild(text('b', list.length + ' 件'));
+      group.appendChild(heading);
+      p.appendChild(group);
+      if (!list.length) return;
       var rows = [];
       for (var j = 0; j < list.length; j++) {
         var it = list[j];
@@ -1531,7 +1581,7 @@ td, th { font-variant-numeric: tabular-nums; }
           orUnrecorded(fmtTime(it.decided_at || it.created_at))
         ]);
       }
-      p.appendChild(makeTable(['approval_id', 'remediation_id', 'decision', 'applied', 'decided_at'], rows, '承認一覧（' + title + '）'));
+      group.appendChild(makeTable(['approval_id', 'remediation_id', 'decision', 'applied', 'decided_at'], rows, '承認一覧（' + title + '）'));
     }
     section('レビュー待ち', pending);
     section('承認済み（未反映/未確認）', approved);
@@ -1543,9 +1593,10 @@ td, th { font-variant-numeric: tabular-nums; }
   function renderList() {
     var frag = document.createDocumentFragment();
     var p1 = document.createElement('section');
-    p1.className = 'panel';
-    p1.appendChild(text('h2', 'Campaign一覧'));
-    p1.appendChild(text('p', '各Campaignの状態・最終実行日時・検知件数を表示します。詳細はリンクから遷移します。', 'lead'));
+    p1.className = 'panel ledger';
+    var title = text('h2', '案件一覧');
+    if (Array.isArray(state.campaigns)) title.appendChild(text('span', state.campaigns.length + ' 件', 'ledger-count'));
+    p1.appendChild(title);
     if (state.campaignsError) {
       p1.appendChild(text('p', '取得に失敗しました: ' + state.campaignsError, 'muted'));
       if (state.campaigns) {
@@ -1559,19 +1610,38 @@ td, th { font-variant-numeric: tabular-nums; }
         oC.className = 'muted';
         p1.appendChild(oC);
       }
+    } else if (!state.campaigns.length) {
+      p1.appendChild(text('p', '案件はまだありません。記録が作成されると、ここに表示されます。', 'empty-ledger'));
     } else {
-      var rows = [];
+      var records = document.createElement('ul');
+      records.className = 'record-list';
+      records.setAttribute('aria-label', '案件一覧');
       for (var i = 0; i < state.campaigns.length; i++) {
         var c = state.campaigns[i];
         if (!c || !c.campaign_id) continue;
         var link = document.createElement('a');
         link.href = '#/campaign/' + encodeURIComponent(c.campaign_id);
         link.setAttribute('data-key', 'list-campaign-' + c.campaign_id);
-        link.textContent = c.campaign_id;
-        var blind = c.status === 'blind' ? badge('Blind', 'warn', '○') : badge(c.status || '未記録', 'info', '●');
-        rows.push([link, blind, orUnrecorded(fmtTime(c.last_run_at)), orUnrecorded(c.finding_count)]);
+        var row = document.createElement('li');
+        row.setAttribute('data-key', 'record-' + c.campaign_id);
+        var identity = text('span', null, 'record-identity');
+        identity.appendChild(text('strong', c.intent_id || c.campaign_id));
+        if (c.intent_id) identity.appendChild(text('small', c.campaign_id));
+        link.appendChild(identity);
+        link.appendChild(c.status === 'blind' ? badge('Blind', 'warn', '○') : statusBadge(c.status));
+        var time = text('span', null, 'record-time');
+        time.appendChild(text('small', '最終実行'));
+        time.appendChild(orUnrecorded(fmtTime(c.last_run_at)));
+        link.appendChild(time);
+        var count = text('span', null, 'record-count');
+        count.appendChild(text('small', '検知'));
+        count.appendChild(text('b', Number.isInteger(c.finding_count) ? c.finding_count + ' 件' : '未記録'));
+        link.appendChild(count);
+        var arrow = text('span', '→', 'record-arrow');
+        arrow.setAttribute('aria-hidden', 'true'); link.appendChild(arrow);
+        row.appendChild(link); records.appendChild(row);
       }
-      p1.appendChild(makeTable(['Campaign', '状態', '最終実行日時', '検知件数'], rows, 'キャンペーン一覧'));
+      p1.appendChild(records);
     }
     frag.appendChild(p1);
 
@@ -1608,7 +1678,6 @@ td, th { font-variant-numeric: tabular-nums; }
       }
       p2.appendChild(makeTable(['役割', '要求モデル', '登録状態', '開発呼び出し状態', '製品接続状態', 'モデル版の固定'], mrows, 'モデル状態'));
     }
-    frag.appendChild(p2);
 
     var p3 = document.createElement('section');
     p3.className = 'panel';
@@ -1635,9 +1704,13 @@ td, th { font-variant-numeric: tabular-nums; }
       }
       p3.appendChild(makeTable(['name', 'status', 'mode', 'checked_at'], arows, '接続先一覧'));
     }
-    frag.appendChild(p3);
-
     frag.appendChild(renderApprovals());
+    var environment = text('details', null, 'details-block environment');
+    environment.setAttribute('data-key', 'environment');
+    environment.appendChild(text('summary', 'モデルと接続先の状態'));
+    environment.appendChild(p2);
+    environment.appendChild(p3);
+    frag.appendChild(environment);
 
     return frag;
   }
@@ -1739,12 +1812,12 @@ td, th { font-variant-numeric: tabular-nums; }
     var head = document.createElement('div');
     head.className = 'detail-head';
     head.setAttribute('data-key', 'campaign-head-' + id);
-    var h2 = text('h2', id);
+    var h2 = text('h2', c.intent_id || id);
     head.appendChild(h2);
     var dl = document.createElement('dl');
     dl.className = 'detail-meta';
     var fields = [
-      ['intent_id', c.intent_id],
+      ['campaign_id', id],
       ['status', c.status],
       ['created_at', fmtTime(c.created_at)],
       ['last_run_at', fmtTime(c.last_run_at)],
@@ -1794,8 +1867,7 @@ td, th { font-variant-numeric: tabular-nums; }
       m.appendChild(mv);
       if (res.denom) {
         var dn = document.createElement('div');
-        dn.className = 'muted';
-        dn.style.fontSize = '12px';
+        dn.className = 'metric-denominator muted';
         dn.appendChild(res.denom);
         m.appendChild(dn);
       }
@@ -1865,7 +1937,7 @@ td, th { font-variant-numeric: tabular-nums; }
     var pFind = document.createElement('section');
     pFind.className = 'panel';
     pFind.setAttribute('data-key', 'campaign-findings-' + id);
-    pFind.appendChild(text('h2', '検知（findings）'));
+    pFind.appendChild(text('h2', '検知の記録'));
     var findings = Array.isArray(d.findings) ? d.findings : [];
     var assessStatusById = null;
     var aRep = state.detail.assessment;
@@ -2762,6 +2834,10 @@ td, th { font-variant-numeric: tabular-nums; }
 
   el.viewRoot.addEventListener('click', onViewRootClick);
 
+  document.querySelector('.skip-link').addEventListener('click', function (event) {
+    event.preventDefault();
+    document.getElementById('main').focus();
+  });
   window.addEventListener('hashchange', navigate);
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) stopAuto();
