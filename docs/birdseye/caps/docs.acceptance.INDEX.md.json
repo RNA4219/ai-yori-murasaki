@@ -2,7 +2,7 @@
   "id": "docs/acceptance/INDEX.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "技術検収の一覧。案件と証跡の画面改修はAC-20261122-01から確認でき、各項目の公開状態を併記する。",
+  "summary": "技術検収の一覧。システム構成図の検収AC-20261123-01と各項目の公開状態を参照できる。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -18,7 +18,9 @@
     "docs/acceptance/AC-20261109-01.md",
     "docs/acceptance/AC-20261109-02.md",
     "docs/acceptance/AC-20261122-01.md",
+    "docs/acceptance/AC-20261123-01.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
+    "docs/tasks/TASK.architecture-map-11-23-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
     "docs/tasks/TASK.product-clarity-11-07-2026.md",
@@ -42,13 +44,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "9b4a5800d085425f8ba81257cc888f5d2bd4f980535702738d1efa4d28e07a2f",
-  "generated_at": "00032",
+  "source_sha256": "e36a76ec9a01ddc25f9ec813eeb681f72b51f226d48075a586a2673d2bbc4cdf",
+  "generated_at": "00036",
   "review": {
-    "reviewed_at": "2026-11-22T13:38:04+00:00",
+    "reviewed_at": "2026-11-22T15:14:19+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "9b4a5800d085425f8ba81257cc888f5d2bd4f980535702738d1efa4d28e07a2f",
-    "summary_sha256": "ef780aedb27786dd026f5285e4147ff3d5c94262ef1df0de74fe71fc5a4211f5",
-    "scope": "今回の画面改修の記載、要約、Task・技術検収への参照を照合。"
+    "source_sha256": "e36a76ec9a01ddc25f9ec813eeb681f72b51f226d48075a586a2673d2bbc4cdf",
+    "summary_sha256": "8d2469be3a6db888d5d43ea9ceca2f5c5ae20c410203ba16e68fab79a375f03d",
+    "scope": "構成図の操作、入力仕様、検収の根拠と文書間の参照を照合。"
   }
 }

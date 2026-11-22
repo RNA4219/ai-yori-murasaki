@@ -26,6 +26,8 @@ CVSS v4.0 の算出仕様は FIRST (Forum of Incident Response and Security Team
 
 ## 配布方式
 
+構成図のローカルYAML読み込みに js-yaml 4.3.2（MIT）を使用する。配布されたESモジュールとライセンス原文を `ai_yori_murasaki/web/architecture/` に同梱する。[js-yaml](https://github.com/nodeca/js-yaml)
+
 - wheel / sdist いずれにも本書（THIRD_PARTY_NOTICES.md）と LICENSE を同梱する。
 - `ai_yori_murasaki` パッケージデータ（schemas/v1、web、lab_assets、assessment_assets、adapters/contracts、default-policy.json）をwheel/sdistに含める。
 - 本書は公開準備（R-063）の一部であり、公開操作そのものではない。

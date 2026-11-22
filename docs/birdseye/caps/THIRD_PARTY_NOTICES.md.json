@@ -2,18 +2,18 @@
   "id": "THIRD_PARTY_NOTICES.md",
   "role": "doc",
   "public_api": [],
-  "summary": "配布物と依存部品の帰属。任意MCP SDK2.3.0のMIT実物確認と、axe-coreを検証環境だけで使うことを記録する。",
+  "summary": "配布物と依存製品の帰属。MCP SDK、検証用axe-core、構成ファイルの読み込みに同梱するjs-yamlの出典とライセンスを記す。",
   "deps_out": [],
   "deps_in": [],
   "risks": [],
   "tests": [],
-  "source_sha256": "66a13d25d47c353bb93aac94fcda5f9f42f5f6e1b7d4730bb4f8165675071c1f",
-  "generated_at": "00029",
+  "source_sha256": "ec9a4a70f3c0b232b12b72bfb370f9bf3d57e6af84f7a95f39b73cfa08eb2af1",
+  "generated_at": "00036",
   "review": {
-    "reviewed_at": "2026-11-09T05:32:05.054668+00:00",
+    "reviewed_at": "2026-11-22T15:14:19+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "66a13d25d47c353bb93aac94fcda5f9f42f5f6e1b7d4730bb4f8165675071c1f",
-    "summary_sha256": "40d34297b802c67ae37375e09886398b9cee5bfc7212e1199f1d1dcea1c08c86",
-    "scope": "今回の原文・要約・参照を照合。MCPローカル試験、実サービス未検証、画面実測、参考情報と判定証拠の分離を確認。"
+    "source_sha256": "ec9a4a70f3c0b232b12b72bfb370f9bf3d57e6af84f7a95f39b73cfa08eb2af1",
+    "summary_sha256": "4a1730764118b5547d6c8fbfa30dcf73511bc568f119d4024ff1f3c69dc3fe3e",
+    "scope": "構成図の操作、入力仕様、検収の根拠と文書間の参照を照合。"
   }
 }

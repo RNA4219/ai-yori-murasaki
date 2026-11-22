@@ -2,7 +2,7 @@
   "id": "README.md",
   "role": "overview",
   "public_api": [],
-  "summary": "製品概要、起動、制約と検証。案件の履歴を初回からたどり、検知・証跡・判断の画面を開く操作を画面例で案内する。",
+  "summary": "製品概要、起動、案件の履歴と判断・証跡の画面例。システム構成図の見本、自分の構成ファイルの読み込み方と仕様に案内する。",
   "deps_out": [
     "BLUEPRINT.md",
     "CHANGELOG.md",
@@ -26,6 +26,7 @@
     "docs/requirements/SPEC-CORE.md",
     "docs/requirements/SPEC-EVALUATION.md",
     "docs/tasks/README.md",
+    "docs/tasks/TASK.architecture-map-11-23-2026.md",
     "docs/workflow-adoption.md"
   ],
   "deps_in": [
@@ -42,13 +43,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "6d64300886ef18ea12e8de5731f10b74318802e3742bb10e5c540dd8c7fd4b22",
-  "generated_at": "00035",
+  "source_sha256": "b1ed2efbfb18d067703c0d1fb56bbf9b54cf68513c5b264da34062d59e641587",
+  "generated_at": "00036",
   "review": {
-    "reviewed_at": "2026-11-22T14:35:45+00:00",
+    "reviewed_at": "2026-11-22T15:14:19+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "6d64300886ef18ea12e8de5731f10b74318802e3742bb10e5c540dd8c7fd4b22",
-    "summary_sha256": "1c23d529598190507b4c1000ce1b659209db4399e734a402f1852a7a5c3a2b0d",
-    "scope": "初回からの履歴、分岐、途中の回を選んだ表示と検収結果を原文と照合。"
+    "source_sha256": "b1ed2efbfb18d067703c0d1fb56bbf9b54cf68513c5b264da34062d59e641587",
+    "summary_sha256": "d415d5250e3530e76fc4309b4a859e33aa0cacee618a027f9c9bf25e597e32df",
+    "scope": "構成図の操作、入力仕様、検収の根拠と文書間の参照を照合。"
   }
 }

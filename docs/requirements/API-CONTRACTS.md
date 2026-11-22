@@ -135,6 +135,8 @@ intent_id: INT-AYM-PRODUCT-20261106 / owner: RNA4219 / status: reviewed
 | method | path | query | 成功 | 失敗 | max size |
 |---|---|---|---|---|---|
 | GET | `/` | - | HTML index | 500 | 256 KiB |
+| GET | `/architecture` | - | 構成図HTML。利用者のファイル入力はブラウザー内で処理する | 500 | 256 KiB |
+| GET | `/architecture/<asset>` | - | 同梱した `map.mjs`、`model.mjs`、`js-yaml.mjs`、`sample.json` | 404 | 1 MiB |
 | GET | `/assets/<path>` | - | static asset | 404 | 1 MiB |
 | GET | `/api/campaigns` | - | `{campaigns: [...]}` | 500 | 1 MiB |
 | GET | `/api/campaign-relations` | `?view=operator\|blue` | operatorは案件ID、目的名、作成日時、比較元の案件ID（`previous_id`）の一覧。比較元がなければnull。Blueは `{"status":"withheld"}` | 500 | 1 MiB |

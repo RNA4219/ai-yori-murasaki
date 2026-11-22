@@ -36,6 +36,8 @@ ALLOWED_HOSTS = ("127.0.0.1", "localhost")
 ROUTES: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("index", re.compile(r"^/$")),
     ("decision", re.compile(r"^/decision$")),
+    ("architecture", re.compile(r"^/architecture$")),
+    ("architecture_asset", re.compile(r"^/architecture/(map\.mjs|model\.mjs|js-yaml\.mjs|sample\.json)$")),
     ("health", re.compile(r"^/api/health$")),
     ("sources", re.compile(r"^/api/sources$")),
     ("source", re.compile(r"^/api/sources/(src-[0-9a-f]{32})$")),
@@ -600,22 +602,12 @@ def _check_origin(origin: str | None, port: int) -> bool:
     return origin in allowed
 
 
-def _load_decision_html() -> bytes:
+def _load_page(filename: str) -> bytes:
     try:
-        data = resources.files("ai_yori_murasaki").joinpath("web/decision.html").read_bytes()
+        data = resources.files("ai_yori_murasaki").joinpath("web", filename).read_bytes()
     except (FileNotFoundError, ModuleNotFoundError, OSError):
         return b""
     return data if len(data) <= MAX_HTML_BYTES else b""
-
-
-def _load_index_html() -> bytes:
-    try:
-        data = resources.files("ai_yori_murasaki").joinpath("web/index.html").read_bytes()
-    except (FileNotFoundError, ModuleNotFoundError, OSError):
-        return b""
-    if len(data) > MAX_HTML_BYTES:
-        return b""
-    return data
 
 
 def _normalize_csp_source(body: str) -> str:
@@ -708,8 +700,8 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
         return _error(400, "bad_view")
 
     try:
-        if name == "index":
-            html = _load_index_html()
+        if name in ("index", "decision", "architecture"):
+            html = _load_page(name + ".html")
             if not html:
                 return _error(500, "index_unavailable")
             hdrs = _security_headers(html)
@@ -717,14 +709,15 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
             hdrs["Content-Length"] = str(len(html))
             return 200, hdrs, html
 
-        if name == "decision":
-            html = _load_decision_html()
-            if not html:
-                return _error(500, "index_unavailable")
-            hdrs = _security_headers(html)
-            hdrs["Content-Type"] = "text/html; charset=utf-8"
-            hdrs["Content-Length"] = str(len(html))
-            return 200, hdrs, html
+        if name == "architecture_asset":
+            asset = groups[0]
+            data = resources.files("ai_yori_murasaki").joinpath("web", "architecture", asset).read_bytes()
+            if len(data) > MAX_RESPONSE_BYTES:
+                return _error(500, "asset_too_large")
+            hdrs = _security_headers()
+            media = "application/json" if asset.endswith(".json") else "text/javascript"
+            hdrs.update({"Content-Type": media + "; charset=utf-8", "Content-Length": str(len(data))})
+            return 200, hdrs, data
 
         if name == "health":
             return _json_response(200, {"status": "ok"})

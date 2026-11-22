@@ -211,6 +211,7 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
   <section class="card picker" id="campaign-picker" hidden>
     <h1>確認する案件を選ぶ</h1>
     <a href="/#/relations">案件のつながりを見る</a>
+    <a href="/architecture">システム構成図を見る</a>
     <p id="campaign-message" class="muted" role="status">Campaign を読み込んでいます。</p>
     <div id="campaign-list" class="campaign-list"></div>
   </section>
@@ -231,7 +232,7 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     <div class="report-front">
     <section class="brief" aria-labelledby="h-sum">
       <div class="brief-heading">
-        <div class="case-line"><p id="sum-name"></p><a href="/decision" id="back-picker" hidden>案件を選び直す</a><a href="/#/relations" id="related-cases" hidden>この案件のつながり</a></div>
+        <div class="case-line"><p id="sum-name"></p><a href="/decision" id="back-picker" hidden>案件を選び直す</a><a href="/#/relations" id="related-cases" hidden>この案件のつながり</a><a href="/architecture" id="system-map" hidden>システム構成図</a></div>
         <h1 id="h-sum"></h1>
       </div>
     </section>
@@ -710,6 +711,7 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     $('refresh-view').hidden=!(state.isAYM&&state.campaign);
     $('back-picker').hidden=!(state.isAYM&&state.campaign);
     $('related-cases').hidden=!(state.isAYM&&state.campaign);
+    $('system-map').hidden=!state.isAYM;
     if (state.isAYM && state.campaign) $('related-cases').href='/#/relations/'+encodeURIComponent(state.campaign);
   }
 

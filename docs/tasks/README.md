@@ -22,6 +22,7 @@ Task、[Acceptance](../acceptance/README.md)、[CHANGELOG](../../CHANGELOG.md)�
 
 | task_id | 作業 | 検収 |
 | --- | --- | --- |
+| 20261123-01 | [リポジトリ・システム構成図](TASK.architecture-map-11-23-2026.md) | [AC-20261123-01](../acceptance/AC-20261123-01.md) |
 | 20261122-01 | [判断の画面と記録モニターの改修](TASK.frontend-review-11-22-2026.md) | [AC-20261122-01](../acceptance/AC-20261122-01.md) |
 | 20261116-01 | [判断の画面（独立プレビュー）](TASK.decision-view-11-16-2026.md) | [AC-20261116-01](../acceptance/AC-20261116-01.md)（未検収） |
 | 20261112-01 | [RSIシナリオ起動・課題文・失敗時呼び出し数](TASK.rsi-scenarios-11-12-2026.md) | [AC-20261112-01](../acceptance/AC-20261112-01.md)（未検収） |

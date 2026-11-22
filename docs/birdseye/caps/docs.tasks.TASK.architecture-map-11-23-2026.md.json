@@ -1,0 +1,29 @@
+{
+  "id": "docs/tasks/TASK.architecture-map-11-23-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "README.md",
+    "docs/acceptance/AC-20261123-01.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261123-01.md"
+  ],
+  "summary": "リポジトリとAWS構成の関係図に関する要件。見本、独自JSON・YAML、CloudFormation、package.jsonの入力仕様と指摘の対象範囲を定める。",
+  "source_sha256": "9bd73bedd770f974b435b5c0eaef4f2dffd952355537a19881c448f68f08510b",
+  "generated_at": "00036",
+  "review": {
+    "reviewed_at": "2026-11-22T15:14:19+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "9bd73bedd770f974b435b5c0eaef4f2dffd952355537a19881c448f68f08510b",
+    "summary_sha256": "98f00fba350ed050745636855b77cdfca9591cd11828217ecda7acb94d7186e8",
+    "scope": "構成図の操作、入力仕様、検収の根拠と文書間の参照を照合。"
+  }
+}

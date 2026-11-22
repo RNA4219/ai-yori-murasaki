@@ -1,0 +1,24 @@
+{
+  "schema": "aym.architecture/v1",
+  "name": "注文管理サービス",
+  "nodes": [
+    {"id":"web","kind":"repository","name":"orders-web","type":"フロントエンド","description":"注文入力と注文履歴を表示するWebアプリ。"},
+    {"id":"api","kind":"repository","name":"orders-api","type":"バックエンド","description":"注文受付の処理と保存を担当するAPIの実装。"},
+    {"id":"contracts","kind":"repository","name":"order-contracts","type":"共有パッケージ","description":"画面とAPIが共有する注文データの型定義。"},
+    {"id":"gateway","kind":"service","name":"注文の受付窓口","type":"Amazon API Gateway","description":"注文画面から受けたリクエストを注文処理に渡す。"},
+    {"id":"worker","kind":"service","name":"注文処理","type":"AWS Lambda","description":"注文内容を検証し、注文控えを保存する。"},
+    {"id":"archive","kind":"store","name":"注文控えの保管庫","type":"Amazon S3","description":"発行した注文控えを保管し、問い合わせ時に参照する。"}
+  ],
+  "connections": [
+    {"from":"web","to":"contracts","label":"型定義に依存","evidence":"orders-web/package.json → dependencies → order-contracts"},
+    {"from":"api","to":"contracts","label":"型定義に依存","evidence":"orders-api/package.json → dependencies → order-contracts"},
+    {"from":"web","to":"gateway","label":"注文を送信","evidence":"orders-web/src/orders.ts → submitOrder"},
+    {"from":"api","to":"worker","label":"実装を配備","evidence":"orders-api/template.yaml → Resources.OrderHandler.Properties.CodeUri"},
+    {"from":"gateway","to":"worker","label":"処理を呼び出す","evidence":"orders-api/template.yaml → OrderRoute.Integration"},
+    {"from":"worker","to":"archive","label":"控えを保存","evidence":"orders-api/src/receipt.ts → saveReceipt"}
+  ],
+  "findings": [
+    {"node":"archive","severity":"high","title":"注文控えの復元手段を確認","evidence":"見本の運用レビュー REC-04。テンプレートのバージョニングは Suspended。注文控えの復元試験が未記録。","action":"保存要件とバックアップ先を確認し、注文控えを一件復元して結果を記録する。"},
+    {"node":"contracts","severity":"medium","title":"互換性テストの対象が片側のみ","evidence":"見本の設計レビュー API-12。共有型の変更時に実行されるのは orders-api のテストのみ。","action":"orders-web の契約テストも対象に加え、共有型を変更したときに両方を確認する。"}
+  ]
+}
