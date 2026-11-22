@@ -1,0 +1,28 @@
+{
+  "id": "docs/tasks/TASK.document-consistency-11-23-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/AC-20261123-03.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "docs/acceptance/AC-20261109-07.md",
+    "docs/acceptance/AC-20261123-03.md"
+  ],
+  "summary": "Birdseyeの3原文と過去のLLM接続検収について、文書整合性を修復するTask。完了条件と文書検収を結ぶ。",
+  "generated_at": "00038",
+  "source_sha256": "087f181f6c09314cea87c1897846aab79733dde046b9b713342a349ab6b3f737",
+  "review": {
+    "reviewed_at": "2026-11-23T01:17:45+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "087f181f6c09314cea87c1897846aab79733dde046b9b713342a349ab6b3f737",
+    "summary_sha256": "04da8a98ebd18a35fe9014280233e057db0a8e5106893daae96b7e371f512bcd",
+    "scope": "完了条件と対応する検収を照合。"
+  }
+}

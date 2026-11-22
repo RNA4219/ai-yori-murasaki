@@ -2,7 +2,7 @@
   "id": "docs/PRODUCT-GUIDE.md",
   "role": "doc",
   "public_api": [],
-  "summary": "導入、分離ディレクトリ、ラボ、CLI、監視、RSI、異常時の回復、配布検証の操作ガイド。",
+  "summary": "導入・保存先、ラボとモニター、CLI、RSI、停止・回復、配布の操作ガイド。認可済み案件の実ログを使うBlind Blue、入力元の証跡とOracleによる確認も扱う。",
   "deps_out": [
     "README.md",
     "docs/CONTRACTS.md",
@@ -13,17 +13,18 @@
     "HUB.codex.md",
     "README.md",
     "RUNBOOK.md",
-    "docs/RSI.md"
+    "docs/RSI.md",
+    "docs/acceptance/AC-20261123-03.md"
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "faf39401dbe58a4b9e06ec8e017a6bf797cab5be803102c4933f0cebf39cfcb8",
-  "generated_at": "00021",
+  "source_sha256": "47d39e9f88e9857d29cbf42e9e096e601a182ec0b07e479b4e9f393b107f093f",
+  "generated_at": "00038",
   "review": {
-    "reviewed_at": "2026-11-06T19:30:36.760596+00:00",
+    "reviewed_at": "2026-11-23T01:17:45+09:00",
     "reviewed_by": "Codex",
-    "source_sha256": "faf39401dbe58a4b9e06ec8e017a6bf797cab5be803102c4933f0cebf39cfcb8",
-    "summary_sha256": "486133817c8ac8ece856ef5133dde5e6443b907c2381151ca94e40fd45e62af9",
-    "scope": "原文と要約・導線を照合。製品の実測範囲と未検証の区別を維持。"
+    "source_sha256": "47d39e9f88e9857d29cbf42e9e096e601a182ec0b07e479b4e9f393b107f093f",
+    "summary_sha256": "2f92d48a5ffc39de8d1f466b5afaae044104849b523db7a5b49a93f55f5effd2",
+    "scope": "製品ガイドの章構成、追記された実ログの取り込み・証跡・判定、参照先を照合。"
   }
 }

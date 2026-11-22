@@ -2,7 +2,7 @@
   "id": "docs/acceptance/INDEX.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "技術検収と公開状態の一覧。構成図と検知集計・前回比較の検収に案内する。",
+  "summary": "技術検収と公開状態の一覧。文書整合性の検収と、実機結果が記録されていないLLM接続の検収計画を区別して掲載する。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -17,12 +17,18 @@
     "docs/acceptance/AC-20261108-03.md",
     "docs/acceptance/AC-20261109-01.md",
     "docs/acceptance/AC-20261109-02.md",
+    "docs/acceptance/AC-20261109-07.md",
+    "docs/acceptance/AC-20261111-01.md",
     "docs/acceptance/AC-20261122-01.md",
     "docs/acceptance/AC-20261123-01.md",
     "docs/acceptance/AC-20261123-02.md",
+    "docs/acceptance/AC-20261123-03.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
+    "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
+    "docs/tasks/TASK.document-consistency-11-23-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
+    "docs/tasks/TASK.llm-remote-11-09-2026.md",
     "docs/tasks/TASK.monitor-counts-11-23-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
     "docs/tasks/TASK.product-clarity-11-07-2026.md",
@@ -46,13 +52,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "8cb88b41574dc55823eaa33341213121c0fd9c84f0a040e687c744e5e90e8645",
-  "generated_at": "00037",
+  "source_sha256": "1094169cf96d87d1a319c8f50877b5e56096e7cc7ed03278d292ba0196d68888",
+  "generated_at": "00038",
   "review": {
-    "reviewed_at": "2026-11-22T15:56:44+00:00",
+    "reviewed_at": "2026-11-23T01:17:45+09:00",
     "reviewed_by": "Codex",
-    "source_sha256": "8cb88b41574dc55823eaa33341213121c0fd9c84f0a040e687c744e5e90e8645",
-    "summary_sha256": "b8dda6b949ac307755f37f2272197beb41a1b28af2eaab4b67d2f6b95fb121d9",
-    "scope": "案件の集計状態、比較元の選択、台帳の実測結果と検収・索引を照合。"
+    "source_sha256": "1094169cf96d87d1a319c8f50877b5e56096e7cc7ed03278d292ba0196d68888",
+    "summary_sha256": "1d0a54763c3d4ae46f35bf54056c63ed142d4c303de7f0e3c37234b4199c7b53",
+    "scope": "文書検査の新規行と既存のLLM接続の未検収行を照合。"
   }
 }

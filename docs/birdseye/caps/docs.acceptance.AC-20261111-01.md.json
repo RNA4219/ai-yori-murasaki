@@ -1,0 +1,27 @@
+{
+  "id": "docs/acceptance/AC-20261111-01.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/RSI.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md"
+  ],
+  "deps_out": [
+    "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md"
+  ],
+  "summary": "同一候補の比較とモデルの固定条件に関する検収計画。確認条件、テスト定義、未実施の範囲を記す。状態はdraft。",
+  "generated_at": "00038",
+  "source_sha256": "3aceec9d04d74d5191df4cab147375ab35f619974fbccdfc6f7dd5d45b2c6ed0",
+  "review": {
+    "reviewed_at": "2026-11-23T01:17:45+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "3aceec9d04d74d5191df4cab147375ab35f619974fbccdfc6f7dd5d45b2c6ed0",
+    "summary_sha256": "33a4b64141f692ef74dbc06a8bacdacb28f543c1f14e223bcd2034c09a51bdeb",
+    "scope": "関連Taskへの参照と検収予定、実行結果の有無を確認。"
+  }
+}

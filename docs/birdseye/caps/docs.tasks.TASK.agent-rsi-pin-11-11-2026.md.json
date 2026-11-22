@@ -1,0 +1,27 @@
+{
+  "id": "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/RSI.md",
+    "docs/acceptance/AC-20261111-01.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "docs/acceptance/AC-20261111-01.md"
+  ],
+  "summary": "同一候補の比較省略とモデル固定の観測条件を扱うTask。回帰確認と実モデルでの評価の範囲を記し、対応する検収は保留。",
+  "generated_at": "00038",
+  "source_sha256": "f4b67e146b4c03ae6cef0098f7e6b5ac68ac1751a87c1e64eae258c72e469452",
+  "review": {
+    "reviewed_at": "2026-11-23T01:17:45+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "f4b67e146b4c03ae6cef0098f7e6b5ac68ac1751a87c1e64eae258c72e469452",
+    "summary_sha256": "805528df0bb951f4cb2da95c48a8a817b9cce6d2d1bbd8bfe7b3b9091c32f338",
+    "scope": "RSI方針から参照される目的・確認条件・検収の状態を照合。"
+  }
+}

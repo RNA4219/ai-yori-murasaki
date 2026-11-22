@@ -2,21 +2,22 @@
   "id": "codemap.config.json",
   "role": "configuration",
   "public_api": [],
-  "summary": "主要文書と導入元のsnapshot、診断スキルの入口・計画・実行条件を発見し、Birdseye自身のJSONを除く。",
+  "summary": "Birdseyeの収集設定。主要文書・証跡のスナップショット・ガバナンス設定に加え、判断画面のMarkdown、GitHubの文書とYAMLを対象とする。生成した索引、モニター状態、指定の調査原資料は除外する。",
   "deps_out": [],
   "deps_in": [
     "HUB.codex.md",
-    "docs/BIRDSEYE.md"
+    "docs/BIRDSEYE.md",
+    "docs/acceptance/AC-20261123-03.md"
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "1b08339e12ca6456b91acf829036f10592b2120a59d6da3a00cf0b5379164221",
-  "generated_at": "00021",
+  "source_sha256": "88e8755d02e53fd2dab832bf29fc6733014dfd5d92c853ad86f2c7a0b3206396",
+  "generated_at": "00038",
   "review": {
-    "reviewed_at": "2026-11-07T18:30:00+09:00",
-    "reviewed_by": "GLM",
-    "source_sha256": "1b08339e12ca6456b91acf829036f10592b2120a59d6da3a00cf0b5379164221",
-    "summary_sha256": "a41899da671d976eeb90d7d4ed9987e3414450fb533908f12ec87feb3ff0c30e",
-    "scope": "原文全文と要約・リンクを照合した。GitHub Public公開前の最終確定（公開記録RA-20261107-01、非公開原資料のリンク注記、codemap exclude、配布物hash）を反映した。"
+    "reviewed_at": "2026-11-23T01:17:45+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "88e8755d02e53fd2dab832bf29fc6733014dfd5d92c853ad86f2c7a0b3206396",
+    "summary_sha256": "6aebab545d2b8a3870122e22b49544b0d8b3a297096aaa761c1c2e139e26604b",
+    "scope": "include・excludeと既定ロールを全項目照合。判断画面とGitHubの収集範囲を要約に反映。"
   }
 }

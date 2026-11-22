@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "変更と版の記録。0026では検知件数の完全性、前回の選択、一覧の台帳読み込み削減を記す。",
+  "summary": "変更と版の記録。0027は文書索引の鮮度とLLM接続の過去の検収計画を整備した履歴。",
   "deps_out": [
     "docs/SOURCES.md",
     "docs/acceptance/AC-20261106-01.md",
@@ -18,14 +18,18 @@
     "docs/acceptance/AC-20261108-03.md",
     "docs/acceptance/AC-20261109-01.md",
     "docs/acceptance/AC-20261109-02.md",
+    "docs/acceptance/AC-20261111-01.md",
     "docs/acceptance/AC-20261122-01.md",
     "docs/acceptance/AC-20261123-01.md",
     "docs/acceptance/AC-20261123-02.md",
+    "docs/acceptance/AC-20261123-03.md",
     "docs/evidence/quality-integration-20261109/README.md",
     "docs/evidence/sources-light-ui-20261109/README.md",
     "docs/evidence/wazuh-live-20261108.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
+    "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
+    "docs/tasks/TASK.document-consistency-11-23-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
     "docs/tasks/TASK.monitor-counts-11-23-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
@@ -51,6 +55,7 @@
     "docs/acceptance/AC-20261122-01.md",
     "docs/acceptance/AC-20261123-01.md",
     "docs/acceptance/AC-20261123-02.md",
+    "docs/acceptance/AC-20261123-03.md",
     "docs/acceptance/README.md",
     "docs/tasks/README.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
@@ -66,13 +71,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "af0c1009255d36bfbdf60ec1661a73a189c4044ef357fa25bea2da4bb04a30a6",
-  "generated_at": "00037",
+  "source_sha256": "418089a88da68adabb1aad802ec08cfadf338fadcc7fdce2abe5f4e25c43ae87",
+  "generated_at": "00038",
   "review": {
-    "reviewed_at": "2026-11-22T15:56:44+00:00",
+    "reviewed_at": "2026-11-23T01:17:45+09:00",
     "reviewed_by": "Codex",
-    "source_sha256": "af0c1009255d36bfbdf60ec1661a73a189c4044ef357fa25bea2da4bb04a30a6",
-    "summary_sha256": "4e4f9f5934a0818b4ea236c6098a9f88db21144ab26ac7c052f1e4df3a9079ec",
-    "scope": "案件の集計状態、比較元の選択、台帳の実測結果と検収・索引を照合。"
+    "source_sha256": "418089a88da68adabb1aad802ec08cfadf338fadcc7fdce2abe5f4e25c43ae87",
+    "summary_sha256": "60a3ce8c820c4a5904668f90819db79a420cd3b1a1e3d2405b6ad34da0fca298",
+    "scope": "変更番号0027の内容とTask・検収の参照を照合。"
   }
 }

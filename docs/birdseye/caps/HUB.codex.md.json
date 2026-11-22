@@ -2,7 +2,7 @@
   "id": "HUB.codex.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "製品操作、評価、運用の索引。案件、システム構成図、検知集計と前回比較に関する改修・検収を案内する。",
+  "summary": "製品操作、要件、評価、運用の索引。案件の表示や構成図の改修に加え、文書索引と過去の検収計画の整合性確認へ案内する。",
   "deps_out": [
     ".agents/skills/security-audit/SKILL.md",
     "AGENTS.md",
@@ -18,6 +18,7 @@
     "docs/ADR/README.md",
     "docs/CONTRACTS.md",
     "docs/INCIDENT_TEMPLATE.md",
+    "docs/INSTALL-DGX.md",
     "docs/PRODUCT-GUIDE.md",
     "docs/RSI.md",
     "docs/SECURITY-AUDIT.md",
@@ -28,9 +29,11 @@
     "docs/acceptance/AC-20261107-03.md",
     "docs/acceptance/AC-20261109-01.md",
     "docs/acceptance/AC-20261109-02.md",
+    "docs/acceptance/AC-20261109-07.md",
     "docs/acceptance/AC-20261122-01.md",
     "docs/acceptance/AC-20261123-01.md",
     "docs/acceptance/AC-20261123-02.md",
+    "docs/acceptance/AC-20261123-03.md",
     "docs/acceptance/INDEX.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
@@ -42,6 +45,7 @@
     "docs/reviews/REVIEW-INTAKE-20261107.md",
     "docs/tasks/README.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
+    "docs/tasks/TASK.document-consistency-11-23-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
     "docs/tasks/TASK.monitor-counts-11-23-2026.md",
     "docs/tasks/TASK.sources-light-ui-11-09-2026.md",
@@ -58,13 +62,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "3381eb2db2051249cf959cc24dd9daef28c7381c855641ddaf8ca9e14a321553",
-  "generated_at": "00037",
+  "source_sha256": "9f13c91a15868a5e6e5492a6465604d4d4a28e6e57e46377cc77d11ee0af229e",
+  "generated_at": "00038",
   "review": {
-    "reviewed_at": "2026-11-22T15:56:44+00:00",
+    "reviewed_at": "2026-11-23T01:17:45+09:00",
     "reviewed_by": "Codex",
-    "source_sha256": "3381eb2db2051249cf959cc24dd9daef28c7381c855641ddaf8ca9e14a321553",
-    "summary_sha256": "fc1a69c4ebf5987179c31d3c0f9898fe4187222e7e397956ccb09e5959254dd0",
-    "scope": "案件の集計状態、比較元の選択、台帳の実測結果と検収・索引を照合。"
+    "source_sha256": "9f13c91a15868a5e6e5492a6465604d4d4a28e6e57e46377cc77d11ee0af229e",
+    "summary_sha256": "91bc16fb8af8b107ec6d2212cace0935f931aa3631bc2d887fca4ea1b53fe0df",
+    "scope": "文書整合性のTask・検収、既存のLLM導入・検収への案内を確認。"
   }
 }

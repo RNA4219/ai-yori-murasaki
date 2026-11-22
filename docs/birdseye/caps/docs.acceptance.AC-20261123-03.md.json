@@ -1,0 +1,32 @@
+{
+  "id": "docs/acceptance/AC-20261123-03.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.document-consistency-11-23-2026.md"
+  ],
+  "deps_out": [
+    "CHANGELOG.md",
+    "codemap.config.json",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/RSI.md",
+    "docs/acceptance/AC-20261109-07.md",
+    "docs/tasks/TASK.document-consistency-11-23-2026.md"
+  ],
+  "summary": "索引3件と過去の検収記録の修復に対する文書検収。レビュー必須の鮮度検査と検収文書の形式検査を対象とする。",
+  "generated_at": "00038",
+  "source_sha256": "29178df6d007885b95ecc8a76300eb3f42534f7c49c86b730291cdcf3c4cf6de",
+  "review": {
+    "reviewed_at": "2026-11-23T01:17:45+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "29178df6d007885b95ecc8a76300eb3f42534f7c49c86b730291cdcf3c4cf6de",
+    "summary_sha256": "5cbfe6131afd11bfafc83acba56736ddbfabfeb61ddec79a1f195c1805a14bc7",
+    "scope": "対象の原文・過去の計画・2つの検査を照合。"
+  }
+}

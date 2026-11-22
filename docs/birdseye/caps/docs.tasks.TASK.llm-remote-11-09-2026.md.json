@@ -1,0 +1,25 @@
+{
+  "id": "docs/tasks/TASK.llm-remote-11-09-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "docs/acceptance/AC-20261109-07.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "docs/acceptance/AC-20261109-07.md"
+  ],
+  "summary": "既定のローカル接続と認証付きOpenAI互換接続を選べるようにするTask。実接続による検収は範囲外で、対応する検収記録は保留。",
+  "generated_at": "00038",
+  "source_sha256": "56baf6067501d742929eaf18d48a2b0f75fb9a6a75154cb7e4286c322f2bb004",
+  "review": {
+    "reviewed_at": "2026-11-23T01:17:45+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "56baf6067501d742929eaf18d48a2b0f75fb9a6a75154cb7e4286c322f2bb004",
+    "summary_sha256": "5e52ec1d01462d3691323c623afe25185d262b2886d7eca84268c402f8cab26f",
+    "scope": "目的、対象外の作業、検収への参照を確認。"
+  }
+}

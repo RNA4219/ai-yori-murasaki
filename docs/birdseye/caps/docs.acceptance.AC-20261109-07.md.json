@@ -1,0 +1,29 @@
+{
+  "id": "docs/acceptance/AC-20261109-07.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "HUB.codex.md",
+    "docs/acceptance/AC-20261123-03.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.document-consistency-11-23-2026.md",
+    "docs/tasks/TASK.llm-remote-11-09-2026.md"
+  ],
+  "deps_out": [
+    "docs/INSTALL-DGX.md",
+    "docs/tasks/TASK.llm-remote-11-09-2026.md"
+  ],
+  "summary": "認証付きOpenAI互換LLMと既定のOllama接続について、設定・秘密情報の扱いと実機確認の予定を示す。テスト定義と導入手順を参照でき、技術検収は保留。",
+  "generated_at": "00038",
+  "source_sha256": "b850103f1c09eb1f6dfa7e42facfb31a7c8376a2f71e0117c3f91ee97ae42c03",
+  "review": {
+    "reviewed_at": "2026-11-23T01:17:45+09:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "b850103f1c09eb1f6dfa7e42facfb31a7c8376a2f71e0117c3f91ee97ae42c03",
+    "summary_sha256": "cd7e351344588ba1bbc7e1bd9066e63fb612b65d3f214a0195c877a47defdf9d",
+    "scope": "7つの未チェック項目を原記録と照合。追加した管理項目、参照先、pendingの位置づけを確認。"
+  }
+}

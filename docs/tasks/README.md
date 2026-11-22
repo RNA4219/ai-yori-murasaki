@@ -22,6 +22,7 @@ Task、[Acceptance](../acceptance/README.md)、[CHANGELOG](../../CHANGELOG.md)�
 
 | task_id | 作業 | 検収 |
 | --- | --- | --- |
+| 20261123-03 | [文書索引と過去の検収記録](TASK.document-consistency-11-23-2026.md) | [AC-20261123-03](../acceptance/AC-20261123-03.md) |
 | 20261123-02 | [検知件数と案件の比較元](TASK.monitor-counts-11-23-2026.md) | [AC-20261123-02](../acceptance/AC-20261123-02.md) |
 | 20261123-01 | [リポジトリ・システム構成図](TASK.architecture-map-11-23-2026.md) | [AC-20261123-01](../acceptance/AC-20261123-01.md) |
 | 20261122-01 | [判断の画面と記録モニターの改修](TASK.frontend-review-11-22-2026.md) | [AC-20261122-01](../acceptance/AC-20261122-01.md) |
