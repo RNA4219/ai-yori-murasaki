@@ -41,7 +41,7 @@
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.65 var(--font); -webkit-font-smoothing: antialiased; }
-.wrap { max-width: 1160px; margin-inline: auto; padding: clamp(20px, 3vw, 40px) clamp(16px, 4vw, 48px) 64px; }
+.wrap { max-width: 1400px; margin-inline: auto; padding: clamp(20px, 3vw, 40px) clamp(16px, 5vw, 72px) 64px; }
 #view { display: grid; gap: 32px; min-width: 0; }
 p, h1, h2, dl, dd { margin: 0; }
 h1, h2 { line-height: 1.45; overflow-wrap: anywhere; }
@@ -54,27 +54,29 @@ a { color: var(--accent); text-underline-offset: .2em; }
 .card { border: 1px solid var(--line); border-radius: 12px; padding: clamp(16px, 3vw, 32px); }
 .picker { border-block-start: 4px solid var(--accent); display: grid; gap: 12px; }
 .picker h1, .brief h1, .sec h2 { font-family: "Yu Mincho", "Hiragino Mincho ProN", "BIZ UDPMincho", serif; }
-.brief {
-  display: grid; grid-template-columns: minmax(0, 1fr) minmax(212px, 27%);
-  border: 1px solid var(--line); border-block-start: 4px solid var(--accent);
-  border-radius: 4px 4px 12px 12px; overflow-wrap: anywhere;
-}
-.brief-heading { padding: clamp(20px, 3vw, 40px); margin: 0; }
+.report-front { display: grid; align-items: start; grid-template-columns: minmax(0, 1fr) minmax(250px,32%); grid-template-areas: "brief coverage" "queue index"; gap: 24px 32px; }
+.brief { grid-area: brief; align-self: stretch; display: flex; align-items: center; background: transparent; border-block: 2px solid var(--accent); overflow-wrap: anywhere; }
+.brief-heading { padding: clamp(20px, 3vw, 32px) 0; margin: 0; }
+.coverage-note { grid-area: coverage; background: var(--amber-soft); color: var(--amber); padding: 16px 20px; border-radius: 10px; }
+.coverage-note h2, .report-tools h2 { font: 700 18px/1.5 var(--font); }
+.coverage-note ul { padding-left: 1.15em; margin: 8px 0 0; display: grid; gap: 4px; font-size: 15px; }
+#sec-now { grid-area: queue; }
+.report-tools { grid-area: index; padding: 20px; min-width: 0; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
 .case-line { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 16px; margin-bottom: 12px; color: var(--accent); font-weight: 700; }
 .case-line a { font-size: 14px; font-weight: 500; }
-.brief h1 { max-width: 22em; line-height: 1.45; text-wrap: balance; }
+.brief h1 { max-width: 22em; line-height: 1.4; text-wrap: balance; font-size: clamp(28px,3.6vw,50px); }
 .brief h1 em { color: var(--accent); font-style: normal; font-variant-numeric: lining-nums tabular-nums; }
-.headline-rest { display: block; font-size: .72em; margin-top: 4px; }
+.headline-rest { display: block; font: 500 clamp(16px,1.6vw,21px)/1.6 var(--font); margin-top: 8px; }
 .lead { margin-top: 16px; color: var(--muted); font-size: 16px; }
 .lead:empty { display: none; }
-.jump { padding: 16px 24px; display: grid; align-content: center; border-left: 1px solid var(--line); background: var(--panel-soft); }
+.jump { padding: 8px 0; display: grid; align-content: center; }
 .jump a { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 48px; padding: 4px; border-bottom: 1px solid var(--line); color: var(--fg); font-size: 15px; text-decoration: none; }
 .jump a:last-child { border: 0; }
 .jump a:hover, .campaign-list a:hover { color: var(--accent); background: var(--accent-soft); }
 .jump b { font: 600 24px/1.1 Georgia, serif; font-variant-numeric: tabular-nums; color: var(--accent); }
 .jump .rose b { color: var(--rose); }
 .jump .amber b { color: var(--amber); }
-.brief-meta { grid-column: 1 / -1; border-top: 1px solid var(--line); padding: 4px 24px; display: flex; align-items: start; justify-content: space-between; gap: 12px; }
+.brief-meta { border-top: 1px solid var(--line); padding-top: 4px; display: grid; justify-items: start; gap: 4px; }
 summary { cursor: pointer; }
 .brief-meta summary, .glossary summary { padding-block: 10px; min-height: 44px; font-weight: 600; color: var(--accent); }
 .brief-meta #since { margin: 4px 0 12px; font-size: 14px; }
@@ -100,6 +102,10 @@ summary { cursor: pointer; }
 .item > summary::-webkit-details-marker, .fold > summary::-webkit-details-marker { display: none; }
 .item-main { display: grid; min-width: 0; gap: 4px; }
 .item-title, .case-name { font-size: 18px; line-height: 1.5; font-weight: 700; overflow-wrap: anywhere; }
+.item-action { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; margin-top: 4px; color: var(--fg); font-size: 15px; }
+.item-action b { color: var(--accent); }
+#now .item { border: 1px solid var(--line); border-inline-start: 3px solid var(--accent); border-radius: 8px; }
+#now { display: grid; gap: 8px; border: 0; }
 .item-meta, .facts dd, .case-name, .case-info { overflow-wrap: anywhere; }
 .chips { display: flex; flex-wrap: wrap; gap: 4px 8px; }
 .chips:empty { display: none; }
@@ -146,12 +152,15 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 @media (max-width: 767px) {
   #view { gap: 24px; }
-  .brief { grid-template-columns: minmax(0,1fr); }
-  .brief-heading { padding: 16px; }
+  .report-front { display: flex; flex-direction: column; align-items: stretch; gap: 16px; }
+  .brief-heading { padding: 16px 0; }
+  .report-tools { padding: 12px 16px; }
+  .coverage-note { padding: 12px 16px; }
+  .coverage-note ul { font-size: 14px; }
   .jump { border-left: 0; border-top: 1px solid var(--line); grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; padding: 0 16px; }
   .jump a { gap: 6px; font-size: 14px; border: 0; padding: 0; min-height: 44px; }
   .jump b { font-size: 18px; }
-  .brief-meta { padding-inline: 12px; font-size: 14px; }
+  .brief-meta { display: flex; align-items: start; justify-content: space-between; font-size: 14px; }
   .item > summary { padding: 12px; gap: 4px 8px; grid-template-columns: minmax(0, 1fr) auto; }
   .item > summary .sev { grid-column: 1; justify-self: start; min-width: 0; }
   .item-main { grid-column: 1; }
@@ -166,36 +175,27 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
 
-.masthead { background: #30243e; color: #fff; }
-.mast-inner {
-  max-width: 1440px; margin-inline: auto; min-height: 64px; padding-inline: clamp(16px, 4vw, 56px);
-  display: flex; align-items: center; justify-content: space-between; gap: 16px;
-}
-.wordmark { display: flex; align-items: center; gap: 12px; font: 600 15px/1.2 Georgia, "Yu Mincho", serif; letter-spacing: .11em; }
-.seal {
-  display: inline-grid; place-items: center; width: 36px; height: 36px;
-  border: 1px solid #cbbcd9; border-radius: 9px 2px 9px 2px; color: #f5ecff;
-  font: 600 23px/1 "Yu Mincho", "Hiragino Mincho ProN", serif; letter-spacing: 0;
-}
-.view-switch { display: flex; align-self: stretch; align-items: stretch; gap: 4px; }
-.view-switch > * {
-  display: inline-flex; align-items: center; justify-content: center; min-height: 44px;
-  padding: 0 16px; color: #ded4e6; font: 600 16px/1.5 system-ui, sans-serif;
-  border-block-end: 3px solid transparent; text-decoration: none;
-}
-.view-switch [aria-current] { color: #fff; border-color: #ddbcf3; background: #41324f; }
-.view-switch a:hover { color: #fff; background: #463652; text-decoration: none; }
-.masthead :focus-visible { outline: 2px solid #fff; outline-offset: -4px; }
+/* 二つの製品画面が共有する切替。単独HTMLでも利用できる。 */
+.masthead { color: #302642; background: #fff; border-bottom: 1px solid #ded9e4; }
+.mast-inner { max-width: 1440px; min-height: 76px; padding-inline: clamp(16px,5vw,72px); margin-inline: auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.wordmark { display: flex; align-items: center; gap: 12px; font: 700 16px/1.2 system-ui, sans-serif; letter-spacing: .105em; }
+.seal { width: 40px; height: 40px; display: inline-grid; place-items: center; position: relative; isolation: isolate; color: white; font: 600 25px/1 "Yu Mincho", "Hiragino Mincho ProN", serif; letter-spacing: 0; }
+.seal::before, .seal::after { content: ""; position: absolute; inset: 2px; border-radius: 2px 8px 2px 8px; z-index: -1; }
+.seal::before { background: #baa9d5; transform: translate(-3px,2px) rotate(-7deg); }
+.seal::after { background: #50346c; transform: translate(1px,-1px); }
+.view-switch { display: inline-flex; align-items: center; border: 1px solid #e1dce7; border-radius: 99px; padding: 3px; background: #f5f3f7; }
+.view-switch > * { min-height: 44px; padding-inline: 20px; display: inline-flex; align-items: center; justify-content: center; border-radius: 99px; color: #5e566b; font: 650 16px/1.4 system-ui,sans-serif; text-decoration: none; }
+.view-switch [aria-current] { color: white; background: #463254; }
+.view-switch a:hover { background: #e8e1ee; color: #382944; text-decoration: none; }
+.masthead :focus-visible { outline: 3px solid #8055ab; outline-offset: 1px; }
 @media (max-width: 767px) {
-  .mast-inner { min-height: 56px; padding-inline: 12px; gap: 8px; }
-  .wordmark { gap: 8px; font-size: 12px; letter-spacing: .05em; }
+  .mast-inner { min-height: 64px; }
+  .wordmark { gap: 6px; font-size: 12px; letter-spacing: .06em; }
   .seal { width: 32px; height: 32px; font-size: 21px; }
-  .view-switch { gap: 0; }
-  .view-switch > * { padding-inline: 8px; font-size: 14px; }
+  .view-switch > * { padding-inline: 10px; font-size: 14px; }
 }
-@media (max-width: 360px) {
-  .wordmark > span:last-child { max-width: 8em; }
-}
+@media (max-width: 360px) { .wordmark > span:last-child { max-width: 7em; } }
+
 </style>
 </head>
 <body>
@@ -227,12 +227,23 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
   </section>
 
   <div id="view" hidden>
+    <div class="report-front">
     <section class="brief" aria-labelledby="h-sum">
       <div class="brief-heading">
         <div class="case-line"><p id="sum-name"></p><a href="/decision" id="back-picker" hidden>案件を選び直す</a></div>
         <h1 id="h-sum"></h1>
-        <p class="lead" id="sum-lead"></p>
       </div>
+    </section>
+    <section class="coverage-note" id="coverage-note" aria-labelledby="coverage-heading" hidden>
+      <h2 id="coverage-heading">判断の前に確認すること</h2>
+      <ul id="sum-lead"></ul>
+    </section>
+    <section class="sec" id="sec-now" aria-labelledby="h-now">
+      <div class="sec-head"><h2 id="h-now">判断が必要な課題</h2><p class="sec-sub" id="now-sub"></p></div>
+      <div class="items" id="now"></div><div class="more" id="now-more"></div>
+    </section>
+    <aside class="report-tools" aria-label="課題の索引と記録の内訳">
+      <h2>課題の索引</h2>
       <nav class="jump" id="jump" aria-label="画面の中の行き先"></nav>
       <div class="brief-meta">
         <details><summary>状態の内訳と前回の記録</summary>
@@ -240,12 +251,8 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
         </details>
         <button type="button" class="btn ghost" id="refresh-view" hidden>読み直す</button>
       </div>
-    </section>
-
-    <section class="sec" id="sec-now" aria-labelledby="h-now">
-      <div class="sec-head"><h2 id="h-now">いま決めること</h2><p class="sec-sub" id="now-sub"></p></div>
-      <div class="items" id="now"></div><div class="more" id="now-more"></div>
-    </section>
+    </aside>
+    </div>
 
     <section class="sec" id="sec-soon" aria-labelledby="h-soon">
       <div class="sec-head"><h2 id="h-soon">早めに対応すること</h2><p class="sec-sub" id="soon-sub"></p></div>
@@ -479,7 +486,13 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
 
   function fact(dl, label, node) { dl.appendChild(el('dt', null, label)); var dd = el('dd'); if (typeof node === 'string') dd.textContent = node; else dd.appendChild(node); dl.appendChild(dd); }
 
-  function itemCard(r) {
+  function actionForItem(it) {
+    if (it.assessment_status != null) return D.nextActionFor(it.assessment_status);
+    if (it.state === 'waiting') return '案件の記録で、誰が何を判断する必要があるか確認してください。';
+    return '元の状態を担当者に確認してください。';
+  }
+
+  function itemCard(r, showAction) {
     var it = r.item, a = r.a;
     var d = el('details', 'item');
     var s = el('summary');
@@ -494,6 +507,11 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     a.reasons.forEach(function (x) { chips.appendChild(el('span', 'chip ' + x.tone, x.text)); });
     if (it.change === 'new') chips.appendChild(el('span', 'chip', '新しく入った'));
     main.appendChild(chips);
+    if (showAction) {
+      var action = el('span', 'item-action');
+      action.append(el('b', null, '次の行動'), document.createTextNode(actionForItem(it)));
+      main.appendChild(action);
+    }
     s.appendChild(main);
     var chev = el('span', 'chev'); chev.setAttribute('aria-hidden', 'true'); s.appendChild(chev);
     d.appendChild(s);
@@ -510,13 +528,13 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
         fact(dl, '脆弱性', t);
       }
       fact(dl,'評価の状態',D.stateLabel(it));
-      fact(dl,'次の行動',it.assessment_status!=null?D.nextActionFor(it.assessment_status):'元の状態を担当者に確認してください。');
+      if (!showAction) fact(dl,'次の行動',actionForItem(it));
       if(it.assessment_status==='retested')fact(dl,'注意','運用への反映は、別に確かめてください。');
       fact(dl,'元のデータでの状態',D.originalStateLabel(it));
       fact(dl,'期限',it.due||'決まっていません');
       more.appendChild(dl);
       if(state.isAYM&&state.campaign){
-        var monitor=el('a','btn ghost','モニターでこの Campaign を見る');
+        var monitor=el('a','btn ghost','この案件の証跡を開く');
         monitor.href='/#/campaign/'+encodeURIComponent(state.campaign);more.appendChild(monitor);
       }
       var tech=el('details','fold inline'),head=el('summary',null,'技術の詳細'),body=el('div','fold-body'),ids=el('dl','facts');
@@ -532,7 +550,7 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     return d;
   }
 
-  function fillItems(node, rows) { clear(node); rows.forEach(function (r) { node.appendChild(itemCard(r)); }); }
+  function fillItems(node, rows, showAction) { clear(node); rows.forEach(function (r) { node.appendChild(itemCard(r, showAction)); }); }
 
   function jumpPill(cls, label, n, target) {
     var a = el('a', cls); a.href = '#' + target;
@@ -566,7 +584,9 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     } else {
       heading.textContent=hints.length?'終わっていない課題は記録にありませんが、確かめていないことがあります':'終わっていない課題はありません';
     }
-    $('sum-lead').textContent=hints.join(' ');
+    clear($('sum-lead'));
+    hints.forEach(function (hint) { $('sum-lead').appendChild(el('li',null,hint)); });
+    $('coverage-note').hidden = !hints.length;
     var j=$('jump');clear(j);
     j.appendChild(jumpPill(c.now?'rose':'plain','いま決めること',c.now,'sec-now'));
     j.appendChild(jumpPill(c.soon?'amber':'plain','早めに対応すること',c.soon,'sec-soon'));
@@ -593,8 +613,8 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
   function renderNow(s) {
     var box = $('now'), more = $('now-more'); clear(box); clear(more);
     if (!s.now.length) { $('now-sub').textContent = ''; box.appendChild(el('p', 'empty', 'いま急いで決めることはありません。')); return; }
-    $('now-sub').textContent = '課題を開くと、急ぐ理由と次に確かめることを読めます。';
-    var n=state.nowAll?s.now.length:Math.min(10,s.now.length);fillItems(box,s.now.slice(0,n));
+    $('now-sub').textContent = '';
+    var n=state.nowAll?s.now.length:Math.min(10,s.now.length);fillItems(box,s.now.slice(0,n),true);
     if(s.now.length>10){var b=el('button','btn ghost',state.nowAll?'最初の 10 件に戻す':'残りの '+(s.now.length-n)+' 件も見る');
       b.type='button';b.addEventListener('click',function(){state.nowAll=!state.nowAll;renderNow(state.sum);});more.appendChild(b);}
   }

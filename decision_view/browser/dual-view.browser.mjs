@@ -63,9 +63,9 @@ try {
       assert.match(await page.locator('#h-sum').innerText(),/終わっていない課題は全部で 1 件です/);
       assert.match(await page.locator('#sum-lead').innerText(),/検査していない範囲が 3 類型あります。安全とは限りません/);
       assert.equal((await page.locator('main').innerText()).includes('internal-finding-abc'),false);
+      assert.match(await page.locator('#now .item-action').first().innerText(),/修正案を確認してください/);
       await page.locator('#now .item > summary').first().click();
       await page.locator('#now .item .item-more').first().waitFor();
-      assert.match(await page.locator('#now .item .item-more').first().innerText(),/修正案を確認してください/);
       assert.equal(await page.getByText('internal-finding-abc').first().isVisible(),false);
       await page.locator('#now .item details').first().evaluate(e=>{e.open=true;});
       assert.equal(await page.getByText('internal-finding-abc').first().isVisible(),true);
@@ -93,10 +93,10 @@ try {
       await candidate.waitFor();
 
       await page.goto(base+'/');
-      const record=page.locator('.record-list a[href="#/campaign/'+cid+'"]');
-      await record.waitFor();
-      assert.match(await record.innerText(),/最終実行/);
-      const count=await record.locator('.record-count').boundingBox();
+      const evidence=page.locator('#case-sheet .action-main');
+      await evidence.waitFor();
+      assert.match(await page.locator('.sheet-meta').innerText(),/最終実行/);
+      const count=await page.locator('.sheet-number').boundingBox();
       assert.ok(count && count.x>=0 && count.x+count.width<=width);
       const environment=page.locator('details.environment');
       await environment.locator('summary').click();
@@ -106,6 +106,48 @@ try {
       ]);
       await page.waitForFunction(()=>!document.querySelector('#refresh-btn').hasAttribute('data-manual-busy'));
       assert.equal(await environment.evaluate(node=>node.open),true);
+
+      // 案件一覧の先頭が空でも、記録のある案件から読み始められる。
+      const otherId='case-with-findings';
+      const fullCase={...campaigns[0],campaign_id:otherId,intent_id:'権限の棚卸し',finding_count:2};
+      await page.route('**/api/campaigns',r=>r.fulfill({json:{campaigns:[{...campaigns[0],finding_count:0},fullCase]}}));
+      await page.route('**/api/campaigns/'+cid,r=>r.fulfill({json:{campaign:{campaign_id:cid},findings:[]}}));
+      const example={campaign:fullCase,findings:[{title:'管理者の登録を確認する',severity:'high'},{title:'担当者の異動日を確認する',severity:'low'}]};
+      await page.route('**/api/campaigns/'+otherId,r=>r.fulfill({json:example}));
+      await page.reload();
+      const visibleFinding=page.getByRole('heading',{name:example.findings[0].title});
+      await visibleFinding.waitFor();
+      assert.match(await page.locator('.excerpt-list').innerText(),/担当者の異動日/);
+      assert.equal(await evidence.getAttribute('href'),'#/campaign/'+otherId);
+      async function selectCase(id) {
+        if (width < 768) await page.locator('#case-choice').selectOption(id);
+        else await page.locator('button[data-select-case="'+id+'"]').click();
+      }
+      await selectCase(cid);
+      await page.getByText('この案件に登録された検知項目はまだありません。').waitFor();
+      assert.equal(await visibleFinding.count(),0);
+      assert.equal(await page.locator('.action-secondary').getAttribute('href'),'/decision?campaign='+cid);
+      // 選択中に届いた以前の案件の応答で、空の案件の表示が戻らない。
+      let deliverRequest;
+      const delayedResponse = new Promise(resolve => { deliverRequest=resolve; });
+      await page.route('**/api/campaigns/'+otherId, route=>deliverRequest(route), {times:1});
+      await selectCase(otherId);
+      const oldRequest = await delayedResponse;
+      await selectCase(cid);
+      await page.getByText('この案件に登録された検知項目はまだありません。').waitFor();
+      await oldRequest.fulfill({json:example});
+      assert.equal(await visibleFinding.count(),0);
+      await selectCase(otherId);
+      await visibleFinding.waitFor();
+      await page.route('**/api/campaigns/'+otherId,r=>r.fulfill({status:503,json:{}}),{times:1});
+      await page.locator('#refresh-btn').click();
+      await page.getByText('更新できませんでした。前回取得した検知記録を表示しています。').waitFor();
+      assert.equal(await visibleFinding.isVisible(),true);
+      await page.waitForFunction(()=>!document.querySelector('#refresh-btn').hasAttribute('data-manual-busy'));
+      await page.route('**/api/campaigns/'+otherId,r=>r.fulfill({status:403,json:{}}));
+      await page.locator('#refresh-btn').click();
+      await page.getByText('この案件の検知記録を表示する権限がありません。').waitFor();
+      assert.equal(await visibleFinding.count(),0);
       assert.deepEqual(errors,[],'no JavaScript errors');
       console.log('PASS real Chromium '+width+'px: routes, accessibility, state and layout');
     } finally {

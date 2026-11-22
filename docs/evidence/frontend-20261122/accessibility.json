@@ -88,5 +88,32 @@
       "scroll": 320
     },
     "violations": []
+  },
+  {
+    "screen": "monitor-with-findings",
+    "width": 1440,
+    "layout": {
+      "client": 1440,
+      "scroll": 1440
+    },
+    "violations": []
+  },
+  {
+    "screen": "monitor-with-findings",
+    "width": 390,
+    "layout": {
+      "client": 390,
+      "scroll": 390
+    },
+    "violations": []
+  },
+  {
+    "screen": "monitor-with-findings",
+    "width": 320,
+    "layout": {
+      "client": 320,
+      "scroll": 320
+    },
+    "violations": []
   }
 ]

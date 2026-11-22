@@ -11,25 +11,25 @@ next_review_due: 2026-12-22
 
 ## Objective
 
-結果を読む人は最初の画面で判断待ちの量と評価の限界をつかめる。調査担当者は同じ案件の記録を、案件名と最終実行日時で識別できる。[2画面の製品要件](../requirements/REQUIREMENTS-DUAL-VIEW.md)と[モニターの設計](../requirements/MONITOR-REDESIGN.md)に基づく。
+調査担当者は、入口で案件を選び、何が検知されたかを確かめ、その案件の証跡を開ける。判断する人は、何件の判断が必要で、どの課題に対して次に何をするかを読み取れる。[2画面の製品要件](../requirements/REQUIREMENTS-DUAL-VIEW.md)・[モニターの設計](../requirements/MONITOR-REDESIGN.md)
 
 ## Requirements
 
 | 利用場面 | 改修前に確認した問題 | 受入条件 |
 | --- | --- | --- |
-| 案件を選ぶ | モニターでは内部IDが主見出しで、390px幅では検知件数が横にはみ出した | 目的名、状態、検知件数、最終実行を横スクロールせずに読める |
-| 判断する | 件数、内訳、前回比較、再読込が同じ順序と強さで並んだ | 判断待ち、未完了の総数、検査範囲を先頭に置く。課題行を開くと理由と次の行動に進める |
+| 案件を選ぶ | 件数を読めても、別画面を開くまで何が検知されたか分からなかった | 一覧で選んだ案件の検知名、重大度、最終実行、件数を同じ画面で読める。390px幅では案件の選択欄、検知名、証跡への操作が上から順に見える |
+| 判断する | 件数を読んだ後、各行を開くまで次の行動が分からなかった | 判断待ちと未完了の総数、その数字を読む際の評価上の制約を冒頭に示す。判断が必要な課題には行を開く前に次の行動を添える |
 | 課題を探す | 検索欄は長い一覧の下にあり、先頭から直接移れなかった | 件数付きの「すべての課題」から、絞り込みを解除した一覧へ移れる |
 | 証跡を読む | モデルと接続先の表が承認記録より先に並んだ | 案件と承認記録を先に置き、接続先の詳細を開ける。更新で開閉状態を保つ |
 | 再読込する | 保留・非公開の応答でも前回の課題が表示された | 保留・非公開では件数と一覧を閉じる。通信失敗で前回の内容を表示するときは古い記録であることを示す |
 
 ## 設計の根拠
 
-判断画面は藤色の紙面と明朝見出しを使い、件数・課題名・開閉の操作を別々に読めるようにした。モニターは白地と罫線を使い、同じ属性が縦に揃う台帳にした。両画面は共通の紫の見出し帯で切り替える。画像・フォントの外部配信を必要としない。[anything-frontend-art-direction](https://github.com/RNA4219/anything-frontend-art-direction)
+判断画面は明朝の件数見出しの下に判断が必要な課題を並べる。評価範囲の注意事項は淡い黄の欄にまとめる。モニターは選択中の案件の先頭の検知名を濃い紫地に置き、証跡への操作と同じ案件のほかの検知を続ける。両画面の切り替えは共通の白いヘッダーに置く。[anything-frontend-art-direction](https://github.com/RNA4219/anything-frontend-art-direction)
 
-GOV.UKの実例では、項目名と状態が同じ行にあり、必要な説明だけが項目名の下に入る。この構成を案件の一覧に採用した。完了までの手順を示す意味は移植していない。[Task listの解説](https://design-system.service.gov.uk/components/task-list/)・[制作元の実例](https://design-system.service.gov.uk/components/task-list/default/)
+Microsoftの一覧・詳細の実例を参照し、広い画面では案件選択と検知本文を並べた。狭い画面では選択欄と本文を一列に置き、一覧を戻り直す手間を省いた。最初は検知のある先頭の案件を選び、その後は利用者の選択を保つ。検知は取得した記録順に最大4件を抜粋する。[Microsoftの一覧・詳細パターン](https://learn.microsoft.com/en-us/windows/apps/develop/ui/controls/list-details)
 
-Motion AtlasのAccordionを参考に、課題を開いた行で矢印と本文が短く動く。キーボードでは標準の開閉操作を使い、動きを減らす設定では即時に内容が出る。[Motion Atlasの作例](https://github.com/RNA4219/motion-atlas/blob/main/src/lab-ui.js)
+GOV.UKのTask listにならい、案件名と状態を同じ行で読み取れるようにした。Motion AtlasのSplit PaneとAccordionを参照し、案件を選んだときは入れ替わる本文、課題を開いたときは開いた行だけに短い動きを付けた。動きを減らす設定では即時に表示する。[GOV.UKの実例](https://design-system.service.gov.uk/components/task-list/default/)・[Motion Atlasの作例](https://github.com/RNA4219/motion-atlas/blob/main/src/lab-ui.js)
 
 ## Scope
 
