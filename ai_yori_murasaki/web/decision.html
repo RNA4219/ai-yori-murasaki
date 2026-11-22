@@ -606,7 +606,12 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
       return Number(a==='再検証済み'||a==='反証済み')-Number(b==='再検証済み'||b==='反証済み');
     }).forEach(function(label){var li=el('li');li.appendChild(el('span',null,label));li.appendChild(el('b',null,byState[label]+' 件'));legend.appendChild(li);});
     var since=$('since');
-    if(!s.hasPrevious)since.textContent='前回のデータがないので、変化は比べていません。';
+    if(v.comparison_status==='ambiguous') {
+      since.textContent='前回候補が '+v.previous_candidates.length+' 件あります。';
+      note('warn',since.textContent+' 比較する案件を確認してください。');
+      var choose=el('a','btn','前回の案件を選ぶ');choose.href='/#/relations/'+encodeURIComponent(v.campaign.id);$('notes').appendChild(choose);
+    } else if(v.comparison_status==='incomplete')since.textContent='前回に未集計の実行があるため、変化の比較を保留しています。';
+    else if(!s.hasPrevious)since.textContent='前回のデータがないので、変化は比べていません。';
     else{var bits=[];if(s.changes.closed.length)bits.push(s.changes.closed.length+' 件が片付き');
       if(s.changes.added.length)bits.push(s.changes.added.length+' 件が新しく入り');
       since.textContent='前回（'+day(v.previous.created_at)+'）から、'+(bits.length?bits.join('、')+'ました。':'片付いたものも、新しく入ったものもありません。');}
@@ -767,7 +772,10 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     }
   }
   function showResponse(d){
-    if(d&&d.decision_view===null&&d.status==='hold'){unavailable('warn','記録を確認できません。');return;}
+    if(d&&d.decision_view===null&&d.status==='hold'){
+      unavailable('warn',d.reason||'記録を確認できません。');
+      var evidence=el('a','btn','モニターで集計状況を見る');evidence.href='/#/campaign/'+encodeURIComponent(campaign);$('notes').appendChild(evidence);return;
+    }
     if(d&&d.decision_view&&d.decision_view.status==='withheld'){unavailable('warn','評価情報はBlueに非公開です。');return;}
     show(d&&d.decision_view?d.decision_view:d);
   }
@@ -788,7 +796,8 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
         if(!c||!/^[a-z0-9][a-z0-9-]{0,63}$/.test(c.campaign_id||''))return;
         var a = el('a'), info = el('span', 'case-info');
         info.appendChild(el('strong', 'case-name', c.intent_id || '名前未記録'));
-        var count = Number.isInteger(c.finding_count) ? c.finding_count + ' 件' : '未確認';
+        var count = Number.isInteger(c.finding_count) ? c.finding_count + ' 件' : '未集計';
+        if(c.finding_count_status==='partial')count='一部未集計（確認済み '+count+'）';
         info.appendChild(el('small', null, '作成 ' + (c.created_at ? when(c.created_at) : '日時不明') + '　·　課題 ' + count));
         a.appendChild(info);
         a.appendChild(el('span', 'case-state', labels[c.status] || '状態未確認'));
@@ -803,7 +812,9 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     $('to-monitor').href='/#/campaign/'+encodeURIComponent(campaign);
     if ($('refresh-view').disabled) return;
     $('refresh-view').disabled = true;
-    return fetchView('/api/campaigns/'+encodeURIComponent(campaign)+'/decision-view').then(showResponse).catch(function(e){
+    var prev=null;
+    try {prev=localStorage.getItem('aym.previous.'+campaign);} catch (_) {}
+    return fetchView('/api/campaigns/'+encodeURIComponent(campaign)+'/decision-view'+(prev?'?previous='+encodeURIComponent(prev):'')).then(showResponse).catch(function(e){
       clear($('notes'));
       if(e.message==='HTTP 404') unavailable('err','この Campaign は見つかりません。');
       else if(e.message==='HTTP 500') unavailable('err','この画面では記録を表示できません。件数が多い場合はモニターで確認してください。');

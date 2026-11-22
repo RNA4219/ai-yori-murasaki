@@ -1,0 +1,28 @@
+{
+  "id": "docs/acceptance/AC-20261123-02.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.monitor-counts-11-23-2026.md"
+  ],
+  "deps_out": [
+    "CHANGELOG.md",
+    "docs/tasks/TASK.monitor-counts-11-23-2026.md"
+  ],
+  "summary": "件数の3状態、案件比較、台帳4本の読み込み回数と改修後の構成図に関するローカル検収。",
+  "source_sha256": "da0b6b6071213fa2c51ccfbbebbee1bfd8abf2f8cccd02a0a2247953735a4233",
+  "generated_at": "00037",
+  "review": {
+    "reviewed_at": "2026-11-22T15:56:44+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "da0b6b6071213fa2c51ccfbbebbee1bfd8abf2f8cccd02a0a2247953735a4233",
+    "summary_sha256": "f9480bd126f589ad95b41ece477a560ca97bf9266e66c5279703f4740a80f1e9",
+    "scope": "案件の集計状態、比較元の選択、台帳の実測結果と検収・索引を照合。"
+  }
+}

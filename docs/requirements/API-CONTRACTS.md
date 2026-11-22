@@ -135,11 +135,12 @@ intent_id: INT-AYM-PRODUCT-20261106 / owner: RNA4219 / status: reviewed
 | method | path | query | 成功 | 失敗 | max size |
 |---|---|---|---|---|---|
 | GET | `/` | - | HTML index | 500 | 256 KiB |
-| GET | `/architecture` | - | 構成図HTML。利用者のファイル入力はブラウザー内で処理する | 500 | 256 KiB |
-| GET | `/architecture/<asset>` | - | 同梱した `map.mjs`、`model.mjs`、`js-yaml.mjs`、`sample.json` | 404 | 1 MiB |
+| GET | `/architecture` | `?system=aym` | 既定は注文管理の見本。aym指定で製品自身の改修後の図を開く | 500 | 256 KiB |
+| GET | `/architecture/<asset>` | - | 同梱した `map.mjs`、`model.mjs`、`js-yaml.mjs`、`sample.json`、`product.json` | 404 | 1 MiB |
 | GET | `/assets/<path>` | - | static asset | 404 | 1 MiB |
 | GET | `/api/campaigns` | - | `{campaigns: [...]}` | 500 | 1 MiB |
-| GET | `/api/campaign-relations` | `?view=operator\|blue` | operatorは案件ID、目的名、作成日時、比較元の案件ID（`previous_id`）の一覧。比較元がなければnull。Blueは `{"status":"withheld"}` | 500 | 1 MiB |
+| GET | `/api/campaign-relations` | `?view=operator\|blue` | operatorは案件ID、目的名、作成日時、確定できる比較元の `previous_id`。同時刻の複数候補は `previous_candidates` にID順で列挙し、`previous_id` はnull。Blueは `{"status":"withheld"}` | 500 | 1 MiB |
+| GET | `/api/campaigns/<campaign_id>/decision-view` | `?previous=<id>` | 複数候補の中で選んだIDを照合して比較。未選択・候補外は比較を保留する。今回の集計が不完全ならhold、前回が不完全なら今回分だけを返す。Blueには比較を公開しない | 404 | 1 MiB |
 | GET | `/api/campaigns/<campaign_id>` | - | `{campaign: {...}}` | 404 | 256 KiB |
 | GET | `/api/runs/<run_id>` | - | `{run: {...}}` | 404 | 256 KiB |
 | GET | `/api/runs/<run_id>/events` | `?after=<sequence>&limit=<int>` | `{events: [...]}`（public projection） | 404 | 1 MiB |
@@ -188,7 +189,7 @@ intent_id: INT-AYM-PRODUCT-20261106 / owner: RNA4219 / status: reviewed
  /api/adapters -> {adapters:[{name,status,mode,checked_at}]}
  /api/campaigns/<id>/runs -> {runs:[Run投影]}
  /api/campaigns/<id>/rsi -> {rsi:[{candidate_id,freeze_id,content_digest,status,comparison:{pairs,baseline,candidate,gain}|null,applied:bool}]}
- Campaign投影: campaign_id,intent_id,status,created_at,last_run_at:null|timestamp,finding_count:null|int。
+ Campaign投影: campaign_id,intent_id,status,created_at,last_run_at:null|timestamp,finding_count:null|int。finding_count_statusはcomplete（確定）、partial（確認済みの件数）、unavailable（件数null）。verified_run_countとunverified_run_countを併記し、operatorはunverified_run_idsから対象の実行を開ける。
  詳細: {campaign:投影,findings:[{finding_id,severity,title,source}],remediations:[{remediation_id,status}],metrics:object|null}
  Run投影: run_id,campaign_id,phase,status,completion,cause,started_at,ended_at,sealed_at,last_sequence,last_event_hash。
  Approval投影: approval_id,remediation_id,decision,decided_at,expires_at,applied:boolean（無ければfalseにせず未確認）。

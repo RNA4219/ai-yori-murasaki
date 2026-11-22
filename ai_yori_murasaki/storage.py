@@ -445,6 +445,14 @@ class Store:
     def read_events(self, run_id: str) -> list[dict]:
         return self._read_events_raw(run_id)
 
+    def read_verified_events(self, run_id: str) -> list[dict]:
+        """検証に使ったイベント列をそのまま読み取り側に渡す。"""
+        events = self.read_events(run_id)
+        if not events:
+            raise DataError("empty ledger")
+        self._inspect_chain(run_id, events)
+        return events
+
     def _inspect_chain(self, run_id: str, events: list[dict]) -> dict:
         head = ZERO
         for sequence, event in enumerate(events, 1):

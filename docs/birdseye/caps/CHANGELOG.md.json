@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "変更と版の記録。0025では案件の画面から開ける構成図、設定と依存関係の読み込み、指摘の確認を記す。",
+  "summary": "変更と版の記録。0026では検知件数の完全性、前回の選択、一覧の台帳読み込み削減を記す。",
   "deps_out": [
     "docs/SOURCES.md",
     "docs/acceptance/AC-20261106-01.md",
@@ -20,12 +20,14 @@
     "docs/acceptance/AC-20261109-02.md",
     "docs/acceptance/AC-20261122-01.md",
     "docs/acceptance/AC-20261123-01.md",
+    "docs/acceptance/AC-20261123-02.md",
     "docs/evidence/quality-integration-20261109/README.md",
     "docs/evidence/sources-light-ui-20261109/README.md",
     "docs/evidence/wazuh-live-20261108.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
+    "docs/tasks/TASK.monitor-counts-11-23-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
     "docs/tasks/TASK.product-clarity-11-07-2026.md",
     "docs/tasks/TASK.product-completion-11-06-2026.md",
@@ -48,6 +50,7 @@
     "docs/acceptance/AC-20261106-02.md",
     "docs/acceptance/AC-20261122-01.md",
     "docs/acceptance/AC-20261123-01.md",
+    "docs/acceptance/AC-20261123-02.md",
     "docs/acceptance/README.md",
     "docs/tasks/README.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
@@ -63,13 +66,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "5829c4a4d7fec325416f917cba96f92e6436362e279c50c3c048e563ddd37772",
-  "generated_at": "00036",
+  "source_sha256": "af0c1009255d36bfbdf60ec1661a73a189c4044ef357fa25bea2da4bb04a30a6",
+  "generated_at": "00037",
   "review": {
-    "reviewed_at": "2026-11-22T15:14:19+00:00",
+    "reviewed_at": "2026-11-22T15:56:44+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "5829c4a4d7fec325416f917cba96f92e6436362e279c50c3c048e563ddd37772",
-    "summary_sha256": "b20280da737130615aac8b13fb74e28c12e919b7ee3fc1737b6db9fae51ca6c6",
-    "scope": "構成図の操作、入力仕様、検収の根拠と文書間の参照を照合。"
+    "source_sha256": "af0c1009255d36bfbdf60ec1661a73a189c4044ef357fa25bea2da4bb04a30a6",
+    "summary_sha256": "4e4f9f5934a0818b4ea236c6098a9f88db21144ab26ac7c052f1e4df3a9079ec",
+    "scope": "案件の集計状態、比較元の選択、台帳の実測結果と検収・索引を照合。"
   }
 }

@@ -1,0 +1,27 @@
+{
+  "id": "docs/tasks/TASK.monitor-counts-11-23-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/AC-20261123-02.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "docs/acceptance/AC-20261123-02.md"
+  ],
+  "summary": "検知件数の集計状態、実行別の証跡、検証済み台帳の再利用、同時刻の前回選択と構成図の改修要件。",
+  "source_sha256": "479ebba328d8207fd495c93f5817e1af6705bbce39236deea39ccc287d4ad622",
+  "generated_at": "00037",
+  "review": {
+    "reviewed_at": "2026-11-22T15:56:44+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "479ebba328d8207fd495c93f5817e1af6705bbce39236deea39ccc287d4ad622",
+    "summary_sha256": "53fc0fb9566a3560f094003b0e8bb3e4584b6b7353ff6d51166740e4afa8262f",
+    "scope": "案件の集計状態、比較元の選択、台帳の実測結果と検収・索引を照合。"
+  }
+}

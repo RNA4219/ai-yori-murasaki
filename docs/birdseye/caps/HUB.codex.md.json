@@ -2,7 +2,7 @@
   "id": "HUB.codex.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "製品操作、要件、評価、運用の索引。案件の画面改修およびリポジトリ・AWS構成図のTaskと技術検収へ案内する。",
+  "summary": "製品操作、評価、運用の索引。案件、システム構成図、検知集計と前回比較に関する改修・検収を案内する。",
   "deps_out": [
     ".agents/skills/security-audit/SKILL.md",
     "AGENTS.md",
@@ -30,6 +30,7 @@
     "docs/acceptance/AC-20261109-02.md",
     "docs/acceptance/AC-20261122-01.md",
     "docs/acceptance/AC-20261123-01.md",
+    "docs/acceptance/AC-20261123-02.md",
     "docs/acceptance/INDEX.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
@@ -42,6 +43,7 @@
     "docs/tasks/README.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
+    "docs/tasks/TASK.monitor-counts-11-23-2026.md",
     "docs/tasks/TASK.sources-light-ui-11-09-2026.md",
     "docs/workflow-adoption.md",
     "governance/policy.yaml"
@@ -56,13 +58,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "438f692145e4ae608d3cbf6ca6761b134a6394df46f7a0a00a254834c4b2bc13",
-  "generated_at": "00036",
+  "source_sha256": "3381eb2db2051249cf959cc24dd9daef28c7381c855641ddaf8ca9e14a321553",
+  "generated_at": "00037",
   "review": {
-    "reviewed_at": "2026-11-22T15:14:19+00:00",
+    "reviewed_at": "2026-11-22T15:56:44+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "438f692145e4ae608d3cbf6ca6761b134a6394df46f7a0a00a254834c4b2bc13",
-    "summary_sha256": "c7b4204bf766757634ba07643cfad3ceefbb4628a1ee8b89144fce27aa05e990",
-    "scope": "構成図の操作、入力仕様、検収の根拠と文書間の参照を照合。"
+    "source_sha256": "3381eb2db2051249cf959cc24dd9daef28c7381c855641ddaf8ca9e14a321553",
+    "summary_sha256": "fc1a69c4ebf5987179c31d3c0f9898fe4187222e7e397956ccb09e5959254dd0",
+    "scope": "案件の集計状態、比較元の選択、台帳の実測結果と検収・索引を照合。"
   }
 }

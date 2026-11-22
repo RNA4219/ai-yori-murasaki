@@ -485,6 +485,9 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
 .sheet-number span { color: #e6daed; font-size: 16px; }
 .sheet-number span:first-child { grid-column: 1/-1; }
 .sheet-number strong { font: 500 clamp(36px,4vw,60px)/1.1 Georgia,serif; font-variant-numeric: lining-nums tabular-nums; }
+.count-pending { color:var(--color-review); max-width:12em; font-size:1rem; line-height:1.5; }
+.previous-choice { border-inline-start:3px solid var(--color-review); padding:8px 14px; margin:12px 0; }
+.previous-choice button { margin:4px 8px 4px 0; min-height:40px; }
 .sheet-meta { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; grid-column: 1/-1; font-size: 16px; color: #e4dce9; }
 .sheet-meta .badge { color: inherit; }
 .sheet-identity .unrecorded { color: inherit; }
@@ -1254,7 +1257,7 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
           if (state.route.name === 'campaign' && state.route.params.id === c.campaign_id) a.setAttribute('aria-current', 'page');
           var meta = document.createElement('span');
           meta.className = 'meta';
-          meta.textContent = '検知 ' + (Number.isInteger(c.finding_count) ? c.finding_count + ' 件' : '未記録');
+          meta.textContent = '検知 ' + findingCount(c);
           a.appendChild(meta);
           li2.appendChild(a);
           items.push(li2);
@@ -1711,6 +1714,7 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
         if (!record || !record.campaign || record.campaign.campaign_id !== chosen.campaign_id || !Array.isArray(record.findings))
           throw new Error('記録の形式を確認できません。');
         state.excerpt = record.findings;
+        Object.assign(chosen, record.campaign);
         state.excerptError = null;
         render();
       }).catch(function (error) {
@@ -1724,6 +1728,25 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
   }
 
   var severityNames = { critical:'重大', high:'高', medium:'中', low:'低', info:'情報' };
+
+  function findingCount(c, compact) {
+    if (c.finding_count_status === 'unavailable' || !Number.isInteger(c.finding_count)) return '未集計';
+    if (c.finding_count_status === 'partial') return compact ? '一部未集計' : '一部未集計（確認済み ' + c.finding_count + ' 件）';
+    return c.finding_count + ' 件';
+  }
+
+  function appendCoverage(parent, c) {
+    if (!c.unverified_run_count) return;
+    var box = text('div', null, 'excerpt-notice');
+    box.appendChild(text('p', '集計済み ' + c.verified_run_count + ' 実行 ／ 未集計 ' + c.unverified_run_count + ' 実行'));
+    (c.unverified_run_ids || []).forEach(function (rid) {
+      var a = text('a', '未集計の実行を確認　' + rid);
+      a.href = '#/run/' + encodeURIComponent(rid);
+      box.appendChild(a);
+      box.appendChild(document.createElement('br'));
+    });
+    parent.appendChild(box);
+  }
 
   function caseSheet(c) {
     var sheet = text('section', null, 'case-sheet');
@@ -1741,8 +1764,12 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
     head.appendChild(identity);
     var stats = text('div', null, 'sheet-number');
     stats.appendChild(text('span', '検知'));
-    stats.appendChild(text('strong', Number.isInteger(c.finding_count) ? c.finding_count : '未記録'));
-    if (Number.isInteger(c.finding_count)) stats.appendChild(text('span', '件'));
+    if (c.finding_count_status === 'partial' || c.finding_count_status === 'unavailable' || !Number.isInteger(c.finding_count)) {
+      stats.appendChild(text('b', findingCount(c), 'count-pending'));
+    } else {
+      stats.appendChild(text('strong', c.finding_count));
+      stats.appendChild(text('span', '件'));
+    }
     head.appendChild(stats);
     var meta = text('div', null, 'sheet-meta');
     if (first) meta.appendChild(text('span', '重大度　' + (severityNames[first.severity] || '未記録'), 'first-severity'));
@@ -1755,10 +1782,11 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
     var body = text('div', null, 'sheet-body');
     body.setAttribute('aria-live','polite');
     body.setAttribute('data-key','excerpt-body');
+    appendCoverage(body,c);
     if (state.excerptError) body.appendChild(text('p', state.excerptError, 'excerpt-notice'));
     if (state.excerpt === null && !state.excerptError) body.appendChild(text('p','記録を読み込んでいます。','muted'));
     if (state.excerpt) {
-      if (!state.excerpt.length) body.appendChild(text('p','この案件に登録された検知項目はまだありません。','muted'));
+      if (!state.excerpt.length && !c.unverified_run_count && Number.isInteger(c.finding_count)) body.appendChild(text('p','この案件に登録された検知項目はまだありません。','muted'));
       else if (state.excerpt.length > 1) {
         body.appendChild(text('h3','同じ案件のほかの検知'));
         var findings = text('ul', null, 'excerpt-list');
@@ -1817,11 +1845,17 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
     var byId = new Map();
     var roots = [];
     cases.forEach(function (c) {
-      byId.set(c.campaign_id, { record:c, children:[], count:1, latest:c.created_at || '' });
+      var parent = c.previous_id;
+      if (Array.isArray(c.previous_candidates) && c.previous_candidates.length > 1) {
+        var chosen = null;
+        try { chosen = localStorage.getItem('aym.previous.' + c.campaign_id); } catch (_) {}
+        parent = c.previous_candidates.includes(chosen) ? chosen : null;
+      }
+      byId.set(c.campaign_id, { record:c, parent:parent, children:[], count:1, latest:c.created_at || '' });
     });
     if (byId.size !== cases.length) throw new Error('案件IDが重複しています。');
     byId.forEach(function (node) {
-      var parent = node.record.previous_id;
+      var parent = node.parent;
       if (parent == null) roots.push(node);
       else if (byId.has(parent)) byId.get(parent).children.push(node);
       else throw new Error('比較元の案件が見つかりません。');
@@ -1856,7 +1890,8 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
       var dot = text('span', null, 'history-dot');
       dot.setAttribute('aria-hidden','true');
       link.appendChild(dot);
-      var phase = text('span', ordinal === 1 ? '初回' : ordinal + '回目', 'history-phase');
+      var uncertain = ordinal === 1 && (c.previous_candidates || []).length > 1;
+      var phase = text('span', uncertain ? '前回未選択' : ordinal === 1 ? '初回' : ordinal + '回目', 'history-phase');
       if (c.campaign_id === selectedId) {
         phase.appendChild(text('small', '選択中'));
         link.setAttribute('aria-current','true');
@@ -1934,10 +1969,33 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
     if (!history.roots.length) { intro.appendChild(text('p', '案件はまだありません。')); return view; }
     var roots = id ? [history.byId.get(id).root] : history.roots;
     intro.appendChild(text('p', '線は、判断画面で比較に使う前回の案件と、その次の案件を結んでいます。'));
+    history.byId.forEach(function (node) {
+      var candidates = node.record.previous_candidates;
+      if (!Array.isArray(candidates) || candidates.length < 2 || (id && node.root !== roots[0])) return;
+      var box = text('section', null, 'previous-choice');
+      var cid = node.record.campaign_id;
+      box.appendChild(text('h3', (node.record.intent_id || cid) + ' の前回候補　' + candidates.length + ' 件'));
+      var decision = text('a', 'この案件の判断を見る');
+      decision.href = '/decision?campaign=' + encodeURIComponent(cid);
+      box.appendChild(decision);
+      box.appendChild(text('p', node.parent ? 'このブラウザーで選んだ案件と比較します。' : '同時刻の候補があります。前回にあたる案件を選ぶと、このブラウザーに保存します。'));
+      candidates.forEach(function (candidate) {
+        var other = history.byId.get(candidate);
+        if (!other) return;
+        var button = text('button', (candidate === node.parent ? '選択中　' : '') + (other.record.intent_id || candidate) + '　' + candidate);
+        button.type = 'button'; button.dataset.previousFor = cid; button.dataset.previousId = candidate;
+        button.setAttribute('aria-pressed', String(candidate === node.parent));
+        box.appendChild(button);
+      });
+      if (node.parent) {
+        var reset = text('button', '選択を解除'); reset.type = 'button'; reset.dataset.previousFor = cid; box.appendChild(reset);
+      }
+      view.appendChild(box);
+    });
     roots.forEach(function (root) {
       if (root.count > 1) view.appendChild(historySheet(root, id));
     });
-    var singles = roots.filter(function (root) { return root.count === 1; });
+    var singles = roots.filter(function (root) { return root.count === 1 && !(root.record.previous_candidates || []).length; });
     if (singles.length) {
       view.appendChild(text('h2', '比較相手のない案件　' + singles.length + ' 件'));
       var rest = text('ul', null, 'relation-list');
@@ -1988,7 +2046,7 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
         var c = state.campaigns[i];
         if (!c || !c.campaign_id) continue;
         var active = c.campaign_id === state.selectedCase;
-        var option = text('option', c.intent_id || c.campaign_id);
+        var option = text('option', (c.intent_id || c.campaign_id) + '　·　検知 ' + findingCount(c,true));
         option.value = c.campaign_id;
         if (active) option.setAttribute('selected', '');
         select.appendChild(option);
@@ -2011,7 +2069,7 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
         link.appendChild(time);
         var count = text('span', null, 'record-count');
         count.appendChild(text('small', '検知'));
-        count.appendChild(text('b', Number.isInteger(c.finding_count) ? c.finding_count + ' 件' : '未記録'));
+        count.appendChild(text('b', findingCount(c,true)));
         link.appendChild(count);
         var arrow = text('span', '→', 'record-arrow');
         arrow.setAttribute('aria-hidden', 'true'); link.appendChild(arrow);
@@ -2200,7 +2258,7 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
       ['status', c.status],
       ['created_at', fmtTime(c.created_at)],
       ['last_run_at', fmtTime(c.last_run_at)],
-      ['finding_count', c.finding_count]
+      ['finding_count', findingCount(c)]
     ];
     for (var i = 0; i < fields.length; i++) {
       var pair = document.createElement('div');
@@ -2218,6 +2276,7 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
       dl.appendChild(pair);
     }
     head.appendChild(dl);
+    appendCoverage(head,c);
     p.appendChild(head);
 
     // Summary metrics (4)
@@ -2328,7 +2387,7 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
       }
     }
     if (findings.length === 0) {
-      pFind.appendChild(text('p', '該当なし', 'muted'));
+      pFind.appendChild(text('p', c.unverified_run_count ? '検知の集計が完了していません。' : '該当なし', 'muted'));
     } else {
       var ul = document.createElement('ul');
       ul.className = 'incident-list';
@@ -3220,6 +3279,18 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
 
   el.viewRoot.addEventListener('click', onViewRootClick);
   el.viewRoot.addEventListener('click', function (event) {
+    var previous = event.target.closest('button[data-previous-for]');
+    if (previous && state.detail && state.detail.byId) {
+      var key = 'aym.previous.' + previous.dataset.previousFor;
+      try {
+        if (previous.dataset.previousId) localStorage.setItem(key,previous.dataset.previousId);
+        else localStorage.removeItem(key);
+        state.detail = campaignHistories(Array.from(state.detail.byId.values(), function (node) { return node.record; }));
+        state.detailError = null;
+      } catch (_) { state.detailError = '前回の選択をこのブラウザーに保存できませんでした。'; }
+      render();
+      return;
+    }
     var choice = event.target.closest('button[data-select-case]');
     if (choice && choice.dataset.selectCase !== state.selectedCase) loadExcerpt(choice.dataset.selectCase);
   });

@@ -42,13 +42,16 @@ function apply(result,sample=false) {
   render();
 }
 function error(message) { $('error').textContent=message; $('error').hidden=false; }
-async function sample() {
+async function loadBundled(product = false) {
   const version=++state.load;
   try {
-    const response=await fetch('/architecture/sample.json',{credentials:'same-origin'});
+    const response=await fetch(product ? '/architecture/product.json' : '/architecture/sample.json',{credentials:'same-origin'});
     if (!response.ok) throw Error('見本ファイルを取得できませんでした。');
     const map=validateMap(await response.json());
-    if (version===state.load) apply({map,note:'架空の構成とレビュー記録を使用しています。'},true);
+    if (version===state.load) {
+      if (product) apply({map,source:'ai-yori-murasaki の実装',note:'検知件数・前回の選択・台帳の読み込みを改修後に検証しました。部品を選ぶと変更内容と接続の根拠を読めます。'});
+      else apply({map,note:'架空の構成とレビュー記録を使用しています。'},true);
+    }
   } catch(e) { if(version===state.load) error(e.message); }
 }
 async function openFiles(files) {
@@ -307,7 +310,7 @@ $('diagram').addEventListener('keydown',e=>{
 });
 $('return').addEventListener('click',()=>{const target=$('diagram').querySelector('[aria-pressed="true"]');target?.focus();target?.scrollIntoView({block:'center'});});
 $('file').addEventListener('change',e=>{const files=[...e.target.files];e.target.value='';if(files.length) openFiles(files);});
-$('reset').addEventListener('click',sample);
+$('reset').addEventListener('click',()=>loadBundled());
 let chartWidth=0;
 new ResizeObserver(([entry])=>{if(entry.contentRect.width!==chartWidth){chartWidth=entry.contentRect.width;draw();}}).observe($('frame'));
-sample();
+loadBundled(new URLSearchParams(location.search).get('system') === 'aym');

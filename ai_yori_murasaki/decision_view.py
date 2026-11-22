@@ -20,7 +20,6 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from importlib import resources
-from itertools import groupby
 from .jsonio import DataError
 from .storage import sanitize
 from urllib.parse import urlsplit
@@ -241,18 +240,30 @@ def load_mapping(store) -> dict:
         raise DataError("decision-view mapping unavailable", "hold") from exc
 
 
-def read_decision_view(runtime, campaign_id: str) -> dict:
+def read_decision_view(runtime, campaign_id: str, selected_previous: str | None = None, summaries=None) -> dict:
     from .assessment import load_report
-    campaign, findings, records = _load(runtime, runtime.store, campaign_id)
+    campaign, findings, records = _load(runtime, runtime.store, campaign_id, summaries)
     report = load_report(runtime, campaign_id)
     previous = None
-    prev_id = pick_previous(runtime.list_campaigns(), campaign)
-    if prev_id:
-        pc, pf, pr = _load(runtime, runtime.store, prev_id)
+    campaigns = ([entry.campaign for entry in summaries.values() if entry.campaign]
+                 if summaries is not None else runtime.list_campaigns())
+    options = previous_candidates(campaigns).get(campaign_id, ())
+    prev_id = options[0] if len(options) == 1 else None
+    if selected_previous in options:
+        prev_id = selected_previous
+    incomplete = bool(prev_id and summaries is not None and
+                      (prev_id not in summaries or summaries[prev_id].status != "complete"))
+    if prev_id and not incomplete:
+        pc, pf, pr = _load(runtime, runtime.store, prev_id, summaries)
         previous = {"campaign": pc, "findings": pf, "records": pr}
     result = build_view(campaign, findings, records,
                         mapping=load_mapping(runtime.store), now=datetime.now(timezone.utc),
                         previous=previous, assessment=report if report is not None else {})
+    if incomplete:
+        result["comparison_status"] = "incomplete"
+    elif len(options) > 1 and not prev_id:
+        result["comparison_status"] = "ambiguous"
+        result["previous_candidates"] = list(options)
     return sanitize(result, runtime.store.secrets)
 
 
@@ -319,9 +330,13 @@ def build_view(campaign: dict, findings: list[dict], records: dict[str, dict] | 
 
 # --- AYM の保存データから読む部分（ここから下だけが AYM に依存する） ---
 
-def _load(runtime, store, campaign_id: str) -> tuple[dict, list[dict], dict[str, dict]]:
-    campaign = runtime.get_campaign(campaign_id)
-    findings = _unique_findings([store.get_object(ref) for ref in runtime.list_records(campaign_id, "finding")])
+def _load(runtime, store, campaign_id: str, summaries=None) -> tuple[dict, list[dict], dict[str, dict]]:
+    if summaries is None:
+        campaign = runtime.get_campaign(campaign_id)
+        findings = _unique_findings([store.get_object(ref) for ref in runtime.list_records(campaign_id, "finding")])
+    else:
+        campaign = summaries[campaign_id].campaign
+        findings = list(summaries[campaign_id].findings.values())
     records: dict[str, dict] = {}
     for f in findings:
         ref = ((f.get("extensions") or {}).get("notion") or {}).get("source_record_ref")
@@ -340,28 +355,40 @@ def _series(campaign: dict) -> str:
     return _INTENT_DATE.sub("", campaign.get("intent_id") or "")
 
 
-def previous_campaign_ids(campaigns: list[dict]) -> dict[str, str]:
-    """判断の画面で比較する各案件と、その前回の案件IDを返す。"""
-    families: dict[str, list[dict]] = {}
+def previous_candidates(campaigns: list[dict]) -> dict[str, tuple[str, ...]]:
+    """直前の時刻にある全候補を返す。同時刻の案件の間には辺を張らない。"""
+    families: dict[str, dict[tuple[datetime, str], list[dict]]] = {}
     for campaign in campaigns:
         name = _series(campaign)
-        if name and campaign.get("campaign_id"):
-            families.setdefault(name, []).append(campaign)
-    parents: dict[str, str] = {}
-
-    def created(campaign: dict) -> str:
-        return campaign.get("created_at") or ""
+        stamp = campaign.get("created_at")
+        if not name or not campaign.get("campaign_id") or not isinstance(stamp, str):
+            continue
+        try:
+            moment = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+        except ValueError:
+            continue
+        if moment.tzinfo is None:
+            moment = moment.replace(tzinfo=timezone.utc)
+        # 契約が許す小数秒9桁のうち、datetimeに入らない末尾3桁を保持する。
+        extra = re.search(r"\.\d{6}(\d{1,3})", stamp)
+        key = (moment, extra[1].ljust(3, "0") if extra else "000")
+        families.setdefault(name, {}).setdefault(key, []).append(campaign)
+    parents: dict[str, tuple[str, ...]] = {}
 
     for name, family in families.items():
-        previous = None
-        for _, entries in groupby(sorted(family, key=created), key=created):
-            same_time = list(entries)
+        previous = ()
+        for moment in sorted(family):
+            same_time = family[moment]
             for campaign in same_time:
-                if previous is not None and campaign["intent_id"] != name:
+                if previous and campaign["intent_id"] != name:
                     parents[campaign["campaign_id"]] = previous
-            # 同時刻の案件間に辺を作らず、次回は元の一覧順で最初の案件を使う。
-            previous = same_time[0]["campaign_id"]
+            previous = tuple(sorted(c["campaign_id"] for c in same_time))
     return parents
+
+
+def previous_campaign_ids(campaigns: list[dict]) -> dict[str, str]:
+    return {cid: candidates[0] for cid, candidates in previous_candidates(campaigns).items()
+            if len(candidates) == 1}
 
 
 def pick_previous(campaigns: list[dict], current: dict) -> str | None:

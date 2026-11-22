@@ -2,7 +2,7 @@
   "id": "docs/requirements/API-CONTRACTS.md",
   "role": "doc",
   "public_api": [],
-  "summary": "CLI・読み取りAPIと画面配信の契約。案件間の比較記録、報告・本文、Blue版の条件のほか、構成図のURLとローカル入力の扱いを記す。",
+  "summary": "CLI・読み取りAPI・画面配信の契約。案件投影の集計状態と件数、比較候補、比較保留・表示境界の扱いを規定する。",
   "deps_out": [
     "docs/PRODUCT-ACCEPTANCE.md",
     "docs/SOURCES.md",
@@ -16,13 +16,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "ea63190ccbcf69fd7d140bfa14b331c320a7ff75b04a10babb51211d1963884d",
-  "generated_at": "00036",
+  "source_sha256": "ea50e942717344033f99853500173707bb15348c5f073e5e532d9801d3e95a92",
+  "generated_at": "00037",
   "review": {
-    "reviewed_at": "2026-11-22T15:14:19+00:00",
+    "reviewed_at": "2026-11-22T15:56:44+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "ea63190ccbcf69fd7d140bfa14b331c320a7ff75b04a10babb51211d1963884d",
-    "summary_sha256": "24ca1051a44d64c8e2aa030d4c5dcdf48cd19d581990ca06f001ed0eea78dd32",
-    "scope": "構成図の操作、入力仕様、検収の根拠と文書間の参照を照合。"
+    "source_sha256": "ea50e942717344033f99853500173707bb15348c5f073e5e532d9801d3e95a92",
+    "summary_sha256": "072675cb230435b593de3eabcb79f44c9310f85e5083034b67a41dc695c3cae7",
+    "scope": "案件の集計状態、比較元の選択、台帳の実測結果と検収・索引を照合。"
   }
 }

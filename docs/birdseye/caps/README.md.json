@@ -2,7 +2,7 @@
   "id": "README.md",
   "role": "overview",
   "public_api": [],
-  "summary": "製品概要、起動、案件の履歴と判断・証跡の画面例。システム構成図の見本、自分の構成ファイルの読み込み方と仕様に案内する。",
+  "summary": "製品概要、起動、検知・判断・構成図の使い方。集計状態、同時刻の比較元選択と改修後の図へ案内する。",
   "deps_out": [
     "BLUEPRINT.md",
     "CHANGELOG.md",
@@ -43,13 +43,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "b1ed2efbfb18d067703c0d1fb56bbf9b54cf68513c5b264da34062d59e641587",
-  "generated_at": "00036",
+  "source_sha256": "3a95439a5c6d10d6e6810d57d9e02bd7327af984a5206369bcc41de4d9cd8a60",
+  "generated_at": "00037",
   "review": {
-    "reviewed_at": "2026-11-22T15:14:19+00:00",
+    "reviewed_at": "2026-11-22T15:56:44+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "b1ed2efbfb18d067703c0d1fb56bbf9b54cf68513c5b264da34062d59e641587",
-    "summary_sha256": "d415d5250e3530e76fc4309b4a859e33aa0cacee618a027f9c9bf25e597e32df",
-    "scope": "構成図の操作、入力仕様、検収の根拠と文書間の参照を照合。"
+    "source_sha256": "3a95439a5c6d10d6e6810d57d9e02bd7327af984a5206369bcc41de4d9cd8a60",
+    "summary_sha256": "9909baaf5b807b2f8ef74f0d093aa995d915157a2d642b34ad02af10726b0360",
+    "scope": "案件の集計状態、比較元の選択、台帳の実測結果と検収・索引を照合。"
   }
 }

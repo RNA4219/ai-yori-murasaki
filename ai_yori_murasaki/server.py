@@ -18,6 +18,7 @@ from urllib.parse import parse_qsl, urlsplit
 
 from .jsonio import DataError, canonical, loads
 from .runtime import Runtime
+from .monitor_summary import CampaignSummary, campaign_summaries
 from .storage import Store
 from . import lab_metrics
 
@@ -37,7 +38,7 @@ ROUTES: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("index", re.compile(r"^/$")),
     ("decision", re.compile(r"^/decision$")),
     ("architecture", re.compile(r"^/architecture$")),
-    ("architecture_asset", re.compile(r"^/architecture/(map\.mjs|model\.mjs|js-yaml\.mjs|sample\.json)$")),
+    ("architecture_asset", re.compile(r"^/architecture/(map\.mjs|model\.mjs|js-yaml\.mjs|sample\.json|product\.json)$")),
     ("health", re.compile(r"^/api/health$")),
     ("sources", re.compile(r"^/api/sources$")),
     ("source", re.compile(r"^/api/sources/(src-[0-9a-f]{32})$")),
@@ -181,22 +182,19 @@ def _project_run(run: dict, store=None) -> dict:
     }
 
 
-def _project_campaign(campaign: dict, runtime=None) -> dict:
-    last_run_at = _safe_str(campaign.get("last_run_at"))
-    finding_count = _safe_int(campaign.get("finding_count"))
-    if runtime is not None:
-        cid = campaign.get("campaign_id")
-        runs = runtime.list_runs(cid)
-        started = [r.get("started_at") for r in runs if r.get("started_at")]
-        last_run_at = _safe_str(max(started)) if started else None
-        finding_count = len(set(runtime.list_records(cid, "finding")))
+def _project_campaign(cid: str, summary: CampaignSummary, view: str = "operator") -> dict:
+    campaign = summary.campaign
     return {
-        "campaign_id": _safe_str(campaign.get("campaign_id")),
+        "campaign_id": cid,
         "intent_id": _safe_str(campaign.get("intent_id")),
         "status": _safe_str(campaign.get("status")),
         "created_at": _safe_str(campaign.get("created_at")),
-        "last_run_at": last_run_at,
-        "finding_count": finding_count,
+        "last_run_at": _safe_str(summary.last_run_at) or None,
+        "finding_count": len(summary.findings) if summary.status != "unavailable" else None,
+        "finding_count_status": summary.status,
+        "verified_run_count": summary.verified_runs,
+        "unverified_run_count": len(summary.pending_runs),
+        **({"unverified_run_ids": summary.pending_runs} if view == "operator" else {}),
     }
 
 
@@ -735,32 +733,37 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
                 return _error(409, "source_unavailable")
 
         if name == "campaigns":
-            campaigns = [_project_campaign(c, runtime) for c in runtime.list_campaigns()]
+            campaigns = [_project_campaign(cid, summary, view)
+                         for cid, summary in campaign_summaries(store).items()]
+            campaigns.sort(key=lambda c: not c["created_at"])
             return _json_response(200, {"campaigns": campaigns})
 
         if name == "campaign_relations":
             if view == "blue":
                 return _json_response(200, {"status": "withheld"})
-            from .decision_view import previous_campaign_ids
+            from .decision_view import previous_candidates
             from .storage import sanitize
             campaigns = runtime.list_campaigns()
-            previous = previous_campaign_ids(campaigns)
+            previous = previous_candidates(campaigns)
             rows = [{"campaign_id": c["campaign_id"], "intent_id": _safe_str(c.get("intent_id")),
-                     "created_at": _safe_str(c.get("created_at")), "previous_id": previous.get(c["campaign_id"])}
-                    for c in campaigns]
+                     "created_at": _safe_str(c.get("created_at")), "previous_id": ids[0] if len(ids) == 1 else None,
+                     "previous_candidates": list(ids) if len(ids) > 1 else []}
+                    for c in campaigns for ids in [previous.get(c["campaign_id"], ())]]
             return _json_response(200, {"campaigns": sanitize(rows, store.secrets)})
 
         if name == "campaign_decision_view":
             if view == "blue":
                 return _json_response(200, {"decision_view": {"status": "withheld", "reason": "評価情報はBlueに非公開"}})
             cid = groups[0]
-            try:
-                runtime.get_campaign(cid)
-            except DataError:
+            summaries = campaign_summaries(store)
+            if cid not in summaries:
                 return _error(404, "not_found")
+            if summaries[cid].status != "complete" or not summaries[cid].campaign:
+                return _json_response(200, {"decision_view": None, "status": "hold",
+                                            "reason": "検知の未集計があるため、判断と前回比較を保留しています。"})
             from .decision_view import read_decision_view
             try:
-                projected = read_decision_view(runtime, cid)
+                projected = read_decision_view(runtime, cid, query.get("previous"), summaries)
             except (DataError, OSError, ValueError, KeyError, TypeError):
                 return _json_response(200, {"decision_view": None, "status": "hold", "reason": "記録を確認できません"})
             return _json_response(200, {"decision_view": projected})
@@ -802,21 +805,12 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
                         "reason": "評価情報はBlueに非公開",
                     },
                 })
-            try:
-                campaign = runtime.get_campaign(cid)
-            except DataError:
+            summary = campaign_summaries(store).get(cid)
+            if summary is None:
                 return _error(404, "not_found")
             findings = []
-            seen_finding_ids = set()
-            for ref in runtime.list_records(cid, "finding"):
-                try:
-                    obj = store.get_object(ref)
-                except (DataError, FileNotFoundError):
-                    continue
+            for obj in summary.findings.values():
                 fid = _safe_str(obj.get("finding_id"))
-                if fid in seen_finding_ids:
-                    continue
-                seen_finding_ids.add(fid)
                 findings.append({
                     "finding_id": fid,
                     "severity": _safe_str(obj.get("severity")),
@@ -824,7 +818,7 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
                     "source": _safe_str(obj.get("source")),
                 })
             remediations = []
-            for ref in runtime.list_records(cid, "remediation"):
+            for ref in summary.remediation_refs:
                 try:
                     obj = store.get_object(ref)
                 except (DataError, FileNotFoundError):
@@ -834,10 +828,11 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
                     "status": _safe_str(obj.get("status")),
                 })
             return _json_response(200, {
-                "campaign": _project_campaign(campaign, runtime),
+                "campaign": _project_campaign(cid, summary),
                 "findings": findings,
                 "remediations": remediations,
-                "metrics": _project_lab_metrics(runtime, cid),
+                "metrics": (_project_lab_metrics(runtime, cid) if not summary.pending_runs else
+                            {"status": "HOLD", "reason_code": "evidence_unverified", "metrics": None, "limitations": []}),
             })
 
         if name == "campaign_runs":

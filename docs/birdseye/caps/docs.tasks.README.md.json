@@ -2,7 +2,7 @@
   "id": "docs/tasks/README.md",
   "role": "operations",
   "public_api": [],
-  "summary": "Taskの目的・状態と履歴。案件画面の改修とシステム構成図のTask・技術検収を案内する。",
+  "summary": "Taskの目的・状態と履歴。案件画面・構成図に加えて検知集計と前回比較の改修を検収に結ぶ。",
   "deps_out": [
     "CHANGELOG.md",
     "HUB.codex.md",
@@ -22,11 +22,13 @@
     "docs/acceptance/AC-20261109-02.md",
     "docs/acceptance/AC-20261122-01.md",
     "docs/acceptance/AC-20261123-01.md",
+    "docs/acceptance/AC-20261123-02.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
+    "docs/tasks/TASK.monitor-counts-11-23-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
     "docs/tasks/TASK.p2-rsi-experiment-11-09-2026.md",
     "docs/tasks/TASK.p2-sqli-11-09-2026.md",
@@ -53,13 +55,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "54704a0fa7e30d298af14b091dae87162b7267d7066654bb4d49e0f1838a32d5",
-  "generated_at": "00036",
+  "source_sha256": "81969d3c890aa7f542b56ba66ecaa2de7cacb21db73d116dcd08bde23cad4b11",
+  "generated_at": "00037",
   "review": {
-    "reviewed_at": "2026-11-22T15:14:19+00:00",
+    "reviewed_at": "2026-11-22T15:56:44+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "54704a0fa7e30d298af14b091dae87162b7267d7066654bb4d49e0f1838a32d5",
-    "summary_sha256": "546091ba1d1d9a942296dee1758bf2a096e8d42fddd76376c23a6114947d9166",
-    "scope": "構成図の操作、入力仕様、検収の根拠と文書間の参照を照合。"
+    "source_sha256": "81969d3c890aa7f542b56ba66ecaa2de7cacb21db73d116dcd08bde23cad4b11",
+    "summary_sha256": "830c2b30f20ebc3d60adbfb20e041b7191b1f4818596252f17e5a123ee461a90",
+    "scope": "案件の集計状態、比較元の選択、台帳の実測結果と検収・索引を照合。"
   }
 }

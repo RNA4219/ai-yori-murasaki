@@ -2,7 +2,7 @@
   "id": "docs/acceptance/INDEX.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "技術検収の一覧。システム構成図の検収AC-20261123-01と各項目の公開状態を参照できる。",
+  "summary": "技術検収と公開状態の一覧。構成図と検知集計・前回比較の検収に案内する。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -19,9 +19,11 @@
     "docs/acceptance/AC-20261109-02.md",
     "docs/acceptance/AC-20261122-01.md",
     "docs/acceptance/AC-20261123-01.md",
+    "docs/acceptance/AC-20261123-02.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
+    "docs/tasks/TASK.monitor-counts-11-23-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
     "docs/tasks/TASK.product-clarity-11-07-2026.md",
     "docs/tasks/TASK.product-completion-11-06-2026.md",
@@ -44,13 +46,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "e36a76ec9a01ddc25f9ec813eeb681f72b51f226d48075a586a2673d2bbc4cdf",
-  "generated_at": "00036",
+  "source_sha256": "8cb88b41574dc55823eaa33341213121c0fd9c84f0a040e687c744e5e90e8645",
+  "generated_at": "00037",
   "review": {
-    "reviewed_at": "2026-11-22T15:14:19+00:00",
+    "reviewed_at": "2026-11-22T15:56:44+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "e36a76ec9a01ddc25f9ec813eeb681f72b51f226d48075a586a2673d2bbc4cdf",
-    "summary_sha256": "8d2469be3a6db888d5d43ea9ceca2f5c5ae20c410203ba16e68fab79a375f03d",
-    "scope": "構成図の操作、入力仕様、検収の根拠と文書間の参照を照合。"
+    "source_sha256": "8cb88b41574dc55823eaa33341213121c0fd9c84f0a040e687c744e5e90e8645",
+    "summary_sha256": "b8dda6b949ac307755f37f2272197beb41a1b28af2eaab4b67d2f6b95fb121d9",
+    "scope": "案件の集計状態、比較元の選択、台帳の実測結果と検収・索引を照合。"
   }
 }
