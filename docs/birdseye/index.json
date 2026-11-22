@@ -1,5 +1,5 @@
 {
-  "generated_at": "00034",
+  "generated_at": "00035",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -16,7 +16,7 @@
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
       "mtime": "00003",
-      "source_sha256": "cd3b01580ba5cc8922b3089cb21e23754810ebeaf7e65a81bbed5b4c4c6a7446"
+      "source_sha256": "8df262a1f9cc4272379269e9abba1f858c55655a20e937637da777aa51925875"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -43,7 +43,7 @@
       "role": "overview",
       "caps": "docs/birdseye/caps/README.md.json",
       "mtime": "00008",
-      "source_sha256": "3054475e966503ed19fe183d5d4120fb9bfa103fdd9fe1610c738821b189d02f"
+      "source_sha256": "6d64300886ef18ea12e8de5731f10b74318802e3742bb10e5c540dd8c7fd4b22"
     },
     "RUNBOOK.md": {
       "role": "operations",
@@ -358,7 +358,7 @@
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.requirements.MONITOR-REDESIGN.md.json",
       "mtime": "00066",
-      "source_sha256": "d7d23f4666ec867ac6287ce2a9413132e8eaa15adfed90bee428f58156fe012a"
+      "source_sha256": "0fa2c3ac35671a66d77daf432abd8978b7496e7d395562f8bfbcbefe76c8e0e6"
     },
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md": {
       "role": "doc",
@@ -563,13 +563,13 @@
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.acceptance.AC-20261122-01.md.json",
       "mtime": "00031",
-      "source_sha256": "2707bb62e9c4c68112f41ff4a4d35f3f5f1a9d1209bd43ba045138b3cd3f64e5"
+      "source_sha256": "94668a82371384fd2ad9ad45f76776540563b87652ad0a8ed53f136275e57b20"
     },
     "docs/tasks/TASK.frontend-review-11-22-2026.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.tasks.TASK.frontend-review-11-22-2026.md.json",
       "mtime": "00031",
-      "source_sha256": "5aff9cab4f49a8520aa1adcf426983be3a80f32bc1ce1161f43112f7f924485f"
+      "source_sha256": "9277bec9fcfbb384b4412e05c0c4cb9fc52a812a8a314e310d35e5055fd3f0b8"
     }
   },
   "edges": [

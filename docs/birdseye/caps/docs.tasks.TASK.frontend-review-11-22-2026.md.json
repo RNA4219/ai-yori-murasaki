@@ -16,14 +16,14 @@
   ],
   "risks": [],
   "tests": [],
-  "summary": "検知から証跡と判断を読む操作、前回と今回の案件を一覧でたどる操作の要件。作例の採用箇所と検収を記す。",
-  "source_sha256": "5aff9cab4f49a8520aa1adcf426983be3a80f32bc1ce1161f43112f7f924485f",
-  "generated_at": "00034",
+  "summary": "検知から証跡・判断へ進む操作と、途中の回からも初回・後続・分岐を確認できる案件履歴の受入条件、参照作例、検収。",
+  "source_sha256": "9277bec9fcfbb384b4412e05c0c4cb9fc52a812a8a314e310d35e5055fd3f0b8",
+  "generated_at": "00035",
   "review": {
-    "reviewed_at": "2026-11-22T14:25:57+00:00",
+    "reviewed_at": "2026-11-22T14:35:45+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "5aff9cab4f49a8520aa1adcf426983be3a80f32bc1ce1161f43112f7f924485f",
-    "summary_sha256": "513e08dc3c8adf7275efb1336a989a382d3d829156c14c63601e93e46f4a0ec5",
-    "scope": "案件の選択と検知、判断が必要な課題の表示条件・画面例・検収記録を原文と照合。"
+    "source_sha256": "9277bec9fcfbb384b4412e05c0c4cb9fc52a812a8a314e310d35e5055fd3f0b8",
+    "summary_sha256": "94d4a8b9dbc80a85a0ec7f673c073051eac710b9103bb24cab4dca9559733954",
+    "scope": "初回からの履歴、分岐、途中の回を選んだ表示と検収結果を原文と照合。"
   }
 }

@@ -155,26 +155,53 @@ try {
       await page.getByText('この案件の検知記録を表示する権限がありません。').waitFor();
       assert.equal(await visibleFinding.count(),0);
       const series = [
+        {campaign_id:'round-three',intent_id:'権限点検-20261222',created_at:'2026-12-22',previous_id:'round-two'},
         {campaign_id:cid,intent_id:'権限点検',created_at:'2026-10-01',previous_id:null},
         {campaign_id:'round-two',intent_id:'権限点検-20261122',created_at:'2026-11-22',previous_id:cid},
         {campaign_id:'standalone',intent_id:'ログ保管',created_at:'2026-11-20',previous_id:null}
       ];
       await page.route('**/api/campaign-relations',r=>r.fulfill({json:{campaigns:series}}));
       await page.locator('#desk-relations').click();
-      const pair=page.locator('.relation-pair');
-      await pair.waitFor();
-      assert.equal(await pair.getByRole('link').first().getAttribute('href'),'#/campaign/'+cid);
-      assert.equal(await pair.getByRole('link').last().getAttribute('href'),'#/campaign/round-two');
+      const history=page.locator('.history-sheet');
+      const steps=history.getByRole('link');
+      await history.waitFor();
+      assert.deepEqual(await steps.evaluateAll(links=>links.map(a=>a.getAttribute('href'))),
+        [cid,'round-two','round-three'].map(id=>'#/campaign/'+id));
+      assert.deepEqual(await history.locator('.history-phase').allTextContents(),['初回','2回目','3回目']);
+      const markers=await history.locator('.history-step').evaluateAll(nodes=>nodes.map(node=>{
+        const dot=node.querySelector('.history-dot').getBoundingClientRect();
+        const line=getComputedStyle(node,'::before');
+        return {x:dot.x,y:dot.y,horizontal:line.borderTopWidth,vertical:line.borderLeftWidth};
+      }));
+      for (let i=1;i<markers.length;i++) {
+        const prev=markers[i-1], next=markers[i];
+        if (width>=800) assert.ok(prev.x<next.x && prev.y===next.y && parseFloat(prev.horizontal)>0);
+        else assert.ok(prev.y<next.y && prev.x===next.x && parseFloat(prev.vertical)>0);
+      }
       assert.match(await page.locator('.relation-single').innerText(),/ログ保管/);
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
-      await pair.getByRole('link').first().click();
+      await steps.first().click();
       await page.locator('.detail-head').waitFor();
       await page.goBack();
-      await pair.waitFor();
+      await history.waitFor();
+      await page.goto(base+'/#/relations/round-two');
+      await history.locator('[aria-current="true"]').waitFor();
+      assert.equal(await steps.count(),3);
+      assert.equal(await history.locator('[aria-current="true"]').getAttribute('href'),'#/campaign/round-two');
+      assert.equal(await page.locator('.relation-single').count(),0);
+      const branch={campaign_id:'other-round',intent_id:'権限点検-20261122B',created_at:'2026-11-22',previous_id:cid};
+      await page.route('**/api/campaign-relations',r=>r.fulfill({json:{campaigns:[branch,...series]}}));
+      await page.locator('#refresh-btn').click();
+      const branchLink=history.locator('.history-branch .relation-case');
+      await branchLink.waitFor();
+      assert.equal(await steps.count(),4);
+      assert.equal(await branchLink.getAttribute('href'),'#/campaign/other-round');
+      assert.equal(await branchLink.locator('xpath=ancestor::ol[1]/parent::li').getAttribute('data-key'),'step-'+cid);
+      await page.waitForFunction(()=>!document.querySelector('#refresh-btn').hasAttribute('data-manual-busy'));
       await page.route('**/api/campaign-relations',r=>r.fulfill({json:{status:'withheld'}}));
       await page.locator('#refresh-btn').click();
       await page.getByText('案件のつながりはこの表示では非公開です。').waitFor();
-      assert.equal(await pair.count(),0);
+      assert.equal(await history.count(),0);
       assert.deepEqual(errors,[],'no JavaScript errors');
       console.log('PASS real Chromium '+width+'px: routes, accessibility, state and layout');
     } finally {

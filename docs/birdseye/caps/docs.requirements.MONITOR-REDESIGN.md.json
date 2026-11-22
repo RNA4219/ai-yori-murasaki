@@ -2,7 +2,7 @@
   "id": "docs/requirements/MONITOR-REDESIGN.md",
   "role": "doc",
   "public_api": [],
-  "summary": "案件選択と検知の抜粋、前回と今回の案件の一覧、画面幅ごとの配置、更新時のフォーカスと古い記録の扱いを定める。",
+  "summary": "案件選択と検知の抜粋、各回の比較元を線で結ぶ履歴、分岐と選択中の回、画面幅別の配置、自動更新の扱いを定める。",
   "deps_out": [
     "docs/acceptance/AC-20261107-01.md",
     "docs/acceptance/AC-20261109-02.md",
@@ -16,13 +16,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "d7d23f4666ec867ac6287ce2a9413132e8eaa15adfed90bee428f58156fe012a",
-  "generated_at": "00034",
+  "source_sha256": "0fa2c3ac35671a66d77daf432abd8978b7496e7d395562f8bfbcbefe76c8e0e6",
+  "generated_at": "00035",
   "review": {
-    "reviewed_at": "2026-11-22T14:25:57+00:00",
+    "reviewed_at": "2026-11-22T14:35:45+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "d7d23f4666ec867ac6287ce2a9413132e8eaa15adfed90bee428f58156fe012a",
-    "summary_sha256": "9419817ff7b957ba07b5bed59a09597a3bbb45e9b1819f930f7407e200afe955",
-    "scope": "案件の選択と検知、判断が必要な課題の表示条件・画面例・検収記録を原文と照合。"
+    "source_sha256": "0fa2c3ac35671a66d77daf432abd8978b7496e7d395562f8bfbcbefe76c8e0e6",
+    "summary_sha256": "76916e30661468262a275b9d009ea3ac4c173640f74b985356172605e062de8b",
+    "scope": "初回からの履歴、分岐、途中の回を選んだ表示と検収結果を原文と照合。"
   }
 }

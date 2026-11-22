@@ -421,18 +421,32 @@ body[data-screen="relations"] main { padding: clamp(20px,3.4vw,48px) clamp(16px,
 .relation-back, .relation-case { text-decoration: underline; text-underline-offset: 4px; }
 .relation-back { display: inline-flex; align-items: center; min-height: 44px; }
 .relation-list { list-style: none; padding: 0; margin: 12px 0 28px; display: grid; gap: 12px; }
-.relation-pair { display: grid; grid-template-columns: minmax(0,1fr) 2em minmax(0,1fr); align-items: center; padding: 16px 20px; background: #fff; border: 1px solid #dcd5e1; border-radius: 10px; }
+.history-sheet { margin: 0 0 24px; padding: clamp(16px,3vw,32px); border: 1px solid #dcd5e1; border-radius: 12px; background: #fff; }
+.history-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; padding-bottom: 16px; margin-bottom: 20px; border-bottom: 1px solid #e5dfe8; }
+.history-head h2 { margin: 0; font-size: clamp(19px,2vw,26px); overflow-wrap: anywhere; }
+.history-count { color: #65586d; font-size: 16px; }
+.history-steps { list-style: none; padding: 0; margin: 0; }
+.history-step { position: relative; min-width: 0; padding: 0 0 22px 32px; }
+.history-step:last-child { padding-bottom: 0; }
+.history-step:not(:last-child)::before { content: ""; position: absolute; left: 7px; top: 12px; bottom: -12px; border-left: 2px solid #8c719b; }
+.history-branch { margin-top: 12px; }
+.history-branch > li:first-child::after { content: ""; position: absolute; left: -24px; top: 12px; width: 32px; border-top: 2px solid #8c719b; }
+.history-dot { position: absolute; z-index: 1; top: 5px; left: 1px; width: 14px; height: 14px; border: 3px solid #705184; background: #fff; border-radius: 50%; }
+.history-sheet > .history-steps > li:first-child > .relation-case > .history-dot { background: #705184; }
+.relation-case[aria-current] .history-dot { box-shadow: 0 0 0 3px #dfd2e8; }
+.history-phase { color: #604673; font-size: 16px; font-weight: 700; }
+.history-phase small { margin-left: 8px; font-size: 14px; color: #493451; }
+.history-fork-label { font-size: 16px; color: #604673; margin: 8px 0 0; }
+@media(min-width: 800px) {
+  .history-short { display: flex; }
+  .history-short > li { flex: 1 1 0; padding: 30px 16px 0 0; }
+  .history-short > li:not(:last-child)::before { left: 8px; right: -8px; top: 12px; bottom: auto; border: 0; border-top: 2px solid #8c719b; }
+}
 .relation-case { display: grid; align-content: center; min-height: 44px; min-width: 0; gap: 3px; overflow-wrap: anywhere; }
-.relation-link-role, .relation-case time { font-size: 16px; font-weight: 400; color: #595260; }
+.relation-case time { font-size: 16px; font-weight: 400; color: #595260; }
 .relation-case { text-decoration: none; }
 .relation-case strong { text-decoration: underline; text-underline-offset: 4px; }
-.relation-arrow { color: #65487a; font-size: 24px; }
 .relation-single { border-top: 1px solid #ded9e3; padding: 10px 0; }
-.relation-pair .relation-case:last-child { border-inline-start: 3px solid #886b9e; padding-inline-start: 16px; }
-@media(max-width: 660px) {
-  .relation-pair { grid-template-columns: 1fr; gap: 4px; padding: 12px 16px; }
-  .relation-arrow { transform: rotate(90deg); transform-origin: center; width: 1em; text-align: center; }
-}
 body[data-screen="list"] .layout { display: block; max-width: 1440px; }
 body[data-screen="list"] .sidebar { display: none; }
 body[data-screen="list"] main { padding: clamp(24px,3.4vw,48px) clamp(16px,5vw,72px) 64px; }
@@ -1786,7 +1800,7 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
         if (!data || !Array.isArray(data.campaigns) || data.campaigns.some(function (c) {
           return !c || typeof c.campaign_id !== 'string' || !/^[a-z0-9][a-z0-9-]{0,63}$/.test(c.campaign_id);
         })) throw new Error('案件の応答形式が不正です。');
-        state.detail = data.campaigns;
+        state.detail = campaignHistories(data.campaigns);
         state.detailError = null;
       }
       render();
@@ -1798,10 +1812,56 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
     });
   }
 
-  function relationCase(c, label) {
+  function campaignHistories(cases) {
+    var byId = new Map();
+    var roots = [];
+    cases.forEach(function (c) {
+      byId.set(c.campaign_id, { record:c, children:[], count:1, latest:c.created_at || '' });
+    });
+    if (byId.size !== cases.length) throw new Error('案件IDが重複しています。');
+    byId.forEach(function (node) {
+      var parent = node.record.previous_id;
+      if (parent == null) roots.push(node);
+      else if (byId.has(parent)) byId.get(parent).children.push(node);
+      else throw new Error('比較元の案件が見つかりません。');
+    });
+    var order = roots.slice();
+    for (var i = 0; i < order.length; i++) {
+      var node = order[i];
+      node.root = node.root || node;
+      node.children.forEach(function (child) { child.root = node.root; order.push(child); });
+    }
+    if (order.length !== cases.length) throw new Error('案件の比較元が循環しています。');
+    // 後続の案件が最も多い側を幹に置き、他の枝は実際の比較元から引く。
+    for (var j = order.length - 1; j >= 0; j--) {
+      var entry = order[j];
+      entry.children.forEach(function (child) {
+        entry.count += child.count;
+        if (child.latest > entry.latest) entry.latest = child.latest;
+      });
+      entry.children.sort(function (a,b) {
+        return b.count - a.count || a.record.campaign_id.localeCompare(b.record.campaign_id);
+      });
+    }
+    roots.sort(function (a,b) { return b.latest.localeCompare(a.latest); });
+    return { byId:byId, roots:roots };
+  }
+
+  function relationCase(c, ordinal, selectedId) {
     var link = text('a', null, 'relation-case');
     link.href = '#/campaign/' + encodeURIComponent(c.campaign_id);
-    if (label) link.appendChild(text('span', label, 'relation-link-role'));
+    link.setAttribute('data-key', 'relation-link-' + c.campaign_id);
+    if (ordinal) {
+      var dot = text('span', null, 'history-dot');
+      dot.setAttribute('aria-hidden','true');
+      link.appendChild(dot);
+      var phase = text('span', ordinal === 1 ? '初回' : ordinal + '回目', 'history-phase');
+      if (c.campaign_id === selectedId) {
+        phase.appendChild(text('small', '選択中'));
+        link.setAttribute('aria-current','true');
+      }
+      link.appendChild(phase);
+    }
     var name = text('strong');
     name.appendChild(orUnrecorded(c.intent_id || c.campaign_id));
     link.appendChild(name);
@@ -1809,6 +1869,46 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
     if (c.created_at) when.dateTime = c.created_at;
     link.appendChild(when);
     return link;
+  }
+
+  function historySheet(root, selectedId) {
+    var sheet = text('section', null, 'history-sheet');
+    sheet.setAttribute('data-key','history-' + root.record.campaign_id);
+    var head = text('div', null, 'history-head');
+    var name = root.record.intent_id || root.record.campaign_id;
+    head.appendChild(text('h2', name.replace(/-\d{8}[A-Z]?$/, '') || name));
+    head.appendChild(text('span', root.count + ' 件の履歴', 'history-count'));
+    sheet.appendChild(head);
+    var steps = text('ol', null, 'history-steps');
+    steps.setAttribute('aria-label','比較元から順に並べた案件');
+    sheet.appendChild(steps);
+    var pending = [{ node:root, ordinal:1, list:steps }];
+    var branched = false;
+    while (pending.length) {
+      var track = pending.pop();
+      var node = track.node;
+      var ordinal = track.ordinal;
+      while (node) {
+        var row = text('li', null, 'history-step');
+        row.setAttribute('data-key', 'step-' + node.record.campaign_id);
+        row.appendChild(relationCase(node.record, ordinal, selectedId));
+        track.list.appendChild(row);
+        if (node.children.length > 1) {
+          branched = true;
+          row.appendChild(text('p', 'ここから ' + node.children.length + ' 件に分岐', 'history-fork-label'));
+          node.children.slice(1).forEach(function (child) {
+            var branch = text('ol', null, 'history-steps history-branch');
+            branch.setAttribute('aria-label', (node.record.intent_id || node.record.campaign_id) + ' からの分岐');
+            row.appendChild(branch);
+            pending.push({ node:child, ordinal:ordinal + 1, list:branch });
+          });
+        }
+        ordinal++;
+        node = node.children[0];
+      }
+    }
+    if (!branched && root.count <= 4) steps.classList.add('history-short');
+    return sheet;
   }
 
   function renderRelations() {
@@ -1828,40 +1928,21 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
       if (!state.detailError) intro.appendChild(text('p', '案件のつながりを読み込んでいます。'));
       return view;
     }
-    var cases = state.detail;
-    var byId = new Map(cases.map(function (c) { return [c.campaign_id, c]; }));
-    if (id && !byId.has(id)) { intro.appendChild(text('p', '指定された案件は一覧にありません。')); return view; }
-    if (!cases.length) { intro.appendChild(text('p', '案件はまだありません。')); return view; }
-    if (id) intro.appendChild(text('h2', byId.get(id).intent_id || id));
-    intro.appendChild(text('p', '判断画面で前回と比較する案件を示しています。目的名から末尾の日付を除き、同じ名前で作成日時が一つ前の案件を結んでいます。'));
-    var links = cases.filter(function (c) {
-      return byId.has(c.previous_id) && (!id || c.campaign_id === id || c.previous_id === id);
-    }).sort(function (a,b) { return (b.created_at || '').localeCompare(a.created_at || ''); });
-    var paired = new Set();
-    if (links.length) {
-      view.appendChild(text('h2', '前回と今回の案件　' + links.length + ' 組'));
-      var list = text('ul', null, 'relation-list');
-      links.forEach(function (c) {
-        var row = text('li', null, 'relation-pair');
-        row.setAttribute('data-key','pair-' + c.campaign_id);
-        row.appendChild(relationCase(byId.get(c.previous_id), '前回の案件'));
-        var arrow = text('span', '→', 'relation-arrow');
-        arrow.setAttribute('aria-hidden','true');
-        row.appendChild(arrow);
-        row.appendChild(relationCase(c, '今回の案件'));
-        paired.add(c.previous_id);
-        paired.add(c.campaign_id);
-        list.appendChild(row);
-      });
-      view.appendChild(list);
-    }
-    var singles = cases.filter(function (c) { return (!id || c.campaign_id === id) && !paired.has(c.campaign_id); });
+    var history = state.detail;
+    if (id && !history.byId.has(id)) { intro.appendChild(text('p', '指定された案件は一覧にありません。')); return view; }
+    if (!history.roots.length) { intro.appendChild(text('p', '案件はまだありません。')); return view; }
+    var roots = id ? [history.byId.get(id).root] : history.roots;
+    intro.appendChild(text('p', '線は、判断画面で比較に使う前回の案件と、その次の案件を結んでいます。'));
+    roots.forEach(function (root) {
+      if (root.count > 1) view.appendChild(historySheet(root, id));
+    });
+    var singles = roots.filter(function (root) { return root.count === 1; });
     if (singles.length) {
       view.appendChild(text('h2', '比較相手のない案件　' + singles.length + ' 件'));
       var rest = text('ul', null, 'relation-list');
-      singles.forEach(function (c) {
+      singles.forEach(function (node) {
         var row = text('li', null, 'relation-single');
-        row.appendChild(relationCase(c));
+        row.appendChild(relationCase(node.record));
         rest.appendChild(row);
       });
       view.appendChild(rest);
