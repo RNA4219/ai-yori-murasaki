@@ -821,7 +821,7 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
         var arrow = el('span', 'case-arrow', '→'); arrow.setAttribute('aria-hidden', 'true'); a.appendChild(arrow);
         a.href='/decision?campaign='+encodeURIComponent(c.campaign_id);$('campaign-list').appendChild(a);
       });
-    }).catch(function(e){$('campaign-message').textContent=e.message==='HTTP 409'?'管理者が aym monitor index を実行すると一覧を開けます。':'案件を取得できませんでした。画面を読み直してください。';});
+    }).catch(function(e){$('campaign-message').textContent=e.message==='HTTP 409'?'案件一覧の索引が必要です。管理者に索引の作成を依頼してください。':'案件を取得できませんでした。画面を読み直してください。';});
   }
   function loadCampaign(){
     state.campaign=campaign;
