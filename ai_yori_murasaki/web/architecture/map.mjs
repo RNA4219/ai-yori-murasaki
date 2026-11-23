@@ -6,6 +6,8 @@ const priorities=[...severityNames.keys()];
 const state={map:null,byId:new Map(),findingsByNode:new Map(),selected:null,mode:'all',packages:new Map(),load:0,note:''};
 const diagram=$('diagram'), frame=$('frame');
 let camera={x:0,y:0,zoom:1}, chart=null, selectedWire=null, wireChoices=[];
+let editingScope=false;
+const scopeMembers=new Set();
 const offsets={all:new Map(),repos:new Map()};
 const nodesDrawn=new Map(), wiresDrawn=new Map();
 function html(tag,text,cls) {
@@ -34,6 +36,8 @@ function initial(nodes) {
 function apply(result,sample=false) {
   let keptEdits=false;
   if(result.packages && state.packages.size){
+    result.map.userScope=result.map.nodes.filter(n=>scopeMembers.has(n.id)).map(n=>n.id);
+    keptEdits=result.map.userScope.length>0;
     const key=c=>JSON.stringify([c.from,c.to,c.label,c.evidence]);
     const inputs=new Map(state.map.connections.filter(c=>c.userInput).map(c=>[key(c),c.userInput]));
     for(const c of result.map.connections){
@@ -42,6 +46,8 @@ function apply(result,sample=false) {
     }
   }
   state.map=result.map;
+  editingScope=false;scopeMembers.clear();
+  for(const id of state.map.userScope) scopeMembers.add(id);
   state.original=result.original;
   setEdited(keptEdits);
   $('save-map').disabled=false;
@@ -69,6 +75,7 @@ function error(message) { $('error').textContent=message; $('error').hidden=fals
 function setEdited(edited){
   $('unsaved').hidden=!edited;
   $('save-changes').hidden=!edited || !selectedWire;
+  if(!edited) $('scope-save').hidden=true;
 }
 async function loadBundled(product = false) {
   const version=++state.load;
@@ -272,6 +279,71 @@ function reveal(target) {
     updateCamera();
   }
 }
+function drawScope(){
+  const layer=$('scope-frame');
+  if(!layer || !chart) return;
+  layer.replaceChildren();
+  const members=[], others=[];
+  for(const [id,p] of chart.positions){
+    const inside=scopeMembers.has(id), pad=inside?8:4;
+    (inside?members:others).push({l:p.x-pad,r:p.x+p.w+pad,t:p.y-p.actorSpace-pad,b:p.y+p.h+pad});
+  }
+  if(!members.length) return;
+  const left=Math.min(...members.map(p=>p.l)), right=Math.max(...members.map(p=>p.r));
+  const top=Math.min(...members.map(p=>p.t)), bottom=Math.max(...members.map(p=>p.b));
+  const blockers=others.filter(p=>p.l<right && p.r>left && p.t<bottom && p.b>top);
+  // 他の部品が間にある場合だけ、水平帯ごとに枠を折り曲げて除外する。
+  const levels=new Set([top,bottom]);
+  if(blockers.length) for(const p of [...members,...blockers]){
+    levels.add(Math.max(top,p.t));levels.add(Math.min(bottom,p.b));
+  }
+  const ys=[...levels].sort((a,b)=>a-b);
+  let fill='',border='',previous=[];
+  for(let i=0;i<ys.length;i++){
+    const y=ys[i], end=ys[i+1];
+    let spans=[];
+    if(end!==undefined){
+      const active=members.filter(p=>p.t<end && p.b>y);
+      if(active.length){
+        spans=[[Math.min(...active.map(p=>p.l)),Math.max(...active.map(p=>p.r))]];
+      } else {
+        // 上下の部品が同じ列にあるときは、その間も枠でつなぐ。
+        const above=Math.max(...members.filter(p=>p.b<=y).map(p=>p.b));
+        const below=Math.min(...members.filter(p=>p.t>=end).map(p=>p.t));
+        const upper=members.filter(p=>p.b===above), lower=members.filter(p=>p.t===below);
+        const l=Math.max(Math.min(...upper.map(p=>p.l)),Math.min(...lower.map(p=>p.l)));
+        const r=Math.min(Math.max(...upper.map(p=>p.r)),Math.max(...lower.map(p=>p.r)));
+        if(l<r) spans=[[l,r]];
+      }
+      for(const p of blockers.filter(p=>p.t<end && p.b>y)){
+        spans=spans.flatMap(([l,r])=>[[l,Math.min(p.l,r)],[Math.max(p.r,l),r]].filter(([a,b])=>a<b));
+      }
+      for(const [l,r] of spans){
+        fill+='M'+l+' '+y+'H'+r+'V'+end+'H'+l+'Z';
+        border+='M'+l+' '+y+'V'+end+'M'+r+' '+y+'V'+end;
+      }
+    }
+    // 隣り合う帯の共有辺を消し、外周だけを描く。
+    const ends=[...previous.flat(),...spans.flat()].sort((a,b)=>a-b);
+    for(let j=0;j<ends.length;j+=2) if(ends[j]<ends[j+1]) border+='M'+ends[j]+' '+y+'H'+ends[j+1];
+    previous=spans;
+  }
+  const anchor=members.find(p=>p.t===top);
+  layer.append(svg('path',{class:'scope-fill',d:fill}),svg('path',{class:'scope-border',d:border}),
+    svg('text',{class:'scope-caption',x:anchor.l+5,y:top-3},'利用者の関与範囲'));
+}
+function editScope(ids,toggle=false){
+  for(const id of ids){
+    if(toggle && scopeMembers.has(id)) scopeMembers.delete(id);
+    else scopeMembers.add(id);
+  }
+  state.map.userScope=[...scopeMembers];
+  $('scope-save').hidden=false;
+  setEdited(true);draw();
+}
+function setScopeMode(on){
+  editingScope=on;resetGestures();draw();
+}
 function draw(reset=false){
   if(!state.map) return;
   const visible=eligible(), near=new Set([state.selected]);
@@ -301,6 +373,7 @@ function draw(reset=false){
     lanes.append(svg('text',{class:'lane-title',x:z.x+10,y:z.y+22},z.label));
   }
   fragment.append(lanes);
+  fragment.append(svg('g',{id:'scope-frame',class:'scope-frame','aria-hidden':true}));
   let focusTarget;
   for(const c of edges) {
     const key=JSON.stringify([c.from,c.to]);
@@ -340,12 +413,22 @@ function draw(reset=false){
     }
     const visibleLabel=[...g.querySelectorAll('text')].map(t=>t.textContent).join(' ');
     if(p.actorSpace) g.append(userPeg());
-    g.setAttribute('aria-label',(p.actorSpace?'利用者が操作する画面。':'')+visibleLabel+'。'+n.name+'、'+kindNames.get(n.kind)+'、指摘'+findings.length+'件');
+    const inside=scopeMembers.has(n.id);
+    g.dataset.inScope=String(inside);
+    if(editingScope) g.setAttribute('aria-pressed',inside);
+    g.setAttribute('aria-label',(p.actorSpace?'利用者が操作する画面。':'')+visibleLabel+'。'+n.name+'、'+kindNames.get(n.kind)+'、指摘'+findings.length+'件'+(inside?'、利用者の関与範囲内':''));
     nodesDrawn.set(n.id,g);
     if(active?.id===n.id) focusTarget=g;
     fragment.append(g);
   }
   diagram.replaceChildren(fragment);
+  drawScope();
+  diagram.classList.toggle('scope-editing',editingScope);
+  $('scope-toggle').setAttribute('aria-pressed',editingScope);
+  $('scope-toggle').textContent=editingScope?'指定を終える':'範囲を指定';
+  const visibleScope=nodes.filter(n=>scopeMembers.has(n.id)).length;
+  $('scope-count').textContent=visibleScope===scopeMembers.size?scopeMembers.size+'要素':'表示'+visibleScope+' / 全'+scopeMembers.size+'要素';
+  $('scope-help').hidden=!editingScope;
   if(initial && width>=580) fitMap();
   else {
     if(initial) camera={x:0,y:0,zoom:1};
@@ -547,6 +630,7 @@ function moveNode(id,dx,dy) {
   offsets[state.mode].set(id,{x:offset.x+dx,y:offset.y+dy});
   p.x+=dx;p.y+=dy;delete p.bandTop;
   nodesDrawn.get(id).setAttribute('transform','translate('+p.x+' '+p.y+')');
+  if(scopeMembers.size) drawScope();
   $('lanes').setAttribute('visibility','hidden');$('reset-layout').disabled=false;
   for(const {records,path,hit} of wiresDrawn.values()) {
     const {from,to}=records[0];
@@ -558,6 +642,7 @@ function moveNode(id,dx,dy) {
 const pointers=new Map();
 let gesture=null, pinch=null;
 function resetGestures() {
+  $('scope-marquee')?.remove();
   for(const id of pointers.keys()) if(diagram.hasPointerCapture(id)) diagram.releasePointerCapture(id);
   pointers.clear();gesture=null;pinch=null;diagram.classList.remove('dragging');
 }
@@ -576,6 +661,10 @@ function wireDistance(path,point) {
   return best;
 }
 function activate(target,event) {
+  if(editingScope){
+    if(target?.classList.contains('node')) editScope([target.dataset.id],true);
+    return;
+  }
   if(target?.classList.contains('wire')) {
     if(!event){selectWire(target.dataset.wire);return;}
     const {clientX,clientY}=event, pixel=viewportPoint(clientX,clientY);
@@ -596,8 +685,9 @@ diagram.addEventListener('pointerdown',e=>{
   if(pointers.size===1) {
     const target=e.button===0 ? e.target.closest('.node,.wire') : null;
     target?.focus({preventScroll:true});
-    gesture={start:point,last:point,target,moved:false};
+    gesture={start:point,last:point,target,moved:false,selectArea:editingScope && e.button===0};
   } else if(pointers.size===2) {
+    $('scope-marquee')?.remove();
     const pair=fingerPair();
     pinch={x:camera.x+pair.x/camera.zoom,y:camera.y+pair.y/camera.zoom,
       zoom:camera.zoom,distance:pair.distance};
@@ -615,6 +705,16 @@ diagram.addEventListener('pointermove',e=>{
   if(!gesture) return;
   if(!gesture.moved && Math.hypot(point.x-gesture.start.x,point.y-gesture.start.y)<4) return;
   gesture.moved=true;diagram.classList.add('dragging');
+  if(gesture.selectArea){
+    const a=gesture.start;
+    const x=camera.x+Math.min(a.x,point.x)/camera.zoom,y=camera.y+Math.min(a.y,point.y)/camera.zoom;
+    const w=Math.abs(point.x-a.x)/camera.zoom,h=Math.abs(point.y-a.y)/camera.zoom;
+    gesture.area={x,y,w,h};
+    let rect=$('scope-marquee');
+    if(!rect){rect=svg('rect',{id:'scope-marquee',class:'scope-marquee'});diagram.append(rect);}
+    for(const [k,v] of Object.entries({x,y,width:w,height:h})) rect.setAttribute(k,v);
+    return;
+  }
   const dx=(point.x-gesture.last.x)/camera.zoom,dy=(point.y-gesture.last.y)/camera.zoom;
   const id=gesture.target?.dataset.id;
   if(id) moveNode(id,dx,dy);
@@ -624,18 +724,28 @@ diagram.addEventListener('pointermove',e=>{
 function endPointer(e) {
   if(!pointers.delete(e.pointerId)) return;
   const tapped=e.type==='pointerup' && gesture && !gesture.moved ? gesture.target : null;
+  const area=e.type==='pointerup' && gesture?.area;
+  $('scope-marquee')?.remove();
   gesture=null;pinch=null;diagram.classList.remove('dragging');
-  if(tapped) activate(tapped,e);
+  if(area){
+    const ids=[];
+    for(const [id,p] of chart.positions){
+      const x=p.x+p.w/2,y=p.y+p.h/2;
+      if(x>=area.x && x<=area.x+area.w && y>=area.y && y<=area.y+area.h && !scopeMembers.has(id)) ids.push(id);
+    }
+    if(ids.length) editScope(ids);
+  } else if(tapped) activate(tapped,e);
 }
 for(const type of ['pointerup','pointercancel','lostpointercapture']) diagram.addEventListener(type,endPointer);
 diagram.addEventListener('click',e=>{if(e.detail===0) activate(e.target.closest('.node,.wire'));});
 frame.addEventListener('keydown',e=>{
+  if(e.key==='Escape' && editingScope){setScopeMode(false);$('scope-toggle').focus();return;}
   const target=e.target.closest('.node,.wire');
   if((e.key==='Enter'||e.key===' ') && target){e.preventDefault();activate(target);return;}
   const step=e.shiftKey?40:10, arrows={ArrowLeft:[-step,0],ArrowRight:[step,0],ArrowUp:[0,-step],ArrowDown:[0,step]};
   if(Object.hasOwn(arrows,e.key)){
     e.preventDefault();const [x,y]=arrows[e.key];
-    if(target?.dataset.id) {moveNode(target.dataset.id,x,y);reveal(target);}
+    if(target?.dataset.id && !editingScope) {moveNode(target.dataset.id,x,y);reveal(target);}
     else {camera.x+=x/camera.zoom;camera.y+=y/camera.zoom;updateCamera();}
   } else if(e.key==='Home'){e.preventDefault();fitMap();}
   else if(!e.ctrlKey && !e.metaKey && ['+','=','-'].includes(e.key)){
@@ -649,6 +759,7 @@ diagram.addEventListener('wheel',e=>{
 $('zoom-in').addEventListener('click',()=>zoomAt(camera.zoom*1.25));
 $('zoom-out').addEventListener('click',()=>zoomAt(camera.zoom*.8));
 $('fit-map').addEventListener('click',fitMap);
+$('scope-toggle').addEventListener('click',()=>setScopeMode(!editingScope));
 function saveMap(){
   try{
     const blob=new Blob([serializeMap(state.map,state.original)],{type:'application/json'});
@@ -661,6 +772,7 @@ function saveMap(){
   }catch(e){error('構成図を保存できません。'+e.message);}
 }
 $('save-map').addEventListener('click',saveMap);
+$('scope-save').addEventListener('click',saveMap);
 $('save-changes').addEventListener('click',saveMap);
 $('reset-layout').addEventListener('click',()=>{offsets[state.mode].clear();draw();fitMap();});
 $('return').addEventListener('click',()=>{const target=diagram.querySelector('[aria-pressed="true"]');target?.focus();frame.scrollIntoView({block:'center'});});

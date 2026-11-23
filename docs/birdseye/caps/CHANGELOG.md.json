@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "製品の変更と検収への参照。0038は構成図の利用者入力の送信元に人型のコマを表示する変更。",
+  "summary": "製品の変更と検収への参照。0039は構成図上で利用者の関与範囲を部品単位で指定し、枠を表示する変更。",
   "deps_out": [
     "docs/SOURCES.md",
     "docs/acceptance/AC-20261106-01.md",
@@ -83,13 +83,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "edafe146d8a91447b58c22fef02803db9609293e79a46b7547bc2bb69f53a746",
-  "generated_at": "00049",
+  "source_sha256": "115758f9619ab987805a8a168109b170d6e7066acc734e93bb781997c5ba60da",
+  "generated_at": "00050",
   "review": {
-    "reviewed_at": "2026-11-23T10:59:10+00:00",
+    "reviewed_at": "2026-11-23T11:09:37+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "edafe146d8a91447b58c22fef02803db9609293e79a46b7547bc2bb69f53a746",
-    "summary_sha256": "1e1fe8375e9cf1a41858f5dd4bfdfe0a66627372f282f684a6e2176d4f36f5e8",
-    "scope": "利用者を表すコマの表示対象・操作と検収を原文に照合。"
+    "source_sha256": "115758f9619ab987805a8a168109b170d6e7066acc734e93bb781997c5ba60da",
+    "summary_sha256": "606d8d773786b381d1181e719247ab91ae4aba6875ee82155ca5876af44f37d5",
+    "scope": "利用者の関与範囲の枠と編集・復元の検収を原文に照合。"
   }
 }

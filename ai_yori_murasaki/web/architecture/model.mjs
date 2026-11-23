@@ -74,7 +74,11 @@ export function validateMap(raw) {
     return {node:f.node,severity:f.severity,title:string(f.title,'指摘名',220),
       evidence:string(f.evidence,'指摘の根拠',1600),action:string(f.action,'確認・対応',1000)};
   });
-  return {name,nodes,connections,findings};
+  const userScope=raw.userScope===undefined ? [] : raw.userScope;
+  if(!Array.isArray(userScope) || userScope.length>ids.size || new Set(userScope).size!==userScope.length || userScope.some(id=>!ids.has(id))){
+    throw Error('userScope には関与範囲に含める構成要素のIDを重複なく指定してください。');
+  }
+  return {name,nodes,connections,findings,userScope:[...userScope]};
 }
 
 export function serializeMap(map,original) {
@@ -85,6 +89,7 @@ export function serializeMap(map,original) {
     else delete connection.userInput;
     return connection;
   })} : {schema:SCHEMA,...map};
+  if(map.userScope.length || original?.userScope) document.userScope=map.userScope;
   const tooLarge='保存する構成図が1 MiBを超えています。';
   // YAML の別名が繰り返し使われた場合も、JSONへの展開量を制限する。
   let budget=MAX_BYTES;

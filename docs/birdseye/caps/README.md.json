@@ -2,7 +2,7 @@
   "id": "README.md",
   "role": "overview",
   "public_api": [],
-  "summary": "製品の起動と操作。案件・検知・判断画面、構成図の接続の根拠、利用者の入力範囲の編集と構成ファイルの保存を案内する。",
+  "summary": "製品の起動と操作。案件・検知・判断画面、構成図での入力経路の編集、利用者の関与範囲の指定とJSON保存を案内する。",
   "deps_out": [
     "BLUEPRINT.md",
     "CHANGELOG.md",
@@ -49,13 +49,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "0c3d06f6d53c02833ba46058428c38a3052d10a82f8239fc70660051f581ee78",
-  "generated_at": "00048",
+  "source_sha256": "687fea1b1a99c0be0647c54a0eb1dd8d92c2ba2e4dde53659cff20585edcf94b",
+  "generated_at": "00050",
   "review": {
-    "reviewed_at": "2026-11-23T10:53:36+00:00",
+    "reviewed_at": "2026-11-23T11:09:37+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "0c3d06f6d53c02833ba46058428c38a3052d10a82f8239fc70660051f581ee78",
-    "summary_sha256": "bb815e533ebc6fa6b38cec4cacaee894e90f5878b115749ed514d89bb962a3ca",
-    "scope": "利用者が入力できる矢印と範囲の指定、構成図の保存・再読込の記録を原文に照合。"
+    "source_sha256": "687fea1b1a99c0be0647c54a0eb1dd8d92c2ba2e4dde53659cff20585edcf94b",
+    "summary_sha256": "b2ccf27e09cc5ae360551e7c71ef176eae67ac02f09caf7cefdf0345ac5470a6",
+    "scope": "利用者の関与範囲の枠と編集・復元の検収を原文に照合。"
   }
 }

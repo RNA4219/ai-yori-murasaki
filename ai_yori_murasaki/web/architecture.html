@@ -69,6 +69,15 @@ summary {cursor:pointer;width:fit-content;padding:5px 0;color:var(--purple);text
 .input-legend span {display:inline-flex;align-items:center;gap:6px}
 .input-legend i {width:22px;border-top:2px solid #8c8192}
 .input-legend .ui {border-top:3px solid #006d95}.input-legend .internal {border-top-style:dashed}
+.scope-bar {display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;padding:8px 16px;font-size:14px}
+.scope-key {display:inline-block;width:19px;height:13px;margin-right:6px;border:2px dashed #28687a;background:#e4f3f5;vertical-align:middle}
+.scope-bar button {min-height:36px;padding:3px 10px;font-size:14px}
+.scope-bar button[aria-pressed=true] {background:var(--purple);color:#fff}
+.scope-frame {pointer-events:none}.scope-fill {fill:#d5edef;fill-opacity:.48}
+.scope-border {fill:none;stroke:#28687a;stroke-width:1.7;stroke-dasharray:7 3;stroke-linejoin:round}
+.scope-caption {fill:#205464;font-size:13px;font-weight:700;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
+.scope-marquee {pointer-events:none;fill:#006d95;fill-opacity:.12;stroke:#006d95;stroke-dasharray:4 3}
+#diagram.scope-editing,#diagram.scope-editing * {cursor:crosshair}
 .node {cursor:grab;outline:none}.node .box {fill:#fff;stroke:#afa4b6;stroke-width:1.5}
 [data-severity=critical] {--severity-fill:#202124;--severity-text:#fff;--severity-line:#202124}
 [data-severity=high] {--severity-fill:#b42336;--severity-text:#fff;--severity-line:#b42336}
@@ -141,6 +150,7 @@ dl {margin:0}dt {font-weight:700;font-size:14px;color:#624e46}dd {margin:0 0 8px
 <button type="button" id="reset-layout" title="配置を戻す" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5v5h5M4.5 10A8 8 0 1 1 6 18"/></svg><span class="tool-label">配置を戻す</span></button></div></div>
 <div id="flags" class="flag-list"></div>
 <div class="map-frame" id="frame" tabindex="0" role="region" aria-label="構成図" aria-describedby="canvas-keys"><svg id="diagram" role="group" aria-label="構成要素と依存関係の図"></svg></div>
+<div class="scope-bar"><span><i class="scope-key" aria-hidden="true"></i>利用者の関与範囲 <b id="scope-count" aria-live="polite"></b></span><button class="btn" type="button" id="scope-toggle" aria-pressed="false">範囲を指定</button><button class="btn" type="button" id="scope-save" hidden>JSONに保存</button><span id="scope-help" hidden>ドラッグで部品を囲んで追加。部品を押すと追加・解除できます。</span></div>
 <div id="input-legend" class="input-legend" aria-label="接続の凡例" hidden><span><i class="ui" aria-hidden="true"></i>利用者入力あり</span><span><i class="internal" aria-hidden="true"></i>内部処理のみ</span><span><i aria-hidden="true"></i>未指定</span></div>
 <p class="sr" id="canvas-keys">Tabで箱と線を選び、Enterで詳細を開きます。矢印キーは箱にフォーカスがあると箱を、それ以外は図全体を移動します。＋と−で拡大・縮小、Homeで全体を表示します。</p>
 <p id="note" class="graph-footer hint"></p>

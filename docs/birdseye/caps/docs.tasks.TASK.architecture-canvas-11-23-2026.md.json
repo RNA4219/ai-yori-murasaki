@@ -14,14 +14,14 @@
   "deps_out": [
     "docs/acceptance/AC-20261123-09.md"
   ],
-  "summary": "構成図の操作、接続根拠、重大度別件数、入力範囲の指定・保存と、人型のコマから操作画面への表示に関する要件。",
-  "source_sha256": "1aa0cf03dd0389165c9567d2e337347bd2d5554b79ff3fe15329794ffdbe2553",
-  "generated_at": "00049",
+  "summary": "構成図の操作と接続根拠、重大度別件数、利用者の入力経路とコマ、関与範囲を示す枠の編集・保存に関する要件。",
+  "source_sha256": "ae5474a7b8964d1d9b2955c23ee4607dd968632c4331bb86347bdaf9edd1688e",
+  "generated_at": "00050",
   "review": {
-    "reviewed_at": "2026-11-23T10:59:10+00:00",
+    "reviewed_at": "2026-11-23T11:09:37+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "1aa0cf03dd0389165c9567d2e337347bd2d5554b79ff3fe15329794ffdbe2553",
-    "summary_sha256": "7782c4aacbab3bec9e895885dc4f0441801aae823d35d37ec50d8042fc62d46e",
-    "scope": "利用者を表すコマの表示対象・操作と検収を原文に照合。"
+    "source_sha256": "ae5474a7b8964d1d9b2955c23ee4607dd968632c4331bb86347bdaf9edd1688e",
+    "summary_sha256": "23991eb8b7f46bfe80c9df52b4255c4658e45144a3bc1a3107c005c20526698e",
+    "scope": "利用者の関与範囲の枠と編集・復元の検収を原文に照合。"
   }
 }

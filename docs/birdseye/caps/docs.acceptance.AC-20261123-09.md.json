@@ -15,14 +15,14 @@
   "deps_out": [
     "docs/tasks/TASK.architecture-canvas-11-23-2026.md"
   ],
-  "summary": "構成図の直接操作、重大度別表示、入力範囲の保存と復元を検証。PC・スマートフォン幅で利用者のコマの位置、絞り込みと入力区分変更への追従を確認した。",
-  "source_sha256": "fa4af0170b48232cda7b161d6b298d1b57b268cb475dc097375eb313f93fdaa8",
-  "generated_at": "00049",
+  "summary": "構成図の直接操作、指摘、入力経路と利用者表示を検証。PC・スマートフォン幅で範囲の囲み、部品の追加・解除、移動への追従と保存・復元を確認した。",
+  "source_sha256": "0e99e38cb85768f3c313ea1fcf8de679d8ec2e2c163b3e5d28cecfda48d4f56c",
+  "generated_at": "00050",
   "review": {
-    "reviewed_at": "2026-11-23T10:59:10+00:00",
+    "reviewed_at": "2026-11-23T11:09:37+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "fa4af0170b48232cda7b161d6b298d1b57b268cb475dc097375eb313f93fdaa8",
-    "summary_sha256": "435869eed63562f1c141a441e52f6a6f21490596d1bf1c24a46560312f426ab6",
-    "scope": "利用者を表すコマの表示対象・操作と検収を原文に照合。"
+    "source_sha256": "0e99e38cb85768f3c313ea1fcf8de679d8ec2e2c163b3e5d28cecfda48d4f56c",
+    "summary_sha256": "cbf235c41bb95fffc8726342de44f1b4c12409ff58703bef5ccfb3ef17c1c75d",
+    "scope": "利用者の関与範囲の枠と編集・復元の検収を原文に照合。"
   }
 }

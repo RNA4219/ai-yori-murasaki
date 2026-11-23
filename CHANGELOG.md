@@ -14,6 +14,8 @@ Keep a Changelog の区分で管理する。記録には既存最大番号 +1 �
 
 ### Changed
 
+- 0039 — 2026-11-23。利用者の関与範囲を構成図の枠で示し、ドラッグや部品の選択で範囲を変更し、JSONに保存できる。[Task 20261123-09](docs/tasks/TASK.architecture-canvas-11-23-2026.md)・[技術検収](docs/acceptance/AC-20261123-09.md)
+
 - 0038 — 2026-11-23。利用者入力の送信元カードに人型のコマと「利用者」のラベルを表示し、人から操作画面への向きを矢印で示す。[Task 20261123-09](docs/tasks/TASK.architecture-canvas-11-23-2026.md)・[技術検収](docs/acceptance/AC-20261123-09.md)
 
 - 0037 — 2026-11-23。構成図の矢印から、利用者が画面で入力できる範囲を指定してJSONに保存できる。利用者入力・内部処理・未指定を線の見た目で区別する。[Task 20261123-09](docs/tasks/TASK.architecture-canvas-11-23-2026.md)・[技術検収](docs/acceptance/AC-20261123-09.md)

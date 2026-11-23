@@ -1,5 +1,5 @@
 {
-  "generated_at": "00049",
+  "generated_at": "00050",
   "index_snapshot": "docs/birdseye/index.json",
   "refresh_command": "RUNBOOK.md#execute と docs/BIRDSEYE.md の PowerShell 手順を参照",
   "curation_notes": "ローカル製品、要件、検収、文書運用の入口。生成世代と原文・要約の内容確認を区別する。",
@@ -7,7 +7,7 @@
     {
       "id": "README.md",
       "role": "overview",
-      "reason": "製品の起動と操作。案件・検知・判断画面、構成図の接続の根拠、利用者の入力範囲の編集と構成ファイルの保存を案内する。",
+      "reason": "製品の起動と操作。案件・検知・判断画面、構成図での入力経路の編集、利用者の関与範囲の指定とJSON保存を案内する。",
       "caps": "docs/birdseye/caps/README.md.json",
       "edges": [
         "BLUEPRINT.md",
@@ -41,7 +41,7 @@
         "docs/tasks/TASK.architecture-map-11-23-2026.md",
         "docs/workflow-adoption.md"
       ],
-      "last_verified_at": "2026-11-23T10:53:36+00:00"
+      "last_verified_at": "2026-11-23T11:09:37+00:00"
     },
     {
       "id": "HUB.codex.md",

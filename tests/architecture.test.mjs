@@ -6,6 +6,18 @@ import {parseFile,validateMap,importDocuments,serializeMap} from '../ai_yori_mur
 const example=JSON.parse(await readFile(new URL('../ai_yori_murasaki/web/architecture/sample.json',import.meta.url)));
 const loadOne=(value,name='template.json')=>importDocuments([{name,value}]);
 
+test('利用者の関与範囲は指定された部品IDだけを保存する',()=>{
+  const original=structuredClone(example);
+  delete original.userScope;
+  const map=validateMap(original);
+  assert.deepEqual(map.userScope,[]);
+  map.userScope=['worker'];
+  assert.deepEqual(validateMap(JSON.parse(serializeMap(map,original))).userScope,['worker']);
+  map.userScope=[];
+  assert.deepEqual(JSON.parse(serializeMap(map,example)).userScope,[]);
+  for(const userScope of [null,'web',['missing'],['web','web']]) assert.throws(()=>validateMap({...original,userScope}),/userScope/);
+});
+
 test('接続の入力区分と任意の範囲を保存し、未指定と内部処理を区別する',()=>{
   const original=structuredClone(example);
   original.connections[0].owner='運用チーム';

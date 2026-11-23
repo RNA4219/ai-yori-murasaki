@@ -1,5 +1,6 @@
 {
   "schema": "aym.architecture/v1",
+  "userScope": ["views","api"],
   "name": "ai-yori-murasaki の構成図",
   "nodes": [
     {"id":"summary","kind":"service","type":"monitor_summary.py","name":"検知件数の集計"},

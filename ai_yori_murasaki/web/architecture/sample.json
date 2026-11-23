@@ -1,5 +1,6 @@
 {
   "schema": "aym.architecture/v1",
+  "userScope": ["web","gateway"],
   "name": "注文管理サービス",
   "nodes": [
     {"id":"web","kind":"repository","name":"orders-web","type":"フロントエンド","description":"注文入力と注文履歴を表示するWebアプリ。"},
