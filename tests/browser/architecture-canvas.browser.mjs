@@ -87,18 +87,26 @@ try {
     }
     const original=await coords(), originalPath=await path();
     const touch=mobile?await page.context().newCDPSession(page):null;
+    async function assertBackground(){
+      assert.equal(await page.locator('#lanes .lane:visible').count(),3,'背景の3区画が表示される');
+      assert.deepEqual(await page.locator('#lanes .lane-title:visible').allTextContents(),['リポジトリ','サービス','データストア']);
+    }
     async function drag(x,y,dx,dy) {
       if(touch) {
         await touch.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});
         await touch.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x+dx,y:y+dy}]});
+        await assertBackground();
         await touch.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
       } else {
         await page.mouse.move(x,y);await page.mouse.down();
-        await page.mouse.move(x+dx,y+dy,{steps:6});await page.mouse.up();
+        await page.mouse.move(x+dx,y+dy,{steps:6});
+        await assertBackground();
+        await page.mouse.up();
       }
     }
     const box=await node.boundingBox();
     await drag(box.x+box.width/2,box.y+box.height/2,22,28);
+    await assertBackground();
     assert.notEqual(await coords(),original);
     assert.notEqual(await path(),originalPath);
     assert.equal(await page.locator('#reset-layout').isEnabled(),true);
@@ -147,6 +155,7 @@ try {
     await node.focus();await page.keyboard.press('ArrowRight');
     assert.notEqual(await coords(),original);
     await page.keyboard.press('Enter');
+    await assertBackground();
     assert.match(await page.locator('#detail-name').innerText(),/モニター/);
     await wire.focus();await page.keyboard.press('Enter');
     assert.equal(await page.locator('#detail-kind').innerText(),'選択中の接続');

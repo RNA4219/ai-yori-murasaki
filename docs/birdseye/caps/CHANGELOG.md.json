@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "製品の変更と検収への参照。0039は構成図上で利用者の関与範囲を部品単位で指定し、枠を表示する変更。",
+  "summary": "製品の変更と検収への参照。0040は構成図の部品を動かすと背景の区画が消える問題を修正する。",
   "deps_out": [
     "docs/SOURCES.md",
     "docs/acceptance/AC-20261106-01.md",
@@ -83,13 +83,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "115758f9619ab987805a8a168109b170d6e7066acc734e93bb781997c5ba60da",
-  "generated_at": "00050",
+  "source_sha256": "7365601648e44da4f001d814128729a32a63fd0edffc94c3ec0121b1c307bed7",
+  "generated_at": "00051",
   "review": {
-    "reviewed_at": "2026-11-23T11:09:37+00:00",
+    "reviewed_at": "2026-11-23T11:13:46+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "115758f9619ab987805a8a168109b170d6e7066acc734e93bb781997c5ba60da",
-    "summary_sha256": "606d8d773786b381d1181e719247ab91ae4aba6875ee82155ca5876af44f37d5",
-    "scope": "利用者の関与範囲の枠と編集・復元の検収を原文に照合。"
+    "source_sha256": "7365601648e44da4f001d814128729a32a63fd0edffc94c3ec0121b1c307bed7",
+    "summary_sha256": "2da74c49abf0172352392230c02cc5c6bdcefba048d9ad36eb66684060d270f4",
+    "scope": "部品移動時と再描画時の背景区画の表示要件と検収を原文に照合。"
   }
 }

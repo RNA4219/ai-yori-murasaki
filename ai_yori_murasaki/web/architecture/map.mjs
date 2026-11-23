@@ -367,7 +367,7 @@ function draw(reset=false){
   const grid=svg('pattern',{id:'grid',width:16,height:16,patternUnits:'userSpaceOnUse'});
   grid.append(svg('circle',{cx:1,cy:1,r:.9,fill:'#cfc5d5'}));defs.append(grid);
   fragment.append(defs,svg('rect',{id:'grid-background',fill:'url(#grid)','pointer-events':'none'}));
-  const lanes=svg('g',{id:'lanes',visibility:offsets[state.mode].size?'hidden':'visible'});
+  const lanes=svg('g',{id:'lanes'});
   for(const z of chart.zones) if(z.label){
     lanes.append(svg('rect',{class:'lane',x:z.x,y:z.y,width:z.w,height:z.h,rx:9}));
     lanes.append(svg('text',{class:'lane-title',x:z.x+10,y:z.y+22},z.label));
@@ -631,7 +631,7 @@ function moveNode(id,dx,dy) {
   p.x+=dx;p.y+=dy;delete p.bandTop;
   nodesDrawn.get(id).setAttribute('transform','translate('+p.x+' '+p.y+')');
   if(scopeMembers.size) drawScope();
-  $('lanes').setAttribute('visibility','hidden');$('reset-layout').disabled=false;
+  $('reset-layout').disabled=false;
   for(const {records,path,hit} of wiresDrawn.values()) {
     const {from,to}=records[0];
     if(from!==id && to!==id) continue;
