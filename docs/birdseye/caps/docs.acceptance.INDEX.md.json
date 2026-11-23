@@ -2,7 +2,7 @@
   "id": "docs/acceptance/INDEX.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "技術検収と公開状態の一覧。文書整合性の検収と、実機結果が記録されていないLLM接続の検収計画を区別して掲載する。",
+  "summary": "検収と公開状態の一覧。AC-20261123-05は10万件からの案件受付、再送、重複防止のローカル技術検収。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -23,13 +23,17 @@
     "docs/acceptance/AC-20261123-01.md",
     "docs/acceptance/AC-20261123-02.md",
     "docs/acceptance/AC-20261123-03.md",
+    "docs/acceptance/AC-20261123-04.md",
+    "docs/acceptance/AC-20261123-05.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
     "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
+    "docs/tasks/TASK.case-intake-11-23-2026.md",
     "docs/tasks/TASK.document-consistency-11-23-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
     "docs/tasks/TASK.llm-remote-11-09-2026.md",
     "docs/tasks/TASK.monitor-counts-11-23-2026.md",
+    "docs/tasks/TASK.monitor-index-11-23-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
     "docs/tasks/TASK.product-clarity-11-07-2026.md",
     "docs/tasks/TASK.product-completion-11-06-2026.md",
@@ -52,13 +56,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "1094169cf96d87d1a319c8f50877b5e56096e7cc7ed03278d292ba0196d68888",
-  "generated_at": "00038",
+  "source_sha256": "500fe468c18c59b8ffe3dbeb768046726c48ec6bd1ab2fd30b69d933941f776d",
+  "generated_at": "00040",
   "review": {
-    "reviewed_at": "2026-11-23T01:17:45+09:00",
+    "reviewed_at": "2026-11-23T04:40:42+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "1094169cf96d87d1a319c8f50877b5e56096e7cc7ed03278d292ba0196d68888",
-    "summary_sha256": "1d0a54763c3d4ae46f35bf54056c63ed142d4c303de7f0e3c37234b4199c7b53",
-    "scope": "文書検査の新規行と既存のLLM接続の未検収行を照合。"
+    "source_sha256": "500fe468c18c59b8ffe3dbeb768046726c48ec6bd1ab2fd30b69d933941f776d",
+    "summary_sha256": "236e582ad76d33d963b3f1dc3498f7b67b993331a960eb9aa704116178f248cf",
+    "scope": "案件受付・再送・検索の変更と検収範囲、参照先を原文に照合。"
   }
 }

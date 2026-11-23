@@ -2,7 +2,7 @@
   "id": "HUB.codex.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "製品操作、要件、評価、運用の索引。案件の表示や構成図の改修に加え、文書索引と過去の検収計画の整合性確認へ案内する。",
+  "summary": "要件、運用、評価と各Taskの文書入口。受付・再送の検収と大規模なモニター一覧の検収を参照できる。",
   "deps_out": [
     ".agents/skills/security-audit/SKILL.md",
     "AGENTS.md",
@@ -34,6 +34,8 @@
     "docs/acceptance/AC-20261123-01.md",
     "docs/acceptance/AC-20261123-02.md",
     "docs/acceptance/AC-20261123-03.md",
+    "docs/acceptance/AC-20261123-04.md",
+    "docs/acceptance/AC-20261123-05.md",
     "docs/acceptance/INDEX.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
@@ -45,9 +47,11 @@
     "docs/reviews/REVIEW-INTAKE-20261107.md",
     "docs/tasks/README.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
+    "docs/tasks/TASK.case-intake-11-23-2026.md",
     "docs/tasks/TASK.document-consistency-11-23-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
     "docs/tasks/TASK.monitor-counts-11-23-2026.md",
+    "docs/tasks/TASK.monitor-index-11-23-2026.md",
     "docs/tasks/TASK.sources-light-ui-11-09-2026.md",
     "docs/workflow-adoption.md",
     "governance/policy.yaml"
@@ -62,13 +66,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "9f13c91a15868a5e6e5492a6465604d4d4a28e6e57e46377cc77d11ee0af229e",
-  "generated_at": "00038",
+  "source_sha256": "8eb50f57043b5b63fc3fb4fd14bcbc51272dc71a41a3cc7d6fa1ff8b5a809b76",
+  "generated_at": "00040",
   "review": {
-    "reviewed_at": "2026-11-23T01:17:45+09:00",
+    "reviewed_at": "2026-11-23T04:40:42+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "9f13c91a15868a5e6e5492a6465604d4d4a28e6e57e46377cc77d11ee0af229e",
-    "summary_sha256": "91bc16fb8af8b107ec6d2212cace0935f931aa3631bc2d887fca4ea1b53fe0df",
-    "scope": "文書整合性のTask・検収、既存のLLM導入・検収への案内を確認。"
+    "source_sha256": "8eb50f57043b5b63fc3fb4fd14bcbc51272dc71a41a3cc7d6fa1ff8b5a809b76",
+    "summary_sha256": "3abfb5381387d2ea4b83e80a0f350332b08a63bfb3ff4e02248bc5d1332f2d7c",
+    "scope": "案件受付・再送・検索の変更と検収範囲、参照先を原文に照合。"
   }
 }

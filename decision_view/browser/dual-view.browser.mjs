@@ -107,7 +107,7 @@ try {
       const environment=page.locator('details.environment');
       await environment.locator('summary').click();
       await Promise.all([
-        page.waitForResponse(r=>r.url()===base+'/api/campaigns'),
+        page.waitForResponse(r=>r.url()===base+'/api/campaigns?page=1'),
         page.locator('#refresh-btn').click()
       ]);
       await page.waitForFunction(()=>!document.querySelector('#refresh-btn').hasAttribute('data-manual-busy'));
@@ -116,7 +116,7 @@ try {
       // 案件一覧の先頭が空でも、記録のある案件から読み始められる。
       const otherId='case-with-findings';
       const fullCase={...campaigns[0],campaign_id:otherId,intent_id:'権限の棚卸し',finding_count:2};
-      await page.route('**/api/campaigns',r=>r.fulfill({json:{campaigns:[{...campaigns[0],finding_count:0},fullCase]}}));
+      await page.route('**/api/campaigns?page=1',r=>r.fulfill({json:{campaigns:[{...campaigns[0],finding_count:0},fullCase]}}));
       await page.route('**/api/campaigns/'+cid,r=>r.fulfill({json:{campaign:{campaign_id:cid},findings:[]}}));
       const example={campaign:fullCase,findings:[{title:'管理者の登録を確認する',severity:'high'},{title:'担当者の異動日を確認する',severity:'low'}]};
       await page.route('**/api/campaigns/'+otherId,r=>r.fulfill({json:example}));
@@ -202,6 +202,21 @@ try {
       await page.locator('#refresh-btn').click();
       await page.getByText('案件のつながりはこの表示では非公開です。').waitFor();
       assert.equal(await history.count(),0);
+      await page.route('**/api/campaigns?page=*', route => {
+        const second = new URL(route.request().url()).searchParams.get('page') === '2';
+        const first = second ? 50 : 0;
+        const rows = Array.from({length:second ? 1 : 50}, (_, i) => ({
+          ...campaigns[0], campaign_id:'page-case-'+(first+i), finding_count:0, finding_excerpt:[]
+        }));
+        return route.fulfill({json:{campaigns:rows,page:second ? 2 : 1,pages:2,total:51,checked_at:'2026-11-23T00:00:00Z'}});
+      });
+      await page.goto(base+'/');
+      await page.getByRole('button',{name:'次へ',exact:true}).click();
+      await page.getByText('2 / 2 ページ',{exact:true}).waitFor();
+      assert.equal(await page.locator('[data-select-case]').count(),1);
+      await page.getByRole('button',{name:'前へ',exact:true}).click();
+      await page.getByText('1 / 2 ページ',{exact:true}).waitFor();
+      assert.equal(await page.locator('[data-select-case]').count(),50);
       assert.deepEqual(errors,[],'no JavaScript errors');
       console.log('PASS real Chromium '+width+'px: routes, accessibility, state and layout');
     } finally {

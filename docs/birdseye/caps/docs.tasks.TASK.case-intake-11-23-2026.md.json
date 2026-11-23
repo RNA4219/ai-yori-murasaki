@@ -1,0 +1,27 @@
+{
+  "id": "docs/tasks/TASK.case-intake-11-23-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/AC-20261123-05.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "docs/acceptance/AC-20261123-05.md"
+  ],
+  "summary": "初期監査から独立した案件受付の要件。Rustによる登録、同一要求の再送、10万件とモニター検索の検収へ案内する。",
+  "source_sha256": "c7371c25738f6b86b532593c2d2617c850c4679f689ffad9705d6d11cf66a6aa",
+  "generated_at": "00040",
+  "review": {
+    "reviewed_at": "2026-11-23T04:40:42+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "c7371c25738f6b86b532593c2d2617c850c4679f689ffad9705d6d11cf66a6aa",
+    "summary_sha256": "db007c6a3a669fd10894c1d6f335caa54263e4ea582a66c483d0edea7f4182b3",
+    "scope": "案件受付・再送・検索の変更と検収範囲、参照先を原文に照合。"
+  }
+}

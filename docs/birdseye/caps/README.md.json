@@ -2,7 +2,7 @@
   "id": "README.md",
   "role": "overview",
   "public_api": [],
-  "summary": "製品概要、起動、検知・判断・構成図の使い方。集計状態、同時刻の比較元選択と改修後の図へ案内する。",
+  "summary": "製品の起動、モニター・判断画面・構成図、検証済み一覧索引を案内する。案件受付のインストール、登録・再送、検索と監査開始の違いを説明する。",
   "deps_out": [
     "BLUEPRINT.md",
     "CHANGELOG.md",
@@ -18,6 +18,7 @@
     "docs/acceptance/AC-20261108-01.md",
     "docs/acceptance/AC-20261109-01.md",
     "docs/acceptance/AC-20261109-02.md",
+    "docs/acceptance/AC-20261123-04.md",
     "docs/acceptance/INDEX.md",
     "docs/evidence/wazuh-live-20261108.md",
     "docs/releases/README.md",
@@ -44,13 +45,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "3a95439a5c6d10d6e6810d57d9e02bd7327af984a5206369bcc41de4d9cd8a60",
-  "generated_at": "00038",
+  "source_sha256": "d165a7e47c67e70094fb9ecd741d951f5c2619f2bc917ae8c146f1ec878bc39f",
+  "generated_at": "00040",
   "review": {
-    "reviewed_at": "2026-11-23T01:17:45+09:00",
+    "reviewed_at": "2026-11-23T04:40:42+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "3a95439a5c6d10d6e6810d57d9e02bd7327af984a5206369bcc41de4d9cd8a60",
-    "summary_sha256": "c1a1f60a33c2fd35ded5bbfaacbd8d129ed741bb234a94371457760074405898",
-    "scope": "既存READMEの導入手順への参照と索引の対応を確認。"
+    "source_sha256": "d165a7e47c67e70094fb9ecd741d951f5c2619f2bc917ae8c146f1ec878bc39f",
+    "summary_sha256": "d135ae592d247c1277964405cf4a0110f9a87723c5cf6c4120e4e0c220c33f62",
+    "scope": "案件受付・再送・検索の変更と検収範囲、参照先を原文に照合。"
   }
 }

@@ -22,9 +22,10 @@ class CampaignSummary:
         return "partial" if self.pending_runs else "complete"
 
 
-def campaign_summaries(store: Store) -> dict[str, CampaignSummary]:
+def campaign_summaries(store: Store, *, catalog: dict | None = None) -> dict[str, CampaignSummary]:
     """台帳上の案件IDを正本とし、読めない実行の所属確認にだけ索引を使う。"""
-    catalog = store.load_catalog().get("runs", {})
+    if catalog is None:
+        catalog = store.load_catalog().get("runs", {})
     runs_dir = store.workspace / "runs"
     run_ids = set(catalog)
     if runs_dir.exists():

@@ -1,0 +1,15 @@
+{
+  "campaign_count": 100000,
+  "runs": 100000,
+  "events_per_run": 1,
+  "page_size": 50,
+  "pages_verified": 2000,
+  "catalog_bytes": 21100035,
+  "index_build_seconds": 714.42,
+  "page_median_ms": {
+    "1": 1.281,
+    "1000": 4.216,
+    "2000": 6.309
+  },
+  "samples_per_page": 11
+}

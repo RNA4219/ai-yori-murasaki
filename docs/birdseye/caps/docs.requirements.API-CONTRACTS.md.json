@@ -2,7 +2,7 @@
   "id": "docs/requirements/API-CONTRACTS.md",
   "role": "doc",
   "public_api": [],
-  "summary": "CLI・読み取りAPI・画面配信の契約。案件投影の集計状態と件数、比較候補、比較保留・表示境界の扱いを規定する。",
+  "summary": "CLI・読み取りAPIと画面の契約。受付ID・再送キーの有効範囲、競合理由、受付検索の表示範囲と件数上限を含む。",
   "deps_out": [
     "docs/PRODUCT-ACCEPTANCE.md",
     "docs/SOURCES.md",
@@ -16,13 +16,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "ea50e942717344033f99853500173707bb15348c5f073e5e532d9801d3e95a92",
-  "generated_at": "00037",
+  "source_sha256": "38a247724599b2132391964cf5ff66c57bf2bbf342d07fdcba44526c21d20a76",
+  "generated_at": "00040",
   "review": {
-    "reviewed_at": "2026-11-22T15:56:44+00:00",
+    "reviewed_at": "2026-11-23T04:40:42+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "ea50e942717344033f99853500173707bb15348c5f073e5e532d9801d3e95a92",
-    "summary_sha256": "072675cb230435b593de3eabcb79f44c9310f85e5083034b67a41dc695c3cae7",
-    "scope": "案件の集計状態、比較元の選択、台帳の実測結果と検収・索引を照合。"
+    "source_sha256": "38a247724599b2132391964cf5ff66c57bf2bbf342d07fdcba44526c21d20a76",
+    "summary_sha256": "575e20c2d01366f702627cb4bd87e983a48e105ad46ae52adee53f7c787c13ff",
+    "scope": "案件受付・再送・検索の変更と検収範囲、参照先を原文に照合。"
   }
 }

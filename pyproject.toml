@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
+requires = ["setuptools>=68", "wheel", "setuptools-rust>=1.11,<2"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -9,7 +9,7 @@ description = "Offline Blue/Purple contracts, evidence and deterministic Oracle"
 license = {file = "LICENSE"}
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = ["jsonschema==4.26.0", "referencing==0.37.0", "cvss==3.6", "packaging==26.0"]
+dependencies = ["jsonschema==4.26.0", "jsonschema-rs==0.61.2", "ijson==3.6.0", "referencing==0.37.0", "cvss==3.6", "packaging==26.0"]
 
 [project.optional-dependencies]
 mcp = ["mcp==2.3.0"]
@@ -18,10 +18,15 @@ mcp = ["mcp==2.3.0"]
 aym = "ai_yori_murasaki.cli:main"
 
 [tool.setuptools]
-license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md", "rust/intake/THIRD_PARTY_LICENSES.txt"]
 
 [tool.setuptools.packages.find]
 include = ["ai_yori_murasaki*"]
+
+[[tool.setuptools-rust.ext-modules]]
+target = "ai_yori_murasaki._intake_index"
+path = "rust/intake/Cargo.toml"
+cargo-manifest-args = ["--locked"]
 
 [tool.setuptools.package-data]
 "ai_yori_murasaki.web.architecture" = ["*.mjs", "sample.json", "product.json", "js-yaml.LICENSE"]

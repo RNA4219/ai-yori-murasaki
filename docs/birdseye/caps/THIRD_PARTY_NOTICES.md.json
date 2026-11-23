@@ -2,18 +2,18 @@
   "id": "THIRD_PARTY_NOTICES.md",
   "role": "doc",
   "public_api": [],
-  "summary": "配布物と依存製品の帰属。MCP SDK、検証用axe-core、構成ファイルの読み込みに同梱するjs-yamlの出典とライセンスを記す。",
+  "summary": "配布物と依存ライブラリの帰属。Rust製の受付拡張とともに配布するSQLiteおよび依存ライセンス文の所在を示す。",
   "deps_out": [],
   "deps_in": [],
   "risks": [],
   "tests": [],
-  "source_sha256": "ec9a4a70f3c0b232b12b72bfb370f9bf3d57e6af84f7a95f39b73cfa08eb2af1",
-  "generated_at": "00036",
+  "source_sha256": "ce48ed878e910ed0a45cb8ee802428a5bcbe4015a9485f681ac21a1770eca3e6",
+  "generated_at": "00040",
   "review": {
-    "reviewed_at": "2026-11-22T15:14:19+00:00",
+    "reviewed_at": "2026-11-23T04:40:42+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "ec9a4a70f3c0b232b12b72bfb370f9bf3d57e6af84f7a95f39b73cfa08eb2af1",
-    "summary_sha256": "4a1730764118b5547d6c8fbfa30dcf73511bc568f119d4024ff1f3c69dc3fe3e",
-    "scope": "構成図の操作、入力仕様、検収の根拠と文書間の参照を照合。"
+    "source_sha256": "ce48ed878e910ed0a45cb8ee802428a5bcbe4015a9485f681ac21a1770eca3e6",
+    "summary_sha256": "03b279c2edee2fe4f691644f6597be54737983ece996c7899484a0fb2b7549a7",
+    "scope": "案件受付・再送・検索の変更と検収範囲、参照先を原文に照合。"
   }
 }

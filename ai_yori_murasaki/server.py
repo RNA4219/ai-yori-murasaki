@@ -36,6 +36,8 @@ ALLOWED_HOSTS = ("127.0.0.1", "localhost")
 # Fixed endpoint patterns.  No arbitrary path segments are accepted.
 ROUTES: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("index", re.compile(r"^/$")),
+    ("intake", re.compile(r"^/intake$")),
+    ("receipts", re.compile(r"^/api/intake$")),
     ("decision", re.compile(r"^/decision$")),
     ("architecture", re.compile(r"^/architecture$")),
     ("architecture_asset", re.compile(r"^/architecture/(map\.mjs|model\.mjs|js-yaml\.mjs|sample\.json|product\.json)$")),
@@ -196,6 +198,10 @@ def _project_campaign(cid: str, summary: CampaignSummary, view: str = "operator"
         "unverified_run_count": len(summary.pending_runs),
         **({"unverified_run_ids": summary.pending_runs} if view == "operator" else {}),
     }
+
+
+def _project_finding(obj: dict) -> dict:
+    return {key: _safe_str(obj.get(key)) for key in ("finding_id", "severity", "title", "source")}
 
 
 def _project_lab_metrics(runtime: Runtime, cid: str) -> dict | None:
@@ -698,7 +704,7 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
         return _error(400, "bad_view")
 
     try:
-        if name in ("index", "decision", "architecture"):
+        if name in ("index", "decision", "architecture", "intake"):
             html = _load_page(name + ".html")
             if not html:
                 return _error(500, "index_unavailable")
@@ -720,6 +726,17 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
         if name == "health":
             return _json_response(200, {"status": "ok"})
 
+        if name == "receipts":
+            if view == "blue":
+                return _json_response(200, {"status": "withheld"})
+            from .intake import search
+            try:
+                return _json_response(200, search(store, query.get("q", "")))
+            except DataError as exc:
+                if exc.reason_code == "invalid_query":
+                    return _error(400, "invalid_query")
+                raise
+
         if name in ("sources", "source"):
             if view == "blue":
                 return _json_response(200, {"status": "withheld", "reason": "資料はBlueに非公開"})
@@ -733,9 +750,32 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
                 return _error(409, "source_unavailable")
 
         if name == "campaigns":
+            if "page" in query:
+                from itertools import islice
+                from .monitor_index import PAGE_SIZE, read_page
+                from .jsonio import MAX_JSON_BYTES
+
+                value = query["page"]
+                if not re.fullmatch(r"[1-9][0-9]{0,8}", value):
+                    return _error(400, "invalid_page")
+                page = int(value)
+                result = read_page(store, page, view)
+                if result is not None:
+                    return _json_response(200, result)
+                catalog = store._catalog_path()
+                runs = store.workspace / "runs"
+                if ((catalog.exists() and catalog.stat().st_size > MAX_JSON_BYTES) or
+                        (runs.is_dir() and next(islice(runs.iterdir(), 1000, None), None) is not None)):
+                    return _error(409, "monitor_index_required")
             campaigns = [_project_campaign(cid, summary, view)
                          for cid, summary in campaign_summaries(store).items()]
             campaigns.sort(key=lambda c: not c["created_at"])
+            if "page" in query:
+                total = len(campaigns)
+                pages = max(1, (total + PAGE_SIZE - 1) // PAGE_SIZE)
+                page = min(page, pages)
+                return _json_response(200, {"campaigns": campaigns[(page-1)*PAGE_SIZE:page*PAGE_SIZE],
+                                            "total": total, "page": page, "pages": pages, "checked_at": None})
             return _json_response(200, {"campaigns": campaigns})
 
         if name == "campaign_relations":
@@ -808,15 +848,7 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
             summary = campaign_summaries(store).get(cid)
             if summary is None:
                 return _error(404, "not_found")
-            findings = []
-            for obj in summary.findings.values():
-                fid = _safe_str(obj.get("finding_id"))
-                findings.append({
-                    "finding_id": fid,
-                    "severity": _safe_str(obj.get("severity")),
-                    "title": _safe_str(obj.get("title")),
-                    "source": _safe_str(obj.get("source")),
-                })
+            findings = [_project_finding(obj) for obj in summary.findings.values()]
             remediations = []
             for ref in summary.remediation_refs:
                 try:

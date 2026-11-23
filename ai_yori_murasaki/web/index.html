@@ -532,6 +532,7 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
   .header-meta strong { font-family: inherit; }
   .case-desk { grid-template-columns: minmax(0,1fr); gap: 12px; margin-bottom: 20px; }
   .ledger:has(select) h2, .record-list { display: none; }
+  .ledger:has(.case-pagination) h2 { display: block; }
   .compact-picker { display: grid; gap: 4px; font-size: 16px; color: #504759; }
   .compact-picker select { min-width: 0; width: 100%; padding: 10px 12px; min-height: 44px; border: 1px solid #b7a9c3; border-radius: 7px; font: 600 16px var(--font-stack); background: #fff; color: #36263f; }
   .sheet-head { padding: 20px 16px; gap: 12px; }
@@ -567,6 +568,10 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
 }
 @media (max-width: 360px) { .wordmark > span:last-child { max-width: 7em; } }
 
+.case-pagination {display:flex; align-items:center; flex-wrap:wrap; gap:.5rem; padding:.5rem 1rem}
+.case-pagination button {min-height:36px; padding:.25rem .65rem}
+.case-pagination form {display:flex; align-items:center; gap:.35rem}
+.case-pagination input {width:5.5em; padding:.35rem}
 </style>
 </head>
 <body>
@@ -595,6 +600,7 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
         <h1 id="monitor-heading">案件と検知</h1>
         <a id="desk-relations" href="#/relations">案件のつながり</a>
         <a class="relation-back" href="/architecture">システム構成図</a>
+        <a class="relation-back" id="desk-intake" href="/intake">案件受付台帳</a>
       </div>
       <div class="header-meta">
         <a id="desk-sources" href="#/sources">資料と出典</a>
@@ -621,11 +627,16 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
   'use strict';
 
   var FETCH_TIMEOUT_MS = 5000;
+  if (new URLSearchParams(location.search).get('view') === 'blue') {
+    document.getElementById('desk-intake').href = '/intake?view=blue';
+  }
   var MAX_BYTES = 1024 * 1024;
   var AUTO_REFRESH_MS = 15000;
 
   var state = {
     campaigns: null,
+    campaignPage: 1,
+    pageInfo: null,
     sources: null,
     sourcesError: null,
     sourceDetail: null,
@@ -941,18 +952,22 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
     }
   }
 
-  function loadCore() {
+  function loadCore(refreshApprovals) {
     var gen = (state.coreGen || 0) + 1;
     state.coreGen = gen;
     function isCurrent() { return state.coreGen === gen; }
-    var p1 = fetchJSON('/api/campaigns', 'campaigns').then(function (d) {
+    var p1 = fetchJSON('/api/campaigns?page=' + state.campaignPage, 'campaigns').then(function (d) {
       if (!isCurrent()) return;
-      if (d && Array.isArray(d.campaigns)) { state.campaigns = d.campaigns; state.campaignsError = null; }
+      if (d && Array.isArray(d.campaigns)) {
+        state.campaigns = d.campaigns; state.campaignsError = null;
+        state.campaignPage = d.page || 1;
+        state.pageInfo = {total: d.total, pages: d.pages || 1, checked: d.checked_at};
+      }
       else { state.campaigns = null; state.campaignsError = '応答形式が不正です'; }
     }).catch(function (e) {
       if (!isCurrent()) return;
       var m = errMsg(e); if (m === null) return;
-      state.campaignsError = m;
+      state.campaignsError = e.httpStatus === 409 ? '管理者が aym monitor index を実行すると一覧を開けます。' : m;
       if (!canShowPrevious(e)) state.campaigns = null;
     }).then(function () {
       if (isCurrent() && state.route.name === 'list') return loadExcerpt();
@@ -984,7 +999,11 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
       state.healthError = m;
       state.healthErrorKind = isHttp(e) ? 'http' : (isTimeout(e) ? 'timeout' : 'network');
     });
-    var p5 = fetchJSON('/api/approvals', 'approvals').then(function (d) {
+    var p5 = p1.then(function () {
+      if (!isCurrent() || state.campaignsError || (state.pageInfo && state.pageInfo.checked && !refreshApprovals)) return;
+      return fetchJSON('/api/approvals', 'approvals');
+    }).then(function (d) {
+      if (!d) return;
       if (!isCurrent()) return;
       if (d && Array.isArray(d.approvals)) { state.approvals = d.approvals; state.approvalsError = null; }
       else { state.approvalsError = '応答形式が不正です'; }
@@ -1637,6 +1656,11 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
     var p = document.createElement('section');
     p.className = 'panel';
     p.appendChild(text('h2', '承認と反映の記録'));
+    if (state.pageInfo && state.pageInfo.checked && !state.approvalsRequested) {
+      var open = text('button', '最新の承認記録を取得');
+      open.type = 'button'; open.setAttribute('data-load-approvals', '');
+      p.appendChild(open); return p;
+    }
     if (state.approvalsError) {
       p.appendChild(text('p', '取得に失敗しました: ' + state.approvalsError, 'muted'));
       if (!state.approvals) {
@@ -1705,6 +1729,12 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
     }
     render();
     if (!chosen) return Promise.resolve();
+    if (Array.isArray(chosen.finding_excerpt)) {
+      state.excerpt = chosen.finding_excerpt;
+      state.excerptError = null;
+      render();
+      return Promise.resolve();
+    }
     function current() {
       return state.route.name === 'list' && state.excerptVersion === version;
     }
@@ -1745,6 +1775,9 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
       box.appendChild(a);
       box.appendChild(document.createElement('br'));
     });
+    if (c.unverified_run_ids && c.unverified_run_count > c.unverified_run_ids.length) {
+      box.appendChild(text('p','未集計の実行は先頭の4件を表示しています。全件は「証跡を開く」で確認できます。'));
+    }
     parent.appendChild(box);
   }
 
@@ -1803,7 +1836,7 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
           findings.appendChild(item);
         });
         body.appendChild(findings);
-        if (state.excerpt.length > 4) body.appendChild(text('p', '全 ' + state.excerpt.length + ' 件のうち、先頭の4件を表示しています。','muted'));
+        if (c.finding_count > 4) body.appendChild(text('p', '確認済み ' + c.finding_count + ' 件のうち、先頭の4件を表示しています。','muted'));
       }
     }
     var links = text('div', null, 'sheet-actions');
@@ -2016,8 +2049,26 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
     var desk = text('div', null, 'case-desk');
     desk.setAttribute('data-key','case-desk');
     var title = text('h2', '案件一覧');
-    if (Array.isArray(state.campaigns)) title.appendChild(text('span', state.campaigns.length + ' 件', 'ledger-count'));
+    if (Array.isArray(state.campaigns)) title.appendChild(text('span',
+      (state.pageInfo && Number.isInteger(state.pageInfo.total) ? state.pageInfo.total : state.campaigns.length) + ' 件', 'ledger-count'));
     p1.appendChild(title);
+    if (state.pageInfo && state.pageInfo.checked) p1.appendChild(text('p','台帳の確認時刻　' + fmtTime(state.pageInfo.checked),'muted'));
+    if (state.pageInfo && state.pageInfo.pages > 1) {
+      var pager = text('nav', null, 'case-pagination');
+      pager.setAttribute('aria-label','案件一覧のページ');
+      pager.appendChild(text('span',state.campaignPage + ' / ' + state.pageInfo.pages + ' ページ'));
+      [['最初',1],['前へ',state.campaignPage-1],['次へ',state.campaignPage+1],['最後',state.pageInfo.pages]].forEach(function (pair) {
+        var button = text('button', pair[0]); button.type = 'button';
+        button.disabled = pair[1] < 1 || pair[1] > state.pageInfo.pages || pair[1] === state.campaignPage;
+        button.setAttribute('data-case-page',pair[1]); pager.appendChild(button);
+      });
+      var jump = document.createElement('form'); jump.id = 'case-page-jump';
+      var number = document.createElement('input'); number.type = 'number'; number.name = 'page';
+      number.min = 1; number.max = state.pageInfo.pages; number.required = true;
+      number.setAttribute('aria-label','移動先のページ番号');
+      jump.appendChild(number); jump.appendChild(text('button','移動')); pager.appendChild(jump);
+      p1.appendChild(pager);
+    }
     if (state.campaignsError) {
       p1.appendChild(text('p', '取得に失敗しました: ' + state.campaignsError, 'muted'));
       if (state.campaigns) {
@@ -3245,7 +3296,7 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
     if (refreshInProgress) return refreshInProgress;
     setBusy(true);
     if (manual === true) el.refreshBtn.setAttribute('data-manual-busy', '');
-    var p = loadCore();
+    var p = loadCore(manual === true && state.approvalsRequested);
     if (state.route.name === 'relations') p = Promise.all([p,loadRelations()]);
     else if (state.route.name !== 'list') p = p.then(function () { return loadDetail(); });
     refreshInProgress = p.then(function () {
@@ -3278,7 +3329,24 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
   });
 
   el.viewRoot.addEventListener('click', onViewRootClick);
+  function openCasePage(number) {
+    state.campaignPage = number;
+    state.campaigns = null; state.pageInfo = null; state.selectedCase = null; state.excerpt = null;
+    state.excerptVersion++; render(); loadCore();
+  }
+  el.viewRoot.addEventListener('submit', function (event) {
+    if (event.target.id !== 'case-page-jump') return;
+    event.preventDefault();
+    openCasePage(event.target.elements.page.valueAsNumber);
+  });
   el.viewRoot.addEventListener('click', function (event) {
+    var pageButton = event.target.closest('[data-case-page]');
+    if (pageButton) {
+      openCasePage(Number(pageButton.dataset.casePage)); return;
+    }
+    if (event.target.closest('[data-load-approvals]')) {
+      state.approvalsRequested = true; loadCore(true); return;
+    }
     var previous = event.target.closest('button[data-previous-for]');
     if (previous && state.detail && state.detail.byId) {
       var key = 'aym.previous.' + previous.dataset.previousFor;

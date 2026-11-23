@@ -1,0 +1,28 @@
+{
+  "id": "docs/acceptance/AC-20261123-04.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "README.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.monitor-index-11-23-2026.md"
+  ],
+  "deps_out": [
+    "docs/tasks/TASK.monitor-index-11-23-2026.md"
+  ],
+  "summary": "10万個の案件台帳で索引を構築し、全2,000ページを照合する検収。初回構築とページ取得の実測、異常系、確認時刻、適用範囲を示す。",
+  "source_sha256": "50793166362953b41f0a4fbd26641b91cce0833f8a21253fa115369d663eeb85",
+  "generated_at": "00039",
+  "review": {
+    "reviewed_at": "2026-11-22T22:54:07+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "50793166362953b41f0a4fbd26641b91cce0833f8a21253fa115369d663eeb85",
+    "summary_sha256": "c2afc5235d54403bf4a161d9204395b26af1037f163bc0a2b3988f250f7f590a",
+    "scope": "案件一覧・台帳検証の変更、参照先と適用範囲を原文に照合。"
+  }
+}

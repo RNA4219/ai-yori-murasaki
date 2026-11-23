@@ -16,6 +16,8 @@ next_review_due: 2026-12-08
 
 ## できること
 
+案件名を先に登録して受付IDを発行できます。モニターの「案件受付台帳」で案件名の先頭や受付IDを検索できます。[案件の受付方法](#case-intake)
+
 モニターの「システム構成図」を開くと、リポジトリの依存とAWSリソースの接続を見られます。指摘のある部品には図の中に要旨が付き、部品を選ぶと根拠と確認方法が開きます。
 
 案件一覧では「検知0件」「一部未集計」「未集計」を区別し、未集計の実行を開けます。前回の候補が同時刻に複数あれば、「案件のつながり」で比較元を選びます。選択はこのブラウザーに保存されます。製品自身の図は `/architecture?system=aym` で開けます。[改修後の構成図](docs/evidence/monitor-counts-20261123/after.png)
@@ -43,6 +45,8 @@ Obsidianのノート、Notionのページ、GitHub Issueを、出典・関連リ
 ## 判断の画面とモニター（2画面）
 
 `aym monitor serve --bind 127.0.0.1:8765` の同じサーバーから、次の2画面を開けます。
+
+案件が多い場合は、同じワークスペースと信頼済みルートを指定して `aym monitor index` を実行します。モニターと判断画面の案件一覧に確認時刻が付き、50案件ずつ読めます。記録を追加・修正したら同じコマンドで更新します。構築中はストアへの書き込みが待たされるので、記録の取り込みが休止している時間帯に実行してください。[案件一覧の仕様と検収](docs/acceptance/AC-20261123-04.md)
 
 - **モニター（`http://127.0.0.1:8765/`）** — QA/セキュリティ担当者がCampaign、Run、検知の証拠や評価を細かく確認する画面。
 - **判断の画面（`http://127.0.0.1:8765/decision`）** — Campaignを選び、いま判断すべきこと・未完了件数・KEV/EPSS・未検査の範囲を読み取る画面。対象を指定するには `/decision?campaign=<campaign_id>`。
@@ -76,9 +80,22 @@ AIが不審なアクセスを見落とす、作業が時間切れになる等の
 
 証跡の一覧は[検収一覧](docs/acceptance/INDEX.md)と[実行記録](docs/evidence/)にあります。
 
+<a id="case-intake"></a>
+## 案件を受け付ける
+
+ソースからのインストールには Rust（Cargo）とCコンパイラーが必要です。対応環境向けにビルド済みのwheelを使う場合、これらは不要です。受付だけならPythonとインストール済みの `aym` で操作できます。
+
+下記のクイックスタートと同じ `AYM_WORKSPACE` と `AYM_TRUSTED_ROOT` を設定して実行します。再送するときは、最初と同じキーと案件名を指定してください。
+
+```powershell
+aym intake register --name "端末一覧の棚卸し" --idempotency-key "request-100001"
+```
+
+返り値の `data.receipt_id` が受付IDです。再送しても受付IDと受付日時は同じです。同じキーで案件名を変えると `idempotency_conflict` が返ります。受付情報はワークスペースの `case-intake.sqlite3` に保存され、初期監査は開始されません。`aym monitor serve` でモニターを開くと、新しい受付から50件を確認できます。
+
 ## クイックスタート
 
-前提は Python 3.11以上、Docker（Linuxコンテナ実行環境）、Ollama（`glm-5.3:cloud`と`deepseek-v4.1-flash:cloud`を登録し、cloudモデルを利用できる状態）です。cloneしたリポジトリのルートで実行します。
+前提は Python 3.11以上、ソースビルド用のRustとCコンパイラー、Docker（Linuxコンテナ実行環境）、Ollama（`glm-5.3:cloud`と`deepseek-v4.1-flash:cloud`を登録し、cloudモデルを利用できる状態）です。cloneしたリポジトリのルートで実行します。
 
 ```powershell
 py -3 -m pip install .

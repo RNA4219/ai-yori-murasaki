@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>案件受付台帳 | AI YORI MURASAKI</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; background: #f6f5f8; color: #29222e; font: 1rem/1.6 system-ui, sans-serif; }
+header { background: #302638; color: white; }
+header div, main { width: min(100% - 2rem, 60rem); margin-inline: auto; }
+header div { display: flex; align-items: center; justify-content: space-between; min-height: 4rem; gap: 1rem; }
+header strong { font-size: .88rem; letter-spacing: .08em; }
+header a { color: inherit; padding-block: .7rem; text-underline-offset: .22em; }
+main { padding-block: clamp(1.5rem, 5vw, 3rem); }
+h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1.3; margin: 0; }
+p { margin: .5rem 0 1.25rem; }
+form { background: white; padding: clamp(1rem, 3vw, 1.5rem); border: 1px solid #dcd5e1; border-radius: .75rem; }
+label { display: block; font-weight: 650; margin-bottom: .4rem; }
+.fields { display: flex; gap: .5rem; }
+input, button { font: inherit; min-height: 44px; padding: .4rem .75rem; border-radius: .35rem; border: 1px solid #817588; }
+input { flex: 1; min-width: 0; }
+button { background: #513162; color: white; cursor: pointer; font-weight: 650; }
+:focus-visible { outline: 3px solid #8a55ab; outline-offset: 2px; }
+#status { margin: 1.5rem 0 .5rem; color: #554b5e; }
+ul { margin: 0; padding: 0; list-style: none; }
+li { background: white; padding: .9rem 1rem; border-bottom: 1px solid #e1dce5; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: .15rem 1rem; }
+li strong, code { overflow-wrap: anywhere; min-width: 0; }
+code { grid-column: 1; color: #65576e; font-size: .87rem; }
+time { grid-area: 1 / 2 / 3 / 3; font-size: .92rem; }
+@media (max-width: 600px) { li { grid-template-columns: 1fr; } time { grid-area: auto; } }
+</style>
+</head>
+<body>
+<header><div><strong>AI YORI MURASAKI</strong><a href="/" id="back">モニターに戻る</a></div></header>
+<main>
+  <h1>案件受付台帳</h1>
+  <p>案件名、受付ID、受付日時を確認できます。初期監査は別の手順で開始します。</p>
+  <form id="search" role="search">
+    <label for="query">案件名の先頭、または受付IDで検索</label>
+    <div class="fields"><input id="query" type="search" maxlength="160"><button type="submit">検索</button></div>
+  </form>
+  <p id="status" role="status"></p>
+  <ul id="results" aria-label="受付記録"></ul>
+</main>
+<script>
+'use strict';
+const form = document.querySelector('#search');
+const input = document.querySelector('#query');
+const status = document.querySelector('#status');
+const results = document.querySelector('#results');
+const blue = new URLSearchParams(location.search).get('view') === 'blue';
+let request = 0;
+async function showReceipts() {
+  const current = ++request;
+  const query = input.value.trim();
+  const params = new URLSearchParams({q: query});
+  if (blue) params.set('view', 'blue');
+  results.replaceChildren();
+  status.textContent = '受付台帳を読み込んでいます。';
+  try {
+    const response = await fetch('/api/intake?' + params);
+    if (!response.ok) throw new Error();
+    const page = await response.json();
+    if (current !== request) return;
+    if (page.status === 'withheld') {
+      form.hidden = true;
+      status.textContent = 'Blueビューでは受付記録は非公開です。';
+      return;
+    }
+    if (!page.receipts.length) {
+      status.textContent = query ? '一致する受付記録はありません。' : '受付記録はまだありません。';
+      return;
+    }
+    for (const receipt of page.receipts) {
+      const row = document.createElement('li');
+      const title = document.createElement('strong');
+      const id = document.createElement('code');
+      const time = document.createElement('time');
+      title.textContent = receipt.name;
+      id.textContent = receipt.receipt_id;
+      time.dateTime = receipt.registered_at;
+      time.textContent = new Date(receipt.registered_at).toLocaleString('ja-JP');
+      row.append(title, id, time);
+      results.append(row);
+    }
+    const n = page.receipts.length;
+    status.textContent = query
+      ? (page.has_more ? '先頭の50件を表示しています。検索条件を絞るとほかの記録を探せます。' : n + '件が一致しました。')
+      : (page.has_more ? '新しい受付から50件を表示しています。' : '受付 ' + n + '件');
+  } catch {
+    if (current === request) status.textContent = '受付台帳を取得できませんでした。もう一度検索してください。';
+  }
+}
+if (blue) document.querySelector('#back').href = '/?view=blue';
+form.addEventListener('submit', event => { event.preventDefault(); showReceipts(); });
+showReceipts();
+</script>
+</body>
+</html>

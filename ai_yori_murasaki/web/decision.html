@@ -214,6 +214,7 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     <a href="/architecture">システム構成図を見る</a>
     <p id="campaign-message" class="muted" role="status">Campaign を読み込んでいます。</p>
     <div id="campaign-list" class="campaign-list"></div>
+    <nav id="picker-pages" aria-label="案件一覧のページ" hidden></nav>
   </section>
 
   <p id="initial-status" role="status">記録を読み込んでいます。</p>
@@ -779,14 +780,30 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     if(d&&d.decision_view&&d.decision_view.status==='withheld'){unavailable('warn','評価情報はBlueに非公開です。');return;}
     show(d&&d.decision_view?d.decision_view:d);
   }
-  function chooseCampaigns(){
+  function chooseCampaigns(page){
+    page = page || 1;
+    var pager = $('picker-pages'); clear(pager); pager.hidden = true;
     $('view').hidden=true;$('loader').hidden=true;$('campaign-picker').hidden=false;
     $('initial-status').hidden=true;
     $('campaign-message').textContent='Campaign を読み込んでいます。';clear($('campaign-list'));
-    return fetchView('/api/campaigns').then(function(data){
+    return fetchView('/api/campaigns?page='+page).then(function(data){
       if(!data||!Array.isArray(data.campaigns))throw Error('bad response');
       var cs=data.campaigns.slice().sort(function(a,b){return (b.created_at||'').localeCompare(a.created_at||'');});
       $('campaign-message').textContent=cs.length?'課題と評価を確認する案件を選んでください。':'登録された案件はまだありません。';
+      if(data.checked_at) $('campaign-message').textContent += ' 台帳の確認時刻　' + when(data.checked_at);
+      if(data.pages>1){
+        pager.hidden=false;
+        pager.appendChild(el('span',null,'全 '+data.total+' 件　'+data.page+' / '+data.pages+' ページ　'));
+        [['最初',1],['前へ',data.page-1],['次へ',data.page+1],['最後',data.pages]].forEach(function(pair){
+          var b=el('button',null,pair[0]); b.type='button';
+          b.disabled=pair[1]<1 || pair[1]>data.pages || pair[1]===data.page;
+          b.onclick=function(){chooseCampaigns(pair[1]);}; pager.appendChild(b);
+        });
+        var jump=el('form'), number=el('input'); number.type='number'; number.min=1; number.max=data.pages;
+        number.required=true; number.setAttribute('aria-label','移動先のページ番号');
+        jump.appendChild(number); jump.appendChild(el('button',null,'移動')); pager.appendChild(jump);
+        jump.onsubmit=function(event){event.preventDefault();chooseCampaigns(number.valueAsNumber);};
+      }
       var labels = {
         created:'作成済み', running:'実行中', blind_completed:'独立評価済み', purple_open:'共同確認中',
         remediation_in_progress:'修復中', review_pending:'レビュー待ち', completed:'完了',
@@ -804,7 +821,7 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
         var arrow = el('span', 'case-arrow', '→'); arrow.setAttribute('aria-hidden', 'true'); a.appendChild(arrow);
         a.href='/decision?campaign='+encodeURIComponent(c.campaign_id);$('campaign-list').appendChild(a);
       });
-    }).catch(function(){$('campaign-message').textContent='Campaign を取得できませんでした。画面を読み直してください。';});
+    }).catch(function(e){$('campaign-message').textContent=e.message==='HTTP 409'?'案件一覧の索引が必要です。管理者に索引の作成を依頼してください。':'案件を取得できませんでした。画面を読み直してください。';});
   }
   function loadCampaign(){
     state.campaign=campaign;

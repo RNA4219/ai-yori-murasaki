@@ -1,0 +1,27 @@
+{
+  "id": "docs/acceptance/AC-20261123-05.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.case-intake-11-23-2026.md"
+  ],
+  "deps_out": [
+    "docs/tasks/TASK.case-intake-11-23-2026.md"
+  ],
+  "summary": "10万件からの新規受付、再送時の件数・ID、競合、同時登録、書き込み失敗、初期監査の非生成、wheelと画面の検収を記録する。",
+  "source_sha256": "dba6612fcc24ce680b9a0a0e1e23322c87a997af8f0f32c3466a69398a9cbc02",
+  "generated_at": "00040",
+  "review": {
+    "reviewed_at": "2026-11-23T04:40:42+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "dba6612fcc24ce680b9a0a0e1e23322c87a997af8f0f32c3466a69398a9cbc02",
+    "summary_sha256": "25eecdda27f258e7d4af9b55b63237825cf1de47ff63b813db262dcd472cf6ab",
+    "scope": "案件受付・再送・検索の変更と検収範囲、参照先を原文に照合。"
+  }
+}
