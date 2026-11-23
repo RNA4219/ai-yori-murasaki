@@ -1,0 +1,28 @@
+{
+  "id": "docs/acceptance/AC-20261123-09.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "README.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.architecture-canvas-11-23-2026.md"
+  ],
+  "deps_out": [
+    "docs/tasks/TASK.architecture-canvas-11-23-2026.md"
+  ],
+  "summary": "製品構成図での箱と線の追従、マウスとタッチでの移動・拡大、選択した線の根拠、キーボードによる操作を確認した検収。",
+  "source_sha256": "65d1973e1032a8e99ebcb04aa2460387d63779c578248ae5f952587fc37534e2",
+  "generated_at": "00044",
+  "review": {
+    "reviewed_at": "2026-11-23T10:12:56+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "65d1973e1032a8e99ebcb04aa2460387d63779c578248ae5f952587fc37534e2",
+    "summary_sha256": "fc7ff9f6cfab6fb5d438792b4569e8d44baff26cfed9385a506837be9fa65f2b",
+    "scope": "構成図の操作と接続根拠の仕様、表示範囲、検収の記録を原文に照合。"
+  }
+}

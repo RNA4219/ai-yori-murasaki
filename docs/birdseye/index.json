@@ -1,5 +1,5 @@
 {
-  "generated_at": "00043",
+  "generated_at": "00044",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -15,8 +15,8 @@
     "CHANGELOG.md": {
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
-      "mtime": "00043",
-      "source_sha256": "2a7608521c9affd4d83fd39cafa6b2a4f1f20218ce156e83e7522e3e4aa4274a"
+      "mtime": "00044",
+      "source_sha256": "b9a269b5fae5b955f933537634ea71477beabe8466a8809f16316ac2688e1218"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -36,14 +36,14 @@
     "HUB.codex.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
-      "mtime": "00043",
-      "source_sha256": "5925a24e55a5bcbbf84336038b2c9b52d27bf034dcdf24e4271892c8365d0655"
+      "mtime": "00044",
+      "source_sha256": "6d52f29a51cdbb8ff75a0f4435b43a188f9ed539ad38f479d2a55686207229a6"
     },
     "README.md": {
       "role": "overview",
       "caps": "docs/birdseye/caps/README.md.json",
-      "mtime": "00043",
-      "source_sha256": "52b7b16166036b57db89106147824148c55d254c121d1082bbb1f6e112284d85"
+      "mtime": "00044",
+      "source_sha256": "38e106606351a1623136f276782039fb20d91bed1787442d25dee51bfb8243d7"
     },
     "RUNBOOK.md": {
       "role": "operations",
@@ -70,8 +70,8 @@
     "docs/acceptance/INDEX.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
-      "mtime": "00043",
-      "source_sha256": "25f36fb9cccf5023c944c1f398905415fb9e88451805f4a1ad9c4785804ff534"
+      "mtime": "00044",
+      "source_sha256": "7c71008b95119056721b84294ffdc3f7aafb2b008cc0298efcd21710f545760e"
     },
     "docs/acceptance/README.md": {
       "role": "guide",
@@ -113,8 +113,8 @@
     "docs/tasks/README.md": {
       "role": "operations",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
-      "mtime": "00043",
-      "source_sha256": "2d6f0e38c3c03db78a91ef36f4e6d997f4b350a1fee64af360cee374ed48857d"
+      "mtime": "00044",
+      "source_sha256": "b2a1744f96b35c6cedacdac7d6541428deb42eb83a0d111088108e26837d7c22"
     },
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md": {
       "role": "task",
@@ -698,6 +698,18 @@
       "caps": "docs/birdseye/caps/docs.acceptance.AC-20261123-08.md.json",
       "source_sha256": "e0e21a78d27aa16f8d3d3d1239fb01967452df69bc6bc869a5b191cfcef9615a",
       "mtime": "00043"
+    },
+    "docs/tasks/TASK.architecture-canvas-11-23-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.architecture-canvas-11-23-2026.md.json",
+      "source_sha256": "df50fede7db700639ca96237b44eacc8d3a6dca444b4b7f31df163cf054e97bd",
+      "mtime": "00044"
+    },
+    "docs/acceptance/AC-20261123-09.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261123-09.md.json",
+      "source_sha256": "65d1973e1032a8e99ebcb04aa2460387d63779c578248ae5f952587fc37534e2",
+      "mtime": "00044"
     }
   },
   "edges": [
@@ -851,6 +863,10 @@
     ],
     [
       "CHANGELOG.md",
+      "docs/acceptance/AC-20261123-09.md"
+    ],
+    [
+      "CHANGELOG.md",
       "docs/evidence/wazuh-live-20261108.md"
     ],
     [
@@ -860,6 +876,10 @@
     [
       "CHANGELOG.md",
       "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.architecture-canvas-11-23-2026.md"
     ],
     [
       "CHANGELOG.md",
@@ -1171,6 +1191,10 @@
     ],
     [
       "HUB.codex.md",
+      "docs/acceptance/AC-20261123-09.md"
+    ],
+    [
+      "HUB.codex.md",
       "docs/acceptance/INDEX.md"
     ],
     [
@@ -1192,6 +1216,10 @@
     [
       "HUB.codex.md",
       "docs/tasks/README.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/tasks/TASK.architecture-canvas-11-23-2026.md"
     ],
     [
       "HUB.codex.md",
@@ -1296,6 +1324,10 @@
     [
       "README.md",
       "docs/acceptance/AC-20261123-08.md"
+    ],
+    [
+      "README.md",
+      "docs/acceptance/AC-20261123-09.md"
     ],
     [
       "README.md",
@@ -1774,6 +1806,10 @@
       "docs/tasks/TASK.case-severity-11-23-2026.md"
     ],
     [
+      "docs/acceptance/AC-20261123-09.md",
+      "docs/tasks/TASK.architecture-canvas-11-23-2026.md"
+    ],
+    [
       "docs/acceptance/ACCEPTANCE_TEMPLATE.md",
       "docs/releases/README.md"
     ],
@@ -1859,11 +1895,19 @@
     ],
     [
       "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261123-09.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
       "docs/tasks/TASK.agent-core-11-08-2026.md"
     ],
     [
       "docs/acceptance/INDEX.md",
       "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.architecture-canvas-11-23-2026.md"
     ],
     [
       "docs/acceptance/INDEX.md",
@@ -2163,6 +2207,10 @@
     ],
     [
       "docs/tasks/README.md",
+      "docs/acceptance/AC-20261123-09.md"
+    ],
+    [
+      "docs/tasks/README.md",
       "docs/acceptance/README.md"
     ],
     [
@@ -2176,6 +2224,10 @@
     [
       "docs/tasks/README.md",
       "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.architecture-canvas-11-23-2026.md"
     ],
     [
       "docs/tasks/README.md",
@@ -2264,6 +2316,10 @@
     [
       "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
       "docs/acceptance/AC-20261111-01.md"
+    ],
+    [
+      "docs/tasks/TASK.architecture-canvas-11-23-2026.md",
+      "docs/acceptance/AC-20261123-09.md"
     ],
     [
       "docs/tasks/TASK.architecture-map-11-23-2026.md",

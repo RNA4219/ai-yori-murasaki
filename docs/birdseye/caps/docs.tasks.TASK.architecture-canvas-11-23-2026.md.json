@@ -1,0 +1,27 @@
+{
+  "id": "docs/tasks/TASK.architecture-canvas-11-23-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/AC-20261123-09.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "docs/acceptance/AC-20261123-09.md"
+  ],
+  "summary": "構成を読むための一時配置とキャンバス操作、線に対応する接続理由と根拠の表示を求めるTask。",
+  "source_sha256": "df50fede7db700639ca96237b44eacc8d3a6dca444b4b7f31df163cf054e97bd",
+  "generated_at": "00044",
+  "review": {
+    "reviewed_at": "2026-11-23T10:12:56+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "df50fede7db700639ca96237b44eacc8d3a6dca444b4b7f31df163cf054e97bd",
+    "summary_sha256": "d95a551cc887b5171f4541c675f9aa9410447d9839b08b13397e664405611aaf",
+    "scope": "構成図の操作と接続根拠の仕様、表示範囲、検収の記録を原文に照合。"
+  }
+}

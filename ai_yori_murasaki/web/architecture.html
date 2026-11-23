@@ -42,12 +42,22 @@ summary {cursor:pointer;width:fit-content;padding:5px 0;color:var(--purple);text
 .map-panel,.detail {background:white;border:1px solid var(--line);border-radius:12px;min-width:0}
 .panel-head {justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line)}
 .mode {gap:2px;padding:3px;border-radius:9px;background:#f1eef3}.mode button {min-height:38px;border:0;background:transparent;font-size:15px}.mode button[aria-pressed=true] {background:var(--purple);color:white}
-.map-frame {overflow:auto;max-height:min(68vh,720px);background-color:var(--paper);background-image:radial-gradient(#d7d0dc .9px,transparent 1px);background-size:16px 16px;overscroll-behavior:contain}
-#diagram {display:block;max-width:none}
+.canvas-tools {display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:8px 14px;border-bottom:1px solid var(--line)}
+.canvas-tools button {min-height:40px;padding:4px 10px;border:1px solid #c9bfce;border-radius:6px;background:#fff;color:var(--purple)}
+.canvas-tools button:disabled {opacity:.5;cursor:default}
+.canvas-tools output {min-width:4ch;text-align:center;font-variant-numeric:tabular-nums;font-size:14px}
+.canvas-help {margin:0;color:var(--muted);font-size:14px;padding:7px 16px}
+.map-frame {height:clamp(310px,61vh,650px);overflow:hidden;background:var(--paper);border-block:1px solid var(--line)}
+#diagram {display:block;width:100%;height:100%;touch-action:none;user-select:none;cursor:grab}
+#diagram.dragging,#diagram.dragging * {cursor:grabbing}
+.wire {cursor:pointer;outline:none}.wire-hit {fill:none;stroke:transparent;stroke-width:18;vector-effect:non-scaling-stroke;pointer-events:stroke}
+.wire.selected .edge,.wire:focus-visible .edge {stroke:#553264;stroke-width:4}
+.wire:hover .edge {stroke:#553264;stroke-width:3.5}
+.node {touch-action:none}
 .lane {fill:#fff;fill-opacity:.61;stroke:#d9d3dd;stroke-dasharray:4 5}
 .lane-title {fill:#55475f;font-size:14px;font-weight:700}
 .edge {fill:none;stroke:#8c8192;stroke-width:1.8;vector-effect:non-scaling-stroke}.edge.near {stroke:#674779;stroke-width:2.7}
-.node {cursor:pointer;outline:none}.node .box {fill:#fff;stroke:#afa4b6;stroke-width:1.5}
+.node {cursor:grab;outline:none}.node .box {fill:#fff;stroke:#afa4b6;stroke-width:1.5}
 .node.near .box {stroke:#80648e}.node.flagged .box {stroke:#bd714e}.node.selected .box {stroke:#604076;stroke-width:3;fill:#faf6fd}
 .node.selected.flagged .box {stroke:#a44624;fill:#fff7f0}
 .node:focus-visible .box,.node:hover .box {stroke:#36263f;stroke-width:3}
@@ -66,6 +76,10 @@ dl {margin:0}dt {font-weight:700;font-size:14px;color:#624e46}dd {margin:0 0 8px
 .links {list-style:none;margin:8px 0 0;padding:0}.links li {padding:8px 0;border-top:1px solid #ece8ee}.links li:first-child {border:0}
 .link {border:0;background:transparent;padding:3px 0;color:var(--purple);font-weight:650;text-decoration:underline;text-align:left}
 .link-evidence {font-size:14px;color:var(--muted)}
+.connection-record {padding:10px 12px;margin-top:8px;border-left:3px solid var(--purple);background:#f6f2f8}
+.connection-record h4 {margin:0 0 5px}
+.connection-choice {display:grid;gap:4px;font-size:14px;margin-top:12px;color:var(--muted)}
+.connection-choice select {min-width:0;width:100%;min-height:40px;color:var(--ink);background:white}
 .picker {padding:0 18px 12px;align-items:center}.picker label {font-size:14px;font-weight:650}.picker select {width:min(100%,280px);min-height:40px;padding:5px 7px;border:1px solid #b9abbf;background:#fff;border-radius:5px;color:var(--ink)}
 .sr {clip-path:inset(50%);position:absolute;width:1px;height:1px;overflow:hidden;white-space:nowrap}
 .return-map {display:none}.btn:hover,.chip:hover {border-color:#6d497c}
@@ -90,10 +104,15 @@ dl {margin:0}dt {font-weight:700;font-size:14px;color:#624e46}dd {margin:0 0 8px
 <section class="map-panel" aria-labelledby="map-title"><div class="panel-head"><h2 id="map-title">構成と接続</h2>
 <div class="mode" role="group" aria-label="図の表示範囲"><button id="all" aria-pressed="true">構成全体</button><button id="repos" aria-pressed="false">リポジトリ間</button></div></div>
 <div id="flags" class="flag-list"></div>
-<div class="map-frame" id="frame" tabindex="0" role="region" aria-label="構成図。構成要素を選ぶと接続と指摘を確認できます"><svg id="diagram" role="group" aria-label="構成要素と依存関係の図"></svg></div>
+<div class="canvas-tools" role="group" aria-label="図の操作">
+<button type="button" id="zoom-out" aria-label="縮小">−</button><output id="zoom-value" aria-label="表示倍率">100%</output><button type="button" id="zoom-in" aria-label="拡大">＋</button>
+<button type="button" id="fit-map">全体を表示</button><button type="button" id="reset-layout" disabled>配置を戻す</button></div>
+<div class="map-frame" id="frame" tabindex="0" role="region" aria-label="構成図" aria-describedby="canvas-help canvas-keys"><svg id="diagram" role="group" aria-label="構成要素と依存関係の図"></svg></div>
+<p class="canvas-help" id="canvas-help">箱をドラッグして配置、余白をドラッグして移動。線を選ぶと接続の根拠を読めます。</p>
+<p class="sr" id="canvas-keys">Tabで箱と線を選び、Enterで詳細を開きます。矢印キーは箱にフォーカスがあると箱を、それ以外は図全体を移動します。＋と−で拡大・縮小、Homeで全体を表示します。</p>
 <div class="graph-footer"><p id="note" class="hint"></p></div>
 <div class="picker"><label for="choose">構成要素を選択</label><select id="choose"></select><label><input type="checkbox" id="nearby"> 直接つながる要素だけ表示</label></div></section>
-<aside class="detail" id="detail" tabindex="-1" aria-labelledby="detail-name"><p class="kind" id="detail-kind"></p><h2 id="detail-name"></h2><p class="description" id="description"></p><section><h3 id="finding-count"></h3><div id="findings"></div></section><section><h3>この要素の接続</h3><ul class="links" id="links"></ul></section><button class="btn return-map" id="return">図に戻る</button></aside>
+<aside class="detail" id="detail" tabindex="-1" aria-labelledby="detail-name"><p class="kind" id="detail-kind"></p><h2 id="detail-name"></h2><p class="description" id="description"></p><section><h3 id="finding-count"></h3><div id="findings"></div></section><section><h3 id="links-title">この要素の接続</h3><ul class="links" id="links"></ul></section><button class="btn return-map" id="return">図に戻る</button></aside>
 </div></main>
 <script type="module" src="/architecture/map.mjs"></script>
 </body></html>

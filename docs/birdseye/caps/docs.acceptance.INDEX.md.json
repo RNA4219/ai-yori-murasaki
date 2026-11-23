@@ -2,7 +2,7 @@
   "id": "docs/acceptance/INDEX.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "各Taskの検収と公開状態を示す。AC-20261123-08は案件ごとの重要度別件数と該当する検知への移動の検収。",
+  "summary": "各Taskの検収一覧と公開状態。AC-20261123-09は構成図での箱の配置、拡大、移動、接続線の選択の技術検収。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -28,8 +28,10 @@
     "docs/acceptance/AC-20261123-06.md",
     "docs/acceptance/AC-20261123-07.md",
     "docs/acceptance/AC-20261123-08.md",
+    "docs/acceptance/AC-20261123-09.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
     "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
+    "docs/tasks/TASK.architecture-canvas-11-23-2026.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
     "docs/tasks/TASK.case-intake-11-23-2026.md",
     "docs/tasks/TASK.case-severity-11-23-2026.md",
@@ -62,13 +64,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "25f36fb9cccf5023c944c1f398905415fb9e88451805f4a1ad9c4785804ff534",
-  "generated_at": "00043",
+  "source_sha256": "7c71008b95119056721b84294ffdc3f7aafb2b008cc0298efcd21710f545760e",
+  "generated_at": "00044",
   "review": {
-    "reviewed_at": "2026-11-23T09:59:17+00:00",
+    "reviewed_at": "2026-11-23T10:12:56+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "25f36fb9cccf5023c944c1f398905415fb9e88451805f4a1ad9c4785804ff534",
-    "summary_sha256": "93bcc5b38a9503788d9dd78821422d8eac9b2f1c0ee2e836889f616df59a6203",
-    "scope": "重要度別件数の意味、操作、索引の移行と検収の参照を原文に照合。"
+    "source_sha256": "7c71008b95119056721b84294ffdc3f7aafb2b008cc0298efcd21710f545760e",
+    "summary_sha256": "6a79e238a1a12f7a88eb98cbda538dc79d58b9a0d5b041877bdc8cfc018304c8",
+    "scope": "構成図の操作と接続根拠の仕様、表示範囲、検収の記録を原文に照合。"
   }
 }

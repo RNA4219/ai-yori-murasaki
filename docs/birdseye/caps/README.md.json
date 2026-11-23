@@ -2,7 +2,7 @@
   "id": "README.md",
   "role": "overview",
   "public_api": [],
-  "summary": "製品の起動と操作。モニターと判断画面を行き来し、選択した案件の重要度別件数から該当する検知を開く方法を含む。",
+  "summary": "製品の起動と画面操作。案件の検知のほか、構成図の箱を移動して、選んだ線の接続理由を読む操作を案内する。",
   "deps_out": [
     "BLUEPRINT.md",
     "CHANGELOG.md",
@@ -22,6 +22,7 @@
     "docs/acceptance/AC-20261123-06.md",
     "docs/acceptance/AC-20261123-07.md",
     "docs/acceptance/AC-20261123-08.md",
+    "docs/acceptance/AC-20261123-09.md",
     "docs/acceptance/INDEX.md",
     "docs/evidence/wazuh-live-20261108.md",
     "docs/releases/README.md",
@@ -48,13 +49,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "52b7b16166036b57db89106147824148c55d254c121d1082bbb1f6e112284d85",
-  "generated_at": "00043",
+  "source_sha256": "38e106606351a1623136f276782039fb20d91bed1787442d25dee51bfb8243d7",
+  "generated_at": "00044",
   "review": {
-    "reviewed_at": "2026-11-23T09:59:17+00:00",
+    "reviewed_at": "2026-11-23T10:12:56+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "52b7b16166036b57db89106147824148c55d254c121d1082bbb1f6e112284d85",
-    "summary_sha256": "41d063eea4404ef8b42bf2bf7edeaeb73bd340d01b96dbeda7c08bdbf358db8c",
-    "scope": "重要度別件数の意味、操作、索引の移行と検収の参照を原文に照合。"
+    "source_sha256": "38e106606351a1623136f276782039fb20d91bed1787442d25dee51bfb8243d7",
+    "summary_sha256": "1864cd53cf64d787d9b958dd23c36dbd00a1fa0e925c9a0cc23d7dc9cf8f26cf",
+    "scope": "構成図の操作と接続根拠の仕様、表示範囲、検収の記録を原文に照合。"
   }
 }
