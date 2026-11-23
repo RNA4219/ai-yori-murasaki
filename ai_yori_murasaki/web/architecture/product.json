@@ -1,8 +1,8 @@
 {
   "schema": "aym.architecture/v1",
-  "name": "ai-yori-murasaki の構成 · 案件と証跡",
+  "name": "ai-yori-murasaki の構成図",
   "nodes": [
-    {"id":"summary","kind":"service","type":"monitor_summary.py","name":"検知件数の集計","description":"台帳を1回ずつ検証して、集計済み・一部未集計・未集計を区別する。ライブ取得と索引の作成で同じ集計を使う。"},
+    {"id":"summary","kind":"service","type":"monitor_summary.py","name":"検知件数の集計"},
     {"id":"index","kind":"store","type":"monitor_index.py / SQLite","name":"確認済みの案件索引","description":"初回は全件、次回からは変更のあった実行を検証し、案件一覧と検知の抜粋を保存する。更新に失敗しても直前の一覧と確認時刻を参照できる。"},
     {"id":"rust","kind":"repository","type":"jsonschema-rs","name":"Rust製の台帳検証器","description":"案件画面で読み出す証跡イベントを同梱スキーマと照合する。ハッシュ列や通番の検査も引き続き行う。"},
     {"id":"views","kind":"service","type":"ブラウザー","name":"モニター・判断画面","description":"モニターで確認済みの検知件数と未集計の実行を表示する。同時刻の前回候補を選ぶと、このブラウザーに案件IDの組を保存し、履歴の線と判断画面の比較に反映する。"},

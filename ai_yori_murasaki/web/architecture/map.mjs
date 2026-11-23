@@ -56,7 +56,7 @@ async function loadBundled(product = false) {
     if (!response.ok) throw Error('見本ファイルを取得できませんでした。');
     const map=validateMap(await response.json());
     if (version===state.load) {
-      if (product) apply({map,source:'ai-yori-murasaki の実装',note:'検知件数・前回の選択・台帳の読み込みを改修後に検証しました。部品を選ぶと変更内容と接続の根拠を読めます。'});
+      if (product) apply({map,source:'ai-yori-murasaki の実装'});
       else apply({map,note:'架空の構成とレビュー記録を使用しています。'},true);
     }
   } catch(e) { if(version===state.load) error(e.message); }

@@ -20,6 +20,35 @@ async function wirePoint(wire) {
 }
 
 try {
+  const layout=await browser.newPage({viewport:{width:1108,height:900}});
+  await layout.goto(base+'/architecture?system=aym');
+  await layout.getByRole('heading',{name:'ai-yori-murasaki の構成図',exact:true}).waitFor();
+  assert.equal(await layout.locator('#note').isVisible(),false);
+  await layout.locator('#choose').selectOption('summary');
+  assert.equal(await layout.locator('#description').isVisible(),false);
+  for(const width of [1108,390,320]) {
+    await layout.setViewportSize({width,height:900});
+    for(const mode of ['all','repos']) {
+      await layout.locator('#'+mode).click();
+      const row=await layout.locator('.panel-head').evaluate(bar=>{
+        const controls=[...bar.querySelectorAll('button,output')].map(el=>el.getBoundingClientRect());
+        const centers=controls.map(rect=>rect.top+rect.height/2);
+        return {count:controls.length,spread:Math.max(...centers)-Math.min(...centers),
+          scroll:bar.scrollWidth-bar.clientWidth,pageWidth:document.documentElement.scrollWidth};
+      });
+      assert.equal(row.count,7);
+      assert.ok(row.spread<=1,'表示切替・倍率・配置操作が一列に並ぶ');
+      assert.equal(row.pageWidth,width);
+      if(width>=390) assert.equal(row.scroll,0,'全操作が横スクロールなしで収まる');
+    }
+    const last=layout.getByRole('button',{name:'配置を戻す',exact:true});
+    await last.scrollIntoViewIfNeeded();
+    assert.equal(await last.evaluate(el=>{
+      const button=el.getBoundingClientRect(), bar=el.closest('.panel-head').getBoundingClientRect();
+      return button.left>=bar.left && button.right<=bar.right;
+    }),true);
+  }
+  await layout.close();
   for(const mobile of [false,true]) {
     const page=await browser.newPage({viewport:{width:mobile?390:1440,height:900},hasTouch:mobile,reducedMotion:'reduce'});
     const errors=[];page.on('pageerror',e=>errors.push(String(e)));

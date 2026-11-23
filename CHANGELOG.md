@@ -14,6 +14,8 @@ Keep a Changelog の区分で管理する。記録には既存最大番号 +1 �
 
 ### Changed
 
+- 0035 — 2026-11-23。構成図の表示切替・倍率・配置操作を1行にまとめた。製品の図は「ai-yori-murasaki の構成図」と表示し、操作説明・検証報告・集計部品の説明文を外した。[Task 20261123-09](docs/tasks/TASK.architecture-canvas-11-23-2026.md)・[技術検収](docs/acceptance/AC-20261123-09.md)
+
 - 0034 — 2026-11-23。「構成と接続」の図の上で、ホイールを回すだけでポインター位置を中心に拡大・縮小できる。[Task 20261123-09](docs/tasks/TASK.architecture-canvas-11-23-2026.md)・[技術検収](docs/acceptance/AC-20261123-09.md)
 
 - 0033 — 2026-11-23。「構成と接続」で箱をドラッグし、拡大・移動しながら線の根拠を読める。タッチ操作、キーボード、重なる線の選択にも対応。[Task 20261123-09](docs/tasks/TASK.architecture-canvas-11-23-2026.md)・[技術検収](docs/acceptance/AC-20261123-09.md)

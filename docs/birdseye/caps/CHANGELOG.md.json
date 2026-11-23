@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "版ごとの変更と検収への参照。0034は構成図上のホイールでポインター位置を中心に拡大・縮小する操作。",
+  "summary": "製品の変更と対応する検収。0035は構成図の操作列を1行にまとめ、見出しと画面内の説明を整理した変更。",
   "deps_out": [
     "docs/SOURCES.md",
     "docs/acceptance/AC-20261106-01.md",
@@ -83,13 +83,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "506de4ad09fc69d926987d47cfd3bf05ebd451dea1ac7c5345aeb6e9d44730aa",
-  "generated_at": "00045",
+  "source_sha256": "0e2981d60e647d8508423878e22806d0bdfb350a2af49038a97b4044a1c32b30",
+  "generated_at": "00046",
   "review": {
-    "reviewed_at": "2026-11-23T10:23:05+00:00",
+    "reviewed_at": "2026-11-23T10:34:51+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "506de4ad09fc69d926987d47cfd3bf05ebd451dea1ac7c5345aeb6e9d44730aa",
-    "summary_sha256": "f8ac689a4ae470f7b35ce7979118a07b290eeecdda176e8c4acebe884fd728ac",
-    "scope": "図内外のホイール操作とポインター位置の検収を原文に照合。"
+    "source_sha256": "0e2981d60e647d8508423878e22806d0bdfb350a2af49038a97b4044a1c32b30",
+    "summary_sha256": "0542212c1e94be87447f7bbc172680aaa875a43d5f76c87825fd9ee98efbe955",
+    "scope": "構成図の操作列と画面内の説明について要件・実装の変更と検収を原文に照合。"
   }
 }

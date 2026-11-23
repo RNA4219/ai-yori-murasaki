@@ -15,14 +15,14 @@
   "deps_out": [
     "docs/tasks/TASK.architecture-canvas-11-23-2026.md"
   ],
-  "summary": "製品の構成図で箱と線の追従、タッチとキーボード、接続の根拠、図の内外におけるホイール操作を確認した検収。",
-  "source_sha256": "c5303b5f71dbe8cab91d034ccc035d68565d8d61bea3137879f7a78aa2d3395b",
-  "generated_at": "00045",
+  "summary": "製品構成図の直接操作と接続の根拠を検証。図の内外でのホイール操作、画面幅に応じた1行の操作列と説明文も確認した。",
+  "source_sha256": "b1ced9004fdcc94626c344ba2891af667079d30f904082f25ae1a7deef4de2ac",
+  "generated_at": "00046",
   "review": {
-    "reviewed_at": "2026-11-23T10:23:05+00:00",
+    "reviewed_at": "2026-11-23T10:34:51+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "c5303b5f71dbe8cab91d034ccc035d68565d8d61bea3137879f7a78aa2d3395b",
-    "summary_sha256": "a9230c90807fd6120ba3f468ebfcafe421fe0658d4ea1bdb2fa45fadf97b0d95",
-    "scope": "図内外のホイール操作とポインター位置の検収を原文に照合。"
+    "source_sha256": "b1ced9004fdcc94626c344ba2891af667079d30f904082f25ae1a7deef4de2ac",
+    "summary_sha256": "cd720e44abd66d74b99971ded55f5743e18411283063165f022afb466051e6d2",
+    "scope": "構成図の操作列と画面内の説明について要件・実装の変更と検収を原文に照合。"
   }
 }
