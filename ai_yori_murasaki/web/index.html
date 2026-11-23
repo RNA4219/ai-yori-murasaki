@@ -600,6 +600,7 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
         <h1 id="monitor-heading">案件と検知</h1>
         <a id="desk-relations" href="#/relations">案件のつながり</a>
         <a class="relation-back" href="/architecture">システム構成図</a>
+        <a class="relation-back" id="desk-intake" href="/intake">案件受付台帳</a>
       </div>
       <div class="header-meta">
         <a id="desk-sources" href="#/sources">資料と出典</a>
@@ -626,6 +627,9 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
   'use strict';
 
   var FETCH_TIMEOUT_MS = 5000;
+  if (new URLSearchParams(location.search).get('view') === 'blue') {
+    document.getElementById('desk-intake').href = '/intake?view=blue';
+  }
   var MAX_BYTES = 1024 * 1024;
   var AUTO_REFRESH_MS = 15000;
 

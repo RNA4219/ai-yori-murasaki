@@ -28,6 +28,8 @@ CVSS v4.0 の算出仕様は FIRST (Forum of Incident Response and Security Team
 
 ## 配布方式
 
+案件受付にはPyO3 0.27.2とrusqlite 0.38.0を使用し、SQLiteをネイティブ拡張に含める。依存の版は[Cargo.lock](rust/intake/Cargo.lock)に固定している。[ネイティブ拡張のライセンス文](rust/intake/THIRD_PARTY_LICENSES.txt)をwheelとsdistに同梱する。
+
 構成図のローカルYAML読み込みに js-yaml 4.3.2（MIT）を使用する。配布されたESモジュールとライセンス原文を `ai_yori_murasaki/web/architecture/` に同梱する。[js-yaml](https://github.com/nodeca/js-yaml)
 
 - wheel / sdist いずれにも本書（THIRD_PARTY_NOTICES.md）と LICENSE を同梱する。

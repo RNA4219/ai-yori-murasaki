@@ -1,0 +1,14 @@
+[package]
+name = "aym-intake-index"
+version = "0.1.0"
+edition = "2021"
+publish = false
+license = "MIT"
+
+[lib]
+name = "_intake_index"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.27", features = ["extension-module", "abi3-py311"] }
+rusqlite = { version = "0.38", features = ["bundled"] }

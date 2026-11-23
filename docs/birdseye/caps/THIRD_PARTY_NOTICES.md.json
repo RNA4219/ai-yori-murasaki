@@ -2,18 +2,18 @@
   "id": "THIRD_PARTY_NOTICES.md",
   "role": "doc",
   "public_api": [],
-  "summary": "配布物と依存ライブラリの帰属。モニターの台帳検証に使うjsonschema-rsと実行索引の読み取りに使うijsonの版・ライセンスを含む。",
+  "summary": "配布物と依存ライブラリの帰属。Rust製の受付拡張とともに配布するSQLiteおよび依存ライセンス文の所在を示す。",
   "deps_out": [],
   "deps_in": [],
   "risks": [],
   "tests": [],
-  "source_sha256": "d5c9a46174b127c75f6f7c3f411dfc0b663728089f2bf1c876d85f98c2a1d58a",
-  "generated_at": "00039",
+  "source_sha256": "ce48ed878e910ed0a45cb8ee802428a5bcbe4015a9485f681ac21a1770eca3e6",
+  "generated_at": "00040",
   "review": {
-    "reviewed_at": "2026-11-22T22:54:07+00:00",
+    "reviewed_at": "2026-11-23T04:40:42+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "d5c9a46174b127c75f6f7c3f411dfc0b663728089f2bf1c876d85f98c2a1d58a",
-    "summary_sha256": "8d91a6d40d94404743cf6ee0c5942e17a31bc5721fdb1fca47601a1bb5654283",
-    "scope": "案件一覧・台帳検証の変更、参照先と適用範囲を原文に照合。"
+    "source_sha256": "ce48ed878e910ed0a45cb8ee802428a5bcbe4015a9485f681ac21a1770eca3e6",
+    "summary_sha256": "03b279c2edee2fe4f691644f6597be54737983ece996c7899484a0fb2b7549a7",
+    "scope": "案件受付・再送・検索の変更と検収範囲、参照先を原文に照合。"
   }
 }

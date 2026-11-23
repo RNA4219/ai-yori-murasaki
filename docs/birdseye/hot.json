@@ -1,5 +1,5 @@
 {
-  "generated_at": "00039",
+  "generated_at": "00040",
   "index_snapshot": "docs/birdseye/index.json",
   "refresh_command": "RUNBOOK.md#execute と docs/BIRDSEYE.md の PowerShell 手順を参照",
   "curation_notes": "ローカル製品、要件、検収、文書運用の入口。生成世代と原文・要約の内容確認を区別する。",
@@ -7,7 +7,7 @@
     {
       "id": "README.md",
       "role": "overview",
-      "reason": "製品の起動、検知・判断・構成図の操作と制約。大規模な一覧を50件ずつ読むための索引構築・更新手順を案内する。",
+      "reason": "製品の起動、モニター・判断画面・構成図、検証済み一覧索引を案内する。案件受付のインストール、登録・再送、検索と監査開始の違いを説明する。",
       "caps": "docs/birdseye/caps/README.md.json",
       "edges": [
         "BLUEPRINT.md",
@@ -37,12 +37,12 @@
         "docs/tasks/TASK.architecture-map-11-23-2026.md",
         "docs/workflow-adoption.md"
       ],
-      "last_verified_at": "2026-11-22T22:54:07+00:00"
+      "last_verified_at": "2026-11-23T04:40:42+00:00"
     },
     {
       "id": "HUB.codex.md",
       "role": "navigation",
-      "reason": "製品の要件、評価、運用と各Taskへの入口。案件一覧の検証済み索引と10万案件の検収を案内する。",
+      "reason": "要件、運用、評価と各Taskの文書入口。受付・再送の検収と大規模なモニター一覧の検収を参照できる。",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
       "edges": [
         ".agents/skills/security-audit/SKILL.md",
@@ -76,6 +76,7 @@
         "docs/acceptance/AC-20261123-02.md",
         "docs/acceptance/AC-20261123-03.md",
         "docs/acceptance/AC-20261123-04.md",
+        "docs/acceptance/AC-20261123-05.md",
         "docs/acceptance/INDEX.md",
         "docs/acceptance/README.md",
         "docs/releases/README.md",
@@ -87,6 +88,7 @@
         "docs/reviews/REVIEW-INTAKE-20261107.md",
         "docs/tasks/README.md",
         "docs/tasks/TASK.architecture-map-11-23-2026.md",
+        "docs/tasks/TASK.case-intake-11-23-2026.md",
         "docs/tasks/TASK.document-consistency-11-23-2026.md",
         "docs/tasks/TASK.frontend-review-11-22-2026.md",
         "docs/tasks/TASK.monitor-counts-11-23-2026.md",
@@ -95,7 +97,7 @@
         "docs/workflow-adoption.md",
         "governance/policy.yaml"
       ],
-      "last_verified_at": "2026-11-22T22:54:07+00:00"
+      "last_verified_at": "2026-11-23T04:40:42+00:00"
     },
     {
       "id": "GUARDRAILS.md",
@@ -216,11 +218,13 @@
         "docs/acceptance/AC-20261123-02.md",
         "docs/acceptance/AC-20261123-03.md",
         "docs/acceptance/AC-20261123-04.md",
+        "docs/acceptance/AC-20261123-05.md",
         "docs/acceptance/README.md",
         "docs/releases/README.md",
         "docs/tasks/TASK.agent-core-11-08-2026.md",
         "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
         "docs/tasks/TASK.architecture-map-11-23-2026.md",
+        "docs/tasks/TASK.case-intake-11-23-2026.md",
         "docs/tasks/TASK.document-consistency-11-23-2026.md",
         "docs/tasks/TASK.frontend-review-11-22-2026.md",
         "docs/tasks/TASK.llm-remote-11-09-2026.md",
@@ -242,7 +246,7 @@
         "docs/tasks/TASK.version-011-11-08-2026.md",
         "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
       ],
-      "last_verified_at": "2026-11-22T22:54:07+00:00"
+      "last_verified_at": "2026-11-23T04:40:42+00:00"
     },
     {
       "id": "docs/acceptance/INDEX.md",
@@ -270,9 +274,11 @@
         "docs/acceptance/AC-20261123-02.md",
         "docs/acceptance/AC-20261123-03.md",
         "docs/acceptance/AC-20261123-04.md",
+        "docs/acceptance/AC-20261123-05.md",
         "docs/tasks/TASK.agent-core-11-08-2026.md",
         "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
         "docs/tasks/TASK.architecture-map-11-23-2026.md",
+        "docs/tasks/TASK.case-intake-11-23-2026.md",
         "docs/tasks/TASK.document-consistency-11-23-2026.md",
         "docs/tasks/TASK.frontend-review-11-22-2026.md",
         "docs/tasks/TASK.llm-remote-11-09-2026.md",
@@ -291,7 +297,7 @@
         "docs/tasks/TASK.version-011-11-08-2026.md",
         "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
       ],
-      "last_verified_at": "2026-11-22T22:54:07+00:00"
+      "last_verified_at": "2026-11-23T04:40:42+00:00"
     },
     {
       "id": "docs/RSI.md",

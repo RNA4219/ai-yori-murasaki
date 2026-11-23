@@ -21,6 +21,7 @@ Keep a Changelog の区分で管理する。記録には既存最大番号 +1 �
 
 ### Added
 
+- 0029 — 2026-11-23。案件名と再送キーで受け付ける `aym intake register` を追加した。登録時にRustで受付索引を更新し、モニターから受付IDと案件名を検索できる。[Task 20261123-05](docs/tasks/TASK.case-intake-11-23-2026.md)・[技術検収](docs/acceptance/AC-20261123-05.md)
 - 0026 — 2026-11-23。未集計と検知0件を区別し、同時刻の前回候補を選択式にした。案件一覧は各台帳を1回だけ読んで集計する。[Task 20261123-02](docs/tasks/TASK.monitor-counts-11-23-2026.md)・[技術検収](docs/acceptance/AC-20261123-02.md)
 - 0025 — 2026-11-23。「システム構成図」でリポジトリ同士とAWSリソースの関係をたどり、指摘のある部品・根拠・対応を確認できる。架空の見本とローカル構成ファイルの読み込みに対応した。[Task 20261123-01](docs/tasks/TASK.architecture-map-11-23-2026.md)・[技術検収](docs/acceptance/AC-20261123-01.md)
 

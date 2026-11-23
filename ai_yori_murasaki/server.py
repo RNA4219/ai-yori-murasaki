@@ -36,6 +36,8 @@ ALLOWED_HOSTS = ("127.0.0.1", "localhost")
 # Fixed endpoint patterns.  No arbitrary path segments are accepted.
 ROUTES: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("index", re.compile(r"^/$")),
+    ("intake", re.compile(r"^/intake$")),
+    ("receipts", re.compile(r"^/api/intake$")),
     ("decision", re.compile(r"^/decision$")),
     ("architecture", re.compile(r"^/architecture$")),
     ("architecture_asset", re.compile(r"^/architecture/(map\.mjs|model\.mjs|js-yaml\.mjs|sample\.json|product\.json)$")),
@@ -702,7 +704,7 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
         return _error(400, "bad_view")
 
     try:
-        if name in ("index", "decision", "architecture"):
+        if name in ("index", "decision", "architecture", "intake"):
             html = _load_page(name + ".html")
             if not html:
                 return _error(500, "index_unavailable")
@@ -723,6 +725,17 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
 
         if name == "health":
             return _json_response(200, {"status": "ok"})
+
+        if name == "receipts":
+            if view == "blue":
+                return _json_response(200, {"status": "withheld"})
+            from .intake import search
+            try:
+                return _json_response(200, search(store, query.get("q", "")))
+            except DataError as exc:
+                if exc.reason_code == "invalid_query":
+                    return _error(400, "invalid_query")
+                raise
 
         if name in ("sources", "source"):
             if view == "blue":

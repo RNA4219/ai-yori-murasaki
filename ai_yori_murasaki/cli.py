@@ -100,6 +100,11 @@ def _build_parser() -> _Parser:
     p.add_argument("kind", choices=sorted(KINDS))
     p.add_argument("inputpath", type=Path)
 
+    intake = sub.add_parser("intake", help="初期監査と独立した案件受付").add_subparsers(dest="action", required=True)
+    entry = intake.add_parser("register", help="案件を受け付けて受付IDを返す")
+    entry.add_argument("--name", required=True)
+    entry.add_argument("--idempotency-key", required=True)
+
     camp = sub.add_parser("campaign").add_subparsers(dest="action", required=True)
     c = camp.add_parser("create")
     c.add_argument("--intent-id", required=True)
@@ -224,7 +229,7 @@ def _resolve_scenario(scenario: Any) -> str:
     return scenario
 
 
-def _make_runtime(args: argparse.Namespace) -> Runtime:
+def _make_store(args: argparse.Namespace) -> Store:
     if args.workspace is None:
         raise DataError("workspace が指定されていません", "usage_error")
     if not args.trusted_root:
@@ -249,7 +254,11 @@ def _make_runtime(args: argparse.Namespace) -> Runtime:
         if s and s not in seen:
             seen.add(s)
             unique_secrets.append(s)
-    store = Store(str(args.workspace), str(args.trusted_root), tuple(unique_secrets))
+    return Store(str(args.workspace), str(args.trusted_root), tuple(unique_secrets))
+
+
+def _make_runtime(args: argparse.Namespace) -> Runtime:
+    store = _make_store(args)
     policy_path = args.policy
     if policy_path is None:
         policy_path = Path(__file__).with_name("default-policy.json")
@@ -419,6 +428,11 @@ def main(argv: list[str] | None = None) -> int:
             validate(args.kind, read_json(args.inputpath))
             _emit(command, "ok", "ok", None, None,
                   {"valid": True, "kind": args.kind})
+            return 0
+        if args.group == "intake":
+            from .intake import register
+            receipt = register(_make_store(args), args.name, args.idempotency_key)
+            _emit(command, "ok", "ok", None, None, receipt)
             return 0
         rt = _make_runtime(args)
         if args.group == "rsi":

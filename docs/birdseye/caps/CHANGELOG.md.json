@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "版・変更履歴と検収への参照。0028はRust製の台帳検証器、既存台帳からの案件索引、50件のページ取得を記す。",
+  "summary": "版ごとの変更と検収への参照。0029は初期監査から独立した受付コマンド、Rustの登録索引とモニター検索。",
   "deps_out": [
     "docs/SOURCES.md",
     "docs/acceptance/AC-20261106-01.md",
@@ -24,12 +24,14 @@
     "docs/acceptance/AC-20261123-02.md",
     "docs/acceptance/AC-20261123-03.md",
     "docs/acceptance/AC-20261123-04.md",
+    "docs/acceptance/AC-20261123-05.md",
     "docs/evidence/quality-integration-20261109/README.md",
     "docs/evidence/sources-light-ui-20261109/README.md",
     "docs/evidence/wazuh-live-20261108.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
     "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
+    "docs/tasks/TASK.case-intake-11-23-2026.md",
     "docs/tasks/TASK.document-consistency-11-23-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
     "docs/tasks/TASK.monitor-counts-11-23-2026.md",
@@ -73,13 +75,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "44628472a5337c78c4b02cf62be9f9d0b62a742296ef24f6f6a0adf64b9a8c24",
-  "generated_at": "00039",
+  "source_sha256": "5ee8f51b2cbf84df89326867eea3c1ead26b25c045c9316fb2d4a2a4b369fd57",
+  "generated_at": "00040",
   "review": {
-    "reviewed_at": "2026-11-22T22:54:07+00:00",
+    "reviewed_at": "2026-11-23T04:40:42+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "44628472a5337c78c4b02cf62be9f9d0b62a742296ef24f6f6a0adf64b9a8c24",
-    "summary_sha256": "977a10af54aeb3746def99677469c1f76e199ec609be46d1ca4b5c4cc3c29f6c",
-    "scope": "案件一覧・台帳検証の変更、参照先と適用範囲を原文に照合。"
+    "source_sha256": "5ee8f51b2cbf84df89326867eea3c1ead26b25c045c9316fb2d4a2a4b369fd57",
+    "summary_sha256": "b901f8320a8762c1da8b963110eeb498742c78454de720d17460dab98cb41aab",
+    "scope": "案件受付・再送・検索の変更と検収範囲、参照先を原文に照合。"
   }
 }
