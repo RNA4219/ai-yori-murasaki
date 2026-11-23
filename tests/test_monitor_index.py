@@ -1,5 +1,8 @@
 """台帳の判定互換と、検証済み案件のページ表示。"""
 import json
+import os
+import sqlite3
+from contextlib import closing
 from pathlib import Path
 from unittest.mock import patch
 
@@ -7,7 +10,7 @@ import pytest
 
 from ai_yori_murasaki.contracts import validate
 from ai_yori_murasaki.jsonio import DataError, canonical
-from ai_yori_murasaki.monitor_index import build_index
+from ai_yori_murasaki.monitor_index import _index_path, build_index, read_page
 from ai_yori_murasaki.monitor_validation import validate_monitor_event
 from ai_yori_murasaki.runtime import Runtime
 from ai_yori_murasaki.server import handle_request
@@ -98,3 +101,116 @@ def test_large_store_requires_index_and_legacy_api_is_unchanged(store):
     with store._catalog_path().open("wb") as stream:
         stream.truncate(17*1024*1024)
     assert api(store,"?page=1") == (409, {"error":"monitor_index_required"})
+
+
+def test_incremental_inputs_and_membership(store):
+    same = ledger(store, "same", "untouched")
+    changed = ledger(store, "moved", "old")
+    ledger(store, "keep", "old")
+    store.update_catalog("orphan", {"campaign_id": "catalog-only"})
+    assert build_index(store)["mode"] == "full"
+
+    def delta(expected):
+        with patch.object(store, "read_verified_events", wraps=store.read_verified_events) as read:
+            result = build_index(store)
+        assert result["mode"] == "incremental"
+        assert [call.args[0] for call in read.call_args_list] == expected
+        assert result["rechecked_runs"] == len(expected)
+
+    delta([])
+    # 同じサイズ・同じmtimeでも別の内容。実行の移籍では旧案件と新案件の両方を更新する。
+    prev = changed.stat()
+    ledger(store, "moved", "new")
+    os.utime(changed, ns=(prev.st_atime_ns, prev.st_mtime_ns))
+    assert changed.stat().st_size == prev.st_size
+    delta(["moved"])
+    same.unlink()
+    same.parent.rmdir()
+    ledger(store, "extra", "added")
+    store._catalog_path().write_bytes(b'{"runs":{"orphan":{"campaign_id":"other"}}}')
+    delta(["extra", "orphan"])
+    page = read_page(store, 1, "operator")
+    rows = {row["campaign_id"]: row for row in page["campaigns"]}
+    assert set(rows) == {"new", "old", "added", "other"}
+    assert rows["old"]["verified_run_count"] == rows["new"]["verified_run_count"] == 1
+    assert rows["other"]["finding_count"] is None
+    build_index(store, full=True)
+    assert read_page(store, 1, "operator")["campaigns"] == page["campaigns"]
+
+
+def test_shared_finding_repair_manifest_and_excerpt(store):
+    # 検知ファイルだけが変わり、2つの実行・同じfinding_idに影響する。
+    obj = store.put_object({"finding_id":"f1","title":"共有検知","severity":"high"})
+    for rid in ("a", "b"):
+        ledger(store, rid, "case", record_kind="finding", record_ref=obj)
+    ledger(store, "stay", "stay")
+    ledger(store, "c", "case", run_snapshot={})
+    build_index(store)
+    target = store._object_path(obj)
+    original = target.read_bytes()
+    target.unlink()
+    assert build_index(store)["rechecked_runs"] == 2
+    row = next(c for c in read_page(store, 1, "operator")["campaigns"] if c["campaign_id"] == "case")
+    assert (row["finding_count_status"], row["unverified_run_ids"]) == ("partial", ["a", "b"])
+    target.write_bytes(original)
+    store._manifest_path("c").write_text('{"run":{"campaign_id":"case","started_at":"2099-01-01T00:00:00Z"}}')
+    assert build_index(store)["rechecked_runs"] == 3
+    rows = read_page(store, 1, "operator")["campaigns"]
+    row = next(c for c in rows if c["campaign_id"] == "case")
+    assert row["last_run_at"] == "2099-01-01T00:00:00Z"
+    assert row["finding_count"] == 1 and row["finding_excerpt"][0]["title"] == "共有検知"
+    build_index(store, full=True)
+    assert read_page(store, 1, "operator")["campaigns"] == rows
+
+
+def test_failed_publication_preserves_rows_clock_and_retry(store):
+    ledger(store, "a", "old")
+    build_index(store)
+    before = read_page(store, 1, "operator")
+    ledger(store, "a", "new")
+    with patch.object(store, "read_verified_events", side_effect=PermissionError("fixture")):
+        with pytest.raises(PermissionError):
+            build_index(store)
+    assert read_page(store, 1, "operator") == before
+    with closing(sqlite3.connect(_index_path(store))) as db:
+        db.execute("CREATE TRIGGER stop BEFORE INSERT ON meta BEGIN SELECT RAISE(ABORT,'stop'); END")
+    with pytest.raises(sqlite3.IntegrityError, match="stop"):
+        build_index(store)
+    assert read_page(store, 1, "operator") == before
+    with closing(sqlite3.connect(_index_path(store))) as db:
+        db.execute("DROP TRIGGER stop")
+    assert build_index(store)["rechecked_runs"] == 1
+    after = read_page(store, 1, "operator")
+    assert after["checked_at"] != before["checked_at"]
+    assert [row["campaign_id"] for row in after["campaigns"]] == ["new"]
+
+
+def test_legacy_snapshot_migrates_atomically(store):
+    ledger(store, "a", "a")
+    with closing(sqlite3.connect(_index_path(store))) as db, db:
+        db.execute("CREATE TABLE meta (checked_at TEXT, total INTEGER)")
+        db.execute("CREATE TABLE cases (id TEXT PRIMARY KEY, created TEXT, row_json TEXT, excerpt TEXT)")
+        db.execute("INSERT INTO meta VALUES ('previous',0)")
+    with patch.object(store, "read_verified_events", side_effect=OSError("I/O")):
+        with pytest.raises(OSError):
+            build_index(store)
+    assert read_page(store, 1, "operator")["checked_at"] == "previous"
+    assert build_index(store)["mode"] == "full"
+    assert build_index(store)["rechecked_runs"] == 0
+
+
+def test_reader_keeps_previous_generation_until_commit(store):
+    from ai_yori_murasaki import monitor_index
+    ledger(store, "r", "old")
+    build_index(store)
+    before = read_page(store, 1, "operator")
+    ledger(store, "r", "new")
+    write_case = monitor_index._write_case
+
+    def observe(*args):
+        write_case(*args)
+        assert read_page(store, 1, "operator") == before
+
+    with patch.object(monitor_index, "_write_case", side_effect=observe):
+        build_index(store)
+    assert read_page(store, 1, "operator")["campaigns"][0]["campaign_id"] == "new"

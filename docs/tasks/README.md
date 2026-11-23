@@ -22,6 +22,7 @@ Task、[Acceptance](../acceptance/README.md)、[CHANGELOG](../../CHANGELOG.md)�
 
 | task_id | 作業 | 検収 |
 | --- | --- | --- |
+| 20261123-06 | [モニター索引の差分更新](TASK.incremental-monitor-11-23-2026.md) | [AC-20261123-06](../acceptance/AC-20261123-06.md) |
 | 20261123-05 | [案件受付と登録索引](TASK.case-intake-11-23-2026.md) | [AC-20261123-05](../acceptance/AC-20261123-05.md) |
 | 20261123-04 | [10万案件のモニター一覧](TASK.monitor-index-11-23-2026.md) | [AC-20261123-04](../acceptance/AC-20261123-04.md) |
 | 20261123-03 | [文書索引と過去の検収記録](TASK.document-consistency-11-23-2026.md) | [AC-20261123-03](../acceptance/AC-20261123-03.md) |

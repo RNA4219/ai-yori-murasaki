@@ -1,0 +1,13 @@
+{
+  "campaigns": 100000,
+  "initial_ledger_opens": 100000,
+  "changed_run": "r050000",
+  "incremental_ledger_opens": 1,
+  "unchanged_ledger_opens": 0,
+  "full_rebuild_ledger_opens": 100000,
+  "matching_rows": 100000,
+  "rows_preserved_on_failure": 100000,
+  "checked_at_before_failure": "2026-11-23T05:49:22.447740+00:00",
+  "checked_at_after_failure": "2026-11-23T05:49:22.447740+00:00",
+  "retry_ledger_opens": 1
+}
