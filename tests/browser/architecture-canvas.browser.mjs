@@ -150,7 +150,7 @@ try {
     assert.match(await page.locator('#detail-name').innerText(),/モニター/);
     await wire.focus();await page.keyboard.press('Enter');
     assert.equal(await page.locator('#detail-kind').innerText(),'選択中の接続');
-    if(!mobile) {
+    {
       const nodes=[{id:'a',name:'受付',kind:'service'},{id:'b',name:'保管',kind:'store'}];
       const connections=[{from:'a',to:'b',label:'記録する',evidence:'仕様書A'},{from:'a',to:'b',label:'状態を照合する'}];
       const file={schema:'aym.architecture/v1',name:'重複する接続の確認',nodes,connections};
@@ -160,6 +160,32 @@ try {
       await page.locator('.wire').focus();await page.keyboard.press('Enter');
       const reasons=await page.locator('#findings').innerText();
       for(const value of ['記録する','仕様書A','状態を照合する','根拠の記録はありません']) assert.ok(reasons.includes(value));
+      const fields=name=>page.getByRole('group',{name,exact:true});
+      const first=fields('記録する'), second=fields('状態を照合する');
+      await second.getByLabel('利用者の入力経路').selectOption('internal');
+      await first.getByLabel('利用者の入力経路').selectOption('ui');
+      await first.getByRole('textbox').fill('受付フォームの件名と本文');
+      assert.equal(await page.locator('.wire').getAttribute('data-input'),'ui');
+      assert.equal(await page.locator('#unsaved').isVisible(),true);
+      const pending=page.waitForEvent('download');
+      await page.getByRole('button',{name:mobile?'変更をJSONに保存':'構成図を保存',exact:true}).click();
+      const download=await pending, chunks=[];
+      for await(const chunk of await download.createReadStream()) chunks.push(chunk);
+      const buffer=Buffer.concat(chunks);
+      const saved=JSON.parse(buffer);
+      assert.deepEqual(saved.connections,[{...connections[0],userInput:{mode:'ui',scope:'受付フォームの件名と本文'}},
+        {...connections[1],userInput:{mode:'internal'}}]);
+      await page.locator('#file').setInputFiles({name:download.suggestedFilename(),mimeType:'application/json',buffer});
+      await page.getByText('読み込み元　'+download.suggestedFilename(),{exact:true}).waitFor();
+      await page.getByRole('button',{name:'入力経路を編集　記録する',exact:true}).click();
+      assert.equal(await first.getByRole('textbox').inputValue(),'受付フォームの件名と本文');
+      assert.equal(await second.getByRole('combobox').inputValue(),'internal');
+      assert.equal(await second.getByRole('textbox').count(),0);
+      await first.getByRole('combobox').selectOption('internal');
+      assert.equal(await page.locator('.wire').getAttribute('data-input'),'internal');
+      await first.getByRole('combobox').selectOption('');
+      await second.getByRole('combobox').selectOption('');
+      assert.equal(await page.locator('#input-legend').isVisible(),false);
     }
     assert.deepEqual(errors,[]);await page.close();
     console.log('PASS 構成と接続　'+(mobile?'タッチ・ピンチ':'マウス')+'・キーボード');

@@ -12,10 +12,10 @@
   "connections": [
     {"from":"web","to":"contracts","label":"型定義に依存","evidence":"orders-web/package.json → dependencies → order-contracts"},
     {"from":"api","to":"contracts","label":"型定義に依存","evidence":"orders-api/package.json → dependencies → order-contracts"},
-    {"from":"web","to":"gateway","label":"注文を送信","evidence":"orders-web/src/orders.ts → submitOrder"},
+    {"from":"web","to":"gateway","label":"注文を送信","evidence":"orders-web/src/orders.ts → submitOrder","userInput":{"mode":"ui","scope":"注文フォームで指定する商品と数量"}},
     {"from":"api","to":"worker","label":"実装を配備","evidence":"orders-api/template.yaml → Resources.OrderHandler.Properties.CodeUri"},
     {"from":"gateway","to":"worker","label":"処理を呼び出す","evidence":"orders-api/template.yaml → OrderRoute.Integration"},
-    {"from":"worker","to":"archive","label":"控えを保存","evidence":"orders-api/src/receipt.ts → saveReceipt"}
+    {"from":"worker","to":"archive","label":"控えを保存","evidence":"orders-api/src/receipt.ts → saveReceipt","userInput":{"mode":"internal"}}
   ],
   "findings": [
     {"node":"archive","severity":"high","title":"注文控えの復元手段を確認","evidence":"見本の運用レビュー REC-04。テンプレートのバージョニングは Suspended。注文控えの復元試験が未記録。","action":"保存要件とバックアップ先を確認し、注文控えを一件復元して結果を記録する。"},

@@ -2,6 +2,7 @@ import { CORE_SCHEMA, Type, load } from './js-yaml.mjs';
 
 export const SCHEMA = 'aym.architecture/v1';
 export const MAX_BYTES = 1024 * 1024;
+export const inputModes = new Map([['','未指定'],['ui','利用者入力'],['internal','内部処理']]);
 export const severityNames = new Map([
   ['critical','重大'], ['high','高'], ['medium','中'], ['low','低'], ['info','情報']
 ]);
@@ -54,8 +55,18 @@ export function validateMap(raw) {
   const connections=rows(raw.connections,'connections',300).map(c=>{
     if (!ids.has(c.from) || !ids.has(c.to)) throw Error('接続先または接続元のIDが nodes に存在しません。');
     if (c.from===c.to) throw Error('接続元と接続先には別の構成要素を指定してください。');
-    return {from:c.from,to:c.to,label:string(c.label,'関係の名前',80),
+    const connection={from:c.from,to:c.to,label:string(c.label,'関係の名前',80),
       evidence:c.evidence ? string(c.evidence,'関係の根拠',1600) : ''};
+    if ('userInput' in c) {
+      const input=c.userInput;
+      if (!plain(input) || !input.mode || !inputModes.has(input.mode)) throw Error('接続の userInput.mode は ui または internal を指定してください。');
+      connection.userInput={mode:input.mode};
+      if ('scope' in input) {
+        if (input.mode!=='ui') throw Error('入力範囲は利用者入力の接続に指定してください。');
+        connection.userInput.scope=string(input.scope,'画面から入力できる範囲',600);
+      }
+    }
+    return connection;
   });
   const findings=rows(raw.findings ?? [],'findings',300).map(f=>{
     if (!ids.has(f.node)) throw Error('指摘の対象IDが nodes に存在しません。');
@@ -64,6 +75,27 @@ export function validateMap(raw) {
       evidence:string(f.evidence,'指摘の根拠',1600),action:string(f.action,'確認・対応',1000)};
   });
   return {name,nodes,connections,findings};
+}
+
+export function serializeMap(map,original) {
+  const document=original ? {...original,connections:original.connections.map((item,i)=>{
+    const connection={...item};
+    const input=map.connections[i].userInput;
+    if(input) connection.userInput=input;
+    else delete connection.userInput;
+    return connection;
+  })} : {schema:SCHEMA,...map};
+  const tooLarge='保存する構成図が1 MiBを超えています。';
+  // YAML の別名が繰り返し使われた場合も、JSONへの展開量を制限する。
+  let budget=MAX_BYTES;
+  const compact=JSON.stringify(document,function(key,value){
+    budget-=1+(Array.isArray(this)?0:key.length)+(typeof value==='string'?value.length:0);
+    if(budget<0) throw Error(tooLarge);
+    return value;
+  });
+  if(new Blob([compact]).size>MAX_BYTES) throw Error(tooLarge);
+  const pretty=JSON.stringify(document,null,2)+'\n';
+  return new Blob([pretty]).size<=MAX_BYTES ? pretty : compact;
 }
 
 function cloudMap(document, filename) {
@@ -183,7 +215,7 @@ export function importDocuments(files, priorPackages=new Map()) {
   }
   if (files.length!==1) throw Error('複数ファイルを同時に選べるのは package.json です。');
   const {name,value}=files[0];
-  if (plain(value) && value.schema===SCHEMA) return {map:validateMap(value),source:name,note:'ファイルに記載された接続と指摘を表示しています。'};
+  if (plain(value) && value.schema===SCHEMA) return {map:validateMap(value),original:value,source:name,note:'ファイルに記載された接続と指摘を表示しています。'};
   if (plain(value) && plain(value.Resources)) return {map:cloudMap(value,name),source:name,
     note:'テンプレート上の依存関係を表示しています。S3の版管理、DynamoDBの復元、EFSの保存時暗号化の明示設定を確認します。'};
   throw Error('構成図、CloudFormation、または repository を含む package.json を選んでください。');

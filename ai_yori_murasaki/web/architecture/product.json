@@ -16,9 +16,9 @@
   ],
   "connections": [
     {"from":"api","to":"index","label":"確認時刻と50案件を取得","evidence":"GET /api/campaigns?page=1 は monitor_index.read_page で確認済みの一覧を返す。"},
-    {"from":"index","to":"summary","label":"変更した台帳を再検証","evidence":"monitor_index は summarize_run で実行を検証し、影響を受けた案件を再集計する。件数・抜粋・確認時刻は同じトランザクションで公開する。"},
+    {"from":"index","to":"summary","label":"変更した台帳を再検証","evidence":"monitor_index は summarize_run で実行を検証し、影響を受けた案件を再集計する。件数・抜粋・確認時刻は同じトランザクションで公開する。","userInput":{"mode":"internal"}},
     {"from":"store","to":"rust","label":"証跡イベントの形式を検証","evidence":"storage.read_verified_events は monitor_validation.validate_monitor_event を台帳の検証に使用する。"},
-    {"from":"views","to":"api","label":"件数・集計状態・候補を取得","evidence":"web/index.html の loadCore・loadRelations・caseSheet と web/decision.html の loadCampaign。"},
+    {"from":"views","to":"api","label":"件数・集計状態・候補を取得","evidence":"web/index.html の loadCore・loadRelations・caseSheet と web/decision.html の loadCampaign。","userInput":{"mode":"ui","scope":"案件一覧で指定するページ番号と、画面で選択する案件。"}},
     {"from":"api","to":"summary","label":"確認済みの件数と未集計の実行を取得","evidence":"server.py の campaigns / campaign / campaign_decision_view は campaign_summaries を呼ぶ。"},
     {"from":"summary","to":"store","label":"検証した台帳を一度の集計に再利用","evidence":"monitor_summary.py の campaign_summaries と storage.py の read_verified_events。件数は重複する finding_id をまとめる。"},
     {"from":"api","to":"history","label":"前回候補と選択を照合","evidence":"server.py の campaign_relations と campaign_decision_view、decision_view.py の previous_candidates・read_decision_view。"},

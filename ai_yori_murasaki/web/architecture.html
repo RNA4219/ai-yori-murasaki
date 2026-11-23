@@ -59,6 +59,13 @@ summary {cursor:pointer;width:fit-content;padding:5px 0;color:var(--purple);text
 .lane {fill:#fff;fill-opacity:.61;stroke:#d9d3dd;stroke-dasharray:4 5}
 .lane-title {fill:#55475f;font-size:14px;font-weight:700}
 .edge {fill:none;stroke:#8c8192;stroke-width:1.8;vector-effect:non-scaling-stroke}.edge.near {stroke:#674779;stroke-width:2.7}
+.wire[data-input=ui] .edge {stroke:#006d95;stroke-width:3;marker-end:url(#input-arrow)}
+.wire[data-input=ui]:is(.selected,:hover,:focus-visible) .edge {stroke-width:4.5}
+.wire[data-input=internal] .edge {stroke-dasharray:7 4}
+.input-legend {display:flex;align-items:center;gap:6px 16px;flex-wrap:wrap;padding:8px 16px 0;color:var(--muted);font-size:14px}
+.input-legend span {display:inline-flex;align-items:center;gap:6px}
+.input-legend i {width:22px;border-top:2px solid #8c8192}
+.input-legend .ui {border-top:3px solid #006d95}.input-legend .internal {border-top-style:dashed}
 .node {cursor:grab;outline:none}.node .box {fill:#fff;stroke:#afa4b6;stroke-width:1.5}
 [data-severity=critical] {--severity-fill:#202124;--severity-text:#fff;--severity-line:#202124}
 [data-severity=high] {--severity-fill:#b42336;--severity-text:#fff;--severity-line:#b42336}
@@ -77,6 +84,8 @@ summary {cursor:pointer;width:fit-content;padding:5px 0;color:var(--purple);text
 .flag-list:not(:empty) {padding:9px 18px;border-bottom:1px solid var(--line)}
 .detail {padding:18px}.detail h2 {font-size:24px;overflow-wrap:anywhere}.detail p,.detail dd,.detail li,.meta {overflow-wrap:anywhere}
 .detail .description {margin:5px 0 16px}.detail section {border-top:1px solid var(--line);padding-top:14px;margin-top:14px}
+.detail h2 span {display:inline-block;max-width:100%}
+#save-changes {margin-top:10px}
 .finding {margin-top:10px;padding:12px;border-left:3px solid var(--severity-line);background:var(--paper);border-radius:0 6px 6px 0}
 .finding h3 {margin:4px 0 8px}.level {display:inline-block;padding:2px 8px;border-radius:4px;color:var(--severity-text);background:var(--severity-fill);font-size:14px;font-weight:700}
 dl {margin:0}dt {font-weight:700;font-size:14px;color:#624e46}dd {margin:0 0 8px}dd:last-child {margin:0}
@@ -87,6 +96,7 @@ dl {margin:0}dt {font-weight:700;font-size:14px;color:#624e46}dd {margin:0 0 8px
 .connection-record h4 {margin:0 0 5px}
 .connection-choice {display:grid;gap:4px;font-size:14px;margin-top:12px;color:var(--muted)}
 .connection-choice select {min-width:0;width:100%;min-height:40px;color:var(--ink);background:white}
+.connection-choice textarea {width:100%;min-height:64px;resize:vertical;font:inherit;color:var(--ink);padding:6px}
 .picker {padding:12px 18px;align-items:center}.picker label {font-size:14px;font-weight:650}.picker select {width:min(100%,280px);min-height:40px;padding:5px 7px;border:1px solid #b9abbf;background:#fff;border-radius:5px;color:var(--ink)}
 .sr {clip-path:inset(50%);position:absolute;width:1px;height:1px;overflow:hidden;white-space:nowrap}
 .return-map {display:none}.btn:hover,.chip:hover {border-color:#6d497c}
@@ -113,7 +123,7 @@ dl {margin:0}dt {font-weight:700;font-size:14px;color:#624e46}dd {margin:0 0 8px
 <header class="top"><div class="top-inner"><a class="brand" href="/"><span class="seal" aria-hidden="true">紫</span> AI YORI MURASAKI</a><nav aria-label="製品の画面"><a href="/">モニター</a><a href="/decision">判断の画面</a></nav></div></header>
 <main id="main" tabindex="-1">
 <div class="heading"><div><h1 id="name">構成図を読み込み中</h1><div class="source-row"><span class="source" id="source"></span><span class="meta" id="counts"></span></div></div>
-<div class="toolbar"><button type="button" class="btn" id="reset" hidden>見本に戻す</button><label class="file">構成ファイルを開く<input id="file" type="file" multiple accept=".json,.yaml,.yml" aria-label="構成ファイルを開く"></label></div></div>
+<div class="toolbar"><button type="button" class="btn" id="reset" hidden>見本に戻す</button><label class="file">構成ファイルを開く<input id="file" type="file" multiple accept=".json,.yaml,.yml" aria-label="構成ファイルを開く"></label><button type="button" class="btn" id="save-map" disabled>構成図を保存</button><span id="unsaved" class="meta" hidden>未保存の変更</span></div></div>
 <details class="guide"><summary>読み込めるファイルと見本</summary>
 <p>構成図（JSON・YAML）では、リポジトリ、AWSリソース、接続の理由、対象ごとの指摘を指定できます。<a href="/architecture/sample.json" download="architecture-sample.json">編集用の見本JSONを保存</a></p>
 <p>CloudFormation（JSON・YAML）はリソースと設定上の依存関係を読み取ります。package.json は repository を指定したものを順に追加すると、読み込んだリポジトリ間の依存が線になります。</p>
@@ -128,10 +138,11 @@ dl {margin:0}dt {font-weight:700;font-size:14px;color:#624e46}dd {margin:0 0 8px
 <button type="button" id="reset-layout" title="配置を戻す" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5v5h5M4.5 10A8 8 0 1 1 6 18"/></svg><span class="tool-label">配置を戻す</span></button></div></div>
 <div id="flags" class="flag-list"></div>
 <div class="map-frame" id="frame" tabindex="0" role="region" aria-label="構成図" aria-describedby="canvas-keys"><svg id="diagram" role="group" aria-label="構成要素と依存関係の図"></svg></div>
+<div id="input-legend" class="input-legend" aria-label="接続の凡例" hidden><span><i class="ui" aria-hidden="true"></i>利用者入力あり</span><span><i class="internal" aria-hidden="true"></i>内部処理のみ</span><span><i aria-hidden="true"></i>未指定</span></div>
 <p class="sr" id="canvas-keys">Tabで箱と線を選び、Enterで詳細を開きます。矢印キーは箱にフォーカスがあると箱を、それ以外は図全体を移動します。＋と−で拡大・縮小、Homeで全体を表示します。</p>
 <p id="note" class="graph-footer hint"></p>
 <div class="picker"><label for="choose">構成要素を選択</label><select id="choose"></select><label><input type="checkbox" id="nearby"> 直接つながる要素だけ表示</label></div></section>
-<aside class="detail" id="detail" tabindex="-1" aria-labelledby="detail-name"><p class="kind" id="detail-kind"></p><h2 id="detail-name"></h2><p class="description" id="description"></p><section><h3 id="finding-count"></h3><div id="findings"></div></section><section><h3 id="links-title">この要素の接続</h3><ul class="links" id="links"></ul></section><button class="btn return-map" id="return">図に戻る</button></aside>
+<aside class="detail" id="detail" tabindex="-1" aria-labelledby="detail-name"><p class="kind" id="detail-kind"></p><h2 id="detail-name"></h2><p class="description" id="description"></p><section><h3 id="finding-count"></h3><div id="findings"></div><button class="btn" type="button" id="save-changes" hidden>変更をJSONに保存</button></section><section><h3 id="links-title">この要素の接続</h3><ul class="links" id="links"></ul></section><button class="btn return-map" id="return">図に戻る</button></aside>
 </div></main>
 <script type="module" src="/architecture/map.mjs"></script>
 </body></html>

@@ -15,14 +15,14 @@
   "deps_out": [
     "docs/tasks/TASK.architecture-canvas-11-23-2026.md"
   ],
-  "summary": "構成図の直接操作と接続の根拠、操作列を検証。部品に混在する重大度の色と件数、情報のみと指摘なしの表示をPC・スマートフォン幅で確認した。",
-  "source_sha256": "fdad374642e35435c237696271cacfcdacf81b3a727ca3e3b97b7f78ac3818e0",
-  "generated_at": "00047",
+  "summary": "構成図の直接操作、重大度別表示と接続の入力区分を検証。PC・スマートフォン幅で重なる線の設定と入力範囲の保存・再読込を確認した。",
+  "source_sha256": "0fc17c21dee35636f3efb8901f4bd7e4b175d550ceb8548c8de1355a1b59f47d",
+  "generated_at": "00048",
   "review": {
-    "reviewed_at": "2026-11-23T10:43:07+00:00",
+    "reviewed_at": "2026-11-23T10:53:36+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "fdad374642e35435c237696271cacfcdacf81b3a727ca3e3b97b7f78ac3818e0",
-    "summary_sha256": "b36b76dcfa128d4c1427f72dc0814e7c5931f7d09e99d22e2b49d53f72520353",
-    "scope": "構成図の重大度別表示の配色、件数と画面検収を原文に照合。"
+    "source_sha256": "0fc17c21dee35636f3efb8901f4bd7e4b175d550ceb8548c8de1355a1b59f47d",
+    "summary_sha256": "44e95afe0f83660325053ebe675a4f2926d99c60a306fb78dcedaa205eb42305",
+    "scope": "利用者が入力できる矢印と範囲の指定、構成図の保存・再読込の記録を原文に照合。"
   }
 }

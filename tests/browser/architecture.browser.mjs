@@ -84,6 +84,11 @@ try{
     }
     assert.equal(await page.locator('.node').count(),2);
     assert.equal(await page.locator('.edge').count(),1);
+    await page.locator('.wire').focus();await page.keyboard.press('Enter');
+    await page.getByLabel('利用者の入力経路').selectOption('internal');
+    await page.locator('#file').setInputFiles(upload('package.json',JSON.stringify({name:'shared',repository:'team/shared'})));
+    await page.getByText('読み込み元　package.json 3 件',{exact:true}).waitFor();
+    assert.equal(await page.locator('.wire').getAttribute('data-input'),'internal');
     assert.equal(requests.length,countBefore,'ファイルの読み込みによるHTTPリクエストがない');
     await page.locator('#reset').click();
     await page.getByRole('heading',{name:'注文管理サービス'}).waitFor();

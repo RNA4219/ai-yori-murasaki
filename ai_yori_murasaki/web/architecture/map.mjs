@@ -1,4 +1,4 @@
-import { parseFile, importDocuments, validateMap, MAX_BYTES, kindNames, severityNames } from './model.mjs';
+import { parseFile, importDocuments, validateMap, serializeMap, MAX_BYTES, kindNames, severityNames, inputModes } from './model.mjs';
 
 const $=id=>document.getElementById(id);
 const ns='http://www.w3.org/2000/svg';
@@ -32,7 +32,19 @@ function initial(nodes) {
 }
 
 function apply(result,sample=false) {
+  let keptEdits=false;
+  if(result.packages && state.packages.size){
+    const key=c=>JSON.stringify([c.from,c.to,c.label,c.evidence]);
+    const inputs=new Map(state.map.connections.filter(c=>c.userInput).map(c=>[key(c),c.userInput]));
+    for(const c of result.map.connections){
+      const input=inputs.get(key(c));
+      if(input) { c.userInput=input;keptEdits=true; }
+    }
+  }
   state.map=result.map;
+  state.original=result.original;
+  setEdited(keptEdits);
+  $('save-map').disabled=false;
   state.map.findings.sort((a,b)=>priorities.indexOf(a.severity)-priorities.indexOf(b.severity));
   state.byId=new Map(state.map.nodes.map(n=>[n.id,n]));
   state.findingsByNode=new Map(state.map.nodes.map(n=>[n.id,[]]));
@@ -54,15 +66,19 @@ function apply(result,sample=false) {
   render();
 }
 function error(message) { $('error').textContent=message; $('error').hidden=false; }
+function setEdited(edited){
+  $('unsaved').hidden=!edited;
+  $('save-changes').hidden=!edited || !selectedWire;
+}
 async function loadBundled(product = false) {
   const version=++state.load;
   try {
     const response=await fetch(product ? '/architecture/product.json' : '/architecture/sample.json',{credentials:'same-origin'});
     if (!response.ok) throw Error('見本ファイルを取得できませんでした。');
-    const map=validateMap(await response.json());
+    const original=await response.json(), map=validateMap(original);
     if (version===state.load) {
-      if (product) apply({map,source:'ai-yori-murasaki の実装'});
-      else apply({map,note:'架空の構成とレビュー記録を使用しています。'},true);
+      if (product) apply({map,original,source:'ai-yori-murasaki の実装'});
+      else apply({map,original,note:'架空の構成とレビュー記録を使用しています。'},true);
     }
   } catch(e) { if(version===state.load) error(e.message); }
 }
@@ -262,7 +278,7 @@ function draw(reset=false){
   const active=document.activeElement?.closest?.('.node,.wire')?.dataset;
   nodesDrawn.clear();wiresDrawn.clear();
   const fragment=document.createDocumentFragment(),defs=svg('defs');
-  for(const [id,color] of [['arrow','#8c8192'],['active-arrow','#674779']]){
+  for(const [id,color] of [['arrow','#8c8192'],['active-arrow','#674779'],['input-arrow','#006d95']]){
     const marker=svg('marker',{id,viewBox:'0 0 10 10',refX:8,refY:5,markerWidth:6,markerHeight:6,orient:'auto'});
     marker.append(svg('path',{d:'M0 1 L9 5 L0 9 z',fill:color}));defs.append(marker);
   }
@@ -288,10 +304,11 @@ function draw(reset=false){
       'marker-end':'url(#'+(activeEdge?'active-arrow':'arrow')+')'});
     const hit=svg('path',{class:'wire-hit',d:path.getAttribute('d')});
     g.append(svg('title',{},label+'　'+c.label),path,hit);fragment.append(g);
-    wiresDrawn.set(key,{path,hit,records:[c]});
+    wiresDrawn.set(key,{group:g,path,hit,records:[c]});
     if(active?.wire===key) focusTarget=g;
   }
   if(selectedWire && !wiresDrawn.has(selectedWire)) selectedWire=null;
+  updateInputLines();
   const emphasized=selectedWire ? new Set(JSON.parse(selectedWire)) : near;
   for(const n of nodes){
     const p=chart.positions.get(n.id), findings=issues(n.id), selected=!selectedWire && n.id===state.selected;
@@ -345,17 +362,60 @@ function selectWire(key,choices=[]) {
   $('status').textContent='接続を選択しました。'+$('detail-name').textContent;
   if(matchMedia('(max-width:900px)').matches) $('detail').focus();
 }
+function updateInputLines(){
+  let marked=false;
+  for(const {group,records} of wiresDrawn.values()){
+    const modes=new Set(records.map(c=>c.userInput?.mode || ''));
+    const input=modes.has('ui')?'ui':modes.size===1 && modes.has('internal')?'internal':'';
+    group.dataset.input=input;
+    if(modes.has('ui') || modes.has('internal')) marked=true;
+    const {from,to}=records[0];
+    const label=state.byId.get(from).name+' → '+state.byId.get(to).name;
+    const classes=[...modes].map(mode=>inputModes.get(mode)).join('・');
+    group.setAttribute('aria-label','接続　'+label+'、'+classes);
+    group.querySelector('title').textContent=label+'　'+records.map(c=>c.label).join('・')+'（'+classes+'）';
+  }
+  $('input-legend').hidden=!marked;
+}
+function inputEditor(connection){
+  const label=html('label','利用者の入力経路','connection-choice'), select=html('select');
+  for(const [mode,name] of inputModes) select.add(new Option(name,mode));
+  select.value=connection.userInput?.mode || '';
+  label.append(select);
+  const scopeLabel=html('label','画面から入力できる範囲（任意）','connection-choice');
+  const scope=html('textarea');
+  scope.maxLength=600;scope.rows=2;
+  scope.value=connection.userInput?.scope || '';
+  scopeLabel.append(scope);
+  scopeLabel.hidden=select.value!=='ui';
+  select.addEventListener('change',()=>{
+    if(select.value) connection.userInput={mode:select.value};
+    else delete connection.userInput;
+    scope.value='';
+    scopeLabel.hidden=select.value!=='ui';
+    setEdited(true);updateInputLines();
+  });
+  scope.addEventListener('input',()=>{
+    const value=scope.value.trim();
+    if(value) connection.userInput.scope=value;
+    else delete connection.userInput.scope;
+    setEdited(true);
+  });
+  return [label,scopeLabel];
+}
 function details(){
+  $('save-changes').hidden=$('unsaved').hidden || !selectedWire;
   if(selectedWire) {
     const records=wiresDrawn.get(selectedWire).records, {from,to}=records[0];
     const source=state.byId.get(from), target=state.byId.get(to);
     $('detail-kind').textContent='選択中の接続';
-    $('detail-name').textContent=source.name+' → '+target.name;
+    $('detail-name').replaceChildren(html('span',source.name),' ',html('span','→ '+target.name));
     $('description').hidden=true;
     $('finding-count').textContent='接続の理由と根拠';
     $('findings').replaceChildren(...records.map(c=>{
       const box=html('div',undefined,'connection-record');
-      box.append(html('h4',c.label),html('p',c.evidence || '根拠の記録はありません。','link-evidence'));
+      box.setAttribute('role','group');box.setAttribute('aria-label',c.label);
+      box.append(html('h4',c.label),html('p',c.evidence || '根拠の記録はありません。','link-evidence'),...inputEditor(c));
       return box;
     }));
     if(wireChoices.length>1) {
@@ -364,8 +424,8 @@ function details(){
         const line=wiresDrawn.get(key)?.records[0];if(!line) continue;
         menu.add(new Option(state.byId.get(line.from).name+' → '+state.byId.get(line.to).name,key));
       }
-      menu.value=selectedWire;
-      menu.addEventListener('change',()=>{selectWire(menu.value,wireChoices);$('findings').querySelector('select')?.focus({preventScroll:true});});
+      menu.id='wire-choice';menu.value=selectedWire;
+      menu.addEventListener('change',()=>{selectWire(menu.value,wireChoices);$('wire-choice')?.focus({preventScroll:true});});
       label.append(menu);$('findings').append(label);
     }
     $('links-title').textContent='接続する要素';
@@ -394,7 +454,17 @@ function details(){
   const links=incident(n.id).map(c=>{
     const out=c.from===n.id, other=state.byId.get(out?c.to:c.from);
     const row=html('li');
-    row.append(html('p',(out?'接続先':'接続元')+'　·　'+c.label,'kind'));
+    const open=html('button',c.label,'link');
+    open.setAttribute('aria-label','入力経路を編集　'+c.label);
+    open.addEventListener('click',()=>{
+      const key=JSON.stringify([c.from,c.to]);
+      if(!wiresDrawn.has(key)){state.mode='all';render();}
+      selectWire(key);
+      const index=wiresDrawn.get(key).records.indexOf(c);
+      $('findings').querySelectorAll('.connection-record select')[index]?.focus();
+    });
+    const direction=html('p',(out?'接続先':'接続元')+'　·　','kind');
+    direction.append(open);row.append(direction);
     const button=html('button',other.name,'link');
     button.addEventListener('click',()=>{
       if(state.mode==='repos' && other.kind!=='repository'){state.mode='all';state.selected=other.id;render();}
@@ -568,6 +638,19 @@ diagram.addEventListener('wheel',e=>{
 $('zoom-in').addEventListener('click',()=>zoomAt(camera.zoom*1.25));
 $('zoom-out').addEventListener('click',()=>zoomAt(camera.zoom*.8));
 $('fit-map').addEventListener('click',fitMap);
+function saveMap(){
+  try{
+    const blob=new Blob([serializeMap(state.map,state.original)],{type:'application/json'});
+    const url=URL.createObjectURL(blob), link=html('a');
+    link.href=url;link.download='architecture-map.json';link.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    if(document.activeElement===$('save-changes')) $('findings').querySelector('select')?.focus({preventScroll:true});
+    setEdited(false);$('error').hidden=true;
+    $('status').textContent='構成図のJSONを書き出しました。';
+  }catch(e){error('構成図を保存できません。'+e.message);}
+}
+$('save-map').addEventListener('click',saveMap);
+$('save-changes').addEventListener('click',saveMap);
 $('reset-layout').addEventListener('click',()=>{offsets[state.mode].clear();draw();fitMap();});
 $('return').addEventListener('click',()=>{const target=diagram.querySelector('[aria-pressed="true"]');target?.focus();frame.scrollIntoView({block:'center'});});
 $('file').addEventListener('change',e=>{const files=[...e.target.files];e.target.value='';if(files.length) openFiles(files);});

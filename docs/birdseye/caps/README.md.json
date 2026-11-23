@@ -2,7 +2,7 @@
   "id": "README.md",
   "role": "overview",
   "public_api": [],
-  "summary": "製品の起動と操作。案件の検知、構成図の箱の移動、ホイールによる拡大縮小、接続の根拠の確認手順を案内する。",
+  "summary": "製品の起動と操作。案件・検知・判断画面、構成図の接続の根拠、利用者の入力範囲の編集と構成ファイルの保存を案内する。",
   "deps_out": [
     "BLUEPRINT.md",
     "CHANGELOG.md",
@@ -49,13 +49,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "648767b6ce300ad10069ddcbfeb2062652f4171abe23ea0fe8f3b3ea33b6608d",
-  "generated_at": "00045",
+  "source_sha256": "0c3d06f6d53c02833ba46058428c38a3052d10a82f8239fc70660051f581ee78",
+  "generated_at": "00048",
   "review": {
-    "reviewed_at": "2026-11-23T10:23:05+00:00",
+    "reviewed_at": "2026-11-23T10:53:36+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "648767b6ce300ad10069ddcbfeb2062652f4171abe23ea0fe8f3b3ea33b6608d",
-    "summary_sha256": "bbc81b37cd992ec7f95f28dad035c3cd914967c2ffc50cc9c789fbd93c830b72",
-    "scope": "図内外のホイール操作とポインター位置の検収を原文に照合。"
+    "source_sha256": "0c3d06f6d53c02833ba46058428c38a3052d10a82f8239fc70660051f581ee78",
+    "summary_sha256": "bb815e533ebc6fa6b38cec4cacaee894e90f5878b115749ed514d89bb962a3ca",
+    "scope": "利用者が入力できる矢印と範囲の指定、構成図の保存・再読込の記録を原文に照合。"
   }
 }

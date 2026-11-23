@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "製品の変更と対応する検収。0036は構成図上の部品別・重大度別の指摘件数と詳細の配色を記録する。",
+  "summary": "製品の変更と検収への参照。0037は接続の利用者入力と内部処理の区分、入力範囲の編集とJSON保存を記録する。",
   "deps_out": [
     "docs/SOURCES.md",
     "docs/acceptance/AC-20261106-01.md",
@@ -83,13 +83,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "f7a84512df0694e0cf891b29c62637eac1619618adb73a77619622c1c3988a5b",
-  "generated_at": "00047",
+  "source_sha256": "3f34166a0b9f80793965d6095bf59f54c9a6f2229be6fbf743bf0cfdc971192e",
+  "generated_at": "00048",
   "review": {
-    "reviewed_at": "2026-11-23T10:43:07+00:00",
+    "reviewed_at": "2026-11-23T10:53:36+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "f7a84512df0694e0cf891b29c62637eac1619618adb73a77619622c1c3988a5b",
-    "summary_sha256": "e40c84c203fb0cb2966a80da559b2e3de9b5ac4b5fbb79f1ed611852d9078169",
-    "scope": "構成図の重大度別表示の配色、件数と画面検収を原文に照合。"
+    "source_sha256": "3f34166a0b9f80793965d6095bf59f54c9a6f2229be6fbf743bf0cfdc971192e",
+    "summary_sha256": "2a26a6c42c8fd8857373edb7e3420e5ec470264d8d3a5d6fa0ae1ca86b9a349b",
+    "scope": "利用者が入力できる矢印と範囲の指定、構成図の保存・再読込の記録を原文に照合。"
   }
 }

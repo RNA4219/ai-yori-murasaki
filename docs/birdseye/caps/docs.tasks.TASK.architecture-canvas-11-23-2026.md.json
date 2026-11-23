@@ -14,14 +14,14 @@
   "deps_out": [
     "docs/acceptance/AC-20261123-09.md"
   ],
-  "summary": "構成図の配置・ズーム・接続根拠、操作列と見出し、部品の指摘を重大度ごとに色と件数で表示する要件。",
-  "source_sha256": "49d1c9746178efdbb260f8e53be2166d65c4d7bbe6c9472698b08d1422a76e5c",
-  "generated_at": "00047",
+  "summary": "構成図の操作、接続根拠、部品の重大度別件数、接続単位での利用者入力の指定・保存に関する要件。",
+  "source_sha256": "90a794e5e2b1c5710fca85cc917ca6926226cf6c69bc9bd23bd84a7caf05c4a3",
+  "generated_at": "00048",
   "review": {
-    "reviewed_at": "2026-11-23T10:43:07+00:00",
+    "reviewed_at": "2026-11-23T10:53:36+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "49d1c9746178efdbb260f8e53be2166d65c4d7bbe6c9472698b08d1422a76e5c",
-    "summary_sha256": "599bd6ec5678a250abef9e785886028bfcee85b91619f3f492e7e0e3d7080b74",
-    "scope": "構成図の重大度別表示の配色、件数と画面検収を原文に照合。"
+    "source_sha256": "90a794e5e2b1c5710fca85cc917ca6926226cf6c69bc9bd23bd84a7caf05c4a3",
+    "summary_sha256": "b89f799a3749c22bcc3709697e6ce1178aa48c31e7eaa0c2fad43e3d917a8ce3",
+    "scope": "利用者が入力できる矢印と範囲の指定、構成図の保存・再読込の記録を原文に照合。"
   }
 }
