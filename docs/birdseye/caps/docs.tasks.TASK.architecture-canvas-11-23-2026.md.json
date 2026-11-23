@@ -14,14 +14,14 @@
   "deps_out": [
     "docs/acceptance/AC-20261123-09.md"
   ],
-  "summary": "構成図の箱の配置、パン、ホイールズーム、接続根拠の表示と、操作列・見出し・説明文に関する要件。",
-  "source_sha256": "ca748efb1cba5c8f8914cef57dd9347f05f7731cc52be29c070fae8e6a8048cc",
-  "generated_at": "00046",
+  "summary": "構成図の配置・ズーム・接続根拠、操作列と見出し、部品の指摘を重大度ごとに色と件数で表示する要件。",
+  "source_sha256": "49d1c9746178efdbb260f8e53be2166d65c4d7bbe6c9472698b08d1422a76e5c",
+  "generated_at": "00047",
   "review": {
-    "reviewed_at": "2026-11-23T10:34:51+00:00",
+    "reviewed_at": "2026-11-23T10:43:07+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "ca748efb1cba5c8f8914cef57dd9347f05f7731cc52be29c070fae8e6a8048cc",
-    "summary_sha256": "e5081f84b73d0c8b7a89788413163fe0893e432158aee272862faa8016ebf915",
-    "scope": "構成図の操作列と画面内の説明について要件・実装の変更と検収を原文に照合。"
+    "source_sha256": "49d1c9746178efdbb260f8e53be2166d65c4d7bbe6c9472698b08d1422a76e5c",
+    "summary_sha256": "599bd6ec5678a250abef9e785886028bfcee85b91619f3f492e7e0e3d7080b74",
+    "scope": "構成図の重大度別表示の配色、件数と画面検収を原文に照合。"
   }
 }

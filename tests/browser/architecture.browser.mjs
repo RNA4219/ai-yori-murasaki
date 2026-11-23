@@ -6,7 +6,7 @@ const browser=await chromium.launch({headless:true,channel:process.env.AYM_BROWS
 const upload=(name,text)=>({name,mimeType:'text/plain',buffer:Buffer.from(text)});
 try{
   for(const width of [1440,390]){
-    const page=await browser.newPage({viewport:{width,height:900},reducedMotion:'reduce'});
+    const page=await browser.newPage({viewport:{width,height:900},reducedMotion:'reduce',deviceScaleFactor:process.env.AYM_TRIAGE_CAPTURE?2:1});
     const errors=[],requests=[];
     page.on('pageerror',e=>errors.push(String(e)));
     page.on('request',r=>requests.push(r.url()));
@@ -29,11 +29,48 @@ try{
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
     const cloud='Resources:\n  Receipts:\n    Type: AWS::S3::Bucket\n    Properties:\n      VersioningConfiguration: {Status: Suspended}\n  Worker:\n    Type: AWS::Lambda::Function\n    Properties:\n      Bucket: !Ref Receipts';
     const countBefore=requests.length;
-    const own={schema:'aym.architecture/v1',name:'請求書管理',nodes:[{id:'billing',kind:'repository',name:'billing-api'}],
-      connections:[],findings:[{node:'billing',severity:'low',title:'担当者の更新',evidence:'引き継ぎ記録 12',action:'担当者を登録する'}]};
+    const own={schema:'aym.architecture/v1',name:'請求書管理',nodes:[
+      {id:'billing',kind:'repository',name:'billing-api'},{id:'audit',kind:'repository',name:'audit-log'},
+      {id:'portal',kind:'service',name:'利用者ポータル'}],connections:[],
+      findings:[['billing','low','担当者の更新'],['billing','high','認証設定の確認'],
+        ['billing','medium','監査ログの保存期間'],['billing','critical','請求書の閲覧権限'],
+        ['billing','high','共有権限の確認'],['audit','info','構成の記録']]
+        .map(([node,severity,title])=>({node,severity,title,evidence:'引き継ぎ記録 12',action:'権限台帳を確認する'}))};
     await page.locator('#file').setInputFiles(upload('own-map.json',JSON.stringify(own)));
     await page.getByRole('heading',{name:'請求書管理',exact:true}).waitFor();
     assert.match(await page.locator('#findings').innerText(),/引き継ぎ記録 12/);
+    const billing=page.locator('.node[data-id="billing"]'), badges=billing.locator('.severity-badge');
+    const triage=['Critical 1','High 2','Medium 1','Low 1'];
+    assert.deepEqual(await badges.locator('text').allTextContents(),triage);
+    assert.deepEqual(await page.locator('.finding .level').allTextContents(),['Critical','High','High','Medium','Low']);
+    assert.equal(await billing.getAttribute('data-severity'),'critical');
+    const colors={'critical':'rgb(32, 33, 36)','high':'rgb(180, 35, 54)','medium':'rgb(245, 205, 66)','low':'rgb(38, 115, 71)'};
+    for(const [severity,color] of Object.entries(colors)){
+      assert.equal(await billing.locator('.severity-badge[data-severity="'+severity+'"] rect')
+        .evaluate(el=>getComputedStyle(el).fill),color);
+      assert.equal(await page.locator('.finding[data-severity="'+severity+'"] .level').first()
+        .evaluate(el=>getComputedStyle(el).backgroundColor),color);
+    }
+    const within=await billing.evaluate(node=>{
+      const box=node.querySelector('.box').getBoundingClientRect();
+      return [...node.querySelectorAll('.severity-badge')].every(badge=>{
+        const r=badge.getBoundingClientRect();
+        return r.left>=box.left && r.right<=box.right && r.top>=box.top && r.bottom<=box.bottom;
+      });
+    });
+    assert.ok(within,'すべての重大度と件数がカードに収まる');
+    for(const label of triage) assert.ok((await billing.getAttribute('aria-label')).includes(label));
+    assert.equal(await page.locator('[data-id="portal"] .severity-badge').count(),0);
+    assert.deepEqual(await page.locator('[data-id="audit"] .severity-badge text').allTextContents(),['情報 1']);
+    if(width===1440 && process.env.AYM_TRIAGE_CAPTURE){
+      await page.locator('#fit-map').click();
+      await page.locator('#frame').scrollIntoViewIfNeeded();
+      const clip=await billing.evaluate(el=>{
+        const r=el.getBoundingClientRect();
+        return {x:r.x-8,y:r.y-8,width:r.width+16,height:r.height+16};
+      });
+      await page.screenshot({path:process.env.AYM_TRIAGE_CAPTURE,clip});
+    }
     await page.locator('#file').setInputFiles(upload('own.yaml',cloud));
     await page.getByRole('heading',{name:'own.yaml',exact:true}).waitFor();
     assert.equal(await page.locator('.node').count(),2);

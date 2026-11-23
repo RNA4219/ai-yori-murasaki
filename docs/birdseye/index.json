@@ -1,5 +1,5 @@
 {
-  "generated_at": "00046",
+  "generated_at": "00047",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -15,8 +15,8 @@
     "CHANGELOG.md": {
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
-      "mtime": "00046",
-      "source_sha256": "0e2981d60e647d8508423878e22806d0bdfb350a2af49038a97b4044a1c32b30"
+      "mtime": "00047",
+      "source_sha256": "f7a84512df0694e0cf891b29c62637eac1619618adb73a77619622c1c3988a5b"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -702,14 +702,14 @@
     "docs/tasks/TASK.architecture-canvas-11-23-2026.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.tasks.TASK.architecture-canvas-11-23-2026.md.json",
-      "source_sha256": "ca748efb1cba5c8f8914cef57dd9347f05f7731cc52be29c070fae8e6a8048cc",
-      "mtime": "00046"
+      "source_sha256": "49d1c9746178efdbb260f8e53be2166d65c4d7bbe6c9472698b08d1422a76e5c",
+      "mtime": "00047"
     },
     "docs/acceptance/AC-20261123-09.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.acceptance.AC-20261123-09.md.json",
-      "source_sha256": "b1ced9004fdcc94626c344ba2891af667079d30f904082f25ae1a7deef4de2ac",
-      "mtime": "00046"
+      "source_sha256": "fdad374642e35435c237696271cacfcdacf81b3a727ca3e3b97b7f78ac3818e0",
+      "mtime": "00047"
     }
   },
   "edges": [

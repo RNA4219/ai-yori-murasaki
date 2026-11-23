@@ -3,7 +3,7 @@ import { parseFile, importDocuments, validateMap, MAX_BYTES, kindNames, severity
 const $=id=>document.getElementById(id);
 const ns='http://www.w3.org/2000/svg';
 const priorities=[...severityNames.keys()];
-const state={map:null,byId:new Map(),selected:null,mode:'all',packages:new Map(),load:0,note:''};
+const state={map:null,byId:new Map(),findingsByNode:new Map(),selected:null,mode:'all',packages:new Map(),load:0,note:''};
 const diagram=$('diagram'), frame=$('frame');
 let camera={x:0,y:0,zoom:1}, chart=null, selectedWire=null, wireChoices=[];
 const offsets={all:new Map(),repos:new Map()};
@@ -20,7 +20,10 @@ function svg(tag,attrs={},text) {
   if (text!==undefined) e.textContent=text;
   return e;
 }
-function issues(id) { return state.map.findings.filter(f=>f.node===id); }
+function issues(id) { return state.findingsByNode.get(id); }
+function levelName(severity) {
+  return severity==='info' ? severityNames.get(severity) : severity[0].toUpperCase()+severity.slice(1);
+}
 function eligible() { return state.map.nodes.filter(n=>state.mode==='all' || n.kind==='repository'); }
 function incident(id) { return state.map.connections.filter(c=>c.from===id || c.to===id); }
 function initial(nodes) {
@@ -32,6 +35,8 @@ function apply(result,sample=false) {
   state.map=result.map;
   state.map.findings.sort((a,b)=>priorities.indexOf(a.severity)-priorities.indexOf(b.severity));
   state.byId=new Map(state.map.nodes.map(n=>[n.id,n]));
+  state.findingsByNode=new Map(state.map.nodes.map(n=>[n.id,[]]));
+  for(const finding of state.map.findings) state.findingsByNode.get(finding.node).push(finding);
   state.mode='all';
   offsets.all.clear();offsets.repos.clear();selectedWire=null;
   resetGestures();
@@ -100,6 +105,21 @@ function repoBands(nodes,edges) {
   for(const n of nodes) (bands[levels.get(n.id)] ??= {label:'',nodes:[]}).nodes.push(n);
   return bands;
 }
+function cardSize(id,width) {
+  const counts=new Map();
+  for(const {severity} of issues(id)) counts.set(severity,(counts.get(severity) || 0)+1);
+  const badges=[];
+  let x=10,y=54;
+  measure.font='bold 12px Arial,sans-serif';
+  for(const [severity,count] of counts) {
+    const label=levelName(severity)+' '+count;
+    const w=Math.ceil(measure.measureText(label).width)+14;
+    if(x>10 && x+w>width-10) { x=10;y+=23; }
+    badges.push({severity,label,x,y,w});
+    x+=w+4;
+  }
+  return {w:width,h:badges.length ? y+46 : 80,badges};
+}
 function layout(nodes,edges,width) {
   const repoOnly=nodes.every(n=>n.kind==='repository');
   const bands=repoOnly ? repoBands(nodes,edges) : [
@@ -109,7 +129,7 @@ function layout(nodes,edges,width) {
   ].filter(b=>b.nodes.length);
   const vertical=width<580 || bands.length>4;
   const positions=new Map(), zones=[];
-  const height=80, gap=36, margin=12;
+  const gap=36, margin=12;
   let bottom=0;
   if(vertical) {
     let top=14;
@@ -118,23 +138,39 @@ function layout(nodes,edges,width) {
       const cell=(width-margin*2)/columns;
       const bw=Math.min(186,cell-18);
       const start=band.label ? 32 : 12;
-      const rows=Math.ceil(band.nodes.length/columns);
-      const zoneHeight=start+rows*(height+20);
+      let zoneHeight=start;
+      for(let i=0;i<band.nodes.length;i+=columns){
+        const row=band.nodes.slice(i,i+columns).map((n,col)=>{
+          const card=cardSize(n.id,bw);
+          Object.assign(card,{x:margin+(col+.5)*cell-bw/2,y:top+zoneHeight,bandTop:top});
+          positions.set(n.id,card);
+          return card.h;
+        });
+        zoneHeight+=Math.max(...row)+20;
+      }
       zones.push({x:margin,y:top,w:width-margin*2,h:zoneHeight,label:band.label});
-      band.nodes.forEach((n,i)=>positions.set(n.id,{x:margin+(i%columns+.5)*cell-bw/2,y:top+start+Math.floor(i/columns)*(height+20),w:bw,h:height,bandTop:top,bandBottom:top+zoneHeight}));
+      for(const n of band.nodes) positions.get(n.id).bandBottom=top+zoneHeight;
       top+=zoneHeight+22;
     }
     bottom=top;
   } else {
     const widthPer=(width-2*margin)/bands.length;
-    const bw=Math.min(205,widthPer-46);
-    const rows=Math.max(...bands.map(b=>b.nodes.length));
-    bottom=Math.max(300,rows*(height+gap)+64);
+    const bw=Math.min(205,Math.max(106,widthPer-46));
+    const heights=bands.map(band=>band.nodes.reduce((total,n)=>{
+      const card=cardSize(n.id,bw);
+      positions.set(n.id,card);
+      return total+card.h+gap;
+    },0));
+    bottom=Math.max(300,Math.max(...heights)+64);
     bands.forEach((band,col)=>{
       const left=margin+col*widthPer;
       zones.push({x:left+2,y:16,w:widthPer-4,h:bottom-32,label:band.label});
-      const firstY=(bottom-band.nodes.length*(height+gap)+gap)/2+10;
-      band.nodes.forEach((n,i)=>positions.set(n.id,{x:left+(widthPer-bw)/2,y:firstY+i*(height+gap),w:bw,h:height}));
+      let y=(bottom-heights[col]+gap)/2+10;
+      for(const n of band.nodes){
+        const card=positions.get(n.id);
+        card.x=left+(widthPer-bw)/2;card.y=y;
+        y+=card.h+gap;
+      }
     });
   }
   return {positions,zones,height:bottom};
@@ -264,11 +300,16 @@ function draw(reset=false){
     g.append(svg('rect',{class:'box',width:p.w,height:p.h,rx:8}));
     const color=n.kind==='repository'?'#68487a':n.kind==='store'?'#29676c':'#915031';
     g.append(svg('path',{class:'glyph',d:glyphs[n.kind],transform:'translate(9 8)',color}));
-    g.append(svg('text',{class:'node-type',x:32,y:23},fit(n.type || kindNames.get(n.kind),p.w-(findings.length?61:42),12)));
+    g.append(svg('text',{class:'node-type',x:32,y:23},fit(n.type || kindNames.get(n.kind),p.w-42,12)));
     g.append(svg('text',{class:'node-title',x:11,y:48},fit(n.name,p.w-21,15,true)));
     if(findings.length){
-      g.append(svg('text',{class:'node-issue',x:11,y:68},fit('指摘　'+findings[0].title,p.w-21,12)));
-      g.append(svg('circle',{class:'alert-icon',cx:p.w-13,cy:15,r:9}),svg('text',{class:'alert-text',x:p.w-13,y:19,'text-anchor':'middle'},'!'));
+      g.dataset.severity=findings[0].severity;
+      for(const {severity,label,x,y,w} of p.badges){
+        const badge=svg('g',{class:'severity-badge','data-severity':severity,transform:'translate('+x+' '+y+')'});
+        badge.append(svg('rect',{width:w,height:19,rx:4}),svg('text',{x:7,y:14},label));
+        g.append(badge);
+      }
+      g.append(svg('text',{class:'node-issue',x:11,y:p.h-9},fit(findings[0].title,p.w-21,12)));
     }
     const visibleLabel=[...g.querySelectorAll('text')].map(t=>t.textContent).join(' ');
     g.setAttribute('aria-label',visibleLabel+'。'+n.name+'、'+kindNames.get(n.kind)+'、指摘'+findings.length+'件');
@@ -344,8 +385,9 @@ function details(){
   $('finding-count').textContent=list.length?'この要素の指摘　'+list.length+' 件':'この要素の指摘';
   const records=list.map(f=>{
     const item=html('article',undefined,'finding');
+    item.dataset.severity=f.severity;
     const dl=html('dl');dl.append(html('dt','根拠'),html('dd',f.evidence),html('dt','確認・対応'),html('dd',f.action));
-    item.append(html('span','重要度　'+severityNames.get(f.severity),'level'),html('h3',f.title),dl);
+    item.append(html('span',levelName(f.severity),'level'),html('h3',f.title),dl);
     return item;
   });
   $('findings').replaceChildren(...(records.length?records:[html('p','このデータには指摘の記録がありません。','hint')]));
@@ -381,6 +423,7 @@ function render() {
     more.append(html('summary','ほか '+Math.max(0,flagged.length-4)+' 件'));
     flagged.forEach((n,i)=>{
       const button=html('button',n.name,'chip');
+      button.dataset.severity=issues(n.id)[0].severity;
       button.addEventListener('click',()=>select(n.id,true));
       (i<4 ? $('flags') : more).append(button);
     });

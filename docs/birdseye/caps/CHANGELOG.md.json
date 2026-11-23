@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "製品の変更と対応する検収。0035は構成図の操作列を1行にまとめ、見出しと画面内の説明を整理した変更。",
+  "summary": "製品の変更と対応する検収。0036は構成図上の部品別・重大度別の指摘件数と詳細の配色を記録する。",
   "deps_out": [
     "docs/SOURCES.md",
     "docs/acceptance/AC-20261106-01.md",
@@ -83,13 +83,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "0e2981d60e647d8508423878e22806d0bdfb350a2af49038a97b4044a1c32b30",
-  "generated_at": "00046",
+  "source_sha256": "f7a84512df0694e0cf891b29c62637eac1619618adb73a77619622c1c3988a5b",
+  "generated_at": "00047",
   "review": {
-    "reviewed_at": "2026-11-23T10:34:51+00:00",
+    "reviewed_at": "2026-11-23T10:43:07+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "0e2981d60e647d8508423878e22806d0bdfb350a2af49038a97b4044a1c32b30",
-    "summary_sha256": "0542212c1e94be87447f7bbc172680aaa875a43d5f76c87825fd9ee98efbe955",
-    "scope": "構成図の操作列と画面内の説明について要件・実装の変更と検収を原文に照合。"
+    "source_sha256": "f7a84512df0694e0cf891b29c62637eac1619618adb73a77619622c1c3988a5b",
+    "summary_sha256": "e40c84c203fb0cb2966a80da559b2e3de9b5ac4b5fbb79f1ed611852d9078169",
+    "scope": "構成図の重大度別表示の配色、件数と画面検収を原文に照合。"
   }
 }
