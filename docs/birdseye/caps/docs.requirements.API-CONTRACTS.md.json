@@ -2,7 +2,7 @@
   "id": "docs/requirements/API-CONTRACTS.md",
   "role": "doc",
   "public_api": [],
-  "summary": "CLI・読み取りAPIと画面の契約。受付ID・再送キーの有効範囲、競合理由、受付検索の表示範囲と件数上限を含む。",
+  "summary": "CLI・読み取りAPIと画面の契約。monitor indexの変更判定、戻り値、確認時刻、旧索引の移行と全件再検証を含む。",
   "deps_out": [
     "docs/PRODUCT-ACCEPTANCE.md",
     "docs/SOURCES.md",
@@ -16,13 +16,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "38a247724599b2132391964cf5ff66c57bf2bbf342d07fdcba44526c21d20a76",
-  "generated_at": "00040",
+  "source_sha256": "03dd0b5d33a6bd263425176f3f85fc21b07d744ea21fb41ddd9b765df91b3fb1",
+  "generated_at": "00041",
   "review": {
-    "reviewed_at": "2026-11-23T04:40:42+00:00",
+    "reviewed_at": "2026-11-23T05:50:40+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "38a247724599b2132391964cf5ff66c57bf2bbf342d07fdcba44526c21d20a76",
-    "summary_sha256": "575e20c2d01366f702627cb4bd87e983a48e105ad46ae52adee53f7c787c13ff",
-    "scope": "案件受付・再送・検索の変更と検収範囲、参照先を原文に照合。"
+    "source_sha256": "03dd0b5d33a6bd263425176f3f85fc21b07d744ea21fb41ddd9b765df91b3fb1",
+    "summary_sha256": "efaf9af12d50fa99aed40c3fe25f07b069ddd1e8c6995f5134940286f0fff2bb",
+    "scope": "索引の差分更新・再検証の変更、失敗時の状態と参照先を原文に照合。"
   }
 }

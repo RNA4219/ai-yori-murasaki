@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.1",
+  "profile": "performance",
+  "manifest_id": "eval:20261123-06",
+  "task_id": "20261123-06",
+  "owner": "RNA4219",
+  "purpose": "comparison",
+  "status": "completed",
+  "freeze_date": "2026-11-23",
+  "hypothesis": "1台帳に検知が加わると、その本文だけを読み、全件の再検証と同一の一覧を生成する。",
+  "action_delta": "同一バージョンのmonitor indexの差分更新と--fullを同じストアで比較する。",
+  "negative_control": "一覧と索引を書き換えた後、確認時刻の公開直前にトランザクションを中断する。旧一覧と確認時刻が完全一致し、再試行は1台帳だけ読む。",
+  "identity": {
+    "legacy": {
+      "source_path": "ai_yori_murasaki",
+      "source_sha256": "sha256:eb174a08cdbd036d8c45563e8f821949c7a9bd6a4be7df04f7daaf9a2c95080f",
+      "source_revision": "e8c4eba5e2cef55d06866d12101f37155b8bd1c8+bundle-eb174a08cdbd",
+      "input_sha256": "sha256:2f23c022f067fea8a1ba38ff60dae9037a2e1ddd3c0453a2e207bbcae930c3dc",
+      "label": "明示的な全件再構築"
+    },
+    "candidate": {
+      "source_path": "ai_yori_murasaki",
+      "source_sha256": "sha256:eb174a08cdbd036d8c45563e8f821949c7a9bd6a4be7df04f7daaf9a2c95080f",
+      "source_revision": "e8c4eba5e2cef55d06866d12101f37155b8bd1c8+bundle-eb174a08cdbd",
+      "input_sha256": "sha256:2f23c022f067fea8a1ba38ff60dae9037a2e1ddd3c0453a2e207bbcae930c3dc",
+      "label": "差分更新"
+    },
+    "runner": {
+      "id": "WSL2 Linux ext4 / Python 3.12.3 / tests/fixtures/verify_monitor_incremental.py",
+      "sha256": "sha256:93b4bf99d790c76888027a31ac0c4a04bfb7d481e97e80c84800f92439b1e11e"
+    }
+  },
+  "evaluation": {
+    "dataset_id": "100000-distinct-cases-change-r050000",
+    "dataset_sha256": "sha256:2f23c022f067fea8a1ba38ff60dae9037a2e1ddd3c0453a2e207bbcae930c3dc",
+    "measurement_unit": "operation",
+    "primary_metric": "incremental_ledger_opens",
+    "model_version": "not_used:local_fixture",
+    "policy_version": "monitor-cache-v1",
+    "configuration": {
+      "count": 100000,
+      "page_size": 50,
+      "repetitions": 1,
+      "source_files": [
+        "ai_yori_murasaki/cli.py",
+        "ai_yori_murasaki/monitor_inputs.py",
+        "ai_yori_murasaki/monitor_index.py",
+        "ai_yori_murasaki/monitor_summary.py",
+        "ai_yori_murasaki/monitor_validation.py",
+        "ai_yori_murasaki/server.py",
+        "ai_yori_murasaki/storage.py",
+        "ai_yori_murasaki/jsonio.py",
+        "ai_yori_murasaki/contracts.py",
+        "uv.lock"
+      ],
+      "comparison": "全案件のid・作成時刻・公開行・検知抜粋を表示順に照合、openイベントで台帳本文を計数する。速度の比較は行わない。"
+    }
+  },
+  "external_mutations": {
+    "registry_frozen": true,
+    "submission_frozen": true
+  },
+  "outcome": {
+    "artifact_path": "../evidence/monitor-incremental-20261123/results.json",
+    "artifact_sha256": "sha256:1f2b018cf646abdfc8dfcc501e93f3d86cb131ae41639e54a689fd3836594d14",
+    "records": 100000,
+    "metrics": {
+      "incremental_ledger_opens": 1
+    },
+    "error_count": 0,
+    "timeout_count": 0,
+    "crash_count": 0
+  }
+}

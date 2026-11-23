@@ -14,6 +14,7 @@ Keep a Changelog の区分で管理する。記録には既存最大番号 +1 �
 
 ### Changed
 
+- 0030 — 2026-11-23。モニター索引の2回目以降の更新で、変化した実行の台帳だけを再検証する。確認時刻と一覧は一緒に公開し、`--full` で全件を再検証できる。[Task 20261123-06](docs/tasks/TASK.incremental-monitor-11-23-2026.md)・[技術検収](docs/acceptance/AC-20261123-06.md)
 - 0028 — 2026-11-23。モニターの台帳イベント検証にRust製のスキーマ検証器を導入した。既存台帳から案件の索引を作成でき、モニターと判断画面の一覧を50件ずつ開ける。[Task 20261123-04](docs/tasks/TASK.monitor-index-11-23-2026.md)・[検収と計測値](docs/acceptance/AC-20261123-04.md)
 
 - 0027 — 2026-11-23。索引設定、RSI方針、製品ガイドの要約を原文に合わせ、LLM接続の検収計画に管理項目と証跡への参照を補った。[Task 20261123-03](docs/tasks/TASK.document-consistency-11-23-2026.md)・[文書検査](docs/acceptance/AC-20261123-03.md)

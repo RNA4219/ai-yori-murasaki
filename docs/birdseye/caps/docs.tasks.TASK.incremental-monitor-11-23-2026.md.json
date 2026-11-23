@@ -1,0 +1,27 @@
+{
+  "id": "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/AC-20261123-06.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "docs/acceptance/AC-20261123-06.md"
+  ],
+  "summary": "変更のあった実行を再検証し、旧・新所属の案件を再集計するTask。10万案件の残りの台帳を読まずに済むことと原子的更新の検収を参照できる。",
+  "source_sha256": "42fd53777aea3e413462caca9918d287759240f25da2affac64e90bc896710ca",
+  "generated_at": "00041",
+  "review": {
+    "reviewed_at": "2026-11-23T05:50:40+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "42fd53777aea3e413462caca9918d287759240f25da2affac64e90bc896710ca",
+    "summary_sha256": "0501fb86f5efd1c4ee3f923d7030ed23c37633fb02ad28aa0fd464708c8a01b8",
+    "scope": "索引の差分更新・再検証の変更、失敗時の状態と参照先を原文に照合。"
+  }
+}

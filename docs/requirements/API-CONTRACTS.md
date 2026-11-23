@@ -48,6 +48,14 @@ intent_id: INT-AYM-PRODUCT-20261106 / owner: RNA4219 / status: reviewed
 - 更新コマンドはverify runに結果refを記録し、chainとcheckpointをsealする。失敗は非ゼロ終了とする。これらは従来の認可方針用 `rsi apply` とは別の、製品agent bundle用コマンドである。
 - `lab demo / iterate --policy-bundle-file <絶対パス>` の選択順、拒否条件、証跡は [方策選択契約](QUALITY-INTEGRATION.md#通常実行の方策選択) に従う。
 
+#### `aym monitor index [--full]`
+
+初回と旧形式からの移行時は全件を検証する。以後は実行ごとに台帳・manifest・カタログ上の所属・参照先の検知ファイルを照合する。追加・変更された実行を検証し、削除された実行を除き、影響を受けた案件を再集計する。共通のカタログに変更があったときはカタログ全体を読み直す。
+
+応答の `data` は `mode`（`full` / `incremental`）、`total`（案件数）、`rechecked_runs`（検証を試みた実行数）、`removed_runs`（差分更新で索引から除いた実行数）、`checked_at`（更新成功時刻）を含む。検知数と抜粋、案件順、確認時刻を同時に公開する。途中のI/O障害や書き込み失敗では旧世代を参照できる。台帳の欠損やハッシュ不一致を確認できた場合は、従来の「未集計」「一部未集計」の規則を適用する。
+
+属性の照合にはファイル識別子、モード、サイズ、更新日時、変更日時を使う。全台帳の内容を照合するには `--full` を指定する。
+
 #### `aym intake register`
 
 `--name <案件名>`（前後の空白を除き1〜160文字）と `--idempotency-key <キー>`（1〜256文字）を受け取る。キーはワークスペース単位。同じキーと案件名なら初回の `data.receipt_id, name, registered_at` をそのまま返す。別名で同じキーを使うと終了コード2、`idempotency_conflict`。同名でもキーが異なれば別の受付となる。受付では `campaign_id` と `run_id` はどちらもnullで、監査の作成や実行は行わない。

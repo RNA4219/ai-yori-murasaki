@@ -1,0 +1,28 @@
+{
+  "id": "docs/acceptance/AC-20261123-06.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "README.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.incremental-monitor-11-23-2026.md"
+  ],
+  "deps_out": [
+    "docs/tasks/TASK.incremental-monitor-11-23-2026.md"
+  ],
+  "summary": "10万案件の1台帳だけを開いた差分更新と全件再構築の全行を比較した検収。書き込み失敗時の一覧・確認時刻と再試行の結果を記録する。",
+  "source_sha256": "e1c64ca93298dcfb12c41308adbde16047f50bab8a30b98eb5c157678d1185f4",
+  "generated_at": "00041",
+  "review": {
+    "reviewed_at": "2026-11-23T05:50:40+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "e1c64ca93298dcfb12c41308adbde16047f50bab8a30b98eb5c157678d1185f4",
+    "summary_sha256": "1ebc1ca9b21b79db2fd4885b177e99af08ec90b06d87fcd64c25f0369a93baba",
+    "scope": "索引の差分更新・再検証の変更、失敗時の状態と参照先を原文に照合。"
+  }
+}

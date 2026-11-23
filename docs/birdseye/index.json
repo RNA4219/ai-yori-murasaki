@@ -1,5 +1,5 @@
 {
-  "generated_at": "00040",
+  "generated_at": "00041",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -15,8 +15,8 @@
     "CHANGELOG.md": {
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
-      "mtime": "00040",
-      "source_sha256": "5ee8f51b2cbf84df89326867eea3c1ead26b25c045c9316fb2d4a2a4b369fd57"
+      "mtime": "00041",
+      "source_sha256": "68b8341a8635d61129ca8795d9f1cd36d5fd4384c0db97d7f173986ae1206f64"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -36,14 +36,14 @@
     "HUB.codex.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
-      "mtime": "00040",
-      "source_sha256": "8eb50f57043b5b63fc3fb4fd14bcbc51272dc71a41a3cc7d6fa1ff8b5a809b76"
+      "mtime": "00041",
+      "source_sha256": "bfae343b74c5a78c284f6641c10ee6bec9a76995da0636aaa1c4d061f2d0f654"
     },
     "README.md": {
       "role": "overview",
       "caps": "docs/birdseye/caps/README.md.json",
-      "mtime": "00040",
-      "source_sha256": "d165a7e47c67e70094fb9ecd741d951f5c2619f2bc917ae8c146f1ec878bc39f"
+      "mtime": "00041",
+      "source_sha256": "6eb079b9f97acadbad684656e84b8b78306bb8026271a114394deafe236f4aa7"
     },
     "RUNBOOK.md": {
       "role": "operations",
@@ -70,8 +70,8 @@
     "docs/acceptance/INDEX.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
-      "mtime": "00040",
-      "source_sha256": "500fe468c18c59b8ffe3dbeb768046726c48ec6bd1ab2fd30b69d933941f776d"
+      "mtime": "00041",
+      "source_sha256": "468ce12d940141e3f3a98194c42444ae9534f1171120be41cf217dbd8d48d1a4"
     },
     "docs/acceptance/README.md": {
       "role": "guide",
@@ -113,8 +113,8 @@
     "docs/tasks/README.md": {
       "role": "operations",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
-      "mtime": "00040",
-      "source_sha256": "7a04d2a3f767ccafc74bcb4343d2bd7fba723b75a31b6cc22231a51c30b2d7a1"
+      "mtime": "00041",
+      "source_sha256": "70ca45588f82ce628d32763af72b57b084d384956e4bab17073fd691b115aa7c"
     },
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md": {
       "role": "task",
@@ -292,8 +292,8 @@
     "docs/requirements/API-CONTRACTS.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.requirements.API-CONTRACTS.md.json",
-      "mtime": "00040",
-      "source_sha256": "38a247724599b2132391964cf5ff66c57bf2bbf342d07fdcba44526c21d20a76"
+      "mtime": "00041",
+      "source_sha256": "03dd0b5d33a6bd263425176f3f85fc21b07d744ea21fb41ddd9b765df91b3fb1"
     },
     "docs/requirements/COMPACTION-01.md": {
       "role": "doc",
@@ -662,6 +662,18 @@
       "caps": "docs/birdseye/caps/docs.acceptance.AC-20261123-05.md.json",
       "source_sha256": "dba6612fcc24ce680b9a0a0e1e23322c87a997af8f0f32c3466a69398a9cbc02",
       "mtime": "00040"
+    },
+    "docs/tasks/TASK.incremental-monitor-11-23-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.incremental-monitor-11-23-2026.md.json",
+      "source_sha256": "42fd53777aea3e413462caca9918d287759240f25da2affac64e90bc896710ca",
+      "mtime": "00041"
+    },
+    "docs/acceptance/AC-20261123-06.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261123-06.md.json",
+      "source_sha256": "e1c64ca93298dcfb12c41308adbde16047f50bab8a30b98eb5c157678d1185f4",
+      "mtime": "00041"
     }
   },
   "edges": [
@@ -803,6 +815,10 @@
     ],
     [
       "CHANGELOG.md",
+      "docs/acceptance/AC-20261123-06.md"
+    ],
+    [
+      "CHANGELOG.md",
       "docs/evidence/wazuh-live-20261108.md"
     ],
     [
@@ -828,6 +844,10 @@
     [
       "CHANGELOG.md",
       "docs/tasks/TASK.frontend-review-11-22-2026.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.incremental-monitor-11-23-2026.md"
     ],
     [
       "CHANGELOG.md",
@@ -1099,6 +1119,10 @@
     ],
     [
       "HUB.codex.md",
+      "docs/acceptance/AC-20261123-06.md"
+    ],
+    [
+      "HUB.codex.md",
       "docs/acceptance/INDEX.md"
     ],
     [
@@ -1136,6 +1160,10 @@
     [
       "HUB.codex.md",
       "docs/tasks/TASK.frontend-review-11-22-2026.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/tasks/TASK.incremental-monitor-11-23-2026.md"
     ],
     [
       "HUB.codex.md",
@@ -1200,6 +1228,10 @@
     [
       "README.md",
       "docs/acceptance/AC-20261123-04.md"
+    ],
+    [
+      "README.md",
+      "docs/acceptance/AC-20261123-06.md"
     ],
     [
       "README.md",
@@ -1666,6 +1698,10 @@
       "docs/tasks/TASK.case-intake-11-23-2026.md"
     ],
     [
+      "docs/acceptance/AC-20261123-06.md",
+      "docs/tasks/TASK.incremental-monitor-11-23-2026.md"
+    ],
+    [
       "docs/acceptance/ACCEPTANCE_TEMPLATE.md",
       "docs/releases/README.md"
     ],
@@ -1739,6 +1775,10 @@
     ],
     [
       "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261123-06.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
       "docs/tasks/TASK.agent-core-11-08-2026.md"
     ],
     [
@@ -1760,6 +1800,10 @@
     [
       "docs/acceptance/INDEX.md",
       "docs/tasks/TASK.frontend-review-11-22-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.incremental-monitor-11-23-2026.md"
     ],
     [
       "docs/acceptance/INDEX.md",
@@ -2011,6 +2055,10 @@
     ],
     [
       "docs/tasks/README.md",
+      "docs/acceptance/AC-20261123-06.md"
+    ],
+    [
+      "docs/tasks/README.md",
       "docs/acceptance/README.md"
     ],
     [
@@ -2040,6 +2088,10 @@
     [
       "docs/tasks/README.md",
       "docs/tasks/TASK.frontend-review-11-22-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.incremental-monitor-11-23-2026.md"
     ],
     [
       "docs/tasks/README.md",
@@ -2132,6 +2184,10 @@
     [
       "docs/tasks/TASK.frontend-review-11-22-2026.md",
       "docs/requirements/MONITOR-REDESIGN.md"
+    ],
+    [
+      "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
+      "docs/acceptance/AC-20261123-06.md"
     ],
     [
       "docs/tasks/TASK.llm-remote-11-09-2026.md",

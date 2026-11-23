@@ -160,7 +160,8 @@ def _build_parser() -> _Parser:
         v.add_argument("--run-id", required=True)
 
     mon = sub.add_parser("monitor").add_subparsers(dest="action", required=True)
-    mon.add_parser("index", help="既存台帳を検証して、案件一覧の索引を作成・更新する")
+    index = mon.add_parser("index", help="初回は全件を検証し、次回から案件一覧の索引を差分更新する")
+    index.add_argument("--full", action="store_true", help="すべての台帳を再検証する")
     m = mon.add_parser("serve")
     m.add_argument("--bind", default="127.0.0.1:8765")
 
@@ -371,7 +372,7 @@ def _dispatch(args: argparse.Namespace, rt: Runtime) -> tuple[Any, Any, Any, int
 
     if group == "monitor" and action == "index":
         from .monitor_index import build_index
-        return None, None, build_index(rt.store), 0
+        return None, None, build_index(rt.store, full=args.full), 0
 
     if group == "monitor" and action == "serve":
         from .server import create_server
