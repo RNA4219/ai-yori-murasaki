@@ -1,0 +1,27 @@
+{
+  "id": "docs/tasks/TASK.case-severity-11-23-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/AC-20261123-08.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "docs/acceptance/AC-20261123-08.md"
+  ],
+  "summary": "案件の検知を重要度ごとに数え、重複と未集計を区別して該当する明細へ進む要件と検収への参照。",
+  "source_sha256": "01b2cda9835f96126a7e51c0b85e6455cdf8760de2ee4f500588787f23f6033c",
+  "generated_at": "00043",
+  "review": {
+    "reviewed_at": "2026-11-23T09:59:17+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "01b2cda9835f96126a7e51c0b85e6455cdf8760de2ee4f500588787f23f6033c",
+    "summary_sha256": "3db1b9d37973fcd51564d626b650df9f7bf13e8890659e10a9195544cb4af3ad",
+    "scope": "重要度別件数の意味、操作、索引の移行と検収の参照を原文に照合。"
+  }
+}

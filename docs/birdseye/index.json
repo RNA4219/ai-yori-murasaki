@@ -1,5 +1,5 @@
 {
-  "generated_at": "00042",
+  "generated_at": "00043",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -15,8 +15,8 @@
     "CHANGELOG.md": {
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
-      "mtime": "00042",
-      "source_sha256": "f67b46a96b652c521b5e0f7fbfe132b444aa6e115e1ebcfdb9474832b1421f7b"
+      "mtime": "00043",
+      "source_sha256": "2a7608521c9affd4d83fd39cafa6b2a4f1f20218ce156e83e7522e3e4aa4274a"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -36,14 +36,14 @@
     "HUB.codex.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
-      "mtime": "00042",
-      "source_sha256": "dcc827a42b05c27f978964f933f4bedd99d966847d2de130a9c5dbe83a846582"
+      "mtime": "00043",
+      "source_sha256": "5925a24e55a5bcbbf84336038b2c9b52d27bf034dcdf24e4271892c8365d0655"
     },
     "README.md": {
       "role": "overview",
       "caps": "docs/birdseye/caps/README.md.json",
-      "mtime": "00042",
-      "source_sha256": "a26e50dde451e4656ea03e598934b79b10087e8ee8524dd0890d98d2694fa04e"
+      "mtime": "00043",
+      "source_sha256": "52b7b16166036b57db89106147824148c55d254c121d1082bbb1f6e112284d85"
     },
     "RUNBOOK.md": {
       "role": "operations",
@@ -70,8 +70,8 @@
     "docs/acceptance/INDEX.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
-      "mtime": "00042",
-      "source_sha256": "c3396d91b328c12a24bb0436170b0f2ae22fc26d5920684f80c354c93a60579b"
+      "mtime": "00043",
+      "source_sha256": "25f36fb9cccf5023c944c1f398905415fb9e88451805f4a1ad9c4785804ff534"
     },
     "docs/acceptance/README.md": {
       "role": "guide",
@@ -113,8 +113,8 @@
     "docs/tasks/README.md": {
       "role": "operations",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
-      "mtime": "00042",
-      "source_sha256": "1d4fcd1457325e6c612b12fe0051a4cb0d2edf0479e990d867c2f86c4423dfa0"
+      "mtime": "00043",
+      "source_sha256": "2d6f0e38c3c03db78a91ef36f4e6d997f4b350a1fee64af360cee374ed48857d"
     },
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md": {
       "role": "task",
@@ -292,8 +292,8 @@
     "docs/requirements/API-CONTRACTS.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.requirements.API-CONTRACTS.md.json",
-      "mtime": "00042",
-      "source_sha256": "2be8f6f6822f175a7249e96fac5ca08697ac68d771fa1f4f01fcb70d5d85aeaf"
+      "mtime": "00043",
+      "source_sha256": "9c761fd6150d6e167b3673cbd09a6d1e7a69da294065f43131dc177663a2bb4f"
     },
     "docs/requirements/COMPACTION-01.md": {
       "role": "doc",
@@ -686,6 +686,18 @@
       "caps": "docs/birdseye/caps/docs.acceptance.AC-20261123-07.md.json",
       "source_sha256": "bf89f91cbd3b71322cdfeec74434524ceeadffbc2689a87939d52c62d18707e2",
       "mtime": "00042"
+    },
+    "docs/tasks/TASK.case-severity-11-23-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.case-severity-11-23-2026.md.json",
+      "source_sha256": "01b2cda9835f96126a7e51c0b85e6455cdf8760de2ee4f500588787f23f6033c",
+      "mtime": "00043"
+    },
+    "docs/acceptance/AC-20261123-08.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261123-08.md.json",
+      "source_sha256": "e0e21a78d27aa16f8d3d3d1239fb01967452df69bc6bc869a5b191cfcef9615a",
+      "mtime": "00043"
     }
   },
   "edges": [
@@ -835,6 +847,10 @@
     ],
     [
       "CHANGELOG.md",
+      "docs/acceptance/AC-20261123-08.md"
+    ],
+    [
+      "CHANGELOG.md",
       "docs/evidence/wazuh-live-20261108.md"
     ],
     [
@@ -852,6 +868,10 @@
     [
       "CHANGELOG.md",
       "docs/tasks/TASK.case-intake-11-23-2026.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.case-severity-11-23-2026.md"
     ],
     [
       "CHANGELOG.md",
@@ -1147,6 +1167,10 @@
     ],
     [
       "HUB.codex.md",
+      "docs/acceptance/AC-20261123-08.md"
+    ],
+    [
+      "HUB.codex.md",
       "docs/acceptance/INDEX.md"
     ],
     [
@@ -1176,6 +1200,10 @@
     [
       "HUB.codex.md",
       "docs/tasks/TASK.case-intake-11-23-2026.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/tasks/TASK.case-severity-11-23-2026.md"
     ],
     [
       "HUB.codex.md",
@@ -1264,6 +1292,10 @@
     [
       "README.md",
       "docs/acceptance/AC-20261123-07.md"
+    ],
+    [
+      "README.md",
+      "docs/acceptance/AC-20261123-08.md"
     ],
     [
       "README.md",
@@ -1738,6 +1770,10 @@
       "docs/tasks/TASK.indexed-case-detail-11-23-2026.md"
     ],
     [
+      "docs/acceptance/AC-20261123-08.md",
+      "docs/tasks/TASK.case-severity-11-23-2026.md"
+    ],
+    [
       "docs/acceptance/ACCEPTANCE_TEMPLATE.md",
       "docs/releases/README.md"
     ],
@@ -1819,6 +1855,10 @@
     ],
     [
       "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261123-08.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
       "docs/tasks/TASK.agent-core-11-08-2026.md"
     ],
     [
@@ -1832,6 +1872,10 @@
     [
       "docs/acceptance/INDEX.md",
       "docs/tasks/TASK.case-intake-11-23-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.case-severity-11-23-2026.md"
     ],
     [
       "docs/acceptance/INDEX.md",
@@ -1928,6 +1972,10 @@
     [
       "docs/requirements/API-CONTRACTS.md",
       "docs/acceptance/AC-20261123-07.md"
+    ],
+    [
+      "docs/requirements/API-CONTRACTS.md",
+      "docs/acceptance/AC-20261123-08.md"
     ],
     [
       "docs/requirements/COMPACTION-01.md",
@@ -2111,6 +2159,10 @@
     ],
     [
       "docs/tasks/README.md",
+      "docs/acceptance/AC-20261123-08.md"
+    ],
+    [
+      "docs/tasks/README.md",
       "docs/acceptance/README.md"
     ],
     [
@@ -2132,6 +2184,10 @@
     [
       "docs/tasks/README.md",
       "docs/tasks/TASK.case-intake-11-23-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.case-severity-11-23-2026.md"
     ],
     [
       "docs/tasks/README.md",
@@ -2220,6 +2276,10 @@
     [
       "docs/tasks/TASK.case-intake-11-23-2026.md",
       "docs/acceptance/AC-20261123-05.md"
+    ],
+    [
+      "docs/tasks/TASK.case-severity-11-23-2026.md",
+      "docs/acceptance/AC-20261123-08.md"
     ],
     [
       "docs/tasks/TASK.document-consistency-11-23-2026.md",

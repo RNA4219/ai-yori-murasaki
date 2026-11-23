@@ -202,7 +202,8 @@ def _project_campaign(cid: str, summary: CampaignSummary, view: str = "operator"
         "finding_count_status": summary.status,
         "verified_run_count": summary.verified_runs,
         "unverified_run_count": len(summary.pending_runs),
-        **({"unverified_run_ids": summary.pending_runs} if view == "operator" else {}),
+        **({"unverified_run_ids": summary.pending_runs, "severity_counts": summary.severity_counts()}
+           if view == "operator" else {}),
     }
 
 

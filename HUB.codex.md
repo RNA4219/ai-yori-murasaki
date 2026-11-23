@@ -31,6 +31,7 @@ template_version: 1.0.0
 | 大規模な案件一覧を構築・更新する | [台帳の検証と一覧の索引](docs/tasks/TASK.monitor-index-11-23-2026.md) | [10万案件の検収](docs/acceptance/AC-20261123-04.md) |
 | 案件一覧を差分更新する | [変更の検出と再集計](docs/tasks/TASK.incremental-monitor-11-23-2026.md) | [再構築との照合・更新失敗時の一覧](docs/acceptance/AC-20261123-06.md) |
 | 大規模な案件一覧から詳細・前回比較を開く | [案件と実行の特定](docs/tasks/TASK.indexed-case-detail-11-23-2026.md) | [両画面で開いた台帳の検収](docs/acceptance/AC-20261123-07.md) |
+| 案件ごとの重要度別件数から該当する検知を開く | [案件の検知と重要度](docs/tasks/TASK.case-severity-11-23-2026.md) | [集計と明細の検収](docs/acceptance/AC-20261123-08.md) |
 | 文書索引と過去の検収状態を確認する | [整合性のTask](docs/tasks/TASK.document-consistency-11-23-2026.md) | [形式・鮮度の検収](docs/acceptance/AC-20261123-03.md) |
 | 案件の集計状況・前回比較・改修後の構成 | [改修要件](docs/tasks/TASK.monitor-counts-11-23-2026.md) | [技術検収](docs/acceptance/AC-20261123-02.md) |
 | リポジトリ・AWS構成の関係と指摘をたどる | [構成図と入力仕様](docs/tasks/TASK.architecture-map-11-23-2026.md) | [構成図の検収](docs/acceptance/AC-20261123-01.md) |

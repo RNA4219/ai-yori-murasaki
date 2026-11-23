@@ -92,7 +92,7 @@ def read_selection(store, cid, *, compare=False, selected=None) -> DetailSelecti
         return None
     with closing(sqlite3.connect(path.as_uri() + "?mode=ro", uri=True)) as db:
         db.execute("BEGIN")
-        if db.execute("PRAGMA user_version").fetchone()[0] != 2:
+        if db.execute("PRAGMA user_version").fetchone()[0] not in (2, 3):
             raise IndexUpdateRequired("案件索引の更新が必要です")
         current = _case(db, store, cid)
         candidates = ()

@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "版ごとの変更と検収への参照。0031は案件IDから実行と比較元を引く詳細・判断画面の変更。",
+  "summary": "版ごとの変更と検収への参照。0032は案件の重要度別件数を表示し、その件数から明細へ移動できる変更。",
   "deps_out": [
     "docs/SOURCES.md",
     "docs/acceptance/AC-20261106-01.md",
@@ -27,6 +27,7 @@
     "docs/acceptance/AC-20261123-05.md",
     "docs/acceptance/AC-20261123-06.md",
     "docs/acceptance/AC-20261123-07.md",
+    "docs/acceptance/AC-20261123-08.md",
     "docs/evidence/quality-integration-20261109/README.md",
     "docs/evidence/sources-light-ui-20261109/README.md",
     "docs/evidence/wazuh-live-20261108.md",
@@ -34,6 +35,7 @@
     "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
     "docs/tasks/TASK.case-intake-11-23-2026.md",
+    "docs/tasks/TASK.case-severity-11-23-2026.md",
     "docs/tasks/TASK.document-consistency-11-23-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
     "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
@@ -79,13 +81,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "f67b46a96b652c521b5e0f7fbfe132b444aa6e115e1ebcfdb9474832b1421f7b",
-  "generated_at": "00042",
+  "source_sha256": "2a7608521c9affd4d83fd39cafa6b2a4f1f20218ce156e83e7522e3e4aa4274a",
+  "generated_at": "00043",
   "review": {
-    "reviewed_at": "2026-11-23T09:24:30+00:00",
+    "reviewed_at": "2026-11-23T09:59:17+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "f67b46a96b652c521b5e0f7fbfe132b444aa6e115e1ebcfdb9474832b1421f7b",
-    "summary_sha256": "a45495881870160d4e6c40a01814ea85b8a9240792d7f52e31467582e113ae48",
-    "scope": "案件詳細と判断画面の取得範囲、索引の移行条件、検収の記録と参照先を原文に照合。"
+    "source_sha256": "2a7608521c9affd4d83fd39cafa6b2a4f1f20218ce156e83e7522e3e4aa4274a",
+    "summary_sha256": "56e9824ccf6531b409e10d1502138934ab0858db44a6427b84d1dbcf7a56d0da",
+    "scope": "重要度別件数の意味、操作、索引の移行と検収の参照を原文に照合。"
   }
 }

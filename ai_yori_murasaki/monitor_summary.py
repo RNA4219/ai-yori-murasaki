@@ -21,6 +21,15 @@ class CampaignSummary:
             return "unavailable"
         return "partial" if self.pending_runs else "complete"
 
+    def severity_counts(self) -> dict[str, int] | None:
+        if self.status == "unavailable":
+            return None
+        counts = dict.fromkeys(("critical", "high", "medium", "low", "info", "unknown"), 0)
+        for finding in self.findings.values():
+            level = finding.get("severity")
+            counts[level if isinstance(level, str) and level in counts else "unknown"] += 1
+        return counts
+
     def include(self, part: "CampaignSummary") -> None:
         if part.campaign and part.snapshot_at >= self.snapshot_at:
             self.campaign, self.snapshot_at = part.campaign, part.snapshot_at

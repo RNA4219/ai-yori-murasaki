@@ -139,12 +139,13 @@ def _refresh(store, db, full):
     if version == 0:
         _setup(db)
         full = True
-    elif version not in (1, 2):
+    elif version not in (1, 2, 3):
         raise DataError("未知のモニター索引形式です")
     if version < 2:
         db.execute("CREATE TABLE case_series (cid TEXT PRIMARY KEY, family TEXT, moment TEXT, dated INTEGER)")
         db.execute("CREATE INDEX series_by_time ON case_series(family, moment, cid)")
-        db.execute("PRAGMA user_version = 2")
+    if version < 3:
+        db.execute("PRAGMA user_version = 3")
     hints = _hints(db, store, full)
     runs = _safe_join(store.workspace, "runs")
     objects = _safe_join(store.workspace, "objects")
@@ -189,7 +190,7 @@ def _refresh(store, db, full):
         affected.add(cid)
         db.execute("DELETE FROM run_cache WHERE rid = ?", (rid,))
 
-    if full or version < 2:
+    if full or version < 3:
         db.execute("DELETE FROM case_series")
         db.execute("DELETE FROM cases")
         rows = db.execute("SELECT cid, part FROM run_cache ORDER BY cid, rid")
@@ -244,5 +245,6 @@ def read_page(store: Store, page: int, view: str) -> dict | None:
                 row["finding_excerpt"] = json.loads(excerpt)
             else:
                 row.pop("unverified_run_ids", None)
+                row.pop("severity_counts", None)
             campaigns.append(row)
     return {"campaigns": campaigns, "page": page, "pages": pages, "total": total, "checked_at": checked_at}

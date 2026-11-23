@@ -105,6 +105,39 @@ def test_large_store_requires_index_and_legacy_api_is_unchanged(store):
         assert api(store, "/c1" + suffix)[0] == 409
 
 
+def test_case_severity_counts_and_v2_migration(store):
+    def add(rid, fid, severity):
+        ref = store.put_object({"campaign_id": "case", "finding_id": fid, "severity": severity})
+        ledger(store, rid, "case", record_kind="finding", record_ref=ref)
+    add("r1", "one", "high")
+    add("r2", "one", "high")
+    add("r3", "two", None)
+    ledger(store, "clean", "empty")
+    store.update_catalog("missing", {"campaign_id": "case"})
+    store.update_catalog("unreadable", {"campaign_id": "pending"})
+    expected = dict(critical=0, high=1, medium=0, low=0, info=0, unknown=1)
+    assert api(store, "/case")[1]["campaign"]["severity_counts"] == expected
+    build_index(store)
+    with closing(sqlite3.connect(_index_path(store))) as db:
+        for cid, row in db.execute("SELECT id,row_json FROM cases").fetchall():
+            data = json.loads(row)
+            del data["severity_counts"]
+            db.execute("UPDATE cases SET row_json=? WHERE id=?", (json.dumps(data), cid))
+        db.execute("PRAGMA user_version=2")
+        db.commit()
+    with patch.object(store, "read_verified_events", side_effect=AssertionError("台帳を再読した")):
+        assert build_index(store)["rechecked_runs"] == 0
+        rows = {c["campaign_id"]: c for c in api(store, "?page=1")[1]["campaigns"]}
+        assert (rows["case"]["severity_counts"], rows["case"]["finding_count_status"]) == (expected, "partial")
+        assert rows["pending"]["severity_counts"] is None
+        assert set(rows["empty"]["severity_counts"].values()) == {0}
+        assert all("severity_counts" not in c for c in api(store, "?page=1&view=blue")[1]["campaigns"])
+    add("r3", "two", "low")
+    assert build_index(store)["rechecked_runs"] == 1
+    updated = api(store, "/case")[1]["campaign"]["severity_counts"]
+    assert updated == {**expected, "low": 1, "unknown": 0}
+
+
 def test_indexed_previous_only_reads_an_eligible_selection(store):
     def add(cid, intent, stamp):
         return ledger(store, "r-" + cid, cid, campaign_snapshot=dict(

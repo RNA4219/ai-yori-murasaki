@@ -136,6 +136,12 @@ summary { cursor: pointer; }
 .dot.accent { background: var(--accent); } .dot.done { background: var(--leaf); } .dot.in_progress { background: var(--indigo); }
 .filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .filters input { flex: 1 1 12em; min-width: 0; }
+.risk-levels { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 0; }
+.risk-levels a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 4px 10px; border: 1px solid var(--line); border-radius: 6px; color: var(--fg); background: var(--panel); text-decoration: none; }
+.risk-levels a:hover { border-color: var(--accent); }
+.risk-levels a[aria-current="true"] { background: #493653; color: white; box-shadow: inset 0 -3px #c2a4d4; }
+.risk-levels b { font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: no-preference) { .risk-levels a { transition: background-color .12s, border-color .12s; } }
 .scroll { overflow-x: auto; }
 table { border-collapse: collapse; width: 100%; font-size: 14px; }
 th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
@@ -235,6 +241,8 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
       <div class="brief-heading">
         <div class="case-line"><p id="sum-name"></p><a href="/decision" id="back-picker" hidden>案件を選び直す</a><a href="/#/relations" id="related-cases" hidden>この案件のつながり</a><a href="/architecture" id="system-map" hidden>システム構成図</a></div>
         <h1 id="h-sum"></h1>
+        <h2 id="risk-heading">検知の重要度 <small>（対応済みを含む）</small></h2>
+        <nav class="risk-levels" id="risk-levels" aria-labelledby="risk-heading"></nav>
       </div>
     </section>
     <section class="coverage-note" id="coverage-note" aria-labelledby="coverage-heading" hidden>
@@ -269,7 +277,7 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     </section>
 
     <section class="sec" id="sec-all" aria-labelledby="h-all">
-      <div class="sec-head"><h2 id="h-all">すべての課題</h2><p class="sec-sub" id="all-sub"></p></div>
+      <div class="sec-head"><h2 id="h-all" tabindex="-1">すべての課題</h2><p class="sec-sub" id="all-sub" role="status"></p></div>
       <div class="filters">
         <input type="search" id="q" placeholder="名前や番号で探す" aria-label="名前や番号で探す">
         <button type="button" class="pill plain" id="f-active" aria-pressed="true">終わっていない</button>
@@ -472,6 +480,12 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
 
   function nameOf(it) { return it.title || '（名前なし）'; }
 
+  function recordedLevel(item) {
+    return !item.severity_unrecorded && D.SEVERITIES.includes(item.severity) ? item.severity : 'unknown';
+  }
+
+  function levelLabel(level) { return D.SEV_LABEL[level] || '未記録'; }
+
   function reasonSentences(it, a) {
     var out = [];
     a.reasons.forEach(function (r) {
@@ -499,7 +513,8 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     var it = r.item, a = r.a;
     var d = el('details', 'item');
     var s = el('summary');
-    s.appendChild(el('span', 'sev ' + (D.SEVERITIES.indexOf(it.severity) >= 0 ? it.severity : 'info'), D.SEV_LABEL[it.severity] || '重大度不明'));
+    var level = recordedLevel(it);
+    s.appendChild(el('span', 'sev ' + level, levelLabel(level)));
     var main = el('span', 'item-main');
     main.appendChild(el('span', 'item-title', it.title || '（名前なし）'));
     var meta = [];
@@ -564,6 +579,14 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
   function renderSummary(s,v){
     var c=s.counts,hints=[],assessment=v.assessment||null;
     $('sum-name').textContent=(v.campaign&&v.campaign.name)||'';
+    var counts = Object.create(null);
+    s.rows.forEach(function (r) { var level = recordedLevel(r.item); counts[level] = (counts[level] || 0) + 1; });
+    var levels = $('risk-levels'); clear(levels);
+    D.SEVERITIES.concat(counts.unknown ? ['unknown'] : []).forEach(function (level) {
+      var link = el('a'); link.href = '#sec-all'; link.dataset.level = level;
+      link.append(el('span', null, levelLabel(level)), el('b', null, (counts[level] || 0) + ' 件'));
+      levels.appendChild(link);
+    });
     if(!assessment||!assessment.present)hints.push('この案件には評価の記録がありません。課題は取り込み時の状態で並べています。');
     if(assessment&&assessment.historical)hints.push('評価の記録は、対象が変わる前のものです。いまの状態は確かめ直してください。');
     var cov=assessment&&assessment.coverage||{},untested=(cov.not_executed||0)+(cov.failed||0);
@@ -595,11 +618,7 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     j.appendChild(jumpPill(c.soon?'amber':'plain','早めに対応すること',c.soon,'sec-soon'));
     if(s.hasPrevious)j.appendChild(jumpPill('','前回から変わったこと',c.changed,'sec-changes'));
     var all = jumpPill('','すべての課題',s.rows.length,'sec-all');
-    all.addEventListener('click', function(){
-      $('q').value = ''; $('f-sev').value = ''; state.fKev = false;
-      $('f-kev').setAttribute('aria-pressed','false');
-      setState('any');
-    });
+    all.addEventListener('click', function(){ showLevel(''); });
     j.appendChild(all);
     var legend=$('legend'),byState={};clear(legend);
     s.rows.forEach(function(row){var label=D.stateLabel(row.item);byState[label]=(byState[label]||0)+1;});
@@ -668,17 +687,21 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     function move(r) { return nameOf(r.item) + '（' + (r.item.prev_state_label || D.STATE_LABEL[r.item.prev_state] || '') + ' → ' + D.stateLabel(r.item) + '）'; }
     g.appendChild(changeFold('done', '片付いた', s.changes.closed, move));
     g.appendChild(changeFold('in_progress', '状態が変わった', s.changes.stateChanged, move));
-    g.appendChild(changeFold('accent', '新しく入った', s.changes.added, function (r) { return nameOf(r.item) + '（' + D.SEV_LABEL[r.item.severity] + '・' + D.stateLabel(r.item) + '）'; }));
+    g.appendChild(changeFold('accent', '新しく入った', s.changes.added, function (r) { return nameOf(r.item) + '（' + levelLabel(recordedLevel(r.item)) + '・' + D.stateLabel(r.item) + '）'; }));
     g.appendChild(changeFold('open', 'なくなった', s.changes.removed, function (x) { return (x.title || '') + '（前は ' + (x.prev_state_label || D.STATE_LABEL[x.prev_state] || '') + '）'; }));
   }
 
   function renderAll(s) {
     var q = $('q').value.trim().toLowerCase(), fv = $('f-sev').value;
+    $('risk-levels').querySelectorAll('a').forEach(function (link) {
+      if (fv === link.dataset.level && state.fState === 'any' && !state.fKev && !q) link.setAttribute('aria-current', 'true');
+      else link.removeAttribute('aria-current');
+    });
     var rows = s.rows.filter(function (r) {
       var it = r.item;
       if (state.fState === 'active' && !r.a.active) return false;
       if (state.fState === 'closed' && r.a.active) return false;
-      if (fv && it.severity !== fv) return false;
+      if (fv && recordedLevel(it) !== fv) return false;
       if (state.fKev && !it.kev) return false;
       if (q && ((it.title || '') + ' ' + (it.ref || '')).toLowerCase().indexOf(q) < 0) return false;
       return true;
@@ -730,11 +753,24 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
   }
 
   function fetchView(url) {
+    if (/^\/api\/campaigns(?:[/?]|$)/.test(url) && new URLSearchParams(location.search).get('view') === 'blue') {
+      url += (url.includes('?') ? '&' : '?') + 'view=blue';
+    }
     return fetch(url, { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' })
       .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
   }
 
-  D.SEVERITIES.forEach(function (x) { var o = el('option', null, '重大度: ' + D.SEV_LABEL[x]); o.value = x; $('f-sev').appendChild(o); });
+  D.SEVERITIES.concat('unknown').forEach(function (x) { var o = el('option', null, '重大度: ' + levelLabel(x)); o.value = x; $('f-sev').appendChild(o); });
+  function showLevel(level) {
+    $('q').value = ''; $('f-sev').value = level; state.fKev = false;
+    $('f-kev').setAttribute('aria-pressed', 'false');
+    setState('any');
+    $('h-all').focus();
+  }
+  $('risk-levels').addEventListener('click', function (event) {
+    var link = event.target.closest('a[data-level]');
+    if (link) showLevel(link.dataset.level);
+  });
   function setState(which) {
     state.fState = which; state.allLimit = 30;
     $('f-active').setAttribute('aria-pressed', String(which === 'active'));

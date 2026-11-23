@@ -2,7 +2,7 @@
   "id": "docs/tasks/README.md",
   "role": "operations",
   "public_api": [],
-  "summary": "Taskの記録・検収と一覧。10万案件から1件の詳細と前回比較を表示する20261123-07を含む。",
+  "summary": "Taskの運用・一覧と検収。案件の重要度別件数と検知を結ぶ20261123-08の作業を案内する。",
   "deps_out": [
     "CHANGELOG.md",
     "HUB.codex.md",
@@ -30,12 +30,14 @@
     "docs/acceptance/AC-20261123-05.md",
     "docs/acceptance/AC-20261123-06.md",
     "docs/acceptance/AC-20261123-07.md",
+    "docs/acceptance/AC-20261123-08.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
     "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
     "docs/tasks/TASK.case-intake-11-23-2026.md",
+    "docs/tasks/TASK.case-severity-11-23-2026.md",
     "docs/tasks/TASK.document-consistency-11-23-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
     "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
@@ -69,13 +71,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "1d4fcd1457325e6c612b12fe0051a4cb0d2edf0479e990d867c2f86c4423dfa0",
-  "generated_at": "00042",
+  "source_sha256": "2d6f0e38c3c03db78a91ef36f4e6d997f4b350a1fee64af360cee374ed48857d",
+  "generated_at": "00043",
   "review": {
-    "reviewed_at": "2026-11-23T09:24:30+00:00",
+    "reviewed_at": "2026-11-23T09:59:17+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "1d4fcd1457325e6c612b12fe0051a4cb0d2edf0479e990d867c2f86c4423dfa0",
-    "summary_sha256": "842d95f26b07800bf31ec1a7224aed3dd3ff5d6bd3b9345437838b9b5693f7cd",
-    "scope": "案件詳細と判断画面の取得範囲、索引の移行条件、検収の記録と参照先を原文に照合。"
+    "source_sha256": "2d6f0e38c3c03db78a91ef36f4e6d997f4b350a1fee64af360cee374ed48857d",
+    "summary_sha256": "46f5f7f3fab49ee7fbdbbad5b190312eee486a69b239fde83925598504416a50",
+    "scope": "重要度別件数の意味、操作、索引の移行と検収の参照を原文に照合。"
   }
 }

@@ -1,0 +1,29 @@
+{
+  "id": "docs/acceptance/AC-20261123-08.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "README.md",
+    "docs/acceptance/INDEX.md",
+    "docs/requirements/API-CONTRACTS.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.case-severity-11-23-2026.md"
+  ],
+  "deps_out": [
+    "docs/tasks/TASK.case-severity-11-23-2026.md"
+  ],
+  "summary": "案件ごとの重要度別件数、明細への移動、索引の移行、スマートフォン・デスクトップでの操作を確認した検収。",
+  "source_sha256": "e0e21a78d27aa16f8d3d3d1239fb01967452df69bc6bc869a5b191cfcef9615a",
+  "generated_at": "00043",
+  "review": {
+    "reviewed_at": "2026-11-23T09:59:17+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "e0e21a78d27aa16f8d3d3d1239fb01967452df69bc6bc869a5b191cfcef9615a",
+    "summary_sha256": "310ee27b6af7b53c859937492aae272bb0880dce490b73fa4d42e44af4e2b9f7",
+    "scope": "重要度別件数の意味、操作、索引の移行と検収の参照を原文に照合。"
+  }
+}

@@ -111,6 +111,7 @@ def _item(finding: dict, record: dict | None, mapping: dict) -> dict:
         "ref": props.get(fields.get("key", "")) if fields.get("key") else None,
         "title": finding.get("title") or "",
         "severity": severity,
+        **({"severity_unrecorded": True} if finding.get("severity") not in SEVERITIES else {}),
         "state": state,
         "state_label": label if isinstance(label, str) else None,
         "due": _date_only(props.get(fields.get("due", ""))) if fields.get("due") else None,

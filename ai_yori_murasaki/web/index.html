@@ -502,6 +502,12 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
 .severity-tag { padding: 1px 6px; text-align: center; border-radius: 4px; font: 650 16px/1.6 var(--font-stack); background: #efebf4; color: #5b4c6c; }
 .severity-tag[data-level="high"], .severity-tag[data-level="critical"] { color: #843a2b; background: #fae7dd; }
 .severity-tag[data-level="medium"] { color: #77521b; background: #f9edd5; }
+.risk-levels { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 14px; }
+.risk-levels a { display: inline-flex; gap: 6px; align-items: center; min-height: 44px; padding: 4px 10px; border: 1px solid #cfc5d3; border-radius: 6px; color: #43384d; background: white; text-decoration: none; }
+.risk-levels a:hover { border-color: #74548a; }
+.risk-levels a[aria-current="true"] { background: #493653; color: white; box-shadow: inset 0 -3px #c2a4d4; }
+.risk-levels b { font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: no-preference) { .risk-levels a { transition: background-color .12s, border-color .12s; } }
 .sheet-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; padding: 16px clamp(16px,2.5vw,32px) 24px; }
 .sheet-actions a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; font-weight: 650; font-size: 16px; }
 .action-main { padding: 8px 16px; color: white; background: #503865; border-radius: 7px; }
@@ -856,6 +862,9 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
   }
 
   function fetchJSON(url, key) {
+    if (/^\/api\/campaigns(?:[/?]|$)/.test(url) && new URLSearchParams(location.search).get('view') === 'blue') {
+      url += (url.includes('?') ? '&' : '?') + 'view=blue';
+    }
     if (state.inflight[key]) {
       var prev = state.inflight[key];
       prev.superseded = true;
@@ -1196,9 +1205,9 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
     if (h === '#/sources') return { name: 'sources', params: {} };
     var sourceMatch = h.match(/^#\/sources\/(src-[0-9a-f]{32})$/);
     if (sourceMatch) return { name: 'source', params: { id: sourceMatch[1] } };
-    var m = h.match(/^#\/campaign\/([^/]+)$/);
+    var m = h.match(/^#\/campaign\/([^/?]+)(?:\?severity=(all|critical|high|medium|low|info|unknown))?$/);
     if (m) {
-      try { return { name: 'campaign', params: { id: decodeURIComponent(m[1]) } }; }
+      try { return { name: 'campaign', params: { id: decodeURIComponent(m[1]), severity: m[2] } }; }
       catch (e) { return { name: 'list', params: {} }; }
     }
     var r = h.match(/^#\/run\/([^/]+)$/);
@@ -1217,8 +1226,18 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
 
   function navigate() {
     var next = parseHash();
-    if (routeKey(next) === routeKey(state.route)) return;
+    if (routeKey(next) === routeKey(state.route)) {
+      if (next.name === 'campaign' && next.params.severity !== state.route.params.severity) {
+        state.route = next;
+        setCampaignView(next.params.id, 'overview');
+        state.focusFindings = true;
+        render();
+      }
+      return;
+    }
     state.route = next;
+    state.focusFindings = next.name === 'campaign' && !!next.params.severity;
+    if (state.focusFindings) setCampaignView(next.params.id, 'overview');
     state.detail = null;
     state.detailError = null;
     state.detailStale = false;
@@ -1757,7 +1776,40 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
       });
   }
 
-  var severityNames = { critical:'重大', high:'高', medium:'中', low:'低', info:'情報' };
+  var severityNames = { critical:'重大', high:'高', medium:'中', low:'低', info:'情報', unknown:'未記録' };
+
+  function severityOf(finding) {
+    return Object.hasOwn(severityNames, finding.severity) ? finding.severity : 'unknown';
+  }
+
+  function severityLinks(c, selected) {
+    var group = text('nav', null, 'risk-levels');
+    group.setAttribute('aria-label', '検知の重要度別件数');
+    var url = '#/campaign/' + encodeURIComponent(c.campaign_id) + '?severity=';
+    var counts = c.severity_counts;
+    if (!counts) {
+      if (c.finding_count_status === 'unavailable') group.appendChild(text('span', '重要度別の件数は未集計です。'));
+      else if (!selected) {
+        var detail = text('a', '重要度別の検知を見る');
+        detail.href = url + 'all';
+        group.appendChild(detail);
+      }
+      return group;
+    }
+    function link(level, label, count) {
+      var a = text('a');
+      a.href = url + level;
+      a.setAttribute('data-key', 'severity-' + level);
+      if (level === selected) a.setAttribute('aria-current', 'true');
+      a.append(text('span', label), text('b', count + ' 件'));
+      group.appendChild(a);
+    }
+    if (selected) link('all', 'すべて', c.finding_count);
+    Object.keys(severityNames).forEach(function (level) {
+      if (level !== 'unknown' || counts[level] || selected === level) link(level, severityNames[level], counts[level]);
+    });
+    return group;
+  }
 
   function findingCount(c, compact) {
     if (c.finding_count_status === 'unavailable' || !Number.isInteger(c.finding_count)) return '未集計';
@@ -1815,6 +1867,10 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
     var body = text('div', null, 'sheet-body');
     body.setAttribute('aria-live','polite');
     body.setAttribute('data-key','excerpt-body');
+    if (new URLSearchParams(location.search).get('view') !== 'blue') {
+      body.appendChild(text('h3', c.finding_count_status === 'partial' ? '確認済みの検知の重要度' : '検知の重要度'));
+      body.appendChild(severityLinks(c));
+    }
     appendCoverage(body,c);
     if (state.excerptError) body.appendChild(text('p', state.excerptError, 'excerpt-notice'));
     if (state.excerpt === null && !state.excerptError) body.appendChild(text('p','記録を読み込んでいます。','muted'));
@@ -2426,8 +2482,22 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
     var pFind = document.createElement('section');
     pFind.className = 'panel';
     pFind.setAttribute('data-key', 'campaign-findings-' + id);
-    pFind.appendChild(text('h2', '検知の記録'));
-    var findings = Array.isArray(d.findings) ? d.findings : [];
+    var findingHeading = text('h2', '検知の記録');
+    findingHeading.id = 'case-findings-heading';
+    findingHeading.tabIndex = -1;
+    pFind.appendChild(findingHeading);
+    var allFindings = Array.isArray(d.findings) ? d.findings : [];
+    var level = state.route.params.severity || 'all';
+    var findings = level === 'all' ? allFindings : allFindings.filter(function (f) { return f && severityOf(f) === level; });
+    if (c.status !== 'withheld') {
+      if (c.finding_count_status === 'partial') pFind.appendChild(text('p', '一部未集計です。件数は確認済みの検知のみです。'));
+      pFind.appendChild(severityLinks(c, level));
+      if (level !== 'all' && c.severity_counts) {
+        var shown = text('p', '重要度「' + severityNames[level] + '」の検知　' + findings.length + ' 件');
+        shown.setAttribute('role', 'status');
+        pFind.appendChild(shown);
+      }
+    }
     var assessStatusById = null;
     var aRep = state.detail.assessment;
     if (aRep && aRep.status === undefined && Array.isArray(aRep.findings)) {
@@ -2438,7 +2508,7 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
       }
     }
     if (findings.length === 0) {
-      pFind.appendChild(text('p', c.unverified_run_count ? '検知の集計が完了していません。' : '該当なし', 'muted'));
+      pFind.appendChild(text('p', c.status === 'withheld' ? c.reason : c.unverified_run_count ? '検知の集計が完了していません。' : '該当なし', 'muted'));
     } else {
       var ul = document.createElement('ul');
       ul.className = 'incident-list';
@@ -2451,7 +2521,7 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
         var sev = document.createElement('span');
         sev.className = 'incident-sev';
         if (f.severity) sev.setAttribute('data-sev', String(f.severity));
-        sev.textContent = f.severity ? String(f.severity) : '未記録';
+        sev.textContent = severityNames[severityOf(f)];
         li.appendChild(sev);
         var title = document.createElement('span');
         title.className = 'incident-title';
@@ -3281,6 +3351,10 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
       applyCampaignView(frag, state.route.params.id);
     }
     reconcileChildren(el.viewRoot, frag.childNodes);
+    if (state.focusFindings && document.getElementById('case-findings-heading')) {
+      state.focusFindings = false;
+      document.getElementById('case-findings-heading').focus();
+    }
     var selector = document.getElementById('case-choice');
     if (selector && selector.value !== state.selectedCase) selector.value = state.selectedCase;
     // Only restore focus if the previously focused node was lost from the DOM.
@@ -3380,6 +3454,7 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
   });
 
   state.route = parseHash();
+  state.focusFindings = state.route.name === 'campaign' && !!state.route.params.severity;
   render();
   runRefresh();
   startAuto();

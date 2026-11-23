@@ -2,7 +2,7 @@
   "id": "HUB.codex.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "製品の要件・評価・運用の入口。案件受付、一覧の差分更新、案件詳細と前回比較で読む台帳の検収へ案内する。",
+  "summary": "製品の要件・運用の入口。案件受付・索引・詳細表示に続き、重要度別の件数と検収を案内する。",
   "deps_out": [
     ".agents/skills/security-audit/SKILL.md",
     "AGENTS.md",
@@ -38,6 +38,7 @@
     "docs/acceptance/AC-20261123-05.md",
     "docs/acceptance/AC-20261123-06.md",
     "docs/acceptance/AC-20261123-07.md",
+    "docs/acceptance/AC-20261123-08.md",
     "docs/acceptance/INDEX.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
@@ -50,6 +51,7 @@
     "docs/tasks/README.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
     "docs/tasks/TASK.case-intake-11-23-2026.md",
+    "docs/tasks/TASK.case-severity-11-23-2026.md",
     "docs/tasks/TASK.document-consistency-11-23-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
     "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
@@ -70,13 +72,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "dcc827a42b05c27f978964f933f4bedd99d966847d2de130a9c5dbe83a846582",
-  "generated_at": "00042",
+  "source_sha256": "5925a24e55a5bcbbf84336038b2c9b52d27bf034dcdf24e4271892c8365d0655",
+  "generated_at": "00043",
   "review": {
-    "reviewed_at": "2026-11-23T09:24:30+00:00",
+    "reviewed_at": "2026-11-23T09:59:17+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "dcc827a42b05c27f978964f933f4bedd99d966847d2de130a9c5dbe83a846582",
-    "summary_sha256": "b9131265409fb51fb5b2232685029c39727f4cbcd3346c1aa94bd019ebf252ae",
-    "scope": "案件詳細と判断画面の取得範囲、索引の移行条件、検収の記録と参照先を原文に照合。"
+    "source_sha256": "5925a24e55a5bcbbf84336038b2c9b52d27bf034dcdf24e4271892c8365d0655",
+    "summary_sha256": "ade252fef2923d704873feff3bc8ed19e99371a20c191d1241e42af524a321bb",
+    "scope": "重要度別件数の意味、操作、索引の移行と検収の参照を原文に照合。"
   }
 }

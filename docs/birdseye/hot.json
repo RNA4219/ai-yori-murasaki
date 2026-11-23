@@ -1,5 +1,5 @@
 {
-  "generated_at": "00042",
+  "generated_at": "00043",
   "index_snapshot": "docs/birdseye/index.json",
   "refresh_command": "RUNBOOK.md#execute と docs/BIRDSEYE.md の PowerShell 手順を参照",
   "curation_notes": "ローカル製品、要件、検収、文書運用の入口。生成世代と原文・要約の内容確認を区別する。",
@@ -7,7 +7,7 @@
     {
       "id": "README.md",
       "role": "overview",
-      "reason": "モニターと判断画面の起動・操作手順。案件一覧の差分更新、案件詳細と前回比較のための索引の更新方法を案内する。",
+      "reason": "製品の起動と操作。モニターと判断画面を行き来し、選択した案件の重要度別件数から該当する検知を開く方法を含む。",
       "caps": "docs/birdseye/caps/README.md.json",
       "edges": [
         "BLUEPRINT.md",
@@ -27,6 +27,7 @@
         "docs/acceptance/AC-20261123-04.md",
         "docs/acceptance/AC-20261123-06.md",
         "docs/acceptance/AC-20261123-07.md",
+        "docs/acceptance/AC-20261123-08.md",
         "docs/acceptance/INDEX.md",
         "docs/evidence/wazuh-live-20261108.md",
         "docs/releases/README.md",
@@ -39,12 +40,12 @@
         "docs/tasks/TASK.architecture-map-11-23-2026.md",
         "docs/workflow-adoption.md"
       ],
-      "last_verified_at": "2026-11-23T09:24:30+00:00"
+      "last_verified_at": "2026-11-23T09:59:17+00:00"
     },
     {
       "id": "HUB.codex.md",
       "role": "navigation",
-      "reason": "製品の要件・評価・運用の入口。案件受付、一覧の差分更新、案件詳細と前回比較で読む台帳の検収へ案内する。",
+      "reason": "製品の要件・運用の入口。案件受付・索引・詳細表示に続き、重要度別の件数と検収を案内する。",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
       "edges": [
         ".agents/skills/security-audit/SKILL.md",
@@ -81,6 +82,7 @@
         "docs/acceptance/AC-20261123-05.md",
         "docs/acceptance/AC-20261123-06.md",
         "docs/acceptance/AC-20261123-07.md",
+        "docs/acceptance/AC-20261123-08.md",
         "docs/acceptance/INDEX.md",
         "docs/acceptance/README.md",
         "docs/releases/README.md",
@@ -93,6 +95,7 @@
         "docs/tasks/README.md",
         "docs/tasks/TASK.architecture-map-11-23-2026.md",
         "docs/tasks/TASK.case-intake-11-23-2026.md",
+        "docs/tasks/TASK.case-severity-11-23-2026.md",
         "docs/tasks/TASK.document-consistency-11-23-2026.md",
         "docs/tasks/TASK.frontend-review-11-22-2026.md",
         "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
@@ -103,7 +106,7 @@
         "docs/workflow-adoption.md",
         "governance/policy.yaml"
       ],
-      "last_verified_at": "2026-11-23T09:24:30+00:00"
+      "last_verified_at": "2026-11-23T09:59:17+00:00"
     },
     {
       "id": "GUARDRAILS.md",
@@ -227,12 +230,14 @@
         "docs/acceptance/AC-20261123-05.md",
         "docs/acceptance/AC-20261123-06.md",
         "docs/acceptance/AC-20261123-07.md",
+        "docs/acceptance/AC-20261123-08.md",
         "docs/acceptance/README.md",
         "docs/releases/README.md",
         "docs/tasks/TASK.agent-core-11-08-2026.md",
         "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
         "docs/tasks/TASK.architecture-map-11-23-2026.md",
         "docs/tasks/TASK.case-intake-11-23-2026.md",
+        "docs/tasks/TASK.case-severity-11-23-2026.md",
         "docs/tasks/TASK.document-consistency-11-23-2026.md",
         "docs/tasks/TASK.frontend-review-11-22-2026.md",
         "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
@@ -256,7 +261,7 @@
         "docs/tasks/TASK.version-011-11-08-2026.md",
         "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
       ],
-      "last_verified_at": "2026-11-23T09:24:30+00:00"
+      "last_verified_at": "2026-11-23T09:59:17+00:00"
     },
     {
       "id": "docs/acceptance/INDEX.md",
@@ -287,10 +292,12 @@
         "docs/acceptance/AC-20261123-05.md",
         "docs/acceptance/AC-20261123-06.md",
         "docs/acceptance/AC-20261123-07.md",
+        "docs/acceptance/AC-20261123-08.md",
         "docs/tasks/TASK.agent-core-11-08-2026.md",
         "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
         "docs/tasks/TASK.architecture-map-11-23-2026.md",
         "docs/tasks/TASK.case-intake-11-23-2026.md",
+        "docs/tasks/TASK.case-severity-11-23-2026.md",
         "docs/tasks/TASK.document-consistency-11-23-2026.md",
         "docs/tasks/TASK.frontend-review-11-22-2026.md",
         "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
@@ -311,7 +318,7 @@
         "docs/tasks/TASK.version-011-11-08-2026.md",
         "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
       ],
-      "last_verified_at": "2026-11-23T09:24:30+00:00"
+      "last_verified_at": "2026-11-23T09:59:17+00:00"
     },
     {
       "id": "docs/RSI.md",
