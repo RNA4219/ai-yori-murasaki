@@ -73,6 +73,26 @@ class AssessmentImportTest(unittest.TestCase):
         for claim in finding["claims"]:
             self.assertEqual(claim["status"], "hypothesis")
 
+    def test_indexed_screens_preserve_assessment_without_global_lookup(self) -> None:
+        from unittest.mock import patch
+        from ai_yori_murasaki.monitor_index import build_index
+        from ai_yori_murasaki.server import handle_request
+
+        self._import(self._trivy([{"Target": "t1", "Vulnerabilities": [self._vuln("CVE-2024-0001")]}]))
+        def responses():
+            result = {}
+            for suffix in ("", "/runs", "/assessment", "/decision-view"):
+                status, _, payload = handle_request(self.rt, "GET", "/api/campaigns/" + self.cid + suffix)
+                self.assertEqual(status, 200)
+                result[suffix] = json.loads(payload)
+            result["/decision-view"]["decision_view"].pop("generated_at")
+            return result
+        expected = responses()
+        self.assertEqual(len(expected["/assessment"]["report"]["findings"]), 1)
+        build_index(self.store)
+        with patch.object(self.store, "load_catalog", side_effect=AssertionError("全件照会")):
+            self.assertEqual(responses(), expected)
+
     def test_repeated_same_entries_single_artifact_attempts(self) -> None:
         vulns = [self._vuln("CVE-2024-0001") for _ in range(3)]
         raw = self._trivy([{"Target": "t1", "Vulnerabilities": vulns}])

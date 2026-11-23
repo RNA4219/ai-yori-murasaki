@@ -834,6 +834,7 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     return fetchView('/api/campaigns/'+encodeURIComponent(campaign)+'/decision-view'+(prev?'?previous='+encodeURIComponent(prev):'')).then(showResponse).catch(function(e){
       clear($('notes'));
       if(e.message==='HTTP 404') unavailable('err','この Campaign は見つかりません。');
+      else if(e.message==='HTTP 409') unavailable('warn','案件の索引を更新する必要があります。管理者に更新を依頼してください。');
       else if(e.message==='HTTP 500') unavailable('err','この画面では記録を表示できません。件数が多い場合はモニターで確認してください。');
       else if(!state.view) unavailable('err','記録を取得できませんでした。案件を選び直してください。');
       else note('warn','更新できませんでした。前回取得した記録を表示しています。「読み直す」で再試行できます。');

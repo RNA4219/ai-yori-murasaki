@@ -19,6 +19,7 @@ from urllib.parse import parse_qsl, urlsplit
 from .jsonio import DataError, canonical, loads
 from .runtime import Runtime
 from .monitor_summary import CampaignSummary, campaign_summaries
+from .monitor_detail import IndexUpdateRequired, read_selection
 from .storage import Store
 from . import lab_metrics
 
@@ -154,11 +155,16 @@ def project_event(event: dict, view: str = "operator") -> dict:
     return out
 
 
-def _project_run(run: dict, store=None) -> dict:
+def _project_run(run: dict, store=None, *, verified_events=None) -> dict:
     last_sequence = _safe_int(run.get("last_sequence"))
     last_event_hash = _safe_str(run.get("last_event_hash"))
     sealed_at = _safe_str(run.get("sealed_at"))
-    if store is not None:
+    if verified_events is not None:
+        last = verified_events[-1] if verified_events else {}
+        last_sequence = _safe_int(last.get("sequence"))
+        last_event_hash = _safe_str(last.get("event_hash"))
+        sealed_at = _safe_str(last.get("timestamp")) if last.get("event_type") == "chain_sealed" else None
+    elif store is not None:
         run_id = run.get("run_id")
         chain = store.verify_chain(run_id)
         if chain.get("result") == "PASS":
@@ -204,7 +210,7 @@ def _project_finding(obj: dict) -> dict:
     return {key: _safe_str(obj.get(key)) for key in ("finding_id", "severity", "title", "source")}
 
 
-def _project_lab_metrics(runtime: Runtime, cid: str) -> dict | None:
+def _project_lab_metrics(runtime, cid: str, *, verified_events=None) -> dict | None:
     """Return aggregated lab metrics for a campaign, or None if absent.
 
     Scans every actual run of the campaign, reads its events, and selects
@@ -216,28 +222,28 @@ def _project_lab_metrics(runtime: Runtime, cid: str) -> dict | None:
     raw objects and expected manifests are never exposed.
     """
     store = runtime.store
-    try:
-        runs = runtime.list_runs(cid)
-    except DataError:
-        return None
+    if verified_events is None:
+        try:
+            run_ids = [run.get("run_id") for run in runtime.list_runs(cid)]
+        except DataError:
+            return None
+    else:
+        run_ids = verified_events.keys()
     latest: tuple[str, dict] | None = None
-    for run in runs:
-        rid = run.get("run_id")
+    for rid in run_ids:
         if not isinstance(rid, str):
             continue
-        try:
-            chain = store.verify_chain(rid)
-        except DataError:
-            return {"status": "HOLD", "reason_code": "evidence_unverified",
-                    "metrics": None, "limitations": []}
-        if chain.get("result") != "PASS":
-            return {"status": "HOLD", "reason_code": "evidence_unverified",
-                    "metrics": None, "limitations": []}
-        try:
-            events = store.read_events(rid)
-        except DataError:
-            return {"status": "HOLD", "reason_code": "evidence_unverified",
-                    "metrics": None, "limitations": []}
+        if verified_events is not None:
+            events = verified_events[rid]
+        else:
+            try:
+                chain = store.verify_chain(rid)
+                if chain.get("result") != "PASS":
+                    raise DataError("unverified")
+                events = store.read_events(rid)
+            except DataError:
+                return {"status": "HOLD", "reason_code": "evidence_unverified",
+                        "metrics": None, "limitations": []}
         for event in events:
             if not isinstance(event, dict):
                 continue
@@ -258,6 +264,8 @@ def _project_lab_metrics(runtime: Runtime, cid: str) -> dict | None:
                 latest = (ts, event)
     if latest is None:
         return None
+    if verified_events is not None and {r["run_id"] for r in runtime.list_runs(cid)} != set(verified_events):
+        return {"status": "HOLD", "reason_code": "evidence_unverified", "metrics": None, "limitations": []}
     event = latest[1]
     refs = event.get("evidence_refs")
     if not isinstance(refs, list) or not refs or not isinstance(refs[0], str):
@@ -281,7 +289,7 @@ def _project_lab_metrics(runtime: Runtime, cid: str) -> dict | None:
                 "metrics": None, "limitations": []}
     status = result.get("status")
     if status == "HOLD":
-        reason = _safe_str(result.get("reason_code"), "evidence_unverified")
+        reason = _safe_str(result.get("reason_code")) or "evidence_unverified"
         return {"status": "HOLD", "reason_code": reason,
                 "metrics": None, "limitations": []}
     metrics = result.get("metrics")
@@ -751,9 +759,7 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
 
         if name == "campaigns":
             if "page" in query:
-                from itertools import islice
-                from .monitor_index import PAGE_SIZE, read_page
-                from .jsonio import MAX_JSON_BYTES
+                from .monitor_index import PAGE_SIZE, needs_index, read_page
 
                 value = query["page"]
                 if not re.fullmatch(r"[1-9][0-9]{0,8}", value):
@@ -762,10 +768,7 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
                 result = read_page(store, page, view)
                 if result is not None:
                     return _json_response(200, result)
-                catalog = store._catalog_path()
-                runs = store.workspace / "runs"
-                if ((catalog.exists() and catalog.stat().st_size > MAX_JSON_BYTES) or
-                        (runs.is_dir() and next(islice(runs.iterdir(), 1000, None), None) is not None)):
+                if needs_index(store):
                     return _error(409, "monitor_index_required")
             campaigns = [_project_campaign(cid, summary, view)
                          for cid, summary in campaign_summaries(store).items()]
@@ -791,19 +794,33 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
                     for c in campaigns for ids in [previous.get(c["campaign_id"], ())]]
             return _json_response(200, {"campaigns": sanitize(rows, store.secrets)})
 
+        indexed = None
+        if name in ("campaign", "campaign_decision_view", "campaign_runs", "campaign_rsi", "campaign_assessment"):
+            withheld = view == "blue" and name in ("campaign", "campaign_decision_view", "campaign_assessment")
+            if not withheld:
+                try:
+                    indexed = read_selection(store, groups[0], compare=name == "campaign_decision_view",
+                                             selected=query.get("previous"))
+                except KeyError:
+                    return _error(404, "not_found")
+
         if name == "campaign_decision_view":
             if view == "blue":
                 return _json_response(200, {"decision_view": {"status": "withheld", "reason": "評価情報はBlueに非公開"}})
             cid = groups[0]
-            summaries = campaign_summaries(store)
+            summaries = {cid: indexed.current.summary} if indexed else campaign_summaries(store)
             if cid not in summaries:
                 return _error(404, "not_found")
             if summaries[cid].status != "complete" or not summaries[cid].campaign:
                 return _json_response(200, {"decision_view": None, "status": "hold",
                                             "reason": "検知の未集計があるため、判断と前回比較を保留しています。"})
             from .decision_view import read_decision_view
+            if indexed and indexed.previous:
+                summaries[indexed.previous.cid] = indexed.previous.summary
             try:
-                projected = read_decision_view(runtime, cid, query.get("previous"), summaries)
+                projected = read_decision_view(runtime, cid, query.get("previous"), summaries,
+                                               options=indexed.candidates if indexed else None,
+                                               report_loader=indexed.current.report if indexed else None)
             except (DataError, OSError, ValueError, KeyError, TypeError):
                 return _json_response(200, {"decision_view": None, "status": "hold", "reason": "記録を確認できません"})
             return _json_response(200, {"decision_view": projected})
@@ -819,7 +836,9 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
                 })
             from .assessment import load_report
             try:
-                report = load_report(runtime, cid)
+                report = indexed.current.report() if indexed else load_report(runtime, cid)
+            except IndexUpdateRequired:
+                raise
             except DataError:
                 return _json_response(200, {
                     "report": None,
@@ -845,7 +864,7 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
                         "reason": "評価情報はBlueに非公開",
                     },
                 })
-            summary = campaign_summaries(store).get(cid)
+            summary = indexed.current.summary if indexed else campaign_summaries(store).get(cid)
             if summary is None:
                 return _error(404, "not_found")
             findings = [_project_finding(obj) for obj in summary.findings.values()]
@@ -859,16 +878,28 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
                     "remediation_id": _safe_str(obj.get("remediation_id")),
                     "status": _safe_str(obj.get("status")),
                 })
+            if summary.pending_runs:
+                metrics = {"status": "HOLD", "reason_code": "evidence_unverified", "metrics": None, "limitations": []}
+            elif indexed:
+                metrics = _project_lab_metrics(indexed.current, cid, verified_events=indexed.current.events)
+            else:
+                metrics = _project_lab_metrics(runtime, cid)
             return _json_response(200, {
                 "campaign": _project_campaign(cid, summary),
                 "findings": findings,
                 "remediations": remediations,
-                "metrics": (_project_lab_metrics(runtime, cid) if not summary.pending_runs else
-                            {"status": "HOLD", "reason_code": "evidence_unverified", "metrics": None, "limitations": []}),
+                "metrics": metrics,
             })
 
         if name == "campaign_runs":
             cid = groups[0]
+            if indexed:
+                case = indexed.current
+                if not case.summary.campaign:
+                    return _error(404, "not_found")
+                return _json_response(200, {"runs": [
+                    _project_run(run, verified_events=case.events.get(run["run_id"], []))
+                    for run in case.list_runs(cid)]})
             try:
                 runtime.get_campaign(cid)
             except DataError:
@@ -878,10 +909,14 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
 
         if name == "campaign_rsi":
             cid = groups[0]
-            try:
-                runtime.get_campaign(cid)
-            except DataError:
-                return _error(404, "not_found")
+            if indexed:
+                if not indexed.current.summary.campaign:
+                    return _error(404, "not_found")
+            else:
+                try:
+                    runtime.get_campaign(cid)
+                except DataError:
+                    return _error(404, "not_found")
             return _json_response(200, {
                 "rsi": _project_rsi(store, cid),
                 "agent_rsi": _project_agent_rsi(store, cid),
@@ -949,6 +984,8 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
 
         if name == "adapters":
             return _json_response(200, {"adapters": _project_adapters(store)})
+    except IndexUpdateRequired:
+        return _error(409, "monitor_index_required")
     except DataError:
         return _error(500, "internal_error")
     except Exception:  # noqa: BLE001 - never leak exception data

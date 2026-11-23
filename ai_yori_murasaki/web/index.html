@@ -1079,7 +1079,7 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
         if (!isCurrent()) return;
         var m = errMsg(e);
         if (m === null) return;
-        mainError = m;
+        mainError = e.httpStatus === 409 ? '案件の索引を更新する必要があります。管理者に更新を依頼してください。' : m;
       }));
       requests.push(fetchJSON('/api/campaigns/' + encodeURIComponent(id) + '/runs', 'detail-runs').then(function (d) {
         if (!isCurrent()) return;

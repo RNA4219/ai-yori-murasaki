@@ -1,0 +1,28 @@
+{
+  "campaigns": 100000,
+  "selected": "c050000",
+  "previous": "c049999",
+  "browser": "159.0.8154.6",
+  "catalog_bytes": 21100035,
+  "screens": {
+    "detail": {
+      "ledger_opens": {
+        "r050000": 4
+      },
+      "unrelated_ledger_opens": 0,
+      "catalog_opens": 0,
+      "matching_api_responses": 4
+    },
+    "decision": {
+      "ledger_opens": {
+        "r049999": 1,
+        "r050000": 1
+      },
+      "unrelated_ledger_opens": 0,
+      "catalog_opens": 0,
+      "matching_api_responses": 1
+    }
+  },
+  "matching_api_responses": 5,
+  "unrelated_ledger_opens": 0
+}

@@ -50,7 +50,8 @@ def campaign_summaries(store: Store, *, catalog: dict | None = None) -> dict[str
 
 
 def summarize_run(store: Store, rid: str, hint: str | None,
-                  finding_refs: set[str] | None = None, *, strict_io: bool = False) -> tuple[str, CampaignSummary]:
+                  finding_refs: set[str] | None = None, *, strict_io: bool = False,
+                  on_verified=None) -> tuple[str, CampaignSummary]:
     """1台帳を検証する。参照先が欠損した検知も、後から復旧を検出できるようにする。"""
     summary = CampaignSummary()
     unavailable_io = FileNotFoundError if strict_io else OSError
@@ -70,6 +71,8 @@ def summarize_run(store: Store, rid: str, hint: str | None,
             raise DataError("unavailable ledger without a campaign")
         summary.pending_runs.append(rid)
         return cid, summary
+    if on_verified is not None:
+        on_verified(rid, cid, events)
     complete = True
     started_at = ""
     for event in events:

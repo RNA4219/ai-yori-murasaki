@@ -679,12 +679,17 @@ def load_report(runtime: Any, campaign_id: str, view: str = "operator") -> dict 
     if view == "blue":
         return {"status": "withheld", "reason": "評価情報はBlueに非公開"}
 
-    campaign = runtime.get_campaign(campaign_id)
+    runtime.get_campaign(campaign_id)
+    return _read_report(runtime.store, campaign_id, view, _iter_assessment_events(runtime, campaign_id))
+
+
+def _read_report(store, campaign_id, view, assessment_events):
+    """検証済みのイベントに結び付いた評価レポートだけを投影する。"""
     current_version = None
     current_version_ts = ""
 
     latest: tuple[str, str, dict] | None = None
-    for event, ext in _iter_assessment_events(runtime, campaign_id):
+    for event, ext in assessment_events:
         tv = ext.get("assessment_target_version")
         if isinstance(tv, str) and tv:
             ts = event.get("timestamp", "")
@@ -695,18 +700,18 @@ def load_report(runtime: Any, campaign_id: str, view: str = "operator") -> dict 
         if not isinstance(ref, str) or not re.fullmatch(r"[0-9a-f]{64}", ref):
             raise jsonio.DataError("malformed assessment event", "hold")
         try:
-            report = runtime.store.get_object(ref)
+            report = store.get_object(ref)
         except Exception as exc:  # noqa: BLE001
             raise jsonio.DataError("assessment report unresolved", "hold") from exc
         if not isinstance(report, dict):
             raise jsonio.DataError("assessment report not object", "hold")
-        try:
-            validate_assessment("assessment_report", report)
-            semantic_validate_assessment("assessment_report", report, runtime.store)
-        except AssessmentContractError as exc:
-            raise jsonio.DataError("malformed assessment report", "hold") from exc
         if report.get("campaign_id") != campaign_id or report.get("run_id") != event.get("run_id"):
             raise jsonio.DataError("assessment report campaign/run mismatch", "hold")
+        try:
+            validate_assessment("assessment_report", report)
+            semantic_validate_assessment("assessment_report", report, store)
+        except AssessmentContractError as exc:
+            raise jsonio.DataError("malformed assessment report", "hold") from exc
         ts = event.get("timestamp", "")
         if latest is None or ts >= latest[0]:
             latest = (ts, ref, report)
@@ -717,7 +722,7 @@ def load_report(runtime: Any, campaign_id: str, view: str = "operator") -> dict 
     if current_version and report.get("target_version") != current_version:
         report = dict(report)
         report["_historical"] = True
-    return project_report(sanitize(report, runtime.store.secrets), view, "operator")
+    return project_report(sanitize(report, store.secrets), view, "operator")
 
 
 # ---------------------------------------------------------------------------

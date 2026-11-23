@@ -2,7 +2,7 @@
   "id": "docs/acceptance/INDEX.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "検収と公開状態の一覧。AC-20261123-06はモニター索引の差分更新、全件再構築との照合、失敗時の前世代保持の検収。",
+  "summary": "検収と公開状態の一覧。AC-20261123-07は案件詳細と判断画面の表示・台帳読み取り範囲の検収。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -26,6 +26,7 @@
     "docs/acceptance/AC-20261123-04.md",
     "docs/acceptance/AC-20261123-05.md",
     "docs/acceptance/AC-20261123-06.md",
+    "docs/acceptance/AC-20261123-07.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
     "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
@@ -33,6 +34,7 @@
     "docs/tasks/TASK.document-consistency-11-23-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
     "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
+    "docs/tasks/TASK.indexed-case-detail-11-23-2026.md",
     "docs/tasks/TASK.llm-remote-11-09-2026.md",
     "docs/tasks/TASK.monitor-counts-11-23-2026.md",
     "docs/tasks/TASK.monitor-index-11-23-2026.md",
@@ -58,13 +60,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "468ce12d940141e3f3a98194c42444ae9534f1171120be41cf217dbd8d48d1a4",
-  "generated_at": "00041",
+  "source_sha256": "c3396d91b328c12a24bb0436170b0f2ae22fc26d5920684f80c354c93a60579b",
+  "generated_at": "00042",
   "review": {
-    "reviewed_at": "2026-11-23T05:50:40+00:00",
+    "reviewed_at": "2026-11-23T09:24:30+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "468ce12d940141e3f3a98194c42444ae9534f1171120be41cf217dbd8d48d1a4",
-    "summary_sha256": "76f7a9dcf5527a7f8b40208cba30a4bec0658e92188114089d2965a11b614bff",
-    "scope": "索引の差分更新・再検証の変更、失敗時の状態と参照先を原文に照合。"
+    "source_sha256": "c3396d91b328c12a24bb0436170b0f2ae22fc26d5920684f80c354c93a60579b",
+    "summary_sha256": "6aeb1c1e8d79208e84e7565b6a7442727e9930bdb625734eb48f5f1a52344b34",
+    "scope": "案件詳細と判断画面の取得範囲、索引の移行条件、検収の記録と参照先を原文に照合。"
   }
 }

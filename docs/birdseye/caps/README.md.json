@@ -2,7 +2,7 @@
   "id": "README.md",
   "role": "overview",
   "public_api": [],
-  "summary": "製品の起動、案件受付、検知・判断・構成図の操作を案内する。モニターの初回構築、差分更新、明示的な全件再検証の使い分けを示す。",
+  "summary": "モニターと判断画面の起動・操作手順。案件一覧の差分更新、案件詳細と前回比較のための索引の更新方法を案内する。",
   "deps_out": [
     "BLUEPRINT.md",
     "CHANGELOG.md",
@@ -20,6 +20,7 @@
     "docs/acceptance/AC-20261109-02.md",
     "docs/acceptance/AC-20261123-04.md",
     "docs/acceptance/AC-20261123-06.md",
+    "docs/acceptance/AC-20261123-07.md",
     "docs/acceptance/INDEX.md",
     "docs/evidence/wazuh-live-20261108.md",
     "docs/releases/README.md",
@@ -46,13 +47,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "6eb079b9f97acadbad684656e84b8b78306bb8026271a114394deafe236f4aa7",
-  "generated_at": "00041",
+  "source_sha256": "a26e50dde451e4656ea03e598934b79b10087e8ee8524dd0890d98d2694fa04e",
+  "generated_at": "00042",
   "review": {
-    "reviewed_at": "2026-11-23T05:50:40+00:00",
+    "reviewed_at": "2026-11-23T09:24:30+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "6eb079b9f97acadbad684656e84b8b78306bb8026271a114394deafe236f4aa7",
-    "summary_sha256": "5503e753e59dc380536714095844bfba6a16bfb5f03329879f42033750d25c09",
-    "scope": "索引の差分更新・再検証の変更、失敗時の状態と参照先を原文に照合。"
+    "source_sha256": "a26e50dde451e4656ea03e598934b79b10087e8ee8524dd0890d98d2694fa04e",
+    "summary_sha256": "ce50b79a917faebec80b2d44ef1c0e36a2c2bb7a178291753867144593fe557b",
+    "scope": "案件詳細と判断画面の取得範囲、索引の移行条件、検収の記録と参照先を原文に照合。"
   }
 }
