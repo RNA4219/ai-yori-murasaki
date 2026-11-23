@@ -1,5 +1,5 @@
 {
-  "generated_at": "00044",
+  "generated_at": "00045",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -15,8 +15,8 @@
     "CHANGELOG.md": {
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
-      "mtime": "00044",
-      "source_sha256": "b9a269b5fae5b955f933537634ea71477beabe8466a8809f16316ac2688e1218"
+      "mtime": "00045",
+      "source_sha256": "506de4ad09fc69d926987d47cfd3bf05ebd451dea1ac7c5345aeb6e9d44730aa"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -42,8 +42,8 @@
     "README.md": {
       "role": "overview",
       "caps": "docs/birdseye/caps/README.md.json",
-      "mtime": "00044",
-      "source_sha256": "38e106606351a1623136f276782039fb20d91bed1787442d25dee51bfb8243d7"
+      "mtime": "00045",
+      "source_sha256": "648767b6ce300ad10069ddcbfeb2062652f4171abe23ea0fe8f3b3ea33b6608d"
     },
     "RUNBOOK.md": {
       "role": "operations",
@@ -702,14 +702,14 @@
     "docs/tasks/TASK.architecture-canvas-11-23-2026.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.tasks.TASK.architecture-canvas-11-23-2026.md.json",
-      "source_sha256": "df50fede7db700639ca96237b44eacc8d3a6dca444b4b7f31df163cf054e97bd",
-      "mtime": "00044"
+      "source_sha256": "f2e9758d15e2436b8604ea8e380680888b338035889c36eb7753fc0d5c6704e9",
+      "mtime": "00045"
     },
     "docs/acceptance/AC-20261123-09.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.acceptance.AC-20261123-09.md.json",
-      "source_sha256": "65d1973e1032a8e99ebcb04aa2460387d63779c578248ae5f952587fc37534e2",
-      "mtime": "00044"
+      "source_sha256": "c5303b5f71dbe8cab91d034ccc035d68565d8d61bea3137879f7a78aa2d3395b",
+      "mtime": "00045"
     }
   },
   "edges": [

@@ -15,14 +15,14 @@
   "deps_out": [
     "docs/tasks/TASK.architecture-canvas-11-23-2026.md"
   ],
-  "summary": "製品構成図での箱と線の追従、マウスとタッチでの移動・拡大、選択した線の根拠、キーボードによる操作を確認した検収。",
-  "source_sha256": "65d1973e1032a8e99ebcb04aa2460387d63779c578248ae5f952587fc37534e2",
-  "generated_at": "00044",
+  "summary": "製品の構成図で箱と線の追従、タッチとキーボード、接続の根拠、図の内外におけるホイール操作を確認した検収。",
+  "source_sha256": "c5303b5f71dbe8cab91d034ccc035d68565d8d61bea3137879f7a78aa2d3395b",
+  "generated_at": "00045",
   "review": {
-    "reviewed_at": "2026-11-23T10:12:56+00:00",
+    "reviewed_at": "2026-11-23T10:23:05+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "65d1973e1032a8e99ebcb04aa2460387d63779c578248ae5f952587fc37534e2",
-    "summary_sha256": "fc7ff9f6cfab6fb5d438792b4569e8d44baff26cfed9385a506837be9fa65f2b",
-    "scope": "構成図の操作と接続根拠の仕様、表示範囲、検収の記録を原文に照合。"
+    "source_sha256": "c5303b5f71dbe8cab91d034ccc035d68565d8d61bea3137879f7a78aa2d3395b",
+    "summary_sha256": "a9230c90807fd6120ba3f468ebfcafe421fe0658d4ea1bdb2fa45fadf97b0d95",
+    "scope": "図内外のホイール操作とポインター位置の検収を原文に照合。"
   }
 }

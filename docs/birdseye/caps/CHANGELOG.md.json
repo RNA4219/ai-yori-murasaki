@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "版ごとの変更と検収への参照。0033は構成図の再配置、パン、ズームと接続の根拠の表示を記録する。",
+  "summary": "版ごとの変更と検収への参照。0034は構成図上のホイールでポインター位置を中心に拡大・縮小する操作。",
   "deps_out": [
     "docs/SOURCES.md",
     "docs/acceptance/AC-20261106-01.md",
@@ -83,13 +83,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "b9a269b5fae5b955f933537634ea71477beabe8466a8809f16316ac2688e1218",
-  "generated_at": "00044",
+  "source_sha256": "506de4ad09fc69d926987d47cfd3bf05ebd451dea1ac7c5345aeb6e9d44730aa",
+  "generated_at": "00045",
   "review": {
-    "reviewed_at": "2026-11-23T10:12:56+00:00",
+    "reviewed_at": "2026-11-23T10:23:05+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "b9a269b5fae5b955f933537634ea71477beabe8466a8809f16316ac2688e1218",
-    "summary_sha256": "7776cf91494ebbb8038243af0a6ec0c8b03a49bf91ebbaba11a2fbb8206f5f11",
-    "scope": "構成図の操作と接続根拠の仕様、表示範囲、検収の記録を原文に照合。"
+    "source_sha256": "506de4ad09fc69d926987d47cfd3bf05ebd451dea1ac7c5345aeb6e9d44730aa",
+    "summary_sha256": "f8ac689a4ae470f7b35ce7979118a07b290eeecdda176e8c4acebe884fd728ac",
+    "scope": "図内外のホイール操作とポインター位置の検収を原文に照合。"
   }
 }

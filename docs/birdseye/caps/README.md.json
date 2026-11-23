@@ -2,7 +2,7 @@
   "id": "README.md",
   "role": "overview",
   "public_api": [],
-  "summary": "製品の起動と画面操作。案件の検知のほか、構成図の箱を移動して、選んだ線の接続理由を読む操作を案内する。",
+  "summary": "製品の起動と操作。案件の検知、構成図の箱の移動、ホイールによる拡大縮小、接続の根拠の確認手順を案内する。",
   "deps_out": [
     "BLUEPRINT.md",
     "CHANGELOG.md",
@@ -49,13 +49,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "38e106606351a1623136f276782039fb20d91bed1787442d25dee51bfb8243d7",
-  "generated_at": "00044",
+  "source_sha256": "648767b6ce300ad10069ddcbfeb2062652f4171abe23ea0fe8f3b3ea33b6608d",
+  "generated_at": "00045",
   "review": {
-    "reviewed_at": "2026-11-23T10:12:56+00:00",
+    "reviewed_at": "2026-11-23T10:23:05+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "38e106606351a1623136f276782039fb20d91bed1787442d25dee51bfb8243d7",
-    "summary_sha256": "1864cd53cf64d787d9b958dd23c36dbd00a1fa0e925c9a0cc23d7dc9cf8f26cf",
-    "scope": "構成図の操作と接続根拠の仕様、表示範囲、検収の記録を原文に照合。"
+    "source_sha256": "648767b6ce300ad10069ddcbfeb2062652f4171abe23ea0fe8f3b3ea33b6608d",
+    "summary_sha256": "bbc81b37cd992ec7f95f28dad035c3cd914967c2ffc50cc9c789fbd93c830b72",
+    "scope": "図内外のホイール操作とポインター位置の検収を原文に照合。"
   }
 }

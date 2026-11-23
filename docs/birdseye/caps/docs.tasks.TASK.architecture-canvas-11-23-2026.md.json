@@ -14,14 +14,14 @@
   "deps_out": [
     "docs/acceptance/AC-20261123-09.md"
   ],
-  "summary": "構成を読むための一時配置とキャンバス操作、線に対応する接続理由と根拠の表示を求めるTask。",
-  "source_sha256": "df50fede7db700639ca96237b44eacc8d3a6dca444b4b7f31df163cf054e97bd",
-  "generated_at": "00044",
+  "summary": "箱の一時配置、パン、ポインターを中心とするホイールズーム、接続の理由と根拠の表示に関する要件。",
+  "source_sha256": "f2e9758d15e2436b8604ea8e380680888b338035889c36eb7753fc0d5c6704e9",
+  "generated_at": "00045",
   "review": {
-    "reviewed_at": "2026-11-23T10:12:56+00:00",
+    "reviewed_at": "2026-11-23T10:23:05+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "df50fede7db700639ca96237b44eacc8d3a6dca444b4b7f31df163cf054e97bd",
-    "summary_sha256": "d95a551cc887b5171f4541c675f9aa9410447d9839b08b13397e664405611aaf",
-    "scope": "構成図の操作と接続根拠の仕様、表示範囲、検収の記録を原文に照合。"
+    "source_sha256": "f2e9758d15e2436b8604ea8e380680888b338035889c36eb7753fc0d5c6704e9",
+    "summary_sha256": "d6769587bf072e501436ebf6c955c91cfc3b55d5c698f69099c67c0eb7166cdd",
+    "scope": "図内外のホイール操作とポインター位置の検収を原文に照合。"
   }
 }

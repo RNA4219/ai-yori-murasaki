@@ -519,7 +519,7 @@ frame.addEventListener('keydown',e=>{
   }
 });
 diagram.addEventListener('wheel',e=>{
-  if(!e.ctrlKey && !e.metaKey) return;
+  if(e.deltaY===0) return;
   e.preventDefault();zoomAt(camera.zoom*(e.deltaY<0?1.15:1/1.15),viewportPoint(e.clientX,e.clientY));
 },{passive:false});
 $('zoom-in').addEventListener('click',()=>zoomAt(camera.zoom*1.25));

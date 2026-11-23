@@ -32,6 +32,30 @@ try {
     const coords=()=>node.getAttribute('transform');
     const path=()=>wire.locator('.edge').getAttribute('d');
     const viewport=()=>page.locator('#diagram').getAttribute('viewBox');
+    if(!mobile) {
+      const diagram=page.locator('#diagram'), box=await diagram.boundingBox();
+      const pointer={x:Math.round(box.x+box.width*.3),y:Math.round(box.y+box.height*.4)};
+      const worldPoint=()=>diagram.evaluate((svg,p)=>{
+        const point=new DOMPoint(p.x,p.y).matrixTransform(svg.getScreenCTM().inverse());
+        return {x:point.x,y:point.y};
+      },pointer);
+      const start=await worldPoint(), zoom=await page.locator('#zoom-value').textContent();
+      const scroll=await page.evaluate(()=>window.scrollY);
+      await page.mouse.move(pointer.x,pointer.y);
+      await page.mouse.wheel(0,-100);
+      await page.waitForFunction(z=>parseInt(document.querySelector('#zoom-value').textContent)>parseInt(z),zoom);
+      const after=await worldPoint();
+      assert.ok(Math.hypot(after.x-start.x,after.y-start.y)<.01,'ポインター下の図の座標を保持する');
+      await page.mouse.wheel(0,100);
+      await page.waitForFunction(z=>document.querySelector('#zoom-value').textContent===z,zoom);
+      assert.equal(await page.evaluate(()=>window.scrollY),scroll);
+      await page.locator('#name').hover();
+      const outsideScroll=await page.evaluate(()=>window.scrollY);
+      await page.mouse.wheel(0,100);
+      await page.waitForFunction(y=>window.scrollY>y,outsideScroll);
+      assert.equal(await page.locator('#zoom-value').textContent(),zoom);
+      await frame.scrollIntoViewIfNeeded();
+    }
     const original=await coords(), originalPath=await path();
     const touch=mobile?await page.context().newCDPSession(page):null;
     async function drag(x,y,dx,dy) {
