@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "製品の変更と検収への参照。0037は接続の利用者入力と内部処理の区分、入力範囲の編集とJSON保存を記録する。",
+  "summary": "製品の変更と検収への参照。0038は構成図の利用者入力の送信元に人型のコマを表示する変更。",
   "deps_out": [
     "docs/SOURCES.md",
     "docs/acceptance/AC-20261106-01.md",
@@ -83,13 +83,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "3f34166a0b9f80793965d6095bf59f54c9a6f2229be6fbf743bf0cfdc971192e",
-  "generated_at": "00048",
+  "source_sha256": "edafe146d8a91447b58c22fef02803db9609293e79a46b7547bc2bb69f53a746",
+  "generated_at": "00049",
   "review": {
-    "reviewed_at": "2026-11-23T10:53:36+00:00",
+    "reviewed_at": "2026-11-23T10:59:10+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "3f34166a0b9f80793965d6095bf59f54c9a6f2229be6fbf743bf0cfdc971192e",
-    "summary_sha256": "2a26a6c42c8fd8857373edb7e3420e5ec470264d8d3a5d6fa0ae1ca86b9a349b",
-    "scope": "利用者が入力できる矢印と範囲の指定、構成図の保存・再読込の記録を原文に照合。"
+    "source_sha256": "edafe146d8a91447b58c22fef02803db9609293e79a46b7547bc2bb69f53a746",
+    "summary_sha256": "1e1fe8375e9cf1a41858f5dd4bfdfe0a66627372f282f684a6e2176d4f36f5e8",
+    "scope": "利用者を表すコマの表示対象・操作と検収を原文に照合。"
   }
 }

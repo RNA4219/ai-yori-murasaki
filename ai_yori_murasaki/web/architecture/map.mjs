@@ -121,7 +121,8 @@ function repoBands(nodes,edges) {
   for(const n of nodes) (bands[levels.get(n.id)] ??= {label:'',nodes:[]}).nodes.push(n);
   return bands;
 }
-function cardSize(id,width) {
+const actorHeight=46;
+function cardSize(id,width,inputSources) {
   const counts=new Map();
   for(const {severity} of issues(id)) counts.set(severity,(counts.get(severity) || 0)+1);
   const badges=[];
@@ -134,9 +135,10 @@ function cardSize(id,width) {
     badges.push({severity,label,x,y,w});
     x+=w+4;
   }
-  return {w:width,h:badges.length ? y+46 : 80,badges};
+  return {w:width,h:badges.length ? y+46 : 80,badges,actorSpace:inputSources.has(id)?actorHeight:0};
 }
 function layout(nodes,edges,width) {
+  const inputSources=new Set(state.map.connections.filter(c=>c.userInput?.mode==='ui').map(c=>c.from));
   const repoOnly=nodes.every(n=>n.kind==='repository');
   const bands=repoOnly ? repoBands(nodes,edges) : [
     {label:'リポジトリ',nodes:nodes.filter(n=>n.kind==='repository')},
@@ -157,10 +159,10 @@ function layout(nodes,edges,width) {
       let zoneHeight=start;
       for(let i=0;i<band.nodes.length;i+=columns){
         const row=band.nodes.slice(i,i+columns).map((n,col)=>{
-          const card=cardSize(n.id,bw);
-          Object.assign(card,{x:margin+(col+.5)*cell-bw/2,y:top+zoneHeight,bandTop:top});
+          const card=cardSize(n.id,bw,inputSources);
+          Object.assign(card,{x:margin+(col+.5)*cell-bw/2,y:top+zoneHeight+card.actorSpace,bandTop:top});
           positions.set(n.id,card);
-          return card.h;
+          return card.actorSpace+card.h;
         });
         zoneHeight+=Math.max(...row)+20;
       }
@@ -173,9 +175,9 @@ function layout(nodes,edges,width) {
     const widthPer=(width-2*margin)/bands.length;
     const bw=Math.min(205,Math.max(106,widthPer-46));
     const heights=bands.map(band=>band.nodes.reduce((total,n)=>{
-      const card=cardSize(n.id,bw);
+      const card=cardSize(n.id,bw,inputSources);
       positions.set(n.id,card);
-      return total+card.h+gap;
+      return total+card.actorSpace+card.h+gap;
     },0));
     bottom=Math.max(300,Math.max(...heights)+64);
     bands.forEach((band,col)=>{
@@ -184,8 +186,8 @@ function layout(nodes,edges,width) {
       let y=(bottom-heights[col]+gap)/2+10;
       for(const n of band.nodes){
         const card=positions.get(n.id);
-        card.x=left+(widthPer-bw)/2;card.y=y;
-        y+=card.h+gap;
+        card.x=left+(widthPer-bw)/2;card.y=y+card.actorSpace;
+        y=card.y+card.h+gap;
       }
     });
   }
@@ -223,6 +225,14 @@ const glyphs={
   store:'M3 5c0-4 13-4 13 0s-13 4-13 0 M3 5v9c0 4 13 4 13 0V5 M3 10c0 4 13 4 13 0',
   external:'M3 5h13v10H3z M6 9h7 M9 7l3 2-3 2'
 };
+function userPeg(){
+  const peg=svg('g',{class:'user-peg',transform:'translate(10 '+(-actorHeight)+')','aria-hidden':true});
+  peg.append(svg('circle',{cx:10,cy:7,r:5.6}),
+    svg('path',{d:'M7 14Q10 12.8 13 14L16.3 25Q16.8 28 10 28Q3.2 28 3.7 25Z'}),
+    svg('text',{x:25,y:21},'利用者'),
+    svg('path',{class:'peg-arrow',d:'M10 31v12m-4-4 4 4 4-4'}));
+  return peg;
+}
 function updateCamera() {
   const {x,y,zoom}=camera, width=frame.clientWidth/zoom, height=frame.clientHeight/zoom;
   diagram.setAttribute('viewBox',[x,y,width,height].join(' '));
@@ -236,7 +246,7 @@ function fitMap() {
   if(!chart || !chart.positions.size) return;
   const boxes=[...chart.positions.values()];
   const auto=!offsets[state.mode].size;
-  const x=Math.min(...boxes.map(p=>p.x))-24, y=Math.min(...boxes.map(p=>p.y))-(auto?44:24);
+  const x=Math.min(...boxes.map(p=>p.x))-24, y=Math.min(...boxes.map(p=>p.y-p.actorSpace))-(auto?44:24);
   const w=Math.max(...boxes.map(p=>p.x+p.w))+24-x,h=Math.max(...boxes.map(p=>p.y+p.h))+24-y;
   const zoom=Math.min(1,frame.clientWidth/w,frame.clientHeight/h);
   camera={zoom,x:x+(w-frame.clientWidth/zoom)/2,y:y+(h-frame.clientHeight/zoom)/2};
@@ -329,7 +339,8 @@ function draw(reset=false){
       g.append(svg('text',{class:'node-issue',x:11,y:p.h-9},fit(findings[0].title,p.w-21,12)));
     }
     const visibleLabel=[...g.querySelectorAll('text')].map(t=>t.textContent).join(' ');
-    g.setAttribute('aria-label',visibleLabel+'。'+n.name+'、'+kindNames.get(n.kind)+'、指摘'+findings.length+'件');
+    if(p.actorSpace) g.append(userPeg());
+    g.setAttribute('aria-label',(p.actorSpace?'利用者が操作する画面。':'')+visibleLabel+'。'+n.name+'、'+kindNames.get(n.kind)+'、指摘'+findings.length+'件');
     nodesDrawn.set(n.id,g);
     if(active?.id===n.id) focusTarget=g;
     fragment.append(g);
@@ -393,7 +404,7 @@ function inputEditor(connection){
     else delete connection.userInput;
     scope.value='';
     scopeLabel.hidden=select.value!=='ui';
-    setEdited(true);updateInputLines();
+    setEdited(true);draw();
   });
   scope.addEventListener('input',()=>{
     const value=scope.value.trim();
