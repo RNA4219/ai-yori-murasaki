@@ -1,5 +1,5 @@
 {
-  "generated_at": "00051",
+  "generated_at": "00054",
   "index_snapshot": "docs/birdseye/index.json",
   "refresh_command": "RUNBOOK.md#execute と docs/BIRDSEYE.md の PowerShell 手順を参照",
   "curation_notes": "ローカル製品、要件、検収、文書運用の入口。生成世代と原文・要約の内容確認を区別する。",
@@ -46,7 +46,7 @@
     {
       "id": "HUB.codex.md",
       "role": "navigation",
-      "reason": "製品の要件・評価・運用への入口。構成図の直接操作のTaskとマウス・タッチの検収を参照できる。",
+      "reason": "製品要件と作業の案内。モニター・判断・構成図・受付の画面設計と検収を引ける。",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
       "edges": [
         ".agents/skills/security-audit/SKILL.md",
@@ -85,6 +85,7 @@
         "docs/acceptance/AC-20261123-07.md",
         "docs/acceptance/AC-20261123-08.md",
         "docs/acceptance/AC-20261123-09.md",
+        "docs/acceptance/AC-20261124-01.md",
         "docs/acceptance/INDEX.md",
         "docs/acceptance/README.md",
         "docs/releases/README.md",
@@ -101,6 +102,7 @@
         "docs/tasks/TASK.case-severity-11-23-2026.md",
         "docs/tasks/TASK.document-consistency-11-23-2026.md",
         "docs/tasks/TASK.frontend-review-11-22-2026.md",
+        "docs/tasks/TASK.frontend-workspace-11-24-2026.md",
         "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
         "docs/tasks/TASK.indexed-case-detail-11-23-2026.md",
         "docs/tasks/TASK.monitor-counts-11-23-2026.md",
@@ -109,7 +111,7 @@
         "docs/workflow-adoption.md",
         "governance/policy.yaml"
       ],
-      "last_verified_at": "2026-11-23T10:12:56+00:00"
+      "last_verified_at": "2026-11-23T16:21:04+00:00"
     },
     {
       "id": "GUARDRAILS.md",
@@ -235,6 +237,7 @@
         "docs/acceptance/AC-20261123-07.md",
         "docs/acceptance/AC-20261123-08.md",
         "docs/acceptance/AC-20261123-09.md",
+        "docs/acceptance/AC-20261124-01.md",
         "docs/acceptance/README.md",
         "docs/releases/README.md",
         "docs/tasks/TASK.agent-core-11-08-2026.md",
@@ -245,6 +248,7 @@
         "docs/tasks/TASK.case-severity-11-23-2026.md",
         "docs/tasks/TASK.document-consistency-11-23-2026.md",
         "docs/tasks/TASK.frontend-review-11-22-2026.md",
+        "docs/tasks/TASK.frontend-workspace-11-24-2026.md",
         "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
         "docs/tasks/TASK.indexed-case-detail-11-23-2026.md",
         "docs/tasks/TASK.llm-remote-11-09-2026.md",
@@ -266,7 +270,7 @@
         "docs/tasks/TASK.version-011-11-08-2026.md",
         "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
       ],
-      "last_verified_at": "2026-11-23T10:12:56+00:00"
+      "last_verified_at": "2026-11-23T16:21:04+00:00"
     },
     {
       "id": "docs/acceptance/INDEX.md",
@@ -299,6 +303,7 @@
         "docs/acceptance/AC-20261123-07.md",
         "docs/acceptance/AC-20261123-08.md",
         "docs/acceptance/AC-20261123-09.md",
+        "docs/acceptance/AC-20261124-01.md",
         "docs/tasks/TASK.agent-core-11-08-2026.md",
         "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
         "docs/tasks/TASK.architecture-canvas-11-23-2026.md",
@@ -307,6 +312,7 @@
         "docs/tasks/TASK.case-severity-11-23-2026.md",
         "docs/tasks/TASK.document-consistency-11-23-2026.md",
         "docs/tasks/TASK.frontend-review-11-22-2026.md",
+        "docs/tasks/TASK.frontend-workspace-11-24-2026.md",
         "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
         "docs/tasks/TASK.indexed-case-detail-11-23-2026.md",
         "docs/tasks/TASK.llm-remote-11-09-2026.md",
@@ -325,7 +331,7 @@
         "docs/tasks/TASK.version-011-11-08-2026.md",
         "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
       ],
-      "last_verified_at": "2026-11-23T10:12:56+00:00"
+      "last_verified_at": "2026-11-23T16:21:04+00:00"
     },
     {
       "id": "docs/RSI.md",

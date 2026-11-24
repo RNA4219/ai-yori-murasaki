@@ -188,6 +188,9 @@ try {
       assert.deepEqual(saved.nodes,nodes);
       assert.deepEqual(saved.connections,[{...connections[0],userInput:{mode:'ui',scope:'受付フォームの件名と本文'}},
         {...connections[1],userInput:{mode:'internal'}}]);
+      assert.equal(await page.locator('#unsaved').isVisible(),true);
+      await page.getByRole('button',{name:'JSONの保存を確認した'}).click();
+      assert.equal(await page.locator('#unsaved').isVisible(),false);
       await page.locator('#file').setInputFiles({name:download.suggestedFilename(),mimeType:'application/json',buffer});
       await page.getByText('読み込み元　'+download.suggestedFilename(),{exact:true}).waitFor();
       assert.equal(await page.locator('[data-id="a"] .user-peg').count(),1);

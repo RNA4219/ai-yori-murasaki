@@ -1,0 +1,59 @@
+/* 製品の画面切替と重要度。ページと一緒に配信して初回表示に揃える。 */
+:root {
+  --desk-ink: #29262c;
+  --desk-muted: #605d63;
+  --desk-line: #d8d5d6;
+  --desk-paper: #f7f7f4;
+  --desk-accent: #633d70;
+  --desk-sans: "Yu Gothic UI", "Hiragino Kaku Gothic ProN", Meiryo, system-ui, sans-serif;
+}
+.product-head { background: #312736; color: #fff; }
+.product-bar {
+  width: min(100% - 64px, 1440px); padding: 0; min-height: 56px; margin: auto;
+  display: flex; align-items: stretch; gap: clamp(24px, 4vw, 64px);
+  font: 600 14px/1.4 var(--desk-sans);
+}
+.product-name { display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+.product-name strong { font: 650 13px/1.2 system-ui, sans-serif; letter-spacing: .055em; }
+.product-stamp {
+  display: grid; place-items: center; width: 30px; height: 30px;
+  border: 1px solid #bca9c4; border-radius: 3px;
+  color: #fff; font: 600 21px/1 "Yu Mincho", "Hiragino Mincho ProN", serif;
+}
+.product-nav { display: flex; align-items: stretch; gap: 4px; min-width: 0; }
+.product-nav > * {
+  border: 0; border-radius: 0; border-bottom: 3px solid transparent;
+  color: #e0d8e4; display: inline-flex; align-items: center; justify-content: center;
+  padding: 3px 16px 0; min-height: 44px; white-space: nowrap; text-decoration: none;
+}
+.product-nav [aria-current] { border-bottom-color: #e3c2ed; color: white; background: #47384d; }
+.product-nav a:hover { color: white; background: #423546; text-decoration: none; }
+.product-nav a:focus-visible { outline: 2px solid #ead5f1; outline-offset: -4px; }
+.product-short { display: none; }
+:where(.risk-levels [data-level], .first-severity, .severity-tag, .sev) {
+  --risk-fill: #e7e6eb; --risk-ink: #403d48; --risk-edge: #77717c;
+}
+[data-level=critical], .sev.critical { --risk-fill: #202124; --risk-ink: white; --risk-edge: #202124; }
+[data-level=high], .sev.high { --risk-fill: #b42336; --risk-ink: white; --risk-edge: #b42336; }
+[data-level=medium], .sev.medium { --risk-fill: #f5cd42; --risk-ink: #332800; --risk-edge: #906c06; }
+[data-level=low], .sev.low { --risk-fill: #267347; --risk-ink: white; --risk-edge: #267347; }
+.first-severity[data-level]::before, .risk-levels a[data-level]::before {
+  content: ""; flex: none; width: 8px; height: 8px; border-radius: 2px;
+  border: 1px solid var(--risk-edge); background: var(--risk-fill);
+}
+.first-severity::before { display: inline-block; margin-right: 6px; }
+.severity-tag[data-level], .sev:is(.critical,.high,.medium,.low) { color: var(--risk-ink); background: var(--risk-fill); }
+@media (prefers-reduced-motion: no-preference) {
+  .product-nav a { transition: color 120ms ease-out, background-color 120ms ease-out; }
+}
+@media (max-width: 760px) {
+  .product-bar { width: calc(100% - 24px); min-height: 52px; gap: 16px; }
+  .product-nav { flex: 1; gap: 0; }
+  .product-nav > * { flex: 1; padding-inline: 6px; }
+  .product-long, .product-name strong { position: absolute; clip-path: inset(50%); width: 1px; height: 1px; overflow: hidden; }
+  .product-short { display: inline; }
+}
+@media (max-width: 380px) {
+  .product-bar { gap: 8px; width: calc(100% - 16px); }
+  .product-nav > * { padding-inline: 4px; font-size: 13px; }
+}

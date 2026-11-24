@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "製品の変更と検収への参照。0040は構成図の部品を動かすと背景の区画が消える問題を修正する。",
+  "summary": "製品の変更と検収。0043は通常保存でダウンロードを拒否されたときの構成図の編集保護を扱う。",
   "deps_out": [
     "docs/SOURCES.md",
     "docs/acceptance/AC-20261106-01.md",
@@ -29,6 +29,7 @@
     "docs/acceptance/AC-20261123-07.md",
     "docs/acceptance/AC-20261123-08.md",
     "docs/acceptance/AC-20261123-09.md",
+    "docs/acceptance/AC-20261124-01.md",
     "docs/evidence/quality-integration-20261109/README.md",
     "docs/evidence/sources-light-ui-20261109/README.md",
     "docs/evidence/wazuh-live-20261108.md",
@@ -40,6 +41,7 @@
     "docs/tasks/TASK.case-severity-11-23-2026.md",
     "docs/tasks/TASK.document-consistency-11-23-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
+    "docs/tasks/TASK.frontend-workspace-11-24-2026.md",
     "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
     "docs/tasks/TASK.indexed-case-detail-11-23-2026.md",
     "docs/tasks/TASK.monitor-counts-11-23-2026.md",
@@ -83,13 +85,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "7365601648e44da4f001d814128729a32a63fd0edffc94c3ec0121b1c307bed7",
-  "generated_at": "00051",
+  "source_sha256": "25776e6dc87304ec1b3ffc5eecf7ff6ffb0e35cb0126906494e06d22a75de9b1",
+  "generated_at": "00054",
   "review": {
-    "reviewed_at": "2026-11-23T11:13:46+00:00",
+    "reviewed_at": "2026-11-23T16:53:46+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "7365601648e44da4f001d814128729a32a63fd0edffc94c3ec0121b1c307bed7",
-    "summary_sha256": "2da74c49abf0172352392230c02cc5c6bdcefba048d9ad36eb66684060d270f4",
-    "scope": "部品移動時と再描画時の背景区画の表示要件と検収を原文に照合。"
+    "source_sha256": "25776e6dc87304ec1b3ffc5eecf7ff6ffb0e35cb0126906494e06d22a75de9b1",
+    "summary_sha256": "4fb730a4ddb3472dc2c8641969ebce6488183d140c15eb2dfc4d6b69dcc82b99",
+    "scope": "構成図の書き出しに失敗した場合の編集保護と検収を照合。"
   }
 }

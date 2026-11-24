@@ -97,7 +97,16 @@ try{
     assert.equal(await page.locator('.wire').getAttribute('data-input'),'internal');
     assert.equal(requests.length,countBefore,'ファイルの読み込みによるHTTPリクエストがない');
     await page.locator('#reset').click();
+    const prompt=page.getByRole('dialog',{name:'未保存の変更があります'});
+    await prompt.waitFor();
+    await page.keyboard.press('Escape');
+    await prompt.waitFor({state:'hidden'});
+    assert.equal(await page.locator('.wire').getAttribute('data-input'),'internal');
+    assert.equal(await page.locator('#unsaved').isVisible(),true);
+    await page.locator('#reset').click();
+    await prompt.getByRole('button',{name:'保存せず切り替える'}).click();
     await page.getByRole('heading',{name:'注文管理サービス'}).waitFor();
+    assert.equal(await page.locator('#unsaved').isVisible(),false);
     assert.equal(await selected.getAttribute('data-id'),'archive');
     assert.deepEqual(errors,[]);
     await page.close();

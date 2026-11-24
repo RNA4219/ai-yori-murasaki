@@ -16,13 +16,7 @@ a {color:var(--purple);text-underline-offset:3px}
 :focus-visible {outline:3px solid #87639c;outline-offset:3px}
 .skip {position:absolute;top:-80px;left:16px;background:#fff;padding:8px;z-index:5}
 .skip:focus {top:12px}
-.top {background:#fff;border-bottom:1px solid var(--line)}
-.top-inner,main {width:min(100% - 48px,1380px);margin:auto}
-.top-inner {min-height:66px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.brand {display:flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none;font-size:14px;font-weight:750;letter-spacing:.075em}
-.seal {display:grid;place-items:center;width:32px;height:32px;border-radius:5px;background:var(--purple);color:white;font:700 22px/1 serif;box-shadow:-3px 3px #cfc0d7}
-.top nav {display:flex;gap:16px}.top nav a {display:inline-flex;align-items:center;min-height:44px}
-main {padding:24px 0 48px}
+main {margin:auto;padding:24px 0 48px}
 .heading,.toolbar,.picker,.source-row,.flag-list {display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .heading {justify-content:space-between;align-items:end}
 h1,h2,h3,p {margin:0}
@@ -126,16 +120,77 @@ dl {margin:0}dt {font-weight:700;font-size:14px;color:#624e46}dd {margin:0 0 8px
   .canvas-tools svg {display:block}
   .canvas-tools .tool-label {position:absolute;clip-path:inset(50%);width:1px;height:1px;overflow:hidden}
 }
-@media(max-width:620px){.top-inner,main{width:calc(100% - 24px)}.top-inner{min-height:56px}.top nav{gap:9px}.brand{font-size:11px;gap:6px}.top nav a{font-size:14px}main{padding-top:16px}.heading{gap:12px}.panel-head{padding:7px 10px;gap:8px}.mode button{font-size:14px}.picker{padding:12px}.graph-footer{padding:10px 12px 0}.mode{gap:0}.map-frame{max-height:420px}.detail{padding:14px}}
+@media(max-width:620px){main{width:calc(100% - 24px)}main{padding-top:16px}.heading{gap:12px}.panel-head{padding:7px 10px;gap:8px}.mode button{font-size:14px}.picker{padding:12px}.graph-footer{padding:10px 12px 0}.mode{gap:0}.map-frame{max-height:420px}.detail{padding:14px}}
 @media(prefers-reduced-motion:no-preference){.node .box,.edge{transition:stroke .14s ease,fill .14s ease}}
+/* 図と選択対象の詳細を一つの作業面に収める。 */
+:root { --ink: var(--desk-ink, #29262c); --muted: #625c65; --line: var(--desk-line, #d8d5d6); --paper: #f6f6f3; --purple: var(--desk-accent, #633d70); }
+body { background: var(--desk-paper, #f7f7f4); }
+main { width: min(calc(100% - 64px), 1440px); padding: 24px 0 44px; }
+.heading { align-items: center; margin-bottom: 16px; }
+.heading h1 { font-size: clamp(24px, 2.6vw, 36px); letter-spacing: -.035em; }
+.source-row { margin-top: 6px; font-size: 14px; }
+.source-row .meta { font-size: inherit; font-variant-numeric: tabular-nums; }
+.source:before { width: 7px; height: 7px; border-radius: 1px; }
+.btn, .file, .chip { border-radius: 4px; }
+.workspace { gap: 0; border: 1px solid #cfcbd0; border-radius: 5px; background: white; }
+.map-panel, .detail { border: 0; border-radius: 0; }
+.map-panel { border-inline-end: 1px solid #cfcbd0; }
+.panel-head { background: #fafaf8; border-bottom: 1px solid var(--line); }
+.panel-head h2 { font-size: 17px; }
+.mode { border-radius: 4px; background: #eae7eb; }
+.mode button, .canvas-tools button { border-radius: 3px; }
+.map-frame { border-top: 0; background: #f3f4f0; }
+.lane { fill: #fff; fill-opacity: .82; stroke: #c9cbca; stroke-dasharray: none; }
+.lane-divider { stroke: #d5d7d5; pointer-events: none; }
+.lane-title { fill: #454246; }
+.wire.selected .wire-hit { stroke: rgb(99 61 112 / 13%); }
+.selection-frame { fill: none; stroke: var(--purple); stroke-width: 1.8; pointer-events: none; }
+.detail { padding: 20px; border-top: 3px solid var(--purple); }
+.detail .kind { margin-bottom: 7px; color: #65576b; font-size: 14px; }
+.detail h2 { font-size: 23px; line-height: 1.4; }
+.detail section { margin-top: 16px; padding-top: 14px; }
+.finding { background: #f8f8f6; border-radius: 0; }
+.detail dt { color: #564e59; }
+.picker { border-top: 1px solid var(--line); margin-top: 8px; }
+.guide { margin: -8px 0 8px; font-size: 14px; }
+.guide summary { min-height: 32px; align-content: center; }
+@media (prefers-reduced-motion: no-preference) {
+  .mode button, .canvas-tools button, .chip { transition: background-color 120ms ease-out, border-color 120ms ease-out; }
+}
+@media (max-width: 1100px) { main { width: calc(100% - 32px); } }
+@media (max-width: 900px) {
+  .map-panel { border-inline-end: 0; }
+  .detail { position: static; }
+}
+@media (max-width: 620px) {
+  main { width: calc(100% - 16px); padding-top: 14px; }
+  .heading { margin: 0 4px 12px; gap: 8px; }
+  .detail { padding: 16px; }
+  .panel-head h2 { font-size: 16px; }
+}
+.replace-dialog { max-width:min(30rem,calc(100% - 24px)); padding:20px; color:var(--ink); background:white; border:1px solid var(--line); border-radius:5px; }
+.replace-dialog::backdrop { background:rgb(38 31 40 / 45%); }
+.replace-dialog p { margin:8px 0 16px; }
+.replace-actions { display:flex; flex-wrap:wrap; gap:8px; }
 </style>
+<!-- workspace-style -->
 </head>
 <body>
 <a class="skip" href="#main">本文へ移る</a>
-<header class="top"><div class="top-inner"><a class="brand" href="/"><span class="seal" aria-hidden="true">紫</span> AI YORI MURASAKI</a><nav aria-label="製品の画面"><a href="/">モニター</a><a href="/decision">判断の画面</a></nav></div></header>
+<header class="product-head">
+  <div class="product-bar">
+    <div class="product-name"><span class="product-stamp" aria-hidden="true">紫</span><strong>AI YORI MURASAKI</strong></div>
+    <nav class="product-nav" aria-label="画面を切り替える">
+      <a href="/">モニター</a>
+      <a href="/decision" aria-label="判断の画面"><span class="product-long">判断の画面</span><span class="product-short" aria-hidden="true">判断</span></a>
+      <span aria-current="page"><span class="product-long">システム構成図</span><span class="product-short" aria-hidden="true">構成図</span></span>
+      <a href="/intake" aria-label="案件受付台帳"><span class="product-long">案件受付台帳</span><span class="product-short" aria-hidden="true">受付台帳</span></a>
+    </nav>
+  </div>
+</header>
 <main id="main" tabindex="-1">
 <div class="heading"><div><h1 id="name">構成図を読み込み中</h1><div class="source-row"><span class="source" id="source"></span><span class="meta" id="counts"></span></div></div>
-<div class="toolbar"><button type="button" class="btn" id="reset" hidden>見本に戻す</button><label class="file">構成ファイルを開く<input id="file" type="file" multiple accept=".json,.yaml,.yml" aria-label="構成ファイルを開く"></label><button type="button" class="btn" id="save-map" disabled>構成図を保存</button><span id="unsaved" class="meta" hidden>未保存の変更</span></div></div>
+<div class="toolbar"><button type="button" class="btn" id="reset" hidden>見本に戻す</button><label class="file">構成ファイルを開く<input id="file" type="file" multiple accept=".json,.yaml,.yml" aria-label="構成ファイルを開く"></label><button type="button" class="btn" id="save-map" disabled>構成図を保存</button><span id="unsaved" class="meta" hidden><span id="edited-label">未保存の変更</span><button type="button" class="btn" id="confirm-saved" hidden>JSONの保存を確認した</button></span></div></div>
 <details class="guide"><summary>読み込めるファイルと見本</summary>
 <p>構成図（JSON・YAML）では、リポジトリ、AWSリソース、接続の理由、対象ごとの指摘を指定できます。<a href="/architecture/sample.json" download="architecture-sample.json">編集用の見本JSONを保存</a></p>
 <p>CloudFormation（JSON・YAML）はリソースと設定上の依存関係を読み取ります。package.json は repository を指定したものを順に追加すると、読み込んだリポジトリ間の依存が線になります。</p>
@@ -156,6 +211,17 @@ dl {margin:0}dt {font-weight:700;font-size:14px;color:#624e46}dd {margin:0 0 8px
 <p id="note" class="graph-footer hint"></p>
 <div class="picker"><label for="choose">構成要素を選択</label><select id="choose"></select><label><input type="checkbox" id="nearby"> 直接つながる要素だけ表示</label></div></section>
 <aside class="detail" id="detail" tabindex="-1" aria-labelledby="detail-name"><p class="kind" id="detail-kind"></p><h2 id="detail-name"></h2><p class="description" id="description"></p><section><h3 id="finding-count"></h3><div id="findings"></div><button class="btn" type="button" id="save-changes" hidden>変更をJSONに保存</button></section><section><h3 id="links-title">この要素の接続</h3><ul class="links" id="links"></ul></section><button class="btn return-map" id="return">図に戻る</button></aside>
-</div></main>
+</div>
+
+</main>
+<dialog id="replace-dialog" class="replace-dialog" aria-labelledby="replace-title" aria-describedby="replace-note">
+  <h2 id="replace-title">未保存の変更があります</h2>
+  <p id="replace-note" role="status"></p>
+  <div class="replace-actions">
+    <button type="button" class="btn" id="replace-cancel" autofocus>キャンセル</button>
+    <button type="button" class="btn" id="replace-save">JSONを保存</button>
+    <button type="button" class="btn" id="replace-discard">切り替える</button>
+  </div>
+</dialog>
 <script type="module" src="/architecture/map.mjs"></script>
 </body></html>

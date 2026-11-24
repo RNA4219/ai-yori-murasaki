@@ -615,9 +615,21 @@ def _check_origin(origin: str | None, port: int) -> bool:
     return origin in allowed
 
 
-def _load_page(filename: str) -> bytes:
+def _load_page(filename: str, *, blue: bool = False) -> bytes:
     try:
-        data = resources.files("ai_yori_murasaki").joinpath("web", filename).read_bytes()
+        web = resources.files("ai_yori_murasaki").joinpath("web")
+        data = web.joinpath(filename).read_bytes()
+        theme = web.joinpath("workspace.css").read_bytes()
+        data = data.replace(b"<!-- workspace-style -->", b"<style>\n" + theme + b"\n</style>")
+        if blue:
+            # The server-rendered links must keep the current view before any script runs.
+            markup, scripts, tail = data.partition(b"<script")
+            for route in (b"/", b"/decision", b"/architecture", b"/intake"):
+                prefix = b'href="' + route
+                markup = markup.replace(prefix + b"?", prefix + b"?view=blue&amp;")
+                for end in (b'"', b"#"):
+                    markup = markup.replace(prefix + end, prefix + b"?view=blue" + end)
+            data = markup + scripts + tail
     except (FileNotFoundError, ModuleNotFoundError, OSError):
         return b""
     return data if len(data) <= MAX_HTML_BYTES else b""
@@ -714,7 +726,7 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
 
     try:
         if name in ("index", "decision", "architecture", "intake"):
-            html = _load_page(name + ".html")
+            html = _load_page(name + ".html", blue=view == "blue")
             if not html:
                 return _error(500, "index_unavailable")
             hdrs = _security_headers(html)

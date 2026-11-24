@@ -1,5 +1,5 @@
 {
-  "generated_at": "00051",
+  "generated_at": "00054",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -15,8 +15,8 @@
     "CHANGELOG.md": {
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
-      "mtime": "00051",
-      "source_sha256": "7365601648e44da4f001d814128729a32a63fd0edffc94c3ec0121b1c307bed7"
+      "mtime": "00054",
+      "source_sha256": "25776e6dc87304ec1b3ffc5eecf7ff6ffb0e35cb0126906494e06d22a75de9b1"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -36,8 +36,8 @@
     "HUB.codex.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
-      "mtime": "00044",
-      "source_sha256": "6d52f29a51cdbb8ff75a0f4435b43a188f9ed539ad38f479d2a55686207229a6"
+      "mtime": "00052",
+      "source_sha256": "6129fc5b2fe40efcae518ba068d53a5d41a5a8f8d10d5d85d021beeb45e2461b"
     },
     "README.md": {
       "role": "overview",
@@ -70,8 +70,8 @@
     "docs/acceptance/INDEX.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
-      "mtime": "00044",
-      "source_sha256": "7c71008b95119056721b84294ffdc3f7aafb2b008cc0298efcd21710f545760e"
+      "mtime": "00052",
+      "source_sha256": "6562f632f9b501060c64a32a7d92bf87dcb6da6a14f424f3c475e2620decb79d"
     },
     "docs/acceptance/README.md": {
       "role": "guide",
@@ -113,8 +113,8 @@
     "docs/tasks/README.md": {
       "role": "operations",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
-      "mtime": "00044",
-      "source_sha256": "b2a1744f96b35c6cedacdac7d6541428deb42eb83a0d111088108e26837d7c22"
+      "mtime": "00052",
+      "source_sha256": "1ca5c8e0c93b3627ff4836527b5b998914a961d81d1f33fdba77ff46bc0e9492"
     },
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md": {
       "role": "task",
@@ -710,6 +710,18 @@
       "caps": "docs/birdseye/caps/docs.acceptance.AC-20261123-09.md.json",
       "source_sha256": "d03fafb4ce8ec05a61cfe78645e22ef4e7a3334167dfcef291433eef4298a0f7",
       "mtime": "00051"
+    },
+    "docs/tasks/TASK.frontend-workspace-11-24-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.frontend-workspace-11-24-2026.md.json",
+      "source_sha256": "a5d416f69d277d0a996eb6247f121a30b7ea4505d0b14bfef3c803e97026b8f9",
+      "mtime": "00054"
+    },
+    "docs/acceptance/AC-20261124-01.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261124-01.md.json",
+      "source_sha256": "0e626db09296001e2c54a6cd3e23b2e2bbd6cd91c8fe363677d7c28daa6ea226",
+      "mtime": "00054"
     }
   },
   "edges": [
@@ -867,6 +879,10 @@
     ],
     [
       "CHANGELOG.md",
+      "docs/acceptance/AC-20261124-01.md"
+    ],
+    [
+      "CHANGELOG.md",
       "docs/evidence/wazuh-live-20261108.md"
     ],
     [
@@ -900,6 +916,10 @@
     [
       "CHANGELOG.md",
       "docs/tasks/TASK.frontend-review-11-22-2026.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.frontend-workspace-11-24-2026.md"
     ],
     [
       "CHANGELOG.md",
@@ -1195,6 +1215,10 @@
     ],
     [
       "HUB.codex.md",
+      "docs/acceptance/AC-20261124-01.md"
+    ],
+    [
+      "HUB.codex.md",
       "docs/acceptance/INDEX.md"
     ],
     [
@@ -1240,6 +1264,10 @@
     [
       "HUB.codex.md",
       "docs/tasks/TASK.frontend-review-11-22-2026.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/tasks/TASK.frontend-workspace-11-24-2026.md"
     ],
     [
       "HUB.codex.md",
@@ -1810,6 +1838,10 @@
       "docs/tasks/TASK.architecture-canvas-11-23-2026.md"
     ],
     [
+      "docs/acceptance/AC-20261124-01.md",
+      "docs/tasks/TASK.frontend-workspace-11-24-2026.md"
+    ],
+    [
       "docs/acceptance/ACCEPTANCE_TEMPLATE.md",
       "docs/releases/README.md"
     ],
@@ -1899,6 +1931,10 @@
     ],
     [
       "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261124-01.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
       "docs/tasks/TASK.agent-core-11-08-2026.md"
     ],
     [
@@ -1928,6 +1964,10 @@
     [
       "docs/acceptance/INDEX.md",
       "docs/tasks/TASK.frontend-review-11-22-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.frontend-workspace-11-24-2026.md"
     ],
     [
       "docs/acceptance/INDEX.md",
@@ -2211,6 +2251,10 @@
     ],
     [
       "docs/tasks/README.md",
+      "docs/acceptance/AC-20261124-01.md"
+    ],
+    [
+      "docs/tasks/README.md",
       "docs/acceptance/README.md"
     ],
     [
@@ -2248,6 +2292,10 @@
     [
       "docs/tasks/README.md",
       "docs/tasks/TASK.frontend-review-11-22-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.frontend-workspace-11-24-2026.md"
     ],
     [
       "docs/tasks/README.md",
@@ -2356,6 +2404,10 @@
     [
       "docs/tasks/TASK.frontend-review-11-22-2026.md",
       "docs/requirements/MONITOR-REDESIGN.md"
+    ],
+    [
+      "docs/tasks/TASK.frontend-workspace-11-24-2026.md",
+      "docs/acceptance/AC-20261124-01.md"
     ],
     [
       "docs/tasks/TASK.incremental-monitor-11-23-2026.md",

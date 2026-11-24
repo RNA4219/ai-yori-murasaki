@@ -33,11 +33,45 @@ function initial(nodes) {
   return state.map.findings.find(f=>wanted.has(f.node))?.node ?? nodes[0].id;
 }
 
+const replaceDialog=$('replace-dialog');
+let pendingMap=null;
+
+function requestMap(result,sample=false) {
+  // 既存の package.json を書き換えずに追加する場合は、編集中の範囲と経路をそのまま統合できる。
+  const appending=result.packages && state.packages.size>0 &&
+    [...state.packages].every(([name,manifest])=>result.packages.get(name)===manifest);
+  if($('unsaved').hidden || appending) {
+    apply(result,sample);
+    return;
+  }
+  pendingMap={result,sample,version:state.load};
+  $('replace-note').textContent='切り替えると現在の編集内容が失われます。必要なら先にJSONを保存してください。';
+  $('replace-discard').textContent='保存せず切り替える';
+  replaceDialog.returnValue='cancel';
+  if(!replaceDialog.open) replaceDialog.showModal();
+}
+$('replace-cancel').addEventListener('click',()=>replaceDialog.close('cancel'));
+$('replace-discard').addEventListener('click',()=>replaceDialog.close('replace'));
+$('replace-save').addEventListener('click',()=>{
+  if(!downloadMap()) {
+    replaceDialog.close('cancel');
+    return;
+  }
+  // ブラウザーからはダウンロードの完了や取り消しを判定できない。
+  $('replace-note').textContent='JSONの保存を確認してから、図を切り替えてください。';
+  $('replace-discard').textContent='切り替える';
+});
+replaceDialog.addEventListener('close',()=>{
+  const pending=pendingMap;
+  pendingMap=null;
+  if(replaceDialog.returnValue==='replace' && pending?.version===state.load) apply(pending.result,pending.sample);
+});
+
 function apply(result,sample=false) {
   let keptEdits=false;
   if(result.packages && state.packages.size){
     result.map.userScope=result.map.nodes.filter(n=>scopeMembers.has(n.id)).map(n=>n.id);
-    keptEdits=result.map.userScope.length>0;
+    keptEdits=!$('unsaved').hidden || result.map.userScope.length>0;
     const key=c=>JSON.stringify([c.from,c.to,c.label,c.evidence]);
     const inputs=new Map(state.map.connections.filter(c=>c.userInput).map(c=>[key(c),c.userInput]));
     for(const c of result.map.connections){
@@ -70,10 +104,19 @@ function apply(result,sample=false) {
   $('source').textContent=sample ? '見本データ' : '読み込み元　'+result.source;
   $('counts').textContent=state.map.nodes.length+' 要素　／　'+state.map.connections.length+' 接続　／　'+state.map.findings.length+' 件の指摘';
   render();
+  $('status').textContent='構成図を読み込みました。'+$('source').textContent;
 }
 function error(message) { $('error').textContent=message; $('error').hidden=false; }
+function warnBeforeLeaving(event) {
+  event.preventDefault();
+  event.returnValue=true;
+}
 function setEdited(edited){
+  if(edited) window.addEventListener('beforeunload',warnBeforeLeaving);
+  else window.removeEventListener('beforeunload',warnBeforeLeaving);
   $('unsaved').hidden=!edited;
+  $('edited-label').hidden=false;
+  $('confirm-saved').hidden=true;
   $('save-changes').hidden=!edited || !selectedWire;
   if(!edited) $('scope-save').hidden=true;
 }
@@ -84,8 +127,8 @@ async function loadBundled(product = false) {
     if (!response.ok) throw Error('見本ファイルを取得できませんでした。');
     const original=await response.json(), map=validateMap(original);
     if (version===state.load) {
-      if (product) apply({map,original,source:'ai-yori-murasaki の実装'});
-      else apply({map,original,note:'架空の構成とレビュー記録を使用しています。'},true);
+      if (product) requestMap({map,original,source:'ai-yori-murasaki の実装'});
+      else requestMap({map,original,note:'架空の構成とレビュー記録を使用しています。'},true);
     }
   } catch(e) { if(version===state.load) error(e.message); }
 }
@@ -102,7 +145,7 @@ async function openFiles(files) {
       docs.push({name:file.name,value:parseFile(contents,file.name)});
     }
     const result=importDocuments(docs,state.packages);
-    if(version===state.load) { apply(result); $('status').textContent='構成図を読み込みました。'+result.source; }
+    if(version===state.load) requestMap(result);
   } catch(e) { if (version===state.load) error(e.message); }
 }
 
@@ -162,7 +205,7 @@ function layout(nodes,edges,width) {
       const columns=width>=460 ? 3 : width>=290 ? 2 : 1;
       const cell=(width-margin*2)/columns;
       const bw=Math.min(186,cell-18);
-      const start=band.label ? 32 : 12;
+      const start=band.label ? 64 : 12;
       let zoneHeight=start;
       for(let i=0;i<band.nodes.length;i+=columns){
         const row=band.nodes.slice(i,i+columns).map((n,col)=>{
@@ -186,7 +229,7 @@ function layout(nodes,edges,width) {
       positions.set(n.id,card);
       return total+card.actorSpace+card.h+gap;
     },0));
-    bottom=Math.max(300,Math.max(...heights)+64);
+    bottom=Math.max(300,Math.max(...heights)+96);
     bands.forEach((band,col)=>{
       const left=margin+col*widthPer;
       zones.push({x:left+2,y:16,w:widthPer-4,h:bottom-32,label:band.label});
@@ -370,6 +413,7 @@ function draw(reset=false){
   const lanes=svg('g',{id:'lanes'});
   for(const z of chart.zones) if(z.label){
     lanes.append(svg('rect',{class:'lane',x:z.x,y:z.y,width:z.w,height:z.h,rx:9}));
+    lanes.append(svg('line',{class:'lane-divider',x1:z.x+1,y1:z.y+30,x2:z.x+z.w-1,y2:z.y+30}));
     lanes.append(svg('text',{class:'lane-title',x:z.x+10,y:z.y+22},z.label));
   }
   fragment.append(lanes);
@@ -398,6 +442,7 @@ function draw(reset=false){
     const g=svg('g',{class:'node'+(selected?' selected':'')+(findings.length?' flagged':'')+(emphasized.has(n.id)?' near':''),
       transform:'translate('+p.x+' '+p.y+')',role:'button',tabindex:0,'aria-pressed':selected,'data-id':n.id});
     g.append(svg('rect',{class:'box',width:p.w,height:p.h,rx:8}));
+    if(selected) g.append(svg('rect',{class:'selection-frame',x:-4,y:-4,width:p.w+8,height:p.h+8,rx:10}));
     const color=n.kind==='repository'?'#68487a':n.kind==='store'?'#29676c':'#915031';
     g.append(svg('path',{class:'glyph',d:glyphs[n.kind],transform:'translate(9 8)',color}));
     g.append(svg('text',{class:'node-type',x:32,y:23},fit(n.type || kindNames.get(n.kind),p.w-42,12)));
@@ -760,17 +805,29 @@ $('zoom-in').addEventListener('click',()=>zoomAt(camera.zoom*1.25));
 $('zoom-out').addEventListener('click',()=>zoomAt(camera.zoom*.8));
 $('fit-map').addEventListener('click',fitMap);
 $('scope-toggle').addEventListener('click',()=>setScopeMode(!editingScope));
-function saveMap(){
+function downloadMap(){
   try{
     const blob=new Blob([serializeMap(state.map,state.original)],{type:'application/json'});
     const url=URL.createObjectURL(blob), link=html('a');
     link.href=url;link.download='architecture-map.json';link.click();
     setTimeout(()=>URL.revokeObjectURL(url),1000);
     if(document.activeElement===$('save-changes')) $('findings').querySelector('select')?.focus({preventScroll:true});
-    setEdited(false);$('error').hidden=true;
-    $('status').textContent='構成図のJSONを書き出しました。';
-  }catch(e){error('構成図を保存できません。'+e.message);}
+    $('error').hidden=true;
+    $('status').textContent='JSONのダウンロードを開始しました。';
+    return true;
+  }catch(e){error('構成図を保存できません。'+e.message);return false;}
 }
+function saveMap(){
+  if(downloadMap() && !$('unsaved').hidden) {
+    $('edited-label').hidden=true;
+    $('confirm-saved').hidden=false;
+  }
+}
+$('confirm-saved').addEventListener('click',()=>{
+  setEdited(false);
+  $('save-map').focus({preventScroll:true});
+  $('status').textContent='構成図の保存を確認しました。';
+});
 $('save-map').addEventListener('click',saveMap);
 $('scope-save').addEventListener('click',saveMap);
 $('save-changes').addEventListener('click',saveMap);

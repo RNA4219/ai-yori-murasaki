@@ -2,7 +2,7 @@
   "id": "HUB.codex.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "製品の要件・評価・運用への入口。構成図の直接操作のTaskとマウス・タッチの検収を参照できる。",
+  "summary": "製品要件と作業の案内。モニター・判断・構成図・受付の画面設計と検収を引ける。",
   "deps_out": [
     ".agents/skills/security-audit/SKILL.md",
     "AGENTS.md",
@@ -40,6 +40,7 @@
     "docs/acceptance/AC-20261123-07.md",
     "docs/acceptance/AC-20261123-08.md",
     "docs/acceptance/AC-20261123-09.md",
+    "docs/acceptance/AC-20261124-01.md",
     "docs/acceptance/INDEX.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
@@ -56,6 +57,7 @@
     "docs/tasks/TASK.case-severity-11-23-2026.md",
     "docs/tasks/TASK.document-consistency-11-23-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
+    "docs/tasks/TASK.frontend-workspace-11-24-2026.md",
     "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
     "docs/tasks/TASK.indexed-case-detail-11-23-2026.md",
     "docs/tasks/TASK.monitor-counts-11-23-2026.md",
@@ -74,13 +76,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "6d52f29a51cdbb8ff75a0f4435b43a188f9ed539ad38f479d2a55686207229a6",
-  "generated_at": "00044",
+  "source_sha256": "6129fc5b2fe40efcae518ba068d53a5d41a5a8f8d10d5d85d021beeb45e2461b",
+  "generated_at": "00052",
   "review": {
-    "reviewed_at": "2026-11-23T10:12:56+00:00",
+    "reviewed_at": "2026-11-23T16:21:04+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "6d52f29a51cdbb8ff75a0f4435b43a188f9ed539ad38f479d2a55686207229a6",
-    "summary_sha256": "f90d4416e72ca4a986295da7c6371216c54e5ee370c473a21c086f558f02cea8",
-    "scope": "構成図の操作と接続根拠の仕様、表示範囲、検収の記録を原文に照合。"
+    "source_sha256": "6129fc5b2fe40efcae518ba068d53a5d41a5a8f8d10d5d85d021beeb45e2461b",
+    "summary_sha256": "0f9934aa7ae7e5cdd2dff30354f747e498ff06d08b9d19b22c8b3cc4658d7238",
+    "scope": "製品画面の役割、重要度の表示、操作試験と参照先を原文に照合。"
   }
 }

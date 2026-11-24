@@ -14,6 +14,12 @@ Keep a Changelog の区分で管理する。記録には既存最大番号 +1 �
 
 ### Changed
 
+- 0043 — 2026-11-24。構成図の通常保存でダウンロードを拒否されても、利用者が保存を確認するまで未保存の編集を保護する。[Task 20261124-01](docs/tasks/TASK.frontend-workspace-11-24-2026.md)・[技術検収](docs/acceptance/AC-20261124-01.md)
+
+- 0042 — 2026-11-24。Blueの補助リンク、モニターの最終取得時刻と再取得失敗の表示、図を切り替えるときの未保存編集の保護を修正。敵対的検証13件を再実行した。[Task 20261124-01](docs/tasks/TASK.frontend-workspace-11-24-2026.md)・[技術検収](docs/acceptance/AC-20261124-01.md)
+
+- 0041 — 2026-11-24。4画面の移動先を上部に統一し、モニターと判断画面の重要度色を構成図に合わせた。構成図の選択枠と詳細欄、案件台帳の行、受付検索の表示を整理した。[Task 20261124-01](docs/tasks/TASK.frontend-workspace-11-24-2026.md)・[技術検収](docs/acceptance/AC-20261124-01.md)
+
 - 0040 — 2026-11-23。構成図でカードを動かすと背景の区画と見出しが消える不具合を修正した。[Task 20261123-09](docs/tasks/TASK.architecture-canvas-11-23-2026.md)・[技術検収](docs/acceptance/AC-20261123-09.md)
 
 - 0039 — 2026-11-23。利用者の関与範囲を構成図の枠で示し、ドラッグや部品の選択で範囲を変更し、JSONに保存できる。[Task 20261123-09](docs/tasks/TASK.architecture-canvas-11-23-2026.md)・[技術検収](docs/acceptance/AC-20261123-09.md)

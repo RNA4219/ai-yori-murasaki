@@ -2,7 +2,7 @@
   "id": "docs/acceptance/INDEX.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "各Taskの検収一覧と公開状態。AC-20261123-09は構成図での箱の配置、拡大、移動、接続線の選択の技術検収。",
+  "summary": "検収の索引。AC-20261124-01は4画面の表示、重要度、選択と移動をローカルで確認する。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -29,6 +29,7 @@
     "docs/acceptance/AC-20261123-07.md",
     "docs/acceptance/AC-20261123-08.md",
     "docs/acceptance/AC-20261123-09.md",
+    "docs/acceptance/AC-20261124-01.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
     "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
     "docs/tasks/TASK.architecture-canvas-11-23-2026.md",
@@ -37,6 +38,7 @@
     "docs/tasks/TASK.case-severity-11-23-2026.md",
     "docs/tasks/TASK.document-consistency-11-23-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
+    "docs/tasks/TASK.frontend-workspace-11-24-2026.md",
     "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
     "docs/tasks/TASK.indexed-case-detail-11-23-2026.md",
     "docs/tasks/TASK.llm-remote-11-09-2026.md",
@@ -64,13 +66,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "7c71008b95119056721b84294ffdc3f7aafb2b008cc0298efcd21710f545760e",
-  "generated_at": "00044",
+  "source_sha256": "6562f632f9b501060c64a32a7d92bf87dcb6da6a14f424f3c475e2620decb79d",
+  "generated_at": "00052",
   "review": {
-    "reviewed_at": "2026-11-23T10:12:56+00:00",
+    "reviewed_at": "2026-11-23T16:21:04+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "7c71008b95119056721b84294ffdc3f7aafb2b008cc0298efcd21710f545760e",
-    "summary_sha256": "6a79e238a1a12f7a88eb98cbda538dc79d58b9a0d5b041877bdc8cfc018304c8",
-    "scope": "構成図の操作と接続根拠の仕様、表示範囲、検収の記録を原文に照合。"
+    "source_sha256": "6562f632f9b501060c64a32a7d92bf87dcb6da6a14f424f3c475e2620decb79d",
+    "summary_sha256": "b531e22151184686756a69733bee33185c388e6b2df3ecf27b6e6d930c5079c3",
+    "scope": "製品画面の役割、重要度の表示、操作試験と参照先を原文に照合。"
   }
 }

@@ -2,7 +2,7 @@
   "id": "docs/tasks/README.md",
   "role": "operations",
   "public_api": [],
-  "summary": "Taskの運用・一覧と検収。構成と接続の図を直接操作する20261123-09を含む。",
+  "summary": "Taskの状態と検収の一覧。20261124-01は製品4画面のデザインと画面移動。",
   "deps_out": [
     "CHANGELOG.md",
     "HUB.codex.md",
@@ -32,6 +32,7 @@
     "docs/acceptance/AC-20261123-07.md",
     "docs/acceptance/AC-20261123-08.md",
     "docs/acceptance/AC-20261123-09.md",
+    "docs/acceptance/AC-20261124-01.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
@@ -42,6 +43,7 @@
     "docs/tasks/TASK.case-severity-11-23-2026.md",
     "docs/tasks/TASK.document-consistency-11-23-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
+    "docs/tasks/TASK.frontend-workspace-11-24-2026.md",
     "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
     "docs/tasks/TASK.indexed-case-detail-11-23-2026.md",
     "docs/tasks/TASK.llm-remote-11-09-2026.md",
@@ -73,13 +75,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "b2a1744f96b35c6cedacdac7d6541428deb42eb83a0d111088108e26837d7c22",
-  "generated_at": "00044",
+  "source_sha256": "1ca5c8e0c93b3627ff4836527b5b998914a961d81d1f33fdba77ff46bc0e9492",
+  "generated_at": "00052",
   "review": {
-    "reviewed_at": "2026-11-23T10:12:56+00:00",
+    "reviewed_at": "2026-11-23T16:21:04+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "b2a1744f96b35c6cedacdac7d6541428deb42eb83a0d111088108e26837d7c22",
-    "summary_sha256": "ae0b852f4abe2e6c59c479deb98f2d62234aec972bafa201391872a92b97484e",
-    "scope": "構成図の操作と接続根拠の仕様、表示範囲、検収の記録を原文に照合。"
+    "source_sha256": "1ca5c8e0c93b3627ff4836527b5b998914a961d81d1f33fdba77ff46bc0e9492",
+    "summary_sha256": "96b42ca6ed4fbeda5c0f14a893a60f3f062c9dc9cc1589e30e21454565147349",
+    "scope": "製品画面の役割、重要度の表示、操作試験と参照先を原文に照合。"
   }
 }
