@@ -1,10 +1,39 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {parseFile,validateMap,importDocuments} from '../ai_yori_murasaki/web/architecture/model.mjs';
+import {parseFile,validateMap,importDocuments,serializeMap} from '../ai_yori_murasaki/web/architecture/model.mjs';
 
 const example=JSON.parse(await readFile(new URL('../ai_yori_murasaki/web/architecture/sample.json',import.meta.url)));
 const loadOne=(value,name='template.json')=>importDocuments([{name,value}]);
+
+test('利用者の関与範囲は指定された部品IDだけを保存する',()=>{
+  const original=structuredClone(example);
+  delete original.userScope;
+  const map=validateMap(original);
+  assert.deepEqual(map.userScope,[]);
+  map.userScope=['worker'];
+  assert.deepEqual(validateMap(JSON.parse(serializeMap(map,original))).userScope,['worker']);
+  map.userScope=[];
+  assert.deepEqual(JSON.parse(serializeMap(map,example)).userScope,[]);
+  for(const userScope of [null,'web',['missing'],['web','web']]) assert.throws(()=>validateMap({...original,userScope}),/userScope/);
+});
+
+test('接続の入力区分と任意の範囲を保存し、未指定と内部処理を区別する',()=>{
+  const original=structuredClone(example);
+  original.connections[0].owner='運用チーム';
+  const {map}=loadOne(original);
+  assert.equal(map.connections[0].userInput,undefined);
+  map.connections[0].userInput={mode:'ui',scope:'申請件名'};
+  delete map.connections[2].userInput;
+  const doc=JSON.parse(serializeMap(map,original));
+  assert.equal(doc.connections[0].owner,'運用チーム');
+  assert.equal(original.connections[0].userInput,undefined);
+  assert.deepEqual(validateMap(doc),map);
+  assert.deepEqual(validateMap(JSON.parse(serializeMap(map))),map);
+  for(const input of [null,{mode:'edit'},{mode:'internal',scope:'件名'},{mode:'ui',scope:'名'.repeat(601)}]){
+    doc.connections[0].userInput=input;assert.throws(()=>validateMap(doc));
+  }
+});
 
 test('見本と利用者の構成は同じ形式で、指摘は存在する要素と根拠を必要とする',()=>{
   const map=validateMap(example);

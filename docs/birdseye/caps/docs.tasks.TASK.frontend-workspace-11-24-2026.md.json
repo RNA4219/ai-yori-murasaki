@@ -1,0 +1,27 @@
+{
+  "id": "docs/tasks/TASK.frontend-workspace-11-24-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/AC-20261124-01.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "docs/acceptance/AC-20261124-01.md"
+  ],
+  "summary": "製品4画面の役割と受入要件。モードの引き継ぎ、一覧取得時刻、構成図の切り替え・通常保存時の編集保護を含む。",
+  "source_sha256": "a5d416f69d277d0a996eb6247f121a30b7ea4505d0b14bfef3c803e97026b8f9",
+  "generated_at": "00054",
+  "review": {
+    "reviewed_at": "2026-11-23T16:53:46+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "a5d416f69d277d0a996eb6247f121a30b7ea4505d0b14bfef3c803e97026b8f9",
+    "summary_sha256": "9b12e732eca04f9aa7b39a75b62dc1dfe1e5c0012057ec3ac42e31895f540ecc",
+    "scope": "構成図の書き出しに失敗した場合の編集保護と検収を照合。"
+  }
+}

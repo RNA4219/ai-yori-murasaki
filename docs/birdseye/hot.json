@@ -1,5 +1,5 @@
 {
-  "generated_at": "00041",
+  "generated_at": "00054",
   "index_snapshot": "docs/birdseye/index.json",
   "refresh_command": "RUNBOOK.md#execute と docs/BIRDSEYE.md の PowerShell 手順を参照",
   "curation_notes": "ローカル製品、要件、検収、文書運用の入口。生成世代と原文・要約の内容確認を区別する。",
@@ -7,7 +7,7 @@
     {
       "id": "README.md",
       "role": "overview",
-      "reason": "製品の起動、案件受付、検知・判断・構成図の操作を案内する。モニターの初回構築、差分更新、明示的な全件再検証の使い分けを示す。",
+      "reason": "製品の起動と操作。案件・検知・判断画面、構成図での入力経路の編集、利用者の関与範囲の指定とJSON保存を案内する。",
       "caps": "docs/birdseye/caps/README.md.json",
       "edges": [
         "BLUEPRINT.md",
@@ -26,6 +26,9 @@
         "docs/acceptance/AC-20261109-02.md",
         "docs/acceptance/AC-20261123-04.md",
         "docs/acceptance/AC-20261123-06.md",
+        "docs/acceptance/AC-20261123-07.md",
+        "docs/acceptance/AC-20261123-08.md",
+        "docs/acceptance/AC-20261123-09.md",
         "docs/acceptance/INDEX.md",
         "docs/evidence/wazuh-live-20261108.md",
         "docs/releases/README.md",
@@ -38,12 +41,12 @@
         "docs/tasks/TASK.architecture-map-11-23-2026.md",
         "docs/workflow-adoption.md"
       ],
-      "last_verified_at": "2026-11-23T05:50:40+00:00"
+      "last_verified_at": "2026-11-23T11:09:37+00:00"
     },
     {
       "id": "HUB.codex.md",
       "role": "navigation",
-      "reason": "要件・評価・運用と各Taskへの入口。大規模な一覧の構築、独立した案件受付、索引の差分更新と失敗時の検収へ案内する。",
+      "reason": "製品要件と作業の案内。モニター・判断・構成図・受付の画面設計と検収を引ける。",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
       "edges": [
         ".agents/skills/security-audit/SKILL.md",
@@ -79,6 +82,10 @@
         "docs/acceptance/AC-20261123-04.md",
         "docs/acceptance/AC-20261123-05.md",
         "docs/acceptance/AC-20261123-06.md",
+        "docs/acceptance/AC-20261123-07.md",
+        "docs/acceptance/AC-20261123-08.md",
+        "docs/acceptance/AC-20261123-09.md",
+        "docs/acceptance/AC-20261124-01.md",
         "docs/acceptance/INDEX.md",
         "docs/acceptance/README.md",
         "docs/releases/README.md",
@@ -89,18 +96,22 @@
         "docs/requirements/SPEC-ASSESSMENT.md",
         "docs/reviews/REVIEW-INTAKE-20261107.md",
         "docs/tasks/README.md",
+        "docs/tasks/TASK.architecture-canvas-11-23-2026.md",
         "docs/tasks/TASK.architecture-map-11-23-2026.md",
         "docs/tasks/TASK.case-intake-11-23-2026.md",
+        "docs/tasks/TASK.case-severity-11-23-2026.md",
         "docs/tasks/TASK.document-consistency-11-23-2026.md",
         "docs/tasks/TASK.frontend-review-11-22-2026.md",
+        "docs/tasks/TASK.frontend-workspace-11-24-2026.md",
         "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
+        "docs/tasks/TASK.indexed-case-detail-11-23-2026.md",
         "docs/tasks/TASK.monitor-counts-11-23-2026.md",
         "docs/tasks/TASK.monitor-index-11-23-2026.md",
         "docs/tasks/TASK.sources-light-ui-11-09-2026.md",
         "docs/workflow-adoption.md",
         "governance/policy.yaml"
       ],
-      "last_verified_at": "2026-11-23T05:50:40+00:00"
+      "last_verified_at": "2026-11-23T16:21:04+00:00"
     },
     {
       "id": "GUARDRAILS.md",
@@ -223,15 +234,23 @@
         "docs/acceptance/AC-20261123-04.md",
         "docs/acceptance/AC-20261123-05.md",
         "docs/acceptance/AC-20261123-06.md",
+        "docs/acceptance/AC-20261123-07.md",
+        "docs/acceptance/AC-20261123-08.md",
+        "docs/acceptance/AC-20261123-09.md",
+        "docs/acceptance/AC-20261124-01.md",
         "docs/acceptance/README.md",
         "docs/releases/README.md",
         "docs/tasks/TASK.agent-core-11-08-2026.md",
         "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
+        "docs/tasks/TASK.architecture-canvas-11-23-2026.md",
         "docs/tasks/TASK.architecture-map-11-23-2026.md",
         "docs/tasks/TASK.case-intake-11-23-2026.md",
+        "docs/tasks/TASK.case-severity-11-23-2026.md",
         "docs/tasks/TASK.document-consistency-11-23-2026.md",
         "docs/tasks/TASK.frontend-review-11-22-2026.md",
+        "docs/tasks/TASK.frontend-workspace-11-24-2026.md",
         "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
+        "docs/tasks/TASK.indexed-case-detail-11-23-2026.md",
         "docs/tasks/TASK.llm-remote-11-09-2026.md",
         "docs/tasks/TASK.monitor-counts-11-23-2026.md",
         "docs/tasks/TASK.monitor-index-11-23-2026.md",
@@ -251,7 +270,7 @@
         "docs/tasks/TASK.version-011-11-08-2026.md",
         "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
       ],
-      "last_verified_at": "2026-11-23T05:50:40+00:00"
+      "last_verified_at": "2026-11-23T16:21:04+00:00"
     },
     {
       "id": "docs/acceptance/INDEX.md",
@@ -281,13 +300,21 @@
         "docs/acceptance/AC-20261123-04.md",
         "docs/acceptance/AC-20261123-05.md",
         "docs/acceptance/AC-20261123-06.md",
+        "docs/acceptance/AC-20261123-07.md",
+        "docs/acceptance/AC-20261123-08.md",
+        "docs/acceptance/AC-20261123-09.md",
+        "docs/acceptance/AC-20261124-01.md",
         "docs/tasks/TASK.agent-core-11-08-2026.md",
         "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
+        "docs/tasks/TASK.architecture-canvas-11-23-2026.md",
         "docs/tasks/TASK.architecture-map-11-23-2026.md",
         "docs/tasks/TASK.case-intake-11-23-2026.md",
+        "docs/tasks/TASK.case-severity-11-23-2026.md",
         "docs/tasks/TASK.document-consistency-11-23-2026.md",
         "docs/tasks/TASK.frontend-review-11-22-2026.md",
+        "docs/tasks/TASK.frontend-workspace-11-24-2026.md",
         "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
+        "docs/tasks/TASK.indexed-case-detail-11-23-2026.md",
         "docs/tasks/TASK.llm-remote-11-09-2026.md",
         "docs/tasks/TASK.monitor-counts-11-23-2026.md",
         "docs/tasks/TASK.monitor-index-11-23-2026.md",
@@ -304,7 +331,7 @@
         "docs/tasks/TASK.version-011-11-08-2026.md",
         "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
       ],
-      "last_verified_at": "2026-11-23T05:50:40+00:00"
+      "last_verified_at": "2026-11-23T16:21:04+00:00"
     },
     {
       "id": "docs/RSI.md",

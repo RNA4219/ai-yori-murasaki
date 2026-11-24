@@ -101,6 +101,94 @@ def test_large_store_requires_index_and_legacy_api_is_unchanged(store):
     with store._catalog_path().open("wb") as stream:
         stream.truncate(17*1024*1024)
     assert api(store,"?page=1") == (409, {"error":"monitor_index_required"})
+    for suffix in ("", "/decision-view", "/runs", "/assessment", "/rsi"):
+        assert api(store, "/c1" + suffix)[0] == 409
+
+
+def test_case_severity_counts_and_v2_migration(store):
+    def add(rid, fid, severity):
+        ref = store.put_object({"campaign_id": "case", "finding_id": fid, "severity": severity})
+        ledger(store, rid, "case", record_kind="finding", record_ref=ref)
+    add("r1", "one", "high")
+    add("r2", "one", "high")
+    add("r3", "two", None)
+    ledger(store, "clean", "empty")
+    store.update_catalog("missing", {"campaign_id": "case"})
+    store.update_catalog("unreadable", {"campaign_id": "pending"})
+    expected = dict(critical=0, high=1, medium=0, low=0, info=0, unknown=1)
+    assert api(store, "/case")[1]["campaign"]["severity_counts"] == expected
+    build_index(store)
+    with closing(sqlite3.connect(_index_path(store))) as db:
+        for cid, row in db.execute("SELECT id,row_json FROM cases").fetchall():
+            data = json.loads(row)
+            del data["severity_counts"]
+            db.execute("UPDATE cases SET row_json=? WHERE id=?", (json.dumps(data), cid))
+        db.execute("PRAGMA user_version=2")
+        db.commit()
+    with patch.object(store, "read_verified_events", side_effect=AssertionError("台帳を再読した")):
+        assert build_index(store)["rechecked_runs"] == 0
+        rows = {c["campaign_id"]: c for c in api(store, "?page=1")[1]["campaigns"]}
+        assert (rows["case"]["severity_counts"], rows["case"]["finding_count_status"]) == (expected, "partial")
+        assert rows["pending"]["severity_counts"] is None
+        assert set(rows["empty"]["severity_counts"].values()) == {0}
+        assert all("severity_counts" not in c for c in api(store, "?page=1&view=blue")[1]["campaigns"])
+    add("r3", "two", "low")
+    assert build_index(store)["rechecked_runs"] == 1
+    updated = api(store, "/case")[1]["campaign"]["severity_counts"]
+    assert updated == {**expected, "low": 1, "unknown": 0}
+
+
+def test_indexed_previous_only_reads_an_eligible_selection(store):
+    def add(cid, intent, stamp):
+        return ledger(store, "r-" + cid, cid, campaign_snapshot=dict(
+            campaign_id=cid, intent_id=intent, created_at=stamp))
+
+    add("older", "series-20261120", "2026-11-20T08:00:00.000000001Z")
+    left = add("left", "series-20261120A", "2026-11-20T08:00:00.000000002Z")
+    add("right", "series-20261120B", "2026-11-20T17:00:00.000000002+09:00")
+    add("current", "series-20261121", "2026-11-21T00:00:00Z")
+    add("foreign", "different", "2026-11-20T23:59:00Z")
+    build_index(store)
+    with patch.object(store, "read_verified_events", wraps=store.read_verified_events) as reads:
+        for choice in ("", "?previous=older", "?previous=foreign"):
+            reads.reset_mock()
+            result = api(store, "/current/decision-view" + choice)[1]["decision_view"]
+            assert result["previous_candidates"] == ["left", "right"] and result["previous"] is None
+            assert [c.args[0] for c in reads.call_args_list] == ["r-current"]
+        reads.reset_mock()
+        chosen = api(store, "/current/decision-view?previous=right")[1]["decision_view"]
+        assert chosen["previous"]["id"] == "right"
+        assert [c.args[0] for c in reads.call_args_list] == ["r-current", "r-right"]
+        reads.reset_mock()
+        for suffix in ("", "/assessment", "/decision-view"):
+            assert api(store, "/current" + suffix + "?view=blue")[0] == 200
+        assert api(store, "/unknown")[0] == 404
+        reads.assert_not_called()
+    left.unlink()
+    left.parent.rmdir()
+    build_index(store)
+    assert api(store, "/current/decision-view")[1]["decision_view"]["previous"]["id"] == "right"
+
+
+def test_scoped_detail_requires_refresh_and_migrates_without_ledger_scan(store):
+    path = ledger(store, "run1", "case1", campaign_snapshot=dict(
+        campaign_id="case1", intent_id="long-name-20261121", created_at=EVENT["timestamp"]))
+    build_index(store)
+    with closing(sqlite3.connect(_index_path(store))) as db:
+        db.execute("DROP TABLE case_series")
+        db.execute("PRAGMA user_version=1")
+        db.commit()
+    assert api(store, "/case1")[0] == 409
+    with patch.object(store, "read_verified_events", side_effect=AssertionError("移行時の台帳再検証")):
+        assert build_index(store)["rechecked_runs"] == 0
+    assert api(store, "/case1/decision-view")[1]["decision_view"]["campaign"]["name"] == "long-name-20261121"
+    path.write_bytes(b"")
+    for suffix in ("", "/runs", "/assessment", "/rsi", "/decision-view"):
+        assert api(store, "/case1" + suffix)[0] == 409
+    store.update_catalog("run1", {"campaign_id": "case1"})
+    build_index(store)
+    assert api(store, "/case1")[1]["campaign"]["finding_count"] is None
+    assert api(store, "/case1/decision-view")[1]["status"] == "hold"
 
 
 def test_incremental_inputs_and_membership(store):

@@ -7,12 +7,7 @@
 <style>
 * { box-sizing: border-box; }
 body { margin: 0; background: #f6f5f8; color: #29222e; font: 1rem/1.6 system-ui, sans-serif; }
-header { background: #302638; color: white; }
-header div, main { width: min(100% - 2rem, 60rem); margin-inline: auto; }
-header div { display: flex; align-items: center; justify-content: space-between; min-height: 4rem; gap: 1rem; }
-header strong { font-size: .88rem; letter-spacing: .08em; }
-header a { color: inherit; padding-block: .7rem; text-underline-offset: .22em; }
-main { padding-block: clamp(1.5rem, 5vw, 3rem); }
+main { margin-inline: auto; padding-block: clamp(1.5rem, 5vw, 3rem); }
 h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1.3; margin: 0; }
 p { margin: .5rem 0 1.25rem; }
 form { background: white; padding: clamp(1rem, 3vw, 1.5rem); border: 1px solid #dcd5e1; border-radius: .75rem; }
@@ -29,19 +24,53 @@ li strong, code { overflow-wrap: anywhere; min-width: 0; }
 code { grid-column: 1; color: #65576e; font-size: .87rem; }
 time { grid-area: 1 / 2 / 3 / 3; font-size: .92rem; }
 @media (max-width: 600px) { li { grid-template-columns: 1fr; } time { grid-area: auto; } }
+body { background: var(--desk-paper, #f7f7f4); color: var(--desk-ink, #29262c); font-family: "Yu Gothic UI", Meiryo, system-ui, sans-serif; }
+main { width: min(100% - 64px, 1120px); padding: 32px 0 64px; }
+h1 { font-size: clamp(26px, 3vw, 40px); }
+.intro { color: var(--desk-muted, #605d63); margin: 8px 0 24px; }
+.receipt-book { background: #fff; border: 1px solid var(--desk-line, #d8d5d6); border-top: 3px solid var(--desk-accent, #633d70); border-radius: 4px; }
+#search { background: #fafaf8; padding: clamp(16px, 3vw, 28px); border: 0; border-bottom: 1px solid var(--desk-line, #d8d5d6); border-radius: 0; }
+.fields { max-width: 44rem; gap: 8px; }
+.fields input { background: white; border-color: #a39ca6; }
+.fields button { min-width: 5rem; border: 0; background: #573961; }
+.fields button:hover { background: #422d49; }
+#status { margin: 0; padding: 20px clamp(16px, 3vw, 28px); color: #554c5a; }
+#results { padding-inline: clamp(16px, 3vw, 28px); }
+#results li { padding: 14px 0; border-top: 1px solid #ddd9de; border-bottom: 0; }
+#results time, #results code { font-variant-numeric: tabular-nums; }
+.skip-link:not(:focus) { position: absolute; clip-path: inset(50%); width: 1px; height: 1px; overflow: hidden; }
+.skip-link:focus { position: absolute; z-index: 2; padding: 8px; background: #fff; }
+@media (max-width: 760px) {
+  main { width: calc(100% - 24px); padding: 20px 0 40px; }
+  .intro { margin-bottom: 16px; }
+}
 </style>
+<!-- workspace-style -->
 </head>
 <body>
-<header><div><strong>AI YORI MURASAKI</strong><a href="/" id="back">モニターに戻る</a></div></header>
-<main>
+<a class="skip-link" href="#main">本文へスキップ</a>
+<header class="product-head">
+  <div class="product-bar">
+    <div class="product-name"><span class="product-stamp" aria-hidden="true">紫</span><strong>AI YORI MURASAKI</strong></div>
+    <nav class="product-nav" aria-label="画面を切り替える">
+      <a id="back" href="/" aria-label="モニターに戻る">モニター</a>
+      <a href="/decision" aria-label="判断の画面"><span class="product-long">判断の画面</span><span class="product-short" aria-hidden="true">判断</span></a>
+      <a href="/architecture" aria-label="システム構成図"><span class="product-long">システム構成図</span><span class="product-short" aria-hidden="true">構成図</span></a>
+      <span aria-current="page"><span class="product-long">案件受付台帳</span><span class="product-short" aria-hidden="true">受付台帳</span></span>
+    </nav>
+  </div>
+</header>
+<main id="main" tabindex="-1">
   <h1>案件受付台帳</h1>
-  <p>案件名、受付ID、受付日時を確認できます。初期監査は別の手順で開始します。</p>
+  <p class="intro">初期監査は別の手順で開始します。</p>
+  <section class="receipt-book" aria-label="受付記録の検索と一覧">
   <form id="search" role="search">
     <label for="query">案件名の先頭、または受付IDで検索</label>
     <div class="fields"><input id="query" type="search" maxlength="160"><button type="submit">検索</button></div>
   </form>
   <p id="status" role="status"></p>
   <ul id="results" aria-label="受付記録"></ul>
+  </section>
 </main>
 <script>
 'use strict';
@@ -92,7 +121,6 @@ async function showReceipts() {
     if (current === request) status.textContent = '受付台帳を取得できませんでした。もう一度検索してください。';
   }
 }
-if (blue) document.querySelector('#back').href = '/?view=blue';
 form.addEventListener('submit', event => { event.preventDefault(); showReceipts(); });
 showReceipts();
 </script>

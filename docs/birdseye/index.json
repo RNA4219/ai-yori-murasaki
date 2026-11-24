@@ -1,5 +1,5 @@
 {
-  "generated_at": "00041",
+  "generated_at": "00054",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -15,8 +15,8 @@
     "CHANGELOG.md": {
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
-      "mtime": "00041",
-      "source_sha256": "68b8341a8635d61129ca8795d9f1cd36d5fd4384c0db97d7f173986ae1206f64"
+      "mtime": "00054",
+      "source_sha256": "25776e6dc87304ec1b3ffc5eecf7ff6ffb0e35cb0126906494e06d22a75de9b1"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -36,14 +36,14 @@
     "HUB.codex.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
-      "mtime": "00041",
-      "source_sha256": "bfae343b74c5a78c284f6641c10ee6bec9a76995da0636aaa1c4d061f2d0f654"
+      "mtime": "00052",
+      "source_sha256": "6129fc5b2fe40efcae518ba068d53a5d41a5a8f8d10d5d85d021beeb45e2461b"
     },
     "README.md": {
       "role": "overview",
       "caps": "docs/birdseye/caps/README.md.json",
-      "mtime": "00041",
-      "source_sha256": "6eb079b9f97acadbad684656e84b8b78306bb8026271a114394deafe236f4aa7"
+      "mtime": "00050",
+      "source_sha256": "687fea1b1a99c0be0647c54a0eb1dd8d92c2ba2e4dde53659cff20585edcf94b"
     },
     "RUNBOOK.md": {
       "role": "operations",
@@ -70,8 +70,8 @@
     "docs/acceptance/INDEX.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
-      "mtime": "00041",
-      "source_sha256": "468ce12d940141e3f3a98194c42444ae9534f1171120be41cf217dbd8d48d1a4"
+      "mtime": "00052",
+      "source_sha256": "6562f632f9b501060c64a32a7d92bf87dcb6da6a14f424f3c475e2620decb79d"
     },
     "docs/acceptance/README.md": {
       "role": "guide",
@@ -113,8 +113,8 @@
     "docs/tasks/README.md": {
       "role": "operations",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
-      "mtime": "00041",
-      "source_sha256": "70ca45588f82ce628d32763af72b57b084d384956e4bab17073fd691b115aa7c"
+      "mtime": "00052",
+      "source_sha256": "1ca5c8e0c93b3627ff4836527b5b998914a961d81d1f33fdba77ff46bc0e9492"
     },
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md": {
       "role": "task",
@@ -292,8 +292,8 @@
     "docs/requirements/API-CONTRACTS.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.requirements.API-CONTRACTS.md.json",
-      "mtime": "00041",
-      "source_sha256": "03dd0b5d33a6bd263425176f3f85fc21b07d744ea21fb41ddd9b765df91b3fb1"
+      "mtime": "00043",
+      "source_sha256": "9c761fd6150d6e167b3673cbd09a6d1e7a69da294065f43131dc177663a2bb4f"
     },
     "docs/requirements/COMPACTION-01.md": {
       "role": "doc",
@@ -674,6 +674,54 @@
       "caps": "docs/birdseye/caps/docs.acceptance.AC-20261123-06.md.json",
       "source_sha256": "e1c64ca93298dcfb12c41308adbde16047f50bab8a30b98eb5c157678d1185f4",
       "mtime": "00041"
+    },
+    "docs/tasks/TASK.indexed-case-detail-11-23-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.indexed-case-detail-11-23-2026.md.json",
+      "source_sha256": "662798892ec3d6391ca68fd8d5e1d62ec6249b6765feaf8c6a2fb5565f645ec2",
+      "mtime": "00042"
+    },
+    "docs/acceptance/AC-20261123-07.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261123-07.md.json",
+      "source_sha256": "bf89f91cbd3b71322cdfeec74434524ceeadffbc2689a87939d52c62d18707e2",
+      "mtime": "00042"
+    },
+    "docs/tasks/TASK.case-severity-11-23-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.case-severity-11-23-2026.md.json",
+      "source_sha256": "01b2cda9835f96126a7e51c0b85e6455cdf8760de2ee4f500588787f23f6033c",
+      "mtime": "00043"
+    },
+    "docs/acceptance/AC-20261123-08.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261123-08.md.json",
+      "source_sha256": "e0e21a78d27aa16f8d3d3d1239fb01967452df69bc6bc869a5b191cfcef9615a",
+      "mtime": "00043"
+    },
+    "docs/tasks/TASK.architecture-canvas-11-23-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.architecture-canvas-11-23-2026.md.json",
+      "source_sha256": "37f7347af6c5eb4a8497b47ed4b0d870a9dc3e17becd5a15433d0da33b7e4b37",
+      "mtime": "00051"
+    },
+    "docs/acceptance/AC-20261123-09.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261123-09.md.json",
+      "source_sha256": "d03fafb4ce8ec05a61cfe78645e22ef4e7a3334167dfcef291433eef4298a0f7",
+      "mtime": "00051"
+    },
+    "docs/tasks/TASK.frontend-workspace-11-24-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.frontend-workspace-11-24-2026.md.json",
+      "source_sha256": "a5d416f69d277d0a996eb6247f121a30b7ea4505d0b14bfef3c803e97026b8f9",
+      "mtime": "00054"
+    },
+    "docs/acceptance/AC-20261124-01.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261124-01.md.json",
+      "source_sha256": "0e626db09296001e2c54a6cd3e23b2e2bbd6cd91c8fe363677d7c28daa6ea226",
+      "mtime": "00054"
     }
   },
   "edges": [
@@ -819,6 +867,22 @@
     ],
     [
       "CHANGELOG.md",
+      "docs/acceptance/AC-20261123-07.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/acceptance/AC-20261123-08.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/acceptance/AC-20261123-09.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/acceptance/AC-20261124-01.md"
+    ],
+    [
+      "CHANGELOG.md",
       "docs/evidence/wazuh-live-20261108.md"
     ],
     [
@@ -831,11 +895,19 @@
     ],
     [
       "CHANGELOG.md",
+      "docs/tasks/TASK.architecture-canvas-11-23-2026.md"
+    ],
+    [
+      "CHANGELOG.md",
       "docs/tasks/TASK.architecture-map-11-23-2026.md"
     ],
     [
       "CHANGELOG.md",
       "docs/tasks/TASK.case-intake-11-23-2026.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.case-severity-11-23-2026.md"
     ],
     [
       "CHANGELOG.md",
@@ -847,7 +919,15 @@
     ],
     [
       "CHANGELOG.md",
+      "docs/tasks/TASK.frontend-workspace-11-24-2026.md"
+    ],
+    [
+      "CHANGELOG.md",
       "docs/tasks/TASK.incremental-monitor-11-23-2026.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.indexed-case-detail-11-23-2026.md"
     ],
     [
       "CHANGELOG.md",
@@ -1123,6 +1203,22 @@
     ],
     [
       "HUB.codex.md",
+      "docs/acceptance/AC-20261123-07.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/acceptance/AC-20261123-08.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/acceptance/AC-20261123-09.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/acceptance/AC-20261124-01.md"
+    ],
+    [
+      "HUB.codex.md",
       "docs/acceptance/INDEX.md"
     ],
     [
@@ -1147,11 +1243,19 @@
     ],
     [
       "HUB.codex.md",
+      "docs/tasks/TASK.architecture-canvas-11-23-2026.md"
+    ],
+    [
+      "HUB.codex.md",
       "docs/tasks/TASK.architecture-map-11-23-2026.md"
     ],
     [
       "HUB.codex.md",
       "docs/tasks/TASK.case-intake-11-23-2026.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/tasks/TASK.case-severity-11-23-2026.md"
     ],
     [
       "HUB.codex.md",
@@ -1163,7 +1267,15 @@
     ],
     [
       "HUB.codex.md",
+      "docs/tasks/TASK.frontend-workspace-11-24-2026.md"
+    ],
+    [
+      "HUB.codex.md",
       "docs/tasks/TASK.incremental-monitor-11-23-2026.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/tasks/TASK.indexed-case-detail-11-23-2026.md"
     ],
     [
       "HUB.codex.md",
@@ -1232,6 +1344,18 @@
     [
       "README.md",
       "docs/acceptance/AC-20261123-06.md"
+    ],
+    [
+      "README.md",
+      "docs/acceptance/AC-20261123-07.md"
+    ],
+    [
+      "README.md",
+      "docs/acceptance/AC-20261123-08.md"
+    ],
+    [
+      "README.md",
+      "docs/acceptance/AC-20261123-09.md"
     ],
     [
       "README.md",
@@ -1702,6 +1826,22 @@
       "docs/tasks/TASK.incremental-monitor-11-23-2026.md"
     ],
     [
+      "docs/acceptance/AC-20261123-07.md",
+      "docs/tasks/TASK.indexed-case-detail-11-23-2026.md"
+    ],
+    [
+      "docs/acceptance/AC-20261123-08.md",
+      "docs/tasks/TASK.case-severity-11-23-2026.md"
+    ],
+    [
+      "docs/acceptance/AC-20261123-09.md",
+      "docs/tasks/TASK.architecture-canvas-11-23-2026.md"
+    ],
+    [
+      "docs/acceptance/AC-20261124-01.md",
+      "docs/tasks/TASK.frontend-workspace-11-24-2026.md"
+    ],
+    [
       "docs/acceptance/ACCEPTANCE_TEMPLATE.md",
       "docs/releases/README.md"
     ],
@@ -1779,11 +1919,31 @@
     ],
     [
       "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261123-07.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261123-08.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261123-09.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261124-01.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
       "docs/tasks/TASK.agent-core-11-08-2026.md"
     ],
     [
       "docs/acceptance/INDEX.md",
       "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.architecture-canvas-11-23-2026.md"
     ],
     [
       "docs/acceptance/INDEX.md",
@@ -1795,6 +1955,10 @@
     ],
     [
       "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.case-severity-11-23-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
       "docs/tasks/TASK.document-consistency-11-23-2026.md"
     ],
     [
@@ -1803,7 +1967,15 @@
     ],
     [
       "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.frontend-workspace-11-24-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
       "docs/tasks/TASK.incremental-monitor-11-23-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.indexed-case-detail-11-23-2026.md"
     ],
     [
       "docs/acceptance/INDEX.md",
@@ -1880,6 +2052,14 @@
     [
       "docs/requirements/API-CONTRACTS.md",
       "docs/PRODUCT-ACCEPTANCE.md"
+    ],
+    [
+      "docs/requirements/API-CONTRACTS.md",
+      "docs/acceptance/AC-20261123-07.md"
+    ],
+    [
+      "docs/requirements/API-CONTRACTS.md",
+      "docs/acceptance/AC-20261123-08.md"
     ],
     [
       "docs/requirements/COMPACTION-01.md",
@@ -2059,6 +2239,22 @@
     ],
     [
       "docs/tasks/README.md",
+      "docs/acceptance/AC-20261123-07.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261123-08.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261123-09.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261124-01.md"
+    ],
+    [
+      "docs/tasks/README.md",
       "docs/acceptance/README.md"
     ],
     [
@@ -2075,11 +2271,19 @@
     ],
     [
       "docs/tasks/README.md",
+      "docs/tasks/TASK.architecture-canvas-11-23-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
       "docs/tasks/TASK.architecture-map-11-23-2026.md"
     ],
     [
       "docs/tasks/README.md",
       "docs/tasks/TASK.case-intake-11-23-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.case-severity-11-23-2026.md"
     ],
     [
       "docs/tasks/README.md",
@@ -2091,7 +2295,15 @@
     ],
     [
       "docs/tasks/README.md",
+      "docs/tasks/TASK.frontend-workspace-11-24-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
       "docs/tasks/TASK.incremental-monitor-11-23-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.indexed-case-detail-11-23-2026.md"
     ],
     [
       "docs/tasks/README.md",
@@ -2154,6 +2366,10 @@
       "docs/acceptance/AC-20261111-01.md"
     ],
     [
+      "docs/tasks/TASK.architecture-canvas-11-23-2026.md",
+      "docs/acceptance/AC-20261123-09.md"
+    ],
+    [
       "docs/tasks/TASK.architecture-map-11-23-2026.md",
       "CHANGELOG.md"
     ],
@@ -2164,6 +2380,10 @@
     [
       "docs/tasks/TASK.case-intake-11-23-2026.md",
       "docs/acceptance/AC-20261123-05.md"
+    ],
+    [
+      "docs/tasks/TASK.case-severity-11-23-2026.md",
+      "docs/acceptance/AC-20261123-08.md"
     ],
     [
       "docs/tasks/TASK.document-consistency-11-23-2026.md",
@@ -2186,8 +2406,16 @@
       "docs/requirements/MONITOR-REDESIGN.md"
     ],
     [
+      "docs/tasks/TASK.frontend-workspace-11-24-2026.md",
+      "docs/acceptance/AC-20261124-01.md"
+    ],
+    [
       "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
       "docs/acceptance/AC-20261123-06.md"
+    ],
+    [
+      "docs/tasks/TASK.indexed-case-detail-11-23-2026.md",
+      "docs/acceptance/AC-20261123-07.md"
     ],
     [
       "docs/tasks/TASK.llm-remote-11-09-2026.md",

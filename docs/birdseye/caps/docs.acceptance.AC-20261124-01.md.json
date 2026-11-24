@@ -1,0 +1,27 @@
+{
+  "id": "docs/acceptance/AC-20261124-01.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.frontend-workspace-11-24-2026.md"
+  ],
+  "deps_out": [
+    "docs/tasks/TASK.frontend-workspace-11-24-2026.md"
+  ],
+  "summary": "製品4画面の操作検収。敵対的検証13件、通常のダウンロードを拒否した場合の編集保護、保存確認後の再読込を記録する。",
+  "source_sha256": "0e626db09296001e2c54a6cd3e23b2e2bbd6cd91c8fe363677d7c28daa6ea226",
+  "generated_at": "00054",
+  "review": {
+    "reviewed_at": "2026-11-23T16:53:46+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "0e626db09296001e2c54a6cd3e23b2e2bbd6cd91c8fe363677d7c28daa6ea226",
+    "summary_sha256": "2e09d8f73a835551383feeb592fea15ba1ba888d9bd3b638d6bedd37dd4c2cb2",
+    "scope": "構成図の書き出しに失敗した場合の編集保護と検収を照合。"
+  }
+}

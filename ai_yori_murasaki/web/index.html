@@ -502,6 +502,12 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
 .severity-tag { padding: 1px 6px; text-align: center; border-radius: 4px; font: 650 16px/1.6 var(--font-stack); background: #efebf4; color: #5b4c6c; }
 .severity-tag[data-level="high"], .severity-tag[data-level="critical"] { color: #843a2b; background: #fae7dd; }
 .severity-tag[data-level="medium"] { color: #77521b; background: #f9edd5; }
+.risk-levels { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 14px; }
+.risk-levels a { display: inline-flex; gap: 6px; align-items: center; min-height: 44px; padding: 4px 10px; border: 1px solid #cfc5d3; border-radius: 6px; color: #43384d; background: white; text-decoration: none; }
+.risk-levels a:hover { border-color: #74548a; }
+.risk-levels a[aria-current="true"] { background: #493653; color: white; box-shadow: inset 0 -3px #c2a4d4; }
+.risk-levels b { font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: no-preference) { .risk-levels a { transition: background-color .12s, border-color .12s; } }
 .sheet-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; padding: 16px clamp(16px,2.5vw,32px) 24px; }
 .sheet-actions a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; font-weight: 650; font-size: 16px; }
 .action-main { padding: 8px 16px; color: white; background: #503865; border-radius: 7px; }
@@ -547,41 +553,74 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
   .record-list button, .view-tabs button { transition: background-color .14s ease-out, border-color .14s ease-out; }
 }
 
-/* 二つの製品画面が共有する切替。単独HTMLでも利用できる。 */
-.masthead { color: #302642; background: #fff; border-bottom: 1px solid #ded9e4; }
-.mast-inner { max-width: 1440px; min-height: 76px; padding-inline: clamp(16px,5vw,72px); margin-inline: auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.wordmark { display: flex; align-items: center; gap: 12px; font: 700 16px/1.2 system-ui, sans-serif; letter-spacing: .105em; }
-.seal { width: 40px; height: 40px; display: inline-grid; place-items: center; position: relative; isolation: isolate; color: white; font: 600 25px/1 "Yu Mincho", "Hiragino Mincho ProN", serif; letter-spacing: 0; }
-.seal::before, .seal::after { content: ""; position: absolute; inset: 2px; border-radius: 2px 8px 2px 8px; z-index: -1; }
-.seal::before { background: #baa9d5; transform: translate(-3px,2px) rotate(-7deg); }
-.seal::after { background: #50346c; transform: translate(1px,-1px); }
-.view-switch { display: inline-flex; align-items: center; border: 1px solid #e1dce7; border-radius: 99px; padding: 3px; background: #f5f3f7; }
-.view-switch > * { min-height: 44px; padding-inline: 20px; display: inline-flex; align-items: center; justify-content: center; border-radius: 99px; color: #5e566b; font: 650 16px/1.4 system-ui,sans-serif; text-decoration: none; }
-.view-switch [aria-current] { color: white; background: #463254; }
-.view-switch a:hover { background: #e8e1ee; color: #382944; text-decoration: none; }
-.masthead :focus-visible { outline: 3px solid #8055ab; outline-offset: 1px; }
-@media (max-width: 767px) {
-  .mast-inner { min-height: 64px; }
-  .wordmark { gap: 6px; font-size: 12px; letter-spacing: .06em; }
-  .seal { width: 32px; height: 32px; font-size: 21px; }
-  .view-switch > * { padding-inline: 10px; font-size: 14px; }
-}
-@media (max-width: 360px) { .wordmark > span:last-child { max-width: 7em; } }
+
 
 .case-pagination {display:flex; align-items:center; flex-wrap:wrap; gap:.5rem; padding:.5rem 1rem}
 .case-pagination button {min-height:36px; padding:.25rem .65rem}
 .case-pagination form {display:flex; align-items:center; gap:.35rem}
 .case-pagination input {width:5.5em; padding:.35rem}
+/* 案件一覧を台帳の行として並べ、詳細を隣の共通の面で読む。 */
+body { background: var(--desk-paper, #f7f7f4); }
+header.page-header { align-items: end; padding-bottom: 18px; border-bottom: 1px solid var(--desk-line, #d8d5d6); }
+header.page-header h1 { font-weight: 700; color: #28252b; }
+.header-meta { font-size: 14px; }
+body[data-screen="list"] .layout { max-width: 1504px; }
+body[data-screen="list"] main { padding: 28px clamp(16px, 3.4vw, 48px) 64px; }
+.case-desk { column-gap: 24px; grid-template-columns: minmax(272px, .78fr) minmax(0, 1.8fr); }
+.ledger h2 { justify-content: space-between; padding: 0 2px 8px; border-bottom: 2px solid #4f4055; font-size: 18px; }
+.ledger-count { font-size: 14px; font-variant-numeric: tabular-nums; }
+.record-list { gap: 0; }
+.record-list button {
+  border: 0; border-bottom: 1px solid var(--desk-line, #d8d5d6); border-radius: 0; background: transparent;
+  min-height: 90px; padding: 12px 14px; gap: 4px 8px;
+}
+.record-list button[aria-pressed=true] { background: #ece7ee; box-shadow: inset 3px 0 var(--desk-accent, #633d70); border-color: var(--desk-line, #d8d5d6); }
+.record-identity strong { font-size: 16px; letter-spacing: .01em; }
+.record-list .badge, .record-time, .record-list small { font-size: 14px; }
+.record-count b { font-variant-numeric: tabular-nums; }
+.case-sheet { border: 1px solid var(--desk-line, #d8d5d6); border-top: 3px solid var(--desk-accent, #633d70); border-radius: 4px; box-shadow: none; }
+.sheet-head {
+  padding: clamp(20px, 2.4vw, 36px); color: var(--desk-ink, #29262c); background: #fff;
+  border-bottom: 1px solid #ddd9df; gap: 16px 24px;
+}
+.sheet-head::before, .sheet-head::after { content: none; }
+.sheet-label { color: #605965; font-size: 14px; font-weight: 650; letter-spacing: .015em; }
+.sheet-position { display: inline-block; margin-inline-start: 10px; white-space: nowrap; font-weight: 500; }
+.sheet-identity h2 { margin-top: 10px; font-size: clamp(22px, 2.4vw, 36px); line-height: 1.4; }
+.sheet-number { align-content: center; border-color: var(--desk-line, #d8d5d6); min-width: 88px; }
+.sheet-number span { color: #635b68; font-size: 14px; }
+.sheet-number strong { color: #4e3659; font: 600 clamp(40px, 4.5vw, 60px)/1.05 system-ui,sans-serif; letter-spacing: -.04em; }
+.sheet-meta { color: #605965; font-size: 14px; }
+.sheet-meta .first-severity { color: #423848; border-color: #d4cdd7; }
+.sheet-actions { padding-block: 16px; }
+.sheet-body { padding-bottom: 24px; }
+.sheet-body h3 { font-size: 16px; }
+.action-main { border-radius: 4px; }
+.history-sheet { border-radius: 4px; border-top: 2px solid #625068; }
+.risk-levels a { border-radius: 4px; }
+@media (max-width: 767px) {
+  .case-desk { grid-template-columns: minmax(0, 1fr); }
+  body[data-screen="list"] main { padding: 16px 12px 40px; }
+  header.page-header { padding-bottom: 12px; }
+  .sheet-head { padding: 18px 14px; gap: 12px; }
+  .sheet-number { min-width: 0; }
+  .header-left { gap: 0 12px; }
+  body[data-screen='list'] :is(#desk-relations, #desk-sources) { font-size: 14px; }
+  .header-meta { gap: 4px 8px; font-size: 13px; }
+}
 </style>
+<!-- workspace-style -->
 </head>
 <body>
 <a class="skip-link" href="#main">本文へスキップ</a>
-<header class="masthead">
-  <div class="mast-inner">
-    <div class="wordmark"><span class="seal" aria-hidden="true">紫</span><span>AI YORI MURASAKI</span></div>
-    <nav class="view-switch" aria-label="画面を切り替える" data-key="view-switcher">
-      <a id="switch-to-decision" data-key="switch-to-decision" href="/decision">判断の画面</a>
+<header class="product-head">
+  <div class="product-bar">
+    <div class="product-name"><span class="product-stamp" aria-hidden="true">紫</span><strong>AI YORI MURASAKI</strong></div>
+    <nav class="product-nav" data-key="view-switcher" aria-label="画面を切り替える">
       <span aria-current="page" data-key="current-monitor">モニター</span>
+      <a id="switch-to-decision" data-key="switch-to-decision" href="/decision" aria-label="判断の画面"><span class="product-long">判断の画面</span><span class="product-short" aria-hidden="true">判断</span></a>
+      <a href="/architecture" aria-label="システム構成図"><span class="product-long">システム構成図</span><span class="product-short" aria-hidden="true">構成図</span></a>
+      <a id="desk-intake" href="/intake" aria-label="案件受付台帳"><span class="product-long">案件受付台帳</span><span class="product-short" aria-hidden="true">受付台帳</span></a>
     </nav>
   </div>
 </header>
@@ -599,13 +638,11 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
       <div class="header-left">
         <h1 id="monitor-heading">案件と検知</h1>
         <a id="desk-relations" href="#/relations">案件のつながり</a>
-        <a class="relation-back" href="/architecture">システム構成図</a>
-        <a class="relation-back" id="desk-intake" href="/intake">案件受付台帳</a>
+        <a id="desk-sources" href="#/sources">資料と出典</a>
       </div>
       <div class="header-meta">
-        <a id="desk-sources" href="#/sources">資料と出典</a>
         <span id="header-conn">未確認</span>
-        <span>最終取得: <strong id="header-fetched">未取得</strong></span>
+        <span>一覧の最終取得: <strong id="header-fetched">未取得</strong></span>
         <button type="button" class="refresh" id="refresh-btn" aria-label="データを手動更新">手動更新</button>
       </div>
     </header>
@@ -627,9 +664,7 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
   'use strict';
 
   var FETCH_TIMEOUT_MS = 5000;
-  if (new URLSearchParams(location.search).get('view') === 'blue') {
-    document.getElementById('desk-intake').href = '/intake?view=blue';
-  }
+  var blueView = new URLSearchParams(location.search).get('view') === 'blue';
   var MAX_BYTES = 1024 * 1024;
   var AUTO_REFRESH_MS = 15000;
 
@@ -849,13 +884,16 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
     if (state.campaignsError) {
       out.push(banner('error', 'Campaign一覧の取得に失敗しました: ' + state.campaignsError));
     }
-    if (state.lastFetched && (state.campaignsError || state.healthError)) {
-      out.push(banner('warn', '前回取得に成功したデータを表示しています。'));
+    if (state.campaignsError && Array.isArray(state.campaigns)) {
+      out.push(banner('warn', '案件一覧は前回取得に成功した内容を表示しています。'));
     }
     return out;
   }
 
   function fetchJSON(url, key) {
+    if (/^\/api\/campaigns(?:[/?]|$)/.test(url) && new URLSearchParams(location.search).get('view') === 'blue') {
+      url += (url.includes('?') ? '&' : '?') + 'view=blue';
+    }
     if (state.inflight[key]) {
       var prev = state.inflight[key];
       prev.superseded = true;
@@ -960,15 +998,16 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
       if (!isCurrent()) return;
       if (d && Array.isArray(d.campaigns)) {
         state.campaigns = d.campaigns; state.campaignsError = null;
+        state.lastFetched = new Date().toISOString();
         state.campaignPage = d.page || 1;
         state.pageInfo = {total: d.total, pages: d.pages || 1, checked: d.checked_at};
       }
-      else { state.campaigns = null; state.campaignsError = '応答形式が不正です'; }
+      else { state.campaigns = null; state.pageInfo = null; state.campaignsError = '応答形式が不正です'; }
     }).catch(function (e) {
       if (!isCurrent()) return;
       var m = errMsg(e); if (m === null) return;
       state.campaignsError = e.httpStatus === 409 ? '管理者が aym monitor index を実行すると一覧を開けます。' : m;
-      if (!canShowPrevious(e)) state.campaigns = null;
+      if (!canShowPrevious(e)) { state.campaigns = null; state.pageInfo = null; }
     }).then(function () {
       if (isCurrent() && state.route.name === 'list') return loadExcerpt();
     });
@@ -1021,7 +1060,6 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
     });
     return Promise.all([p1, p2, p3, p4, p5, p6]).then(function () {
       if (!isCurrent()) return;
-      state.lastFetched = new Date().toISOString();
       render();
     });
   }
@@ -1079,7 +1117,7 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
         if (!isCurrent()) return;
         var m = errMsg(e);
         if (m === null) return;
-        mainError = m;
+        mainError = e.httpStatus === 409 ? '案件の索引を更新する必要があります。管理者に更新を依頼してください。' : m;
       }));
       requests.push(fetchJSON('/api/campaigns/' + encodeURIComponent(id) + '/runs', 'detail-runs').then(function (d) {
         if (!isCurrent()) return;
@@ -1196,9 +1234,9 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
     if (h === '#/sources') return { name: 'sources', params: {} };
     var sourceMatch = h.match(/^#\/sources\/(src-[0-9a-f]{32})$/);
     if (sourceMatch) return { name: 'source', params: { id: sourceMatch[1] } };
-    var m = h.match(/^#\/campaign\/([^/]+)$/);
+    var m = h.match(/^#\/campaign\/([^/?]+)(?:\?severity=(all|critical|high|medium|low|info|unknown))?$/);
     if (m) {
-      try { return { name: 'campaign', params: { id: decodeURIComponent(m[1]) } }; }
+      try { return { name: 'campaign', params: { id: decodeURIComponent(m[1]), severity: m[2] } }; }
       catch (e) { return { name: 'list', params: {} }; }
     }
     var r = h.match(/^#\/run\/([^/]+)$/);
@@ -1217,8 +1255,18 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
 
   function navigate() {
     var next = parseHash();
-    if (routeKey(next) === routeKey(state.route)) return;
+    if (routeKey(next) === routeKey(state.route)) {
+      if (next.name === 'campaign' && next.params.severity !== state.route.params.severity) {
+        state.route = next;
+        setCampaignView(next.params.id, 'overview');
+        state.focusFindings = true;
+        render();
+      }
+      return;
+    }
     state.route = next;
+    state.focusFindings = next.name === 'campaign' && !!next.params.severity;
+    if (state.focusFindings) setCampaignView(next.params.id, 'overview');
     state.detail = null;
     state.detailError = null;
     state.detailStale = false;
@@ -1757,7 +1805,41 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
       });
   }
 
-  var severityNames = { critical:'重大', high:'高', medium:'中', low:'低', info:'情報' };
+  var severityNames = { critical:'重大', high:'高', medium:'中', low:'低', info:'情報', unknown:'未記録' };
+
+  function severityOf(finding) {
+    return Object.hasOwn(severityNames, finding.severity) ? finding.severity : 'unknown';
+  }
+
+  function severityLinks(c, selected) {
+    var group = text('nav', null, 'risk-levels');
+    group.setAttribute('aria-label', '検知の重要度別件数');
+    var url = '#/campaign/' + encodeURIComponent(c.campaign_id) + '?severity=';
+    var counts = c.severity_counts;
+    if (!counts) {
+      if (c.finding_count_status === 'unavailable') group.appendChild(text('span', '重要度別の件数は未集計です。'));
+      else if (!selected) {
+        var detail = text('a', '重要度別の検知を見る');
+        detail.href = url + 'all';
+        group.appendChild(detail);
+      }
+      return group;
+    }
+    function link(level, label, count) {
+      var a = text('a');
+      a.href = url + level;
+      a.dataset.level = level;
+      a.setAttribute('data-key', 'severity-' + level);
+      if (level === selected) a.setAttribute('aria-current', 'true');
+      a.append(text('span', label), text('b', count + ' 件'));
+      group.appendChild(a);
+    }
+    if (selected) link('all', 'すべて', c.finding_count);
+    Object.keys(severityNames).forEach(function (level) {
+      if (level !== 'unknown' || counts[level] || selected === level) link(level, severityNames[level], counts[level]);
+    });
+    return group;
+  }
 
   function findingCount(c, compact) {
     if (c.finding_count_status === 'unavailable' || !Number.isInteger(c.finding_count)) return '未集計';
@@ -1790,7 +1872,9 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
     var identity = text('div', null, 'sheet-identity');
     var first = state.excerpt && state.excerpt[0];
     var caseName = c.intent_id || c.campaign_id;
-    identity.appendChild(text('span', first ? caseName + '　·　検知 1 件目' : caseName, 'sheet-label'));
+    var label = text('div', caseName, 'sheet-label');
+    if (first) label.appendChild(text('span', '検知 1 件目', 'sheet-position'));
+    identity.appendChild(label);
     var heading = text('h2');
     heading.appendChild(first ? orUnrecorded(first.title) : document.createTextNode('案件の記録'));
     identity.appendChild(heading);
@@ -1805,7 +1889,11 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
     }
     head.appendChild(stats);
     var meta = text('div', null, 'sheet-meta');
-    if (first) meta.appendChild(text('span', '重大度　' + (severityNames[first.severity] || '未記録'), 'first-severity'));
+    if (first) {
+      var firstLevel = text('span', '重大度　' + (severityNames[first.severity] || '未記録'), 'first-severity');
+      firstLevel.dataset.level = severityOf(first);
+      meta.appendChild(firstLevel);
+    }
     var caseStatus = text('span', '案件の状態　');
     caseStatus.appendChild(statusBadge(c.status));
     meta.appendChild(caseStatus);
@@ -1815,6 +1903,10 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
     var body = text('div', null, 'sheet-body');
     body.setAttribute('aria-live','polite');
     body.setAttribute('data-key','excerpt-body');
+    if (new URLSearchParams(location.search).get('view') !== 'blue') {
+      body.appendChild(text('h3', c.finding_count_status === 'partial' ? '確認済みの検知の重要度' : '検知の重要度'));
+      body.appendChild(severityLinks(c));
+    }
     appendCoverage(body,c);
     if (state.excerptError) body.appendChild(text('p', state.excerptError, 'excerpt-notice'));
     if (state.excerpt === null && !state.excerptError) body.appendChild(text('p','記録を読み込んでいます。','muted'));
@@ -1844,6 +1936,7 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
     evidence.href = '#/campaign/' + encodeURIComponent(c.campaign_id);
     var decision = text('a', 'この案件の判断を見る', 'action-secondary');
     decision.href = '/decision?campaign=' + encodeURIComponent(c.campaign_id);
+    if (blueView) decision.search += '&view=blue';
     links.appendChild(evidence); links.appendChild(decision); sheet.appendChild(links);
     sheet.appendChild(body);
     return sheet;
@@ -2010,6 +2103,7 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
       box.appendChild(text('h3', (node.record.intent_id || cid) + ' の前回候補　' + candidates.length + ' 件'));
       var decision = text('a', 'この案件の判断を見る');
       decision.href = '/decision?campaign=' + encodeURIComponent(cid);
+      if (blueView) decision.search += '&view=blue';
       box.appendChild(decision);
       box.appendChild(text('p', node.parent ? 'このブラウザーで選んだ案件と比較します。' : '同時刻の候補があります。前回にあたる案件を選ぶと、このブラウザーに保存します。'));
       candidates.forEach(function (candidate) {
@@ -2426,8 +2520,22 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
     var pFind = document.createElement('section');
     pFind.className = 'panel';
     pFind.setAttribute('data-key', 'campaign-findings-' + id);
-    pFind.appendChild(text('h2', '検知の記録'));
-    var findings = Array.isArray(d.findings) ? d.findings : [];
+    var findingHeading = text('h2', '検知の記録');
+    findingHeading.id = 'case-findings-heading';
+    findingHeading.tabIndex = -1;
+    pFind.appendChild(findingHeading);
+    var allFindings = Array.isArray(d.findings) ? d.findings : [];
+    var level = state.route.params.severity || 'all';
+    var findings = level === 'all' ? allFindings : allFindings.filter(function (f) { return f && severityOf(f) === level; });
+    if (c.status !== 'withheld') {
+      if (c.finding_count_status === 'partial') pFind.appendChild(text('p', '一部未集計です。件数は確認済みの検知のみです。'));
+      pFind.appendChild(severityLinks(c, level));
+      if (level !== 'all' && c.severity_counts) {
+        var shown = text('p', '重要度「' + severityNames[level] + '」の検知　' + findings.length + ' 件');
+        shown.setAttribute('role', 'status');
+        pFind.appendChild(shown);
+      }
+    }
     var assessStatusById = null;
     var aRep = state.detail.assessment;
     if (aRep && aRep.status === undefined && Array.isArray(aRep.findings)) {
@@ -2438,7 +2546,7 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
       }
     }
     if (findings.length === 0) {
-      pFind.appendChild(text('p', c.unverified_run_count ? '検知の集計が完了していません。' : '該当なし', 'muted'));
+      pFind.appendChild(text('p', c.status === 'withheld' ? c.reason : c.unverified_run_count ? '検知の集計が完了していません。' : '該当なし', 'muted'));
     } else {
       var ul = document.createElement('ul');
       ul.className = 'incident-list';
@@ -2451,7 +2559,7 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
         var sev = document.createElement('span');
         sev.className = 'incident-sev';
         if (f.severity) sev.setAttribute('data-sev', String(f.severity));
-        sev.textContent = f.severity ? String(f.severity) : '未記録';
+        sev.textContent = severityNames[severityOf(f)];
         li.appendChild(sev);
         var title = document.createElement('span');
         title.className = 'incident-title';
@@ -3257,6 +3365,7 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
     if(r.name==='run'&&state.detail&&state.detail.kind==='run'&&state.detail.data&&state.detail.data.run)
       cid=state.detail.data.run.campaign_id;
     link.href=cid&&/^[a-z0-9][a-z0-9-]{0,63}$/.test(cid)?'/decision?campaign='+encodeURIComponent(cid):'/decision';
+    if (blueView) link.search += (link.search ? '&' : '?') + 'view=blue';
   }
 
   function render() {
@@ -3281,6 +3390,10 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
       applyCampaignView(frag, state.route.params.id);
     }
     reconcileChildren(el.viewRoot, frag.childNodes);
+    if (state.focusFindings && document.getElementById('case-findings-heading')) {
+      state.focusFindings = false;
+      document.getElementById('case-findings-heading').focus();
+    }
     var selector = document.getElementById('case-choice');
     if (selector && selector.value !== state.selectedCase) selector.value = state.selectedCase;
     // Only restore focus if the previously focused node was lost from the DOM.
@@ -3380,6 +3493,7 @@ body[data-screen="list"] #desk-sources { display: inline-flex; align-items: cent
   });
 
   state.route = parseHash();
+  state.focusFindings = state.route.name === 'campaign' && !!state.route.params.severity;
   render();
   runRefresh();
   startAuto();

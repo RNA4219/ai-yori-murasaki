@@ -1,0 +1,27 @@
+{
+  "id": "docs/tasks/TASK.indexed-case-detail-11-23-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/AC-20261123-07.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "docs/acceptance/AC-20261123-07.md"
+  ],
+  "summary": "10万案件を対象に、案件詳細と判断画面に必要な実行だけを読む変更の要件と検収条件を定める。",
+  "source_sha256": "662798892ec3d6391ca68fd8d5e1d62ec6249b6765feaf8c6a2fb5565f645ec2",
+  "generated_at": "00042",
+  "review": {
+    "reviewed_at": "2026-11-23T09:24:30+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "662798892ec3d6391ca68fd8d5e1d62ec6249b6765feaf8c6a2fb5565f645ec2",
+    "summary_sha256": "a73d4e997aa196fe6aa81fbfff973c66d16b76a15acd15602e8b14efc9905627",
+    "scope": "案件詳細と判断画面の取得範囲、索引の移行条件、検収の記録と参照先を原文に照合。"
+  }
+}

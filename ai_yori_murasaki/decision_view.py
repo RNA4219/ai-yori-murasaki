@@ -111,6 +111,7 @@ def _item(finding: dict, record: dict | None, mapping: dict) -> dict:
         "ref": props.get(fields.get("key", "")) if fields.get("key") else None,
         "title": finding.get("title") or "",
         "severity": severity,
+        **({"severity_unrecorded": True} if finding.get("severity") not in SEVERITIES else {}),
         "state": state,
         "state_label": label if isinstance(label, str) else None,
         "due": _date_only(props.get(fields.get("due", ""))) if fields.get("due") else None,
@@ -240,14 +241,16 @@ def load_mapping(store) -> dict:
         raise DataError("decision-view mapping unavailable", "hold") from exc
 
 
-def read_decision_view(runtime, campaign_id: str, selected_previous: str | None = None, summaries=None) -> dict:
+def read_decision_view(runtime, campaign_id: str, selected_previous: str | None = None, summaries=None,
+                       *, options=None, report_loader=None) -> dict:
     from .assessment import load_report
     campaign, findings, records = _load(runtime, runtime.store, campaign_id, summaries)
-    report = load_report(runtime, campaign_id)
+    report = report_loader() if report_loader is not None else load_report(runtime, campaign_id)
     previous = None
-    campaigns = ([entry.campaign for entry in summaries.values() if entry.campaign]
-                 if summaries is not None else runtime.list_campaigns())
-    options = previous_candidates(campaigns).get(campaign_id, ())
+    if options is None:
+        campaigns = ([entry.campaign for entry in summaries.values() if entry.campaign]
+                     if summaries is not None else runtime.list_campaigns())
+        options = previous_candidates(campaigns).get(campaign_id, ())
     prev_id = options[0] if len(options) == 1 else None
     if selected_previous in options:
         prev_id = selected_previous
@@ -355,23 +358,37 @@ def _series(campaign: dict) -> str:
     return _INTENT_DATE.sub("", campaign.get("intent_id") or "")
 
 
+def series_position(campaign: dict) -> tuple[str, str, bool] | None:
+    """同系列の時刻をUTC・小数秒9桁で順序づける。SQLiteでも同じ順序になる。"""
+    intent = campaign.get("intent_id")
+    stamp = campaign.get("created_at")
+    if not isinstance(intent, str) or not isinstance(stamp, str):
+        return None
+    name = _series(campaign)
+    if not name:
+        return None
+    try:
+        moment = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if moment.tzinfo is None:
+        moment = moment.replace(tzinfo=timezone.utc)
+    delta = moment - datetime.min.replace(tzinfo=timezone.utc)
+    extra = re.search(r"\.\d{6}(\d{1,3})", stamp)
+    tail = extra[1].ljust(3, "0") if extra else "000"
+    # 最小日時の正のUTCオフセットも表現できるように日番号を1から数える。
+    key = f"{delta.days + 1:07d}{delta.seconds:05d}{delta.microseconds:06d}{tail}"
+    return name, key, intent != name
+
+
 def previous_candidates(campaigns: list[dict]) -> dict[str, tuple[str, ...]]:
     """直前の時刻にある全候補を返す。同時刻の案件の間には辺を張らない。"""
-    families: dict[str, dict[tuple[datetime, str], list[dict]]] = {}
+    families: dict[str, dict[str, list[dict]]] = {}
     for campaign in campaigns:
-        name = _series(campaign)
-        stamp = campaign.get("created_at")
-        if not name or not campaign.get("campaign_id") or not isinstance(stamp, str):
+        position = series_position(campaign)
+        if not position or not campaign.get("campaign_id"):
             continue
-        try:
-            moment = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
-        except ValueError:
-            continue
-        if moment.tzinfo is None:
-            moment = moment.replace(tzinfo=timezone.utc)
-        # 契約が許す小数秒9桁のうち、datetimeに入らない末尾3桁を保持する。
-        extra = re.search(r"\.\d{6}(\d{1,3})", stamp)
-        key = (moment, extra[1].ljust(3, "0") if extra else "000")
+        name, key, _ = position
         families.setdefault(name, {}).setdefault(key, []).append(campaign)
     parents: dict[str, tuple[str, ...]] = {}
 

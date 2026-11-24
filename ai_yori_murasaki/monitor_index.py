@@ -12,7 +12,7 @@ from tempfile import TemporaryDirectory
 
 import ijson
 
-from .jsonio import DataError, MAX_JSON_DEPTH
+from .jsonio import DataError, MAX_JSON_BYTES, MAX_JSON_DEPTH
 from .monitor_inputs import file_stamp
 from .monitor_summary import CampaignSummary, summarize_run
 from .storage import ID_RE, Store, _is_reparse, _safe_join
@@ -103,6 +103,7 @@ def _pack(part: CampaignSummary) -> str:
 
 
 def _write_case(db, cid, parts):
+    from .decision_view import series_position
     from .server import _project_campaign
     summary = CampaignSummary()
     for data in parts:
@@ -113,6 +114,24 @@ def _write_case(db, cid, parts):
     db.execute("INSERT OR REPLACE INTO cases VALUES (?, ?, ?, ?)", (
         cid, row["created_at"] or "", json.dumps(row, ensure_ascii=False),
         json.dumps(excerpt, ensure_ascii=False)))
+    position = series_position(summary.campaign)
+    if position:
+        db.execute("INSERT INTO case_series VALUES (?, ?, ?, ?)", (cid, *position))
+
+
+def run_file_stamps(folder):
+    if _is_reparse(folder):
+        return ["linked"]
+    if not folder.is_dir():
+        return []
+    return [file_stamp(folder / "events.jsonl"), file_stamp(folder / "manifest.json")]
+
+
+def needs_index(store):
+    catalog = store._catalog_path()
+    runs = store.workspace / "runs"
+    return ((catalog.exists() and catalog.stat().st_size > MAX_JSON_BYTES) or
+            (runs.is_dir() and next(islice(runs.iterdir(), 1000, None), None) is not None))
 
 
 def _refresh(store, db, full):
@@ -120,8 +139,13 @@ def _refresh(store, db, full):
     if version == 0:
         _setup(db)
         full = True
-    elif version != 1:
+    elif version not in (1, 2, 3):
         raise DataError("未知のモニター索引形式です")
+    if version < 2:
+        db.execute("CREATE TABLE case_series (cid TEXT PRIMARY KEY, family TEXT, moment TEXT, dated INTEGER)")
+        db.execute("CREATE INDEX series_by_time ON case_series(family, moment, cid)")
+    if version < 3:
+        db.execute("PRAGMA user_version = 3")
     hints = _hints(db, store, full)
     runs = _safe_join(store.workspace, "runs")
     objects = _safe_join(store.workspace, "objects")
@@ -131,7 +155,6 @@ def _refresh(store, db, full):
 
     previous = {}
     if full:
-        db.execute("DELETE FROM cases")
         db.execute("DELETE FROM run_cache")
     else:
         previous = {rid: (cid, inputs, refs) for rid, cid, inputs, refs in
@@ -149,13 +172,7 @@ def _refresh(store, db, full):
         return json.dumps(result)
 
     for rid in sorted(ids):
-        folder = runs / rid
-        if _is_reparse(folder):
-            files = ["linked"]
-        elif not folder.is_dir():
-            files = []
-        else:
-            files = [file_stamp(folder / "events.jsonl"), file_stamp(folder / "manifest.json")]
+        files = run_file_stamps(runs / rid)
         inputs = json.dumps([hints.get(rid), files])
         old = previous.pop(rid, None)
         if old and inputs == old[1] and (old[2] == "{}" or old[2] == refs_stamp(json.loads(old[2]))):
@@ -173,12 +190,15 @@ def _refresh(store, db, full):
         affected.add(cid)
         db.execute("DELETE FROM run_cache WHERE rid = ?", (rid,))
 
-    if full:
+    if full or version < 3:
+        db.execute("DELETE FROM case_series")
+        db.execute("DELETE FROM cases")
         rows = db.execute("SELECT cid, part FROM run_cache ORDER BY cid, rid")
         for cid, group in groupby(rows, key=itemgetter(0)):
             _write_case(db, cid, map(itemgetter(1), group))
     else:
         for cid in affected:
+            db.execute("DELETE FROM case_series WHERE cid = ?", (cid,))
             db.execute("DELETE FROM cases WHERE id = ?", (cid,))
             rows = db.execute("SELECT part FROM run_cache WHERE cid = ? ORDER BY rid", (cid,))
             first = rows.fetchone()
@@ -225,5 +245,6 @@ def read_page(store: Store, page: int, view: str) -> dict | None:
                 row["finding_excerpt"] = json.loads(excerpt)
             else:
                 row.pop("unverified_run_ids", None)
+                row.pop("severity_counts", None)
             campaigns.append(row)
     return {"campaigns": campaigns, "page": page, "pages": pages, "total": total, "checked_at": checked_at}

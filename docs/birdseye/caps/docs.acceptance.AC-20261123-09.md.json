@@ -1,0 +1,28 @@
+{
+  "id": "docs/acceptance/AC-20261123-09.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "README.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.architecture-canvas-11-23-2026.md"
+  ],
+  "deps_out": [
+    "docs/tasks/TASK.architecture-canvas-11-23-2026.md"
+  ],
+  "summary": "構成図の直接操作と関与範囲の編集を検証。マウス・タッチでの移動中と終了後、キーボード操作後の再描画で背景の3区画と見出しが表示されることを確認した。",
+  "source_sha256": "d03fafb4ce8ec05a61cfe78645e22ef4e7a3334167dfcef291433eef4298a0f7",
+  "generated_at": "00051",
+  "review": {
+    "reviewed_at": "2026-11-23T11:13:46+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "d03fafb4ce8ec05a61cfe78645e22ef4e7a3334167dfcef291433eef4298a0f7",
+    "summary_sha256": "f89861ed67a3772ce914fc69a4b7f012c1c982a6493c1c2c5e804faf96c90f28",
+    "scope": "部品移動時と再描画時の背景区画の表示要件と検収を原文に照合。"
+  }
+}

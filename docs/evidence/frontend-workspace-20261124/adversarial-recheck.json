@@ -1,0 +1,206 @@
+{
+  "base": "http://127.0.0.1:49550",
+  "started": "2026-11-23T16:52:57.803Z",
+  "runner": "8f9333306fe4971826e3608b04c6e2340d35e5ea0d541fe3afbdaf55b59b8825",
+  "sources": {
+    "server.py": "ac36f94e3dc4607951b45eda4f417454c67b94ffc784ea1c1a77ebd1df394e7d",
+    "web/index.html": "1846e0f3e5f924b990d238c7db83914b1b3fa55ac8e9da833eb17c4b1be5b1b5",
+    "web/decision.html": "2240a408ac98129db515fa1a1ae2b2ad613e87c63b11eae1ac8693cdfd6d9131",
+    "web/intake.html": "cdd3f5682fd466ade9c735214d4409275bdb344bbe51b10f34eda1c152cf5070",
+    "web/architecture.html": "a42fca091aa5c01cc7d4e64354971b93f728a33c444b900ef18eddd8eee056af",
+    "web/architecture/map.mjs": "3d8eb94b9c57db31a33a324d3a0ac12c24872903c01e0f3a6846f9e2d8ea2fcc",
+    "web/architecture/model.mjs": "4f75078febe6d0be2b65bf0ad4ad202fc519d8c700d02b5a01991adc801f4ffe",
+    "web/architecture/sample.json": "a67d52d322471dcce73b6d7c65c1e5b946ccb9c3a055b5df0281842348913ba0",
+    "web/decision-sample.json": "b5ba96d7555c4d90b2c47e3dcdb3aae886bb3be7298bc0d1ead88efd279ed259",
+    "web/workspace.css": "8744585d8bb6d18d20c342538b428e45ca27c5bda3a8ef48ac2227178e0fe2ee"
+  },
+  "negativeControl": "対象データもサーバー設定も変更しない。正常入力と異常入力を別コンテキストで比較する。",
+  "chrome": "157.0.8103.40",
+  "ended": "2026-11-23T16:53:07.460Z",
+  "sameSources": true,
+  "results": [
+    {
+      "id": "B1",
+      "title": "Blueの共通タブと非公開状態",
+      "width": 320,
+      "status": "PASS",
+      "observed": {
+        "links": [
+          "blue",
+          "blue",
+          "blue"
+        ],
+        "searchHidden": true
+      },
+      "errors": [],
+      "elapsedMs": 398
+    },
+    {
+      "id": "B2",
+      "title": "非公開表示から一覧へ戻るリンクの表示モード",
+      "width": 390,
+      "status": "PASS",
+      "observed": {
+        "message": "評価情報はBlueに非公開です。\n案件一覧へ戻る",
+        "linkRetainsBlue": true
+      },
+      "errors": [],
+      "elapsedMs": 206
+    },
+    {
+      "id": "B3",
+      "title": "構成図の見本から製品図を開くリンクの表示モード",
+      "width": 1440,
+      "status": "PASS",
+      "observed": {
+        "linkRetainsBlue": true
+      },
+      "errors": [],
+      "elapsedMs": 503
+    },
+    {
+      "id": "M1",
+      "title": "確定0件・確認済み0件・未集計を切り替える",
+      "width": 390,
+      "status": "PASS",
+      "observed": {
+        "counts": [
+          "検知0件",
+          "検知一部未集計（確認済み0件）",
+          "検知未集計"
+        ],
+        "links": [
+          "/decision?campaign=qa-zero",
+          "/decision?campaign=qa-part",
+          "/decision?campaign=qa-unknown"
+        ]
+      },
+      "errors": [],
+      "elapsedMs": 539
+    },
+    {
+      "id": "M2",
+      "title": "起動時に全APIが失敗したときの最終取得時刻",
+      "width": 1440,
+      "status": "PASS",
+      "observed": {
+        "fetched": "未取得",
+        "rows": 0,
+        "connection": "接続不可"
+      },
+      "errors": [],
+      "elapsedMs": 267
+    },
+    {
+      "id": "M3",
+      "title": "一覧の再取得失敗時に直前の台帳と確認時刻を保持する",
+      "width": 1440,
+      "status": "PASS",
+      "observed": {
+        "rows": 3,
+        "checked": "台帳の確認時刻　2026/11/20 12:12:00",
+        "after": "台帳の確認時刻　2026/11/20 12:12:00",
+        "staleWarning": true
+      },
+      "errors": [],
+      "elapsedMs": 430
+    },
+    {
+      "id": "D1",
+      "title": "判断画面で絞り込み中に再取得が503になる",
+      "width": 390,
+      "status": "PASS",
+      "observed": {
+        "count": 11,
+        "retained": true
+      },
+      "errors": [],
+      "elapsedMs": 424
+    },
+    {
+      "id": "I1",
+      "title": "2回の検索の応答が逆順になる",
+      "width": 390,
+      "status": "PASS",
+      "observed": {
+        "titles": [
+          "結果後"
+        ]
+      },
+      "errors": [],
+      "elapsedMs": 316
+    },
+    {
+      "id": "I2",
+      "title": "検索失敗・該当なし・再検索で結果がある場合",
+      "width": 320,
+      "status": "PASS",
+      "observed": {
+        "statuses": [
+          "受付台帳を取得できませんでした。もう一度検索してください。",
+          "一致する受付記録はありません。",
+          "1件が一致しました。"
+        ],
+        "overflow": false
+      },
+      "errors": [],
+      "elapsedMs": 381
+    },
+    {
+      "id": "G1",
+      "title": "不正な構成を選んだ後も選択した部品を保持する",
+      "width": 390,
+      "status": "PASS",
+      "observed": {
+        "before": "order-contracts",
+        "after": "order-contracts",
+        "n": 6,
+        "error": "構成要素のIDが重複しています。web"
+      },
+      "errors": [],
+      "elapsedMs": 463
+    },
+    {
+      "id": "G2",
+      "title": "構成要素100件の上限と101件の拒否",
+      "width": 1440,
+      "status": "PASS",
+      "observed": {
+        "accepted": 100,
+        "remain": 100,
+        "error": "nodes は最大100件のオブジェクトの配列で指定してください。"
+      },
+      "errors": [],
+      "elapsedMs": 472
+    },
+    {
+      "id": "G3",
+      "title": "線を選んでからデスクトップ幅をスマートフォン幅に変える",
+      "width": 1440,
+      "status": "PASS",
+      "observed": {
+        "before": "orders-web → order-contracts",
+        "after": "orders-web → order-contracts",
+        "selected": true
+      },
+      "errors": [],
+      "elapsedMs": 544
+    },
+    {
+      "id": "G4",
+      "title": "関与範囲の未保存編集と図ファイル切替",
+      "width": 1440,
+      "status": "PASS",
+      "observed": {
+        "original": "2要素",
+        "changed": "1要素",
+        "switched": false,
+        "prompt": false,
+        "restored": "1要素",
+        "unsaved": true
+      },
+      "errors": [],
+      "elapsedMs": 600
+    }
+  ]
+}

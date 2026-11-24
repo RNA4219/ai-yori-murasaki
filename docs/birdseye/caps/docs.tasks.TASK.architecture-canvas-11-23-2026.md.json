@@ -1,0 +1,27 @@
+{
+  "id": "docs/tasks/TASK.architecture-canvas-11-23-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/AC-20261123-09.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "docs/acceptance/AC-20261123-09.md"
+  ],
+  "summary": "構成図の直接操作と背景区画の表示、接続根拠、利用者の入力・関与範囲の編集と保存に関する要件。",
+  "source_sha256": "37f7347af6c5eb4a8497b47ed4b0d870a9dc3e17becd5a15433d0da33b7e4b37",
+  "generated_at": "00051",
+  "review": {
+    "reviewed_at": "2026-11-23T11:13:46+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "37f7347af6c5eb4a8497b47ed4b0d870a9dc3e17becd5a15433d0da33b7e4b37",
+    "summary_sha256": "5063ab02edd7f99e4e1f111b4e27539daa71df4719c5df4acec68a5cadf84fea",
+    "scope": "部品移動時と再描画時の背景区画の表示要件と検収を原文に照合。"
+  }
+}

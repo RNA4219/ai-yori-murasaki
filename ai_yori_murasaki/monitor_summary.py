@@ -21,6 +21,15 @@ class CampaignSummary:
             return "unavailable"
         return "partial" if self.pending_runs else "complete"
 
+    def severity_counts(self) -> dict[str, int] | None:
+        if self.status == "unavailable":
+            return None
+        counts = dict.fromkeys(("critical", "high", "medium", "low", "info", "unknown"), 0)
+        for finding in self.findings.values():
+            level = finding.get("severity")
+            counts[level if isinstance(level, str) and level in counts else "unknown"] += 1
+        return counts
+
     def include(self, part: "CampaignSummary") -> None:
         if part.campaign and part.snapshot_at >= self.snapshot_at:
             self.campaign, self.snapshot_at = part.campaign, part.snapshot_at
@@ -50,7 +59,8 @@ def campaign_summaries(store: Store, *, catalog: dict | None = None) -> dict[str
 
 
 def summarize_run(store: Store, rid: str, hint: str | None,
-                  finding_refs: set[str] | None = None, *, strict_io: bool = False) -> tuple[str, CampaignSummary]:
+                  finding_refs: set[str] | None = None, *, strict_io: bool = False,
+                  on_verified=None) -> tuple[str, CampaignSummary]:
     """1台帳を検証する。参照先が欠損した検知も、後から復旧を検出できるようにする。"""
     summary = CampaignSummary()
     unavailable_io = FileNotFoundError if strict_io else OSError
@@ -70,6 +80,8 @@ def summarize_run(store: Store, rid: str, hint: str | None,
             raise DataError("unavailable ledger without a campaign")
         summary.pending_runs.append(rid)
         return cid, summary
+    if on_verified is not None:
+        on_verified(rid, cid, events)
     complete = True
     started_at = ""
     for event in events:

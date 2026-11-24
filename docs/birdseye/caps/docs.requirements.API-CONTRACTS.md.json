@@ -2,10 +2,12 @@
   "id": "docs/requirements/API-CONTRACTS.md",
   "role": "doc",
   "public_api": [],
-  "summary": "CLI・読み取りAPIと画面の契約。monitor indexの変更判定、戻り値、確認時刻、旧索引の移行と全件再検証を含む。",
+  "summary": "CLIと読み取りAPIの契約。案件の重要度別件数、未集計、Blueの表示範囲、既存索引の移行を含む。",
   "deps_out": [
     "docs/PRODUCT-ACCEPTANCE.md",
     "docs/SOURCES.md",
+    "docs/acceptance/AC-20261123-07.md",
+    "docs/acceptance/AC-20261123-08.md",
     "docs/requirements/QUALITY-INTEGRATION.md"
   ],
   "deps_in": [
@@ -16,13 +18,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "03dd0b5d33a6bd263425176f3f85fc21b07d744ea21fb41ddd9b765df91b3fb1",
-  "generated_at": "00041",
+  "source_sha256": "9c761fd6150d6e167b3673cbd09a6d1e7a69da294065f43131dc177663a2bb4f",
+  "generated_at": "00043",
   "review": {
-    "reviewed_at": "2026-11-23T05:50:40+00:00",
+    "reviewed_at": "2026-11-23T09:59:17+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "03dd0b5d33a6bd263425176f3f85fc21b07d744ea21fb41ddd9b765df91b3fb1",
-    "summary_sha256": "efaf9af12d50fa99aed40c3fe25f07b069ddd1e8c6995f5134940286f0fff2bb",
-    "scope": "索引の差分更新・再検証の変更、失敗時の状態と参照先を原文に照合。"
+    "source_sha256": "9c761fd6150d6e167b3673cbd09a6d1e7a69da294065f43131dc177663a2bb4f",
+    "summary_sha256": "964e621fd9bb85d260c49cc3a716bf2bdac7bf0a1ee38bceab499044f03f40b8",
+    "scope": "重要度別件数の意味、操作、索引の移行と検収の参照を原文に照合。"
   }
 }

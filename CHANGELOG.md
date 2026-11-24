@@ -14,6 +14,32 @@ Keep a Changelog の区分で管理する。記録には既存最大番号 +1 �
 
 ### Changed
 
+- 0043 — 2026-11-24。構成図の通常保存でダウンロードを拒否されても、利用者が保存を確認するまで未保存の編集を保護する。[Task 20261124-01](docs/tasks/TASK.frontend-workspace-11-24-2026.md)・[技術検収](docs/acceptance/AC-20261124-01.md)
+
+- 0042 — 2026-11-24。Blueの補助リンク、モニターの最終取得時刻と再取得失敗の表示、図を切り替えるときの未保存編集の保護を修正。敵対的検証13件を再実行した。[Task 20261124-01](docs/tasks/TASK.frontend-workspace-11-24-2026.md)・[技術検収](docs/acceptance/AC-20261124-01.md)
+
+- 0041 — 2026-11-24。4画面の移動先を上部に統一し、モニターと判断画面の重要度色を構成図に合わせた。構成図の選択枠と詳細欄、案件台帳の行、受付検索の表示を整理した。[Task 20261124-01](docs/tasks/TASK.frontend-workspace-11-24-2026.md)・[技術検収](docs/acceptance/AC-20261124-01.md)
+
+- 0040 — 2026-11-23。構成図でカードを動かすと背景の区画と見出しが消える不具合を修正した。[Task 20261123-09](docs/tasks/TASK.architecture-canvas-11-23-2026.md)・[技術検収](docs/acceptance/AC-20261123-09.md)
+
+- 0039 — 2026-11-23。利用者の関与範囲を構成図の枠で示し、ドラッグや部品の選択で範囲を変更し、JSONに保存できる。[Task 20261123-09](docs/tasks/TASK.architecture-canvas-11-23-2026.md)・[技術検収](docs/acceptance/AC-20261123-09.md)
+
+- 0038 — 2026-11-23。利用者入力の送信元カードに人型のコマと「利用者」のラベルを表示し、人から操作画面への向きを矢印で示す。[Task 20261123-09](docs/tasks/TASK.architecture-canvas-11-23-2026.md)・[技術検収](docs/acceptance/AC-20261123-09.md)
+
+- 0037 — 2026-11-23。構成図の矢印から、利用者が画面で入力できる範囲を指定してJSONに保存できる。利用者入力・内部処理・未指定を線の見た目で区別する。[Task 20261123-09](docs/tasks/TASK.architecture-canvas-11-23-2026.md)・[技術検収](docs/acceptance/AC-20261123-09.md)
+
+- 0036 — 2026-11-23。構成図の各カードに重大度別の指摘件数を表示する。Criticalは黒、Highは赤、Mediumは黄、Lowは緑とし、詳細欄の各指摘にも同じ配色を使う。[Task 20261123-09](docs/tasks/TASK.architecture-canvas-11-23-2026.md)・[技術検収](docs/acceptance/AC-20261123-09.md)
+
+- 0035 — 2026-11-23。構成図の表示切替・倍率・配置操作を1行にまとめた。製品の図は「ai-yori-murasaki の構成図」と表示し、操作説明・検証報告・集計部品の説明文を外した。[Task 20261123-09](docs/tasks/TASK.architecture-canvas-11-23-2026.md)・[技術検収](docs/acceptance/AC-20261123-09.md)
+
+- 0034 — 2026-11-23。「構成と接続」の図の上で、ホイールを回すだけでポインター位置を中心に拡大・縮小できる。[Task 20261123-09](docs/tasks/TASK.architecture-canvas-11-23-2026.md)・[技術検収](docs/acceptance/AC-20261123-09.md)
+
+- 0033 — 2026-11-23。「構成と接続」で箱をドラッグし、拡大・移動しながら線の根拠を読める。タッチ操作、キーボード、重なる線の選択にも対応。[Task 20261123-09](docs/tasks/TASK.architecture-canvas-11-23-2026.md)・[技術検収](docs/acceptance/AC-20261123-09.md)
+
+- 0032 — 2026-11-23。案件を選ぶと重要度ごとの検知件数が分かり、件数を押すと同じ案件の該当する検知を開ける。一部未集計では確認済み分を明示する。[Task 20261123-08](docs/tasks/TASK.case-severity-11-23-2026.md)・[技術検収](docs/acceptance/AC-20261123-08.md)
+
+- 0031 — 2026-11-23。案件詳細は選んだ案件、判断画面はその案件と比較元だけの台帳を読む。同時刻に前回候補が複数ある場合は、選んだ候補を比較する。[Task 20261123-07](docs/tasks/TASK.indexed-case-detail-11-23-2026.md)・[技術検収](docs/acceptance/AC-20261123-07.md)
+
 - 0030 — 2026-11-23。モニター索引の2回目以降の更新で、変化した実行の台帳だけを再検証する。確認時刻と一覧は一緒に公開し、`--full` で全件を再検証できる。[Task 20261123-06](docs/tasks/TASK.incremental-monitor-11-23-2026.md)・[技術検収](docs/acceptance/AC-20261123-06.md)
 - 0028 — 2026-11-23。モニターの台帳イベント検証にRust製のスキーマ検証器を導入した。既存台帳から案件の索引を作成でき、モニターと判断画面の一覧を50件ずつ開ける。[Task 20261123-04](docs/tasks/TASK.monitor-index-11-23-2026.md)・[検収と計測値](docs/acceptance/AC-20261123-04.md)
 

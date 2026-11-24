@@ -1,0 +1,29 @@
+{
+  "id": "docs/acceptance/AC-20261123-07.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "README.md",
+    "docs/acceptance/INDEX.md",
+    "docs/requirements/API-CONTRACTS.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.indexed-case-detail-11-23-2026.md"
+  ],
+  "deps_out": [
+    "docs/tasks/TASK.indexed-case-detail-11-23-2026.md"
+  ],
+  "summary": "ブラウザーで案件を開いたときの台帳ID・回数と、前回比較の差分や案件別APIの応答を照合する検収記録。",
+  "source_sha256": "bf89f91cbd3b71322cdfeec74434524ceeadffbc2689a87939d52c62d18707e2",
+  "generated_at": "00042",
+  "review": {
+    "reviewed_at": "2026-11-23T09:24:30+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "bf89f91cbd3b71322cdfeec74434524ceeadffbc2689a87939d52c62d18707e2",
+    "summary_sha256": "100dae020309f1e050120a61c054995d542d5bbf884d23646cf517c9b88e4166",
+    "scope": "案件詳細と判断画面の取得範囲、索引の移行条件、検収の記録と参照先を原文に照合。"
+  }
+}

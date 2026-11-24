@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.1",
+  "profile": "performance",
+  "manifest_id": "eval:20261123-07",
+  "task_id": "20261123-07",
+  "owner": "RNA4219",
+  "purpose": "comparison",
+  "status": "completed",
+  "freeze_date": "2026-11-23",
+  "hypothesis": "10万案件の詳細・判断画面は対象と直前の案件だけを読み、従来の集計と同じ内容を表示できる。",
+  "action_delta": "同系列3件の台帳を使う従来の全件集計APIと、それらを含む10万案件の索引を使うブラウザーの応答を照合する。",
+  "negative_control": "同系列の前々回と他の系列の台帳は一度も開かず、判断画面の差分に前々回の項目が現れない。",
+  "identity": {
+    "legacy": {
+      "source_path": "ai_yori_murasaki",
+      "source_sha256": "sha256:4596b8151d77c2dd560c6802e6f97c0667f6bcc99bf29e1e17a79e299053d39e",
+      "source_revision": "0889033a2667d497394aae603e2614f9c37a4bf1+bundle-4596b8151d77",
+      "input_sha256": "sha256:bfced0c8d97ec38bf9001dfa6121c684a9c6f59f4eca1d59f3f56fd5d8e8de0d",
+      "label": "索引のない同系列3件のHTTP応答"
+    },
+    "candidate": {
+      "source_path": "ai_yori_murasaki",
+      "source_sha256": "sha256:4596b8151d77c2dd560c6802e6f97c0667f6bcc99bf29e1e17a79e299053d39e",
+      "source_revision": "0889033a2667d497394aae603e2614f9c37a4bf1+bundle-4596b8151d77",
+      "input_sha256": "sha256:bfced0c8d97ec38bf9001dfa6121c684a9c6f59f4eca1d59f3f56fd5d8e8de0d",
+      "label": "10万案件の索引とブラウザー"
+    },
+    "runner": {
+      "id": "WSL2 ext4 Python 3.12.3 / Chromium / tests/fixtures/verify_monitor_detail.py",
+      "sha256": "sha256:0ebc5b7a9dcee60007bc144edc561f597e4a44f35a60612870544c07eac68356"
+    }
+  },
+  "evaluation": {
+    "dataset_id": "100000-distinct-cases-open-c050000",
+    "dataset_sha256": "sha256:bfced0c8d97ec38bf9001dfa6121c684a9c6f59f4eca1d59f3f56fd5d8e8de0d",
+    "measurement_unit": "operation",
+    "primary_metric": "unrelated_ledger_opens",
+    "model_version": "not_used:local_fixture",
+    "policy_version": "monitor-detail-v2",
+    "configuration": {
+      "count": 100000,
+      "repetitions": 1,
+      "source_files": [
+        "ai_yori_murasaki/monitor_inputs.py",
+        "ai_yori_murasaki/monitor_index.py",
+        "ai_yori_murasaki/monitor_detail.py",
+        "ai_yori_murasaki/monitor_summary.py",
+        "ai_yori_murasaki/monitor_validation.py",
+        "ai_yori_murasaki/server.py",
+        "ai_yori_murasaki/runtime.py",
+        "ai_yori_murasaki/storage.py",
+        "ai_yori_murasaki/jsonio.py",
+        "ai_yori_murasaki/assessment.py",
+        "ai_yori_murasaki/decision_view.py",
+        "ai_yori_murasaki/lab_metrics.py",
+        "ai_yori_murasaki/contracts.py",
+        "ai_yori_murasaki/web/index.html",
+        "ai_yori_murasaki/web/decision.html",
+        "uv.lock"
+      ],
+      "comparison": "詳細4応答、判断1応答の状態コードと全JSONを照合。生成時刻だけを除く。画面ごとに台帳本文のopenを監査する。"
+    }
+  },
+  "external_mutations": {
+    "registry_frozen": true,
+    "submission_frozen": true
+  },
+  "outcome": {
+    "artifact_path": "../evidence/monitor-detail-20261123/results.json",
+    "artifact_sha256": "sha256:383649e9c3947abfa83831bf2889db9dc2baec6e32a3f3bf6195cb4822131805",
+    "records": 2,
+    "metrics": {
+      "unrelated_ledger_opens": 0
+    },
+    "error_count": 0,
+    "timeout_count": 0,
+    "crash_count": 0
+  }
+}

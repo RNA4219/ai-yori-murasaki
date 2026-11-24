@@ -136,6 +136,12 @@ summary { cursor: pointer; }
 .dot.accent { background: var(--accent); } .dot.done { background: var(--leaf); } .dot.in_progress { background: var(--indigo); }
 .filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .filters input { flex: 1 1 12em; min-width: 0; }
+.risk-levels { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 0; }
+.risk-levels a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 4px 10px; border: 1px solid var(--line); border-radius: 6px; color: var(--fg); background: var(--panel); text-decoration: none; }
+.risk-levels a:hover { border-color: var(--accent); }
+.risk-levels a[aria-current="true"] { background: #493653; color: white; box-shadow: inset 0 -3px #c2a4d4; }
+.risk-levels b { font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: no-preference) { .risk-levels a { transition: background-color .12s, border-color .12s; } }
 .scroll { overflow-x: auto; }
 table { border-collapse: collapse; width: 100%; font-size: 14px; }
 th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
@@ -175,35 +181,57 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
 
-/* 二つの製品画面が共有する切替。単独HTMLでも利用できる。 */
-.masthead { color: #302642; background: #fff; border-bottom: 1px solid #ded9e4; }
-.mast-inner { max-width: 1440px; min-height: 76px; padding-inline: clamp(16px,5vw,72px); margin-inline: auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.wordmark { display: flex; align-items: center; gap: 12px; font: 700 16px/1.2 system-ui, sans-serif; letter-spacing: .105em; }
-.seal { width: 40px; height: 40px; display: inline-grid; place-items: center; position: relative; isolation: isolate; color: white; font: 600 25px/1 "Yu Mincho", "Hiragino Mincho ProN", serif; letter-spacing: 0; }
-.seal::before, .seal::after { content: ""; position: absolute; inset: 2px; border-radius: 2px 8px 2px 8px; z-index: -1; }
-.seal::before { background: #baa9d5; transform: translate(-3px,2px) rotate(-7deg); }
-.seal::after { background: #50346c; transform: translate(1px,-1px); }
-.view-switch { display: inline-flex; align-items: center; border: 1px solid #e1dce7; border-radius: 99px; padding: 3px; background: #f5f3f7; }
-.view-switch > * { min-height: 44px; padding-inline: 20px; display: inline-flex; align-items: center; justify-content: center; border-radius: 99px; color: #5e566b; font: 650 16px/1.4 system-ui,sans-serif; text-decoration: none; }
-.view-switch [aria-current] { color: white; background: #463254; }
-.view-switch a:hover { background: #e8e1ee; color: #382944; text-decoration: none; }
-.masthead :focus-visible { outline: 3px solid #8055ab; outline-offset: 1px; }
-@media (max-width: 767px) {
-  .mast-inner { min-height: 64px; }
-  .wordmark { gap: 6px; font-size: 12px; letter-spacing: .06em; }
-  .seal { width: 32px; height: 32px; font-size: 21px; }
-  .view-switch > * { padding-inline: 10px; font-size: 14px; }
-}
-@media (max-width: 360px) { .wordmark > span:last-child { max-width: 7em; } }
 
+
+/* 単独配布の判断画面にも見出しと重要度の色を持たせる。 */
+.product-name { display: flex; align-items: center; gap: 10px; }
+.product-head { padding: 0; background: var(--panel); color: var(--fg); }
+.product-bar { max-width: 1440px; margin: auto; padding: 12px 16px; }
+.product-stamp { color: var(--accent); font: 700 21px/1 serif; }
+.product-short { display: none; }
+.wrap { max-width: 1504px; padding: 28px clamp(16px, 3.4vw, 48px) 64px; }
+.brief { background: var(--panel); border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: 4px; }
+.brief-heading { width: 100%; padding: clamp(18px, 2.4vw, 34px); }
+.case-line { font-size: 14px; row-gap: 4px; }
+.brief h1 { font-size: clamp(28px, 3.4vw, 48px); }
+#risk-heading { margin-top: 20px; font-size: 16px; }
+.report-front { gap: 24px; grid-template-columns: minmax(0, 1fr) minmax(256px, 29%); }
+.coverage-note, .report-tools, .card { border-radius: 4px; }
+.coverage-note { border-inline-start: 3px solid var(--amber); }
+.report-tools { border-top: 2px solid var(--accent); }
+#now .item { border: 0; border-bottom: 1px solid var(--line); border-radius: 0; }
+#now { gap: 0; }
+.item[open] > summary { background: var(--panel-soft); }
+.sev.critical { color: #fff; background: #202124; }
+.sev.high { color: #fff; background: #b42336; }
+.sev.medium { color: #332800; background: #f5cd42; }
+.sev.low { color: #fff; background: #267347; }
+.risk-levels a { border-radius: 4px; }
+#campaign-picker { gap: 0; padding: 0; border: 0; background: transparent; }
+#campaign-picker h1 { font-family: var(--font); }
+#campaign-picker > a { justify-self: start; display: inline-flex; align-items: center; min-height: 44px; }
+#campaign-message { margin: 12px 0 6px; }
+.campaign-list { border-top: 2px solid var(--accent); }
+.campaign-list a:hover { background: var(--panel-soft); }
+@media (max-width: 767px) {
+  .wrap { padding: 16px 12px 40px; }
+  .brief-heading { padding: 16px; }
+  .report-tools { padding: 14px; }
+}
 </style>
+<!-- workspace-style -->
 </head>
 <body>
 <a class="skip" href="#app">本文へスキップ</a>
-<header class="masthead">
-  <div class="mast-inner">
-  <div class="wordmark"><span class="seal" aria-hidden="true">紫</span><span>AI YORI MURASAKI</span></div>
-  <nav id="view-switch" class="view-switch" aria-label="画面を切り替える" hidden><span aria-current="page">判断の画面</span><a id="to-monitor" href="/#/">モニター</a></nav>
+<header class="product-head">
+  <div class="product-bar">
+    <div class="product-name"><span class="product-stamp" aria-hidden="true">紫</span><strong>AI YORI MURASAKI</strong></div>
+    <nav class="product-nav" id="view-switch" hidden aria-label="画面を切り替える">
+      <a id="to-monitor" href="/#/">モニター</a>
+      <span aria-current="page"><span class="product-long">判断の画面</span><span class="product-short" aria-hidden="true">判断</span></span>
+      <a href="/architecture" aria-label="システム構成図"><span class="product-long">システム構成図</span><span class="product-short" aria-hidden="true">構成図</span></a>
+      <a href="/intake" aria-label="案件受付台帳"><span class="product-long">案件受付台帳</span><span class="product-short" aria-hidden="true">受付台帳</span></a>
+    </nav>
   </div>
 </header>
 <main class="wrap" id="app" tabindex="-1">
@@ -211,7 +239,6 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
   <section class="card picker" id="campaign-picker" hidden>
     <h1>確認する案件を選ぶ</h1>
     <a href="/#/relations">案件のつながりを見る</a>
-    <a href="/architecture">システム構成図を見る</a>
     <p id="campaign-message" class="muted" role="status">Campaign を読み込んでいます。</p>
     <div id="campaign-list" class="campaign-list"></div>
     <nav id="picker-pages" aria-label="案件一覧のページ" hidden></nav>
@@ -233,8 +260,10 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     <div class="report-front">
     <section class="brief" aria-labelledby="h-sum">
       <div class="brief-heading">
-        <div class="case-line"><p id="sum-name"></p><a href="/decision" id="back-picker" hidden>案件を選び直す</a><a href="/#/relations" id="related-cases" hidden>この案件のつながり</a><a href="/architecture" id="system-map" hidden>システム構成図</a></div>
+        <div class="case-line"><p id="sum-name"></p><a href="/decision" id="back-picker" hidden>案件を選び直す</a><a href="/#/relations" id="related-cases" hidden>この案件のつながり</a></div>
         <h1 id="h-sum"></h1>
+        <h2 id="risk-heading">検知の重要度 <small>（対応済みを含む）</small></h2>
+        <nav class="risk-levels" id="risk-levels" aria-labelledby="risk-heading"></nav>
       </div>
     </section>
     <section class="coverage-note" id="coverage-note" aria-labelledby="coverage-heading" hidden>
@@ -269,7 +298,7 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     </section>
 
     <section class="sec" id="sec-all" aria-labelledby="h-all">
-      <div class="sec-head"><h2 id="h-all">すべての課題</h2><p class="sec-sub" id="all-sub"></p></div>
+      <div class="sec-head"><h2 id="h-all" tabindex="-1">すべての課題</h2><p class="sec-sub" id="all-sub" role="status"></p></div>
       <div class="filters">
         <input type="search" id="q" placeholder="名前や番号で探す" aria-label="名前や番号で探す">
         <button type="button" class="pill plain" id="f-active" aria-pressed="true">終わっていない</button>
@@ -472,6 +501,12 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
 
   function nameOf(it) { return it.title || '（名前なし）'; }
 
+  function recordedLevel(item) {
+    return !item.severity_unrecorded && D.SEVERITIES.includes(item.severity) ? item.severity : 'unknown';
+  }
+
+  function levelLabel(level) { return D.SEV_LABEL[level] || '未記録'; }
+
   function reasonSentences(it, a) {
     var out = [];
     a.reasons.forEach(function (r) {
@@ -499,7 +534,8 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     var it = r.item, a = r.a;
     var d = el('details', 'item');
     var s = el('summary');
-    s.appendChild(el('span', 'sev ' + (D.SEVERITIES.indexOf(it.severity) >= 0 ? it.severity : 'info'), D.SEV_LABEL[it.severity] || '重大度不明'));
+    var level = recordedLevel(it);
+    s.appendChild(el('span', 'sev ' + level, levelLabel(level)));
     var main = el('span', 'item-main');
     main.appendChild(el('span', 'item-title', it.title || '（名前なし）'));
     var meta = [];
@@ -538,7 +574,7 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
       more.appendChild(dl);
       if(state.isAYM&&state.campaign){
         var monitor=el('a','btn ghost','この案件の証跡を開く');
-        monitor.href='/#/campaign/'+encodeURIComponent(state.campaign);more.appendChild(monitor);
+        monitor.href='/'+locationView+'#/campaign/'+encodeURIComponent(state.campaign);more.appendChild(monitor);
       }
       var tech=el('details','fold inline'),head=el('summary',null,'技術の詳細'),body=el('div','fold-body'),ids=el('dl','facts');
       fact(ids,'課題の識別子',String(it.key||'未記録'));
@@ -564,6 +600,14 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
   function renderSummary(s,v){
     var c=s.counts,hints=[],assessment=v.assessment||null;
     $('sum-name').textContent=(v.campaign&&v.campaign.name)||'';
+    var counts = Object.create(null);
+    s.rows.forEach(function (r) { var level = recordedLevel(r.item); counts[level] = (counts[level] || 0) + 1; });
+    var levels = $('risk-levels'); clear(levels);
+    D.SEVERITIES.concat(counts.unknown ? ['unknown'] : []).forEach(function (level) {
+      var link = el('a'); link.href = '#sec-all'; link.dataset.level = level;
+      link.append(el('span', null, levelLabel(level)), el('b', null, (counts[level] || 0) + ' 件'));
+      levels.appendChild(link);
+    });
     if(!assessment||!assessment.present)hints.push('この案件には評価の記録がありません。課題は取り込み時の状態で並べています。');
     if(assessment&&assessment.historical)hints.push('評価の記録は、対象が変わる前のものです。いまの状態は確かめ直してください。');
     var cov=assessment&&assessment.coverage||{},untested=(cov.not_executed||0)+(cov.failed||0);
@@ -595,11 +639,7 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     j.appendChild(jumpPill(c.soon?'amber':'plain','早めに対応すること',c.soon,'sec-soon'));
     if(s.hasPrevious)j.appendChild(jumpPill('','前回から変わったこと',c.changed,'sec-changes'));
     var all = jumpPill('','すべての課題',s.rows.length,'sec-all');
-    all.addEventListener('click', function(){
-      $('q').value = ''; $('f-sev').value = ''; state.fKev = false;
-      $('f-kev').setAttribute('aria-pressed','false');
-      setState('any');
-    });
+    all.addEventListener('click', function(){ showLevel(''); });
     j.appendChild(all);
     var legend=$('legend'),byState={};clear(legend);
     s.rows.forEach(function(row){var label=D.stateLabel(row.item);byState[label]=(byState[label]||0)+1;});
@@ -610,7 +650,7 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     if(v.comparison_status==='ambiguous') {
       since.textContent='前回候補が '+v.previous_candidates.length+' 件あります。';
       note('warn',since.textContent+' 比較する案件を確認してください。');
-      var choose=el('a','btn','前回の案件を選ぶ');choose.href='/#/relations/'+encodeURIComponent(v.campaign.id);$('notes').appendChild(choose);
+      var choose=el('a','btn','前回の案件を選ぶ');choose.href='/'+locationView+'#/relations/'+encodeURIComponent(v.campaign.id);$('notes').appendChild(choose);
     } else if(v.comparison_status==='incomplete')since.textContent='前回に未集計の実行があるため、変化の比較を保留しています。';
     else if(!s.hasPrevious)since.textContent='前回のデータがないので、変化は比べていません。';
     else{var bits=[];if(s.changes.closed.length)bits.push(s.changes.closed.length+' 件が片付き');
@@ -668,17 +708,21 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     function move(r) { return nameOf(r.item) + '（' + (r.item.prev_state_label || D.STATE_LABEL[r.item.prev_state] || '') + ' → ' + D.stateLabel(r.item) + '）'; }
     g.appendChild(changeFold('done', '片付いた', s.changes.closed, move));
     g.appendChild(changeFold('in_progress', '状態が変わった', s.changes.stateChanged, move));
-    g.appendChild(changeFold('accent', '新しく入った', s.changes.added, function (r) { return nameOf(r.item) + '（' + D.SEV_LABEL[r.item.severity] + '・' + D.stateLabel(r.item) + '）'; }));
+    g.appendChild(changeFold('accent', '新しく入った', s.changes.added, function (r) { return nameOf(r.item) + '（' + levelLabel(recordedLevel(r.item)) + '・' + D.stateLabel(r.item) + '）'; }));
     g.appendChild(changeFold('open', 'なくなった', s.changes.removed, function (x) { return (x.title || '') + '（前は ' + (x.prev_state_label || D.STATE_LABEL[x.prev_state] || '') + '）'; }));
   }
 
   function renderAll(s) {
     var q = $('q').value.trim().toLowerCase(), fv = $('f-sev').value;
+    $('risk-levels').querySelectorAll('a').forEach(function (link) {
+      if (fv === link.dataset.level && state.fState === 'any' && !state.fKev && !q) link.setAttribute('aria-current', 'true');
+      else link.removeAttribute('aria-current');
+    });
     var rows = s.rows.filter(function (r) {
       var it = r.item;
       if (state.fState === 'active' && !r.a.active) return false;
       if (state.fState === 'closed' && r.a.active) return false;
-      if (fv && it.severity !== fv) return false;
+      if (fv && recordedLevel(it) !== fv) return false;
       if (state.fKev && !it.kev) return false;
       if (q && ((it.title || '') + ' ' + (it.ref || '')).toLowerCase().indexOf(q) < 0) return false;
       return true;
@@ -717,8 +761,7 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     $('refresh-view').hidden=!(state.isAYM&&state.campaign);
     $('back-picker').hidden=!(state.isAYM&&state.campaign);
     $('related-cases').hidden=!(state.isAYM&&state.campaign);
-    $('system-map').hidden=!state.isAYM;
-    if (state.isAYM && state.campaign) $('related-cases').href='/#/relations/'+encodeURIComponent(state.campaign);
+    if (state.isAYM && state.campaign) $('related-cases').href='/'+locationView+'#/relations/'+encodeURIComponent(state.campaign);
   }
 
   function readFile(f) {
@@ -730,11 +773,24 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
   }
 
   function fetchView(url) {
+    if (/^\/api\/campaigns(?:[/?]|$)/.test(url) && new URLSearchParams(location.search).get('view') === 'blue') {
+      url += (url.includes('?') ? '&' : '?') + 'view=blue';
+    }
     return fetch(url, { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' })
       .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
   }
 
-  D.SEVERITIES.forEach(function (x) { var o = el('option', null, '重大度: ' + D.SEV_LABEL[x]); o.value = x; $('f-sev').appendChild(o); });
+  D.SEVERITIES.concat('unknown').forEach(function (x) { var o = el('option', null, '重大度: ' + levelLabel(x)); o.value = x; $('f-sev').appendChild(o); });
+  function showLevel(level) {
+    $('q').value = ''; $('f-sev').value = level; state.fKev = false;
+    $('f-kev').setAttribute('aria-pressed', 'false');
+    setState('any');
+    $('h-all').focus();
+  }
+  $('risk-levels').addEventListener('click', function (event) {
+    var link = event.target.closest('a[data-level]');
+    if (link) showLevel(link.dataset.level);
+  });
   function setState(which) {
     state.fState = which; state.allLimit = 30;
     $('f-active').setAttribute('aria-pressed', String(which === 'active'));
@@ -758,6 +814,7 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
   drop.addEventListener('drop', function (e) { readFile(e.dataTransfer && e.dataTransfer.files[0]); });
 
   var params=new URLSearchParams(location.search),src=params.get('data'),campaign=params.get('campaign');
+  var locationView = params.get('view') === 'blue' ? '?view=blue' : '';
   var campaignOK=campaign&&/^[a-z0-9][a-z0-9-]{0,63}$/.test(campaign);
   if(src&&(src.indexOf('//')>=0||/^[a-z]+:/i.test(src))){note('err','data には、同じ配信元のパスだけを指定できます。');src=null;}
   function unavailable(kind, message) {
@@ -768,14 +825,14 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     note(kind, message);
     if (state.isAYM) {
       var back = el('a', 'btn', '案件一覧へ戻る');
-      back.href = '/decision';
+      back.href = '/decision' + locationView;
       $('notes').appendChild(back);
     }
   }
   function showResponse(d){
     if(d&&d.decision_view===null&&d.status==='hold'){
       unavailable('warn',d.reason||'記録を確認できません。');
-      var evidence=el('a','btn','モニターで集計状況を見る');evidence.href='/#/campaign/'+encodeURIComponent(campaign);$('notes').appendChild(evidence);return;
+      var evidence=el('a','btn','モニターで集計状況を見る');evidence.href='/'+locationView+'#/campaign/'+encodeURIComponent(campaign);$('notes').appendChild(evidence);return;
     }
     if(d&&d.decision_view&&d.decision_view.status==='withheld'){unavailable('warn','評価情報はBlueに非公開です。');return;}
     show(d&&d.decision_view?d.decision_view:d);
@@ -819,14 +876,16 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
         a.appendChild(info);
         a.appendChild(el('span', 'case-state', labels[c.status] || '状態未確認'));
         var arrow = el('span', 'case-arrow', '→'); arrow.setAttribute('aria-hidden', 'true'); a.appendChild(arrow);
-        a.href='/decision?campaign='+encodeURIComponent(c.campaign_id);$('campaign-list').appendChild(a);
+        a.href='/decision?campaign='+encodeURIComponent(c.campaign_id);
+        if (locationView) a.search += '&view=blue';
+        $('campaign-list').appendChild(a);
       });
     }).catch(function(e){$('campaign-message').textContent=e.message==='HTTP 409'?'案件一覧の索引が必要です。管理者に索引の作成を依頼してください。':'案件を取得できませんでした。画面を読み直してください。';});
   }
   function loadCampaign(){
     state.campaign=campaign;
     if(!campaignOK){chooseCampaigns();return;}
-    $('to-monitor').href='/#/campaign/'+encodeURIComponent(campaign);
+    $('to-monitor').href='/'+locationView+'#/campaign/'+encodeURIComponent(campaign);
     if ($('refresh-view').disabled) return;
     $('refresh-view').disabled = true;
     var prev=null;
@@ -834,6 +893,7 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     return fetchView('/api/campaigns/'+encodeURIComponent(campaign)+'/decision-view'+(prev?'?previous='+encodeURIComponent(prev):'')).then(showResponse).catch(function(e){
       clear($('notes'));
       if(e.message==='HTTP 404') unavailable('err','この Campaign は見つかりません。');
+      else if(e.message==='HTTP 409') unavailable('warn','案件の索引を更新する必要があります。管理者に更新を依頼してください。');
       else if(e.message==='HTTP 500') unavailable('err','この画面では記録を表示できません。件数が多い場合はモニターで確認してください。');
       else if(!state.view) unavailable('err','記録を取得できませんでした。案件を選び直してください。');
       else note('warn','更新できませんでした。前回取得した記録を表示しています。「読み直す」で再試行できます。');
