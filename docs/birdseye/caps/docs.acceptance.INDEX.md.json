@@ -2,7 +2,7 @@
   "id": "docs/acceptance/INDEX.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "製品の技術検収、対応する Task、ソース反映の記録を引くための一覧。課題の照合条件の検収を含む。",
+  "summary": "検収、対応する Task、ソース反映の記録を引くための一覧。課題の照合条件に関する技術検収の合格を含む。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -72,13 +72,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "937d0798a438855c268f5d045c0ceff977bab4cef2181336f51323562e98cea5",
-  "generated_at": "00056",
+  "source_sha256": "efef6def1cef56a657b3d77dbac49d1261b19d152ff99f20d3b1000122ac3cf9",
+  "generated_at": "00057",
   "review": {
-    "reviewed_at": "2026-11-26T17:52:19+00:00",
+    "reviewed_at": "2026-11-26T18:00:09+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "937d0798a438855c268f5d045c0ceff977bab4cef2181336f51323562e98cea5",
-    "summary_sha256": "3ce03658144b9701e11a08d18c1dfff1573702227cf3dcd385663f16ed9b82ac",
+    "source_sha256": "efef6def1cef56a657b3d77dbac49d1261b19d152ff99f20d3b1000122ac3cf9",
+    "summary_sha256": "20ae4a82521fb6eef4e3e231f63e3521c1a6b89277853252fdb48d4519803c8a",
     "scope": "課題に適用する検査と資源の観測範囲に関する本文、要約、参照を確認。"
   }
 }

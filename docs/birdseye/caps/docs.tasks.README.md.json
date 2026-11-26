@@ -2,7 +2,7 @@
   "id": "docs/tasks/README.md",
   "role": "operations",
   "public_api": [],
-  "summary": "Task の進め方と一覧。課題の検査・資源・観測範囲を含む作業と技術検収を関連付ける。",
+  "summary": "Task と対応する検収の一覧。課題の検査・資源・観測範囲を扱う Task の技術検収結果を引ける。",
   "deps_out": [
     "CHANGELOG.md",
     "HUB.codex.md",
@@ -79,13 +79,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "7947a5d6486dc6beb1fe54148e820c712f301ee6456219b0a66c643af02191ff",
-  "generated_at": "00056",
+  "source_sha256": "22aac1cddf2927807b90ce5a1893291f6dba11e38c5e724c21db6e8dbbc89530",
+  "generated_at": "00057",
   "review": {
-    "reviewed_at": "2026-11-26T17:52:19+00:00",
+    "reviewed_at": "2026-11-26T18:00:09+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "7947a5d6486dc6beb1fe54148e820c712f301ee6456219b0a66c643af02191ff",
-    "summary_sha256": "d60f2defc64ce9f7c5154d61243921f7e64e9d2eac17b63fb756084e697b1ad3",
+    "source_sha256": "22aac1cddf2927807b90ce5a1893291f6dba11e38c5e724c21db6e8dbbc89530",
+    "summary_sha256": "5529985238a168e371b7487e7570a972a962597d85174365e612682a8058dfd8",
     "scope": "課題に適用する検査と資源の観測範囲に関する本文、要約、参照を確認。"
   }
 }

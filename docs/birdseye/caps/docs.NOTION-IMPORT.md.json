@@ -4,9 +4,9 @@
   "public_api": [],
   "risks": [],
   "tests": [],
-  "summary": "合成した課題 CSV と観測 JSON の取り込み、判断画面と書き出しの操作例。課題列と検査名、除外語、資源の種類と ID の書式を設定する手順を示す。",
-  "generated_at": "00056",
-  "source_sha256": "c6451a8f944005b3ae52cec4bb32fa98a5f5319272e9857fe94a3f182d47ca89",
+  "summary": "合成した課題と観測の取り込み、判断画面、書き出しの手順。明示する検査・除外語・ID 書式の例と、新旧形式を組み合わせた場合に不在を判定できる条件を示す。",
+  "generated_at": "00057",
+  "source_sha256": "2ca0704aad46210023d889afe4c87f3829d2225078e42451f419f9eb88ae04e7",
   "deps_in": [
     "CHANGELOG.md",
     "HUB.codex.md",
@@ -18,10 +18,10 @@
   ],
   "deps_out": [],
   "review": {
-    "reviewed_at": "2026-11-26T17:52:19+00:00",
+    "reviewed_at": "2026-11-26T18:00:09+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "c6451a8f944005b3ae52cec4bb32fa98a5f5319272e9857fe94a3f182d47ca89",
-    "summary_sha256": "1f409da7b15d3fd1f94dea4466adddf44a37eae1db7f57de57eedd069e12143c",
+    "source_sha256": "2ca0704aad46210023d889afe4c87f3829d2225078e42451f419f9eb88ae04e7",
+    "summary_sha256": "00c96019c23078d614b9b45e9865eb1dec585d875689480101fdc4cfdf09686d",
     "scope": "課題に適用する検査と資源の観測範囲に関する本文、要約、参照を確認。"
   }
 }

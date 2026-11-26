@@ -4,9 +4,9 @@
   "public_api": [],
   "risks": [],
   "tests": [],
-  "summary": "課題と資源の照合に関する T49〜T52 と既存形式の受入条件、試験の入口、最終判定の参照先を示す。",
-  "generated_at": "00056",
-  "source_sha256": "59d2688784d18f0a81b697b218e9a250f1b6870f6b99e13a2a0cc21b518a43b2",
+  "summary": "T49〜T52 と旧形式の受入条件および製品コミットの正式な manual-bb、回帰試験と CI の結果を記録。最終 PR head の記録へ案内する。",
+  "generated_at": "00057",
+  "source_sha256": "c96ee7195c1eef715f63ec0f91a272cb5f955b0464cf9ffab7b92eefe0dcd257",
   "deps_in": [
     "CHANGELOG.md",
     "HUB.codex.md",
@@ -21,10 +21,10 @@
     "docs/tasks/TASK.tracker-evidence-11-26-2026.md"
   ],
   "review": {
-    "reviewed_at": "2026-11-26T17:52:19+00:00",
+    "reviewed_at": "2026-11-26T18:00:09+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "59d2688784d18f0a81b697b218e9a250f1b6870f6b99e13a2a0cc21b518a43b2",
-    "summary_sha256": "266441b6c520560f7c1841a93f2720d63c6674d6fdc5b71bda7abf2acd1668b6",
+    "source_sha256": "c96ee7195c1eef715f63ec0f91a272cb5f955b0464cf9ffab7b92eefe0dcd257",
+    "summary_sha256": "45d01084f1e6c5b5fe21e08b30b2249796a4cba24a261a575a17188721514865",
     "scope": "課題に適用する検査と資源の観測範囲に関する本文、要約、参照を確認。"
   }
 }

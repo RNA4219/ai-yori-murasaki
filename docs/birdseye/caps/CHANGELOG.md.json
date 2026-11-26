@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "製品と開発手順の変更履歴。課題の検査・資源・収集範囲の指定を Task と検収に結び付ける。",
+  "summary": "製品と開発手順の変更履歴。課題の検査・資源・収集範囲の更新を Task と技術検収結果に結び付ける。",
   "deps_out": [
     "docs/NOTION-IMPORT.md",
     "docs/SOURCES.md",
@@ -90,13 +90,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "512be1fd44a8b81fdaf9d1b12920c6da2ca49baeb4ffbd3c838e3df6ddf9f974",
-  "generated_at": "00056",
+  "source_sha256": "16e84551efde10b09de89b531a54873ad06d8340a7f2ff3ed040978f31d51158",
+  "generated_at": "00057",
   "review": {
-    "reviewed_at": "2026-11-26T17:52:19+00:00",
+    "reviewed_at": "2026-11-26T18:00:09+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "512be1fd44a8b81fdaf9d1b12920c6da2ca49baeb4ffbd3c838e3df6ddf9f974",
-    "summary_sha256": "de8fbd3889bf16aabe90249f0461e9395de4c1b6e191a60c26681782a8733660",
+    "source_sha256": "16e84551efde10b09de89b531a54873ad06d8340a7f2ff3ed040978f31d51158",
+    "summary_sha256": "83688fb0be7aae8aa684b7684bc3a615053f4033846a9628f043147d89477b8f",
     "scope": "課題に適用する検査と資源の観測範囲に関する本文、要約、参照を確認。"
   }
 }

@@ -2,7 +2,7 @@
 task_id: 20261126-02
 intent_id: INT-AYM-PRODUCT-20261106
 owner: RNA4219
-status: reviewing
+status: done
 last_reviewed_at: 2026-11-26
 next_review_due: 2026-12-26
 ---
@@ -18,6 +18,6 @@ next_review_due: 2026-12-26
 | R-079 | 検知の資源 ID と任意の種類を照合する。1つの ID に複数の種類があり、種類を決められない検知は推定として扱う。 |
 | R-080 | 資源一覧に収集対象の種類と ID の書式を指定できる。本文にだけある ID の不在を判定するには、課題の提供元・アカウント・地域と、該当 ID の種類の観測を裏付ける入力を必要とする。 |
 
-照合条件を指定する入口はワークスペースの `decision-view/mapping.json` と観測 JSON とする。課題の自由記述から検査名を選ぶ規則や、アカウントを表す予約の種類名は設けない。判断画面での候補の選択、API と CLI の読取専用レポート、CSV と Markdown の書き出しを検収する。
+照合条件を指定する入口はワークスペースの `decision-view/mapping.json` と観測 JSON とする。課題の自由記述から検査名を選ぶ規則や、アカウントを表す予約の種類名は設けない。判断画面での候補の選択、API と CLI の読取専用レポート、CSV と Markdown の書き出しについて技術検収を完了した。
 
 [設定と操作例](../NOTION-IMPORT.md)・[T49〜T52 と既存入力の検収](../acceptance/AC-20261126-02.md)・[ソース反映](../releases/RA-20261126-02.md)
