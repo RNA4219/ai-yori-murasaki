@@ -86,6 +86,37 @@ try {
   assert.equal(await warning.count(), 0);
   await monitor.close();
   console.log('補助リンクの表示モード、初回失敗・復旧・再取得失敗の表示を確認');
+
+  const intake = await browser.newPage({viewport: {width: 390, height: 900}});
+  await intake.goto(base + '/intake');
+  const query = intake.getByRole('searchbox');
+  await query.fill('画面試験の受付');
+  await query.press('Enter');
+  await intake.getByText('2件が一致しました。', {exact: true}).waitFor();
+  const linked = intake.locator('#results li').filter({has: intake.getByRole('link', {name: /監査結果を開く/})});
+  const unlinked = intake.locator('#results li').filter({hasText: '監査との連結なし'});
+  const linkedId = await linked.locator('code').innerText();
+  const unlinkedId = await unlinked.locator('code').innerText();
+  assert.notEqual(linkedId, unlinkedId);
+  await query.fill(unlinkedId);
+  await query.press('Enter');
+  await intake.getByText('1件が一致しました。', {exact: true}).waitFor();
+  assert.equal(await unlinked.locator('code').innerText(), unlinkedId);
+  assert.equal(await intake.locator('#results a').count(), 0);
+  await query.fill(linkedId);
+  await query.press('Enter');
+  const audit = linked.getByRole('link');
+  const href = await audit.getAttribute('href');
+  const [, cid] = href.match(/^\/#\/campaign\/([a-z0-9][a-z0-9-]{0,63})$/);
+  const detail = intake.waitForResponse(base + '/api/campaigns/' + cid);
+  await audit.click();
+  await intake.waitForURL(base + href);
+  assert.equal((await (await detail).json()).campaign.campaign_id, cid);
+  await intake.goto(base + '/intake?view=blue');
+  await intake.getByText('Blueビューでは受付記録は非公開です。').waitFor();
+  assert.equal(await intake.locator('#results li').count(), 0);
+  await intake.close();
+  console.log('同名の受付をIDで検索し、連結済みの受付から該当監査を開けることを確認');
 } finally {
   await browser.close();
 }

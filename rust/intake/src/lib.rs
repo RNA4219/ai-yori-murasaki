@@ -61,5 +61,58 @@ fn register(
 #[pymodule]
 fn _intake_index(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(register, module)?)?;
+    module.add_function(wrap_pyfunction!(link, module)?)?;
     Ok(())
+}
+
+#[pyfunction]
+fn link(
+    py: Python<'_>,
+    path: PathBuf,
+    receipt_id: String,
+    campaign_id: String,
+) -> PyResult<Option<String>> {
+    py.detach(move || link_record(path, receipt_id, campaign_id))
+        .map_err(|_| PyOSError::new_err("案件受付台帳を更新できません"))
+}
+
+fn link_record(
+    path: PathBuf,
+    receipt_id: String,
+    campaign_id: String,
+) -> rusqlite::Result<Option<String>> {
+    let mut db = Connection::open_with_flags(
+        path,
+        OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+    )?;
+    db.busy_timeout(Duration::from_secs(10))?;
+    db.pragma_update(None, "trusted_schema", false)?;
+    db.pragma_update(None, "foreign_keys", true)?;
+    let tx = db.transaction_with_behavior(TransactionBehavior::Immediate)?;
+    let exists: bool = tx.query_row(
+        "SELECT EXISTS(SELECT 1 FROM receipts WHERE receipt_id = ?1)",
+        [&receipt_id],
+        |row| row.get(0),
+    )?;
+    if !exists {
+        return Ok(None);
+    }
+    tx.execute_batch(
+        "CREATE TABLE IF NOT EXISTS receipt_campaigns (
+            receipt_id TEXT PRIMARY KEY REFERENCES receipts(receipt_id),
+            campaign_id TEXT NOT NULL
+        )",
+    )?;
+    tx.execute(
+        "INSERT INTO receipt_campaigns(receipt_id, campaign_id) VALUES (?1, ?2)
+         ON CONFLICT(receipt_id) DO NOTHING",
+        params![receipt_id, campaign_id],
+    )?;
+    let saved = tx.query_row(
+        "SELECT campaign_id FROM receipt_campaigns WHERE receipt_id = ?1",
+        [&receipt_id],
+        |row| row.get(0),
+    )?;
+    tx.commit()?;
+    Ok(Some(saved))
 }

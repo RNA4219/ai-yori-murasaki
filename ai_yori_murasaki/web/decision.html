@@ -288,6 +288,7 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
 
     <section class="sec" id="sec-drift" aria-labelledby="h-drift" hidden>
       <h2 id="h-drift">課題の一覧と実物のずれ</h2>
+      <p id="drift-status" role="status" hidden></p>
       <dl class="facts" id="drift-counts"></dl>
       <details class="fold" id="drift-list">
         <summary id="drift-list-label">ずれの候補を見る</summary>
@@ -324,6 +325,24 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
       <div class="more" id="all-more"></div>
     </section>
 
+    <section class="card glossary" aria-label="製品の検証範囲">
+      <details id="product-verification">
+        <summary>製品の類型別検証範囲</summary>
+        <table>
+          <caption>製品検収で確認した範囲（2026年11月8日時点）</caption>
+          <thead><tr><th scope="col">類型</th><th scope="col">固定データでの評価</th><th scope="col">実モデル・Dockerでの修復後の再検証</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">認可不備</th><td>確認済み</td><td>確認済み</td></tr>
+            <tr><th scope="row">SQLインジェクション</th><td>確認済み</td><td>未検証</td></tr>
+            <tr><th scope="row">XSS</th><td>確認済み</td><td>未検証</td></tr>
+            <tr><th scope="row">パストラバーサル</th><td>確認済み</td><td>未検証</td></tr>
+            <tr><th scope="row">既知依存脆弱性</th><td>確認済み</td><td>未検証</td></tr>
+          </tbody>
+        </table>
+        <p>根拠は<a href="https://github.com/RNA4219/ai-yori-murasaki/blob/a69707c59c100b02749ef8a072ed201c987f46ef/docs/acceptance/AC-20261107-03.md" referrerpolicy="no-referrer">11月7日の固定データ評価記録</a>と<a href="https://github.com/RNA4219/ai-yori-murasaki/blob/a69707c59c100b02749ef8a072ed201c987f46ef/docs/acceptance/AC-20261108-01.md" referrerpolicy="no-referrer">11月8日の実ラボ検収記録</a>で確認できます。</p>
+      </details>
+    </section>
+
     <section class="card glossary">
       <details>
         <summary>言葉の説明</summary>
@@ -333,7 +352,7 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
           <dt>重大度</dt><dd>元のデータに付いている重大度です（重大・高・中・低・情報）。</dd>
           <dt>期限</dt><dd>元のデータの対応期限です。この画面を開いた日を今日として、過ぎた日数を数えます。</dd>
           <dt>終わっていない</dt><dd>評価の状態を優先します。評価がない場合だけ元の状態を使い、分からない課題も終わっていない側に数えます。</dd>
-          <dt>いま決めること</dt><dd>終わっていない課題のうち、悪用が確認されたもの、評価が確認済み・修正提案のもの、未評価で判断待ちのものです。</dd>
+          <dt>いま決めること</dt><dd>終わっていない課題のうち、悪用が確認されたもの、評価が確認済み・修正提案・再検証失敗のもの、未評価で判断待ちのものです。</dd>
           <dt>早めに対応すること</dt><dd>終わっていない課題で、期限を過ぎた重大・高のもの、または悪用の見込みが高いものです。業務への影響は、担当者が決めます。</dd>
         </dl>
       </details>
@@ -356,13 +375,14 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
   var STATE_LABEL = { open: '手つかず', in_progress: '対応中', waiting: '判断待ち', done: '片付いた', wont_fix: '対応しない', other: 'その他' };
   var ACTIVE = { open: true, in_progress: true, waiting: true };
 
-  var ASSESSMENT_LABELS={confirmed:'確認済み',candidate:'候補',refuted:'反証済み',retested:'再検証済み',proposed:'修正提案',undetermined:'判定不能',historical:'古い証跡',unknown:'未確認'};
+  var ASSESSMENT_LABELS={confirmed:'確認済み',candidate:'候補',refuted:'反証済み',retested:'再検証済み',retest_failed:'再検証失敗',proposed:'修正提案',undetermined:'判定不能',historical:'古い証跡',unknown:'未確認'};
   function nextActionFor(status) {
     if(status==='confirmed')return '修正案を確認してください。';
     if(status==='candidate')return '追加の証拠を確認してください。';
     if(status==='refuted')return 'この仮説は反証されています。残る仮説と未確認範囲を確認してください。';
     if(status==='proposed')return '修正案の適用と再検証を進めてください。';
     if(status==='retested')return '再検証結果を記録し、未検証範囲を確認してください。';
+    if(status==='retest_failed')return '失敗した検査を確認し、修正内容を見直してください。';
     if(status==='undetermined')return '証拠不足のため判定できませんでした。追加の証拠を確認してください。';
     if(status==='historical')return '古い証跡です。現在の状態を再確認してください。';
     return '状態が未確認のため、担当者に確認してください。';
@@ -412,19 +432,21 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     var epssHigh = typeof item.epss_max === 'number' && item.epss_max >= rules.epss_high;
     var dueSoon = dueInDays !== null && dueInDays <= rules.due_soon_days;
     if (active && item.kev) reasons.push({ code: 'kev', text: '悪用が確認されている', tone: 'crit' });
-    if(active&&(item.assessment_status==='confirmed'||item.assessment_status==='proposed'))
+    var needsReview = ['confirmed','proposed','retest_failed'].includes(item.assessment_status);
+    var awaitingDecision = item.assessment_status==null && item.state==='waiting';
+    if(active&&needsReview)
       reasons.push({code:'assessment',text:ASSESSMENT_LABELS[item.assessment_status]+'・'+nextActionFor(item.assessment_status),tone:'crit'});
-    if(active&&item.assessment_status==null&&item.state==='waiting')reasons.push({code:'waiting',text:'判断待ち',tone:'warn'});
+    if(active&&awaitingDecision)reasons.push({code:'waiting',text:'判断待ち',tone:'warn'});
     if (overdueDays !== null) reasons.push({ code: 'overdue', text: '期限を ' + overdueDays + ' 日過ぎた', tone: severe ? 'crit' : 'warn' });
     if (dueSoon) reasons.push({ code: 'due_soon', text: dueInDays === 0 ? '期限は今日' : '期限まであと ' + dueInDays + ' 日', tone: 'warn' });
     if (active && epssHigh) reasons.push({ code: 'epss', text: '悪用の見込み ' + Math.round(item.epss_max * 100) + '%', tone: 'warn' });
     var tier = null;
-    if(active&&(item.kev||item.assessment_status==='confirmed'||item.assessment_status==='proposed'||(item.assessment_status==null&&item.state==='waiting')))tier='now';
+    if(active&&(item.kev||needsReview||awaitingDecision))tier='now';
     else if (active && ((overdueDays !== null && severe) || epssHigh)) tier = 'soon';
     var score = 0;
     if (active) {
       score += item.kev ? 1000 : 0;
-      score += (item.assessment_status==='confirmed'||item.assessment_status==='proposed'||(item.assessment_status==null&&item.state==='waiting'))?500:0;
+      score += (needsReview||awaitingDecision)?500:0;
       score += overdueDays !== null ? Math.min(overdueDays, 60) * 2 : 0;
       score += dueSoon ? 50 : 0;
       score += SEV_WEIGHT[item.severity] || 0;
@@ -666,9 +688,11 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
       var choose=el('a','btn','前回の案件を選ぶ');choose.href='/'+locationView+'#/relations/'+encodeURIComponent(v.campaign.id);$('notes').appendChild(choose);
     } else if(v.comparison_status==='incomplete')since.textContent='前回に未集計の実行があるため、変化の比較を保留しています。';
     else if(!s.hasPrevious)since.textContent='前回のデータがないので、変化は比べていません。';
-    else{var bits=[];if(s.changes.closed.length)bits.push(s.changes.closed.length+' 件が片付き');
-      if(s.changes.added.length)bits.push(s.changes.added.length+' 件が新しく入り');
-      since.textContent='前回（'+day(v.previous.created_at)+'）から、'+(bits.length?bits.join('、')+'ました。':'片付いたものも、新しく入ったものもありません。');}
+    else{var bits=[];if(s.changes.closed.length)bits.push('片付いた課題 '+s.changes.closed.length+' 件');
+      if(s.changes.stateChanged.length)bits.push('状態変更 '+s.changes.stateChanged.length+' 件');
+      if(s.changes.added.length)bits.push('新規 '+s.changes.added.length+' 件');
+      if(s.changes.removed.length)bits.push('今回の記録にない課題 '+s.changes.removed.length+' 件');
+      since.textContent='前回（'+day(v.previous.created_at)+'）と比べて、'+(bits.length?bits.join('、')+'です':'変化はありません')+'。';}
   }
 
   function renderNow(s) {
@@ -718,11 +742,11 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     $('sec-changes').hidden = !s.hasPrevious;
     if (!s.hasPrevious) return;
     $('changes-sub').textContent = when(v.previous.created_at) + ' のデータと比べました。';
-    function move(r) { return nameOf(r.item) + '（' + (r.item.prev_state_label || D.STATE_LABEL[r.item.prev_state] || '') + ' → ' + D.stateLabel(r.item) + '）'; }
+    function move(r) { return nameOf(r.item) + '（' + (r.item.prev_state_label || D.STATE_LABEL[r.item.prev_state] || '') + ' → ' + D.originalStateLabel(r.item) + '）'; }
     g.appendChild(changeFold('done', '片付いた', s.changes.closed, move));
     g.appendChild(changeFold('in_progress', '状態が変わった', s.changes.stateChanged, move));
     g.appendChild(changeFold('accent', '新しく入った', s.changes.added, function (r) { return nameOf(r.item) + '（' + levelLabel(recordedLevel(r.item)) + '・' + D.stateLabel(r.item) + '）'; }));
-    g.appendChild(changeFold('open', 'なくなった', s.changes.removed, function (x) { return (x.title || '') + '（前は ' + (x.prev_state_label || D.STATE_LABEL[x.prev_state] || '') + '）'; }));
+    g.appendChild(changeFold('open', '今回の記録にない課題', s.changes.removed, function (x) { return (x.title || '') + '（前は ' + (x.prev_state_label || D.STATE_LABEL[x.prev_state] || '') + '）'; }));
   }
 
   function renderAll(s) {
@@ -820,13 +844,25 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
   function renderDrift(report, cid) {
     var section = $('sec-drift');
     section.hidden = true;
-    if (report.status === 'withheld') return;
-    if (report.campaign_id !== cid || !Array.isArray(report.observations)) throw Error('drift unavailable');
-    if (!report.observations.length) return;
+    var status = $('drift-status');
     var counts = $('drift-counts'), candidates = $('drift-candidates'), others = $('drift-others');
+    clear(status);
+    status.hidden = true;
     clear(counts);
     clear(candidates);
     clear(others);
+    if (report.status === 'withheld') return;
+    if (report.campaign_id !== cid || !Array.isArray(report.observations) || !Array.isArray(report.items)) throw Error('drift unavailable');
+    if (!report.observations.length) {
+      if (!report.items.length) return;
+      status.append(el('strong', null, '観測未取込・照合待ち ' + report.items.length + ' 件'),
+        '。照合するには、この案件に資源一覧または検知一覧を取り込んでください。');
+      status.hidden = false;
+      $('drift-list').hidden = true;
+      $('drift-others-list').hidden = true;
+      section.hidden = false;
+      return;
+    }
     Object.keys(driftLabels).forEach(function (key) {
       var count = report.counts[key];
       if (!Number.isInteger(count) || count < 0) throw Error('invalid count');
@@ -845,6 +881,10 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
       (candidate ? candidates : others).appendChild(driftItem(item, candidate));
     });
     var total = candidates.childElementCount;
+    if (!total) {
+      status.textContent = 'ずれの候補 0 件';
+      status.hidden = false;
+    }
     $('drift-list').hidden = !total;
     $('drift-list-label').textContent = 'ずれの候補を見る（' + total + ' 件）';
     $('drift-others-list').hidden = !others.childElementCount;

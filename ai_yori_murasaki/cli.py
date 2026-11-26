@@ -104,6 +104,9 @@ def _build_parser() -> _Parser:
     entry = intake.add_parser("register", help="案件を受け付けて受付IDを返す")
     entry.add_argument("--name", required=True)
     entry.add_argument("--idempotency-key", required=True)
+    association = intake.add_parser("link", help="受付を既存の監査案件に連結する")
+    association.add_argument("--receipt-id", required=True)
+    association.add_argument("--campaign-id", required=True)
 
     camp = sub.add_parser("campaign").add_subparsers(dest="action", required=True)
     c = camp.add_parser("create")
@@ -431,9 +434,13 @@ def main(argv: list[str] | None = None) -> int:
                   {"valid": True, "kind": args.kind})
             return 0
         if args.group == "intake":
-            from .intake import register
-            receipt = register(_make_store(args), args.name, args.idempotency_key)
-            _emit(command, "ok", "ok", None, None, receipt)
+            from .intake import link, register
+            store = _make_store(args)
+            if args.action == "link":
+                receipt = link(store, args.receipt_id, args.campaign_id)
+            else:
+                receipt = register(store, args.name, args.idempotency_key)
+            _emit(command, "ok", "ok", receipt.get("campaign_id"), None, receipt)
             return 0
         if args.group == "assess" and (args.action == "drift" or
                                        (args.action == "import" and args.format in ("observation", "notion"))):

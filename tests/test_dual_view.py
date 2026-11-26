@@ -210,12 +210,13 @@ class DecisionViewTests(unittest.TestCase):
         self.assertIsNone(v["items"][0]["assessment_status"])
         self.assertEqual(v["campaign"]["status"],"review_pending")
 
-    def test_eight_assessment_states_match_monitor(self):
+    def test_assessment_states_match_monitor(self):
         cases=[
             ({"claims":[{"status":"confirmed"}]},"confirmed"),
             ({"claims":[{"status":"hypothesis"}]},"candidate"),
             ({"claims":[{"status":"refuted"}]},"refuted"),
             ({"validation":{"result":"success"}},"retested"),
+            ({"validation":{"result":"failed"},"remediation":{"proposal_ref":"a"}},"retest_failed"),
             ({"remediation":{"proposal_ref":"a"}},"proposed"),
             ({"validation":{"result":"undetermined"}},"undetermined"),
             ({"historical":True},"historical"),
@@ -224,6 +225,15 @@ class DecisionViewTests(unittest.TestCase):
         for finding,want in cases:
             self.assertEqual(derive_assessment_status(finding),want)
         self.assertEqual(derive_assessment_status({"validation":{"result":"success"}},True),"historical")
+        self.assertEqual(derive_assessment_status({"validation":{"result":"failed"}}, True), "historical")
+
+    def test_failed_retest_report_is_projected_even_for_a_closed_source_issue(self):
+        issue = f("id1", "対応済み")
+        report = {"status": "ready", "findings": [
+            {"finding_id": "id1", "remediation": {"proposal_ref": "a"}, "validation": {"result": "failed"}}]}
+        view = build_view({"campaign_id": "c"}, [issue], mapping=MAPPING, now=NOW, assessment=report)
+        self.assertEqual((view["items"][0]["state"], view["items"][0]["assessment_status"]),
+                         ("done", "retest_failed"))
 
     def test_report_projection_and_coverage(self):
         report={"status":"ready","historical":True,

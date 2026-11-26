@@ -2739,6 +2739,7 @@ body[data-screen="list"] main { padding: 28px clamp(16px, 3.4vw, 48px) 64px; }
     candidate: { label: '候補', tone: 'warn' },
     refuted: { label: '反証済み', tone: 'info' },
     retested: { label: '再検証済み', tone: 'ok' },
+    retest_failed: { label: '再検証失敗', tone: 'warn' },
     proposed: { label: '修正提案', tone: 'info' },
     undetermined: { label: '判定不能', tone: 'warn' },
     historical: { label: '古い証跡', tone: 'muted' },
@@ -2769,6 +2770,7 @@ body[data-screen="list"] main { padding: 28px clamp(16px, 3.4vw, 48px) 64px; }
     ['候補', '問題の可能性があるが、まだ確認されていない状態です。'],
     ['修正提案', '修正案が提示されているが、まだ適用・確認されていない状態です。'],
     ['再検証済み', '修正後に再検証が成功した状態です。'],
+    ['再検証失敗', '修正後の再検証で、合格条件を満たさなかった状態です。'],
     ['判定不能', '証拠不足などで判定できなかった状態です。'],
     ['古い証跡', '以前の評価時点の記録であり、現在の状態とは異なる可能性があります。']
   ];
@@ -2799,6 +2801,7 @@ body[data-screen="list"] main { padding: 28px clamp(16px, 3.4vw, 48px) 64px; }
     var val = f.validation;
     if (val) {
       if (val.result === 'success') return 'retested';
+      if (val.result === 'failed') return 'retest_failed';
       if (val.result === 'undetermined') return 'undetermined';
     }
     if (f.remediation) return 'proposed';
@@ -2827,6 +2830,7 @@ body[data-screen="list"] main { padding: 28px clamp(16px, 3.4vw, 48px) 64px; }
     if (status === 'refuted') return 'この仮説は反証されています。残る仮説と未確認範囲を確認してください。';
     if (status === 'proposed') return '修正案の適用と再検証を進めてください。';
     if (status === 'retested') return '再検証結果を記録し、未検証範囲を確認してください。';
+    if (status === 'retest_failed') return '失敗した検査を確認し、修正内容を見直してください。';
     if (status === 'undetermined') return '証拠不足のため判定できませんでした。追加の証拠を確認してください。';
     if (status === 'historical') return '古い証跡です。現在の状態を再確認してください。';
     return '状態が未確認のため、担当者に確認してください。';
@@ -3099,7 +3103,9 @@ body[data-screen="list"] main { padding: 28px clamp(16px, 3.4vw, 48px) 64px; }
               var shv = shortHash(cv2);
               vtxt = shv ? shv : '未確認';
             } else {
-              vtxt = cv2 === true ? '確認済み' : '未確認';
+              if (cv2 === true) vtxt = '確認済み';
+              else if (cv2 === false && val.result === 'failed') vtxt = '条件未達';
+              else vtxt = '未確認';
             }
             vrows.push([text('span', checks[vi][0]), text('span', vtxt)]);
           }

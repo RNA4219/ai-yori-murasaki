@@ -49,3 +49,4 @@ jobs:
           done
           if [ "$ready" != "1" ]; then cat /tmp/aym-browser-server.log; exit 1; fi
           node decision_view/browser/dual-view.browser.mjs
+          node tests/browser/workspace.browser.mjs

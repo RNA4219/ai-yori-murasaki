@@ -22,10 +22,17 @@ test('retested and refuted closed; historical never closed',()=>{
   for (const st of ['retested','refuted']) assert.equal(D.assess(item({assessment_status:st}),'2026-11-16',D.DEFAULT_RULES).active,false);
   assert.equal(D.assess(item({state:'done',assessment_status:'historical'}),'2026-11-16',D.DEFAULT_RULES).active,true);
 });
-test('eight status labels and action semantics',()=>{
-  const states=['confirmed','candidate','refuted','retested','proposed','undetermined','historical','unknown'];
+test('assessment labels and action semantics',()=>{
+  const states=['confirmed','candidate','refuted','retested','retest_failed','proposed','undetermined','historical','unknown'];
   for(const st of states) {assert.ok(D.stateLabel(item({assessment_status:st})).length);assert.ok(D.nextActionFor(st).endsWith('。'));}
   assert.equal(D.stateLabel(item({state:'waiting',assessment_status:null})),'未評価');
+});
+test('T53: failed validation needs a decision even if the source was closed',()=>{
+  const failure=item({state:'done',assessment_status:'retest_failed'});
+  assert.equal(D.stateLabel(failure),'再検証失敗');
+  assert.match(D.nextActionFor(failure.assessment_status),/失敗した検査.*修正内容/);
+  const {counts}=D.summarize(view([failure]),'2026-11-16');
+  assert.deepEqual([counts.active,counts.closed,counts.now],[1,0,1]);
 });
 test('urgent by assessment status, not severity alone',()=>{
   assert.equal(D.assess(item({assessment_status:'proposed',severity:'low'}),'2026-11-16',D.DEFAULT_RULES).tier,'now');
@@ -71,6 +78,8 @@ test('T41: Python assessment status derives exactly as the monitor JS on shared 
     [{claims:[{status:'hypothesis'}]},false],
     [{claims:[{status:'refuted'}]},false],
     [{validation:{result:'success'}},false],
+    [{validation:{result:'failed'},remediation:{proposal_ref:'x'}},false],
+    [{validation:{result:'failed'},remediation:{proposal_ref:'x'}},true],
     [{remediation:{proposal_ref:'x'}},false],
     [{validation:{result:'undetermined'}},false],
     [{},true],
@@ -85,7 +94,7 @@ test('T41: Python assessment status derives exactly as the monitor JS on shared 
   const py=spawnSync('python',['-c',pyCode],{input:JSON.stringify(cases),encoding:'utf8'});
   assert.equal(py.status,0,py.stderr);
   assert.deepEqual(JSON.parse(py.stdout),monitorResults);
-  for(const status of ['confirmed','candidate','refuted','retested','proposed','undetermined','historical','unknown']){
+  for(const status of ['confirmed','candidate','refuted','retested','retest_failed','proposed','undetermined','historical','unknown']){
     assert.equal(D.nextActionFor(status),ctx.nextActionFor(status));
   }
 });
