@@ -35,13 +35,18 @@ def add_parser(subparsers):
     sub = p.add_subparsers(dest="action", required=True)
 
     imp = sub.add_parser("import", help="成果物を取り込む")
-    imp.add_argument("--format", required=True, choices=["trivy", "sarif"])
+    imp.add_argument("--format", required=True, choices=["trivy", "sarif", "observation", "notion"])
     imp.add_argument("--input", dest="input_path", required=True)
     imp.add_argument("--context", dest="context_path", required=True)
     imp.add_argument("--campaign", dest="campaign_id", required=True)
     imp.add_argument("--run", dest="run_id", required=True)
     imp.add_argument("--kev-meta", dest="kev_meta_path", default=None)
     imp.add_argument("--epss-meta", dest="epss_meta_path", default=None)
+
+    drift = sub.add_parser("drift", help="課題一覧と取り込んだ観測を照合する")
+    drift.add_argument("--campaign", dest="campaign_id", required=True)
+    drift.add_argument("--format", choices=["json", "md", "csv"], default="json")
+    drift.add_argument("--output", type=Path, help="結果を保存するローカルファイル")
 
     sh = sub.add_parser("show", help="レポートを表示する")
     sh.add_argument("--campaign", dest="campaign_id", required=True)
@@ -86,6 +91,18 @@ def _load_meta(path, expected_kind):
 
 
 def _do_import(args, rt):
+    if args.format == "notion":
+        from .notion_import import import_notion
+        if args.kev_meta_path or args.epss_meta_path:
+            raise DataError("Notion import does not accept enrichment metadata", "usage_error")
+        result = import_notion(rt, args.campaign_id, args.run_id, args.input_path, args.context_path)
+        return args.campaign_id, args.run_id, result, 0
+    if args.format == "observation":
+        from .observations import import_observation
+        if args.kev_meta_path or args.epss_meta_path:
+            raise DataError("observation does not accept enrichment metadata", "usage_error")
+        result = import_observation(rt, args.campaign_id, args.run_id, args.input_path, args.context_path)
+        return args.campaign_id, args.run_id, result, 0
     raw = _read_bounded(args.input_path)
     ctx = _read_json(args.context_path)
     if not isinstance(ctx, dict):

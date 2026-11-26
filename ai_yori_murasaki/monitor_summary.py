@@ -1,5 +1,5 @@
 """読み取り画面で使う、1リクエスト限りの案件集計。"""
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 from .jsonio import DataError
 from .storage import ID_RE, SHA_RE, Store
@@ -14,6 +14,7 @@ class CampaignSummary:
     pending_runs: list[str] = field(default_factory=list)
     findings: dict[str, dict] = field(default_factory=dict)
     remediation_refs: list[str] = field(default_factory=list)
+    csv_only_failures: list[str] = field(default_factory=list)
 
     @property
     def status(self) -> str:
@@ -30,18 +31,29 @@ class CampaignSummary:
             counts[level if isinstance(level, str) and level in counts else "unknown"] += 1
         return counts
 
+    def diagnostics_only(self):
+        # 索引には同じ案件の担当者用とBlue用の集計を残す。CSVだけの欠損はBlueの実行数にも含めない。
+        excluded = set(self.csv_only_failures)
+        return replace(self, findings={fid: item for fid, item in self.findings.items()
+                                       if item.get("source") != "notion"},
+                       verified_runs=self.verified_runs + len(excluded),
+                       pending_runs=[rid for rid in self.pending_runs if rid not in excluded],
+                       csv_only_failures=[])
+
     def include(self, part: "CampaignSummary") -> None:
         if part.campaign and part.snapshot_at >= self.snapshot_at:
             self.campaign, self.snapshot_at = part.campaign, part.snapshot_at
         self.last_run_at = max(self.last_run_at, part.last_run_at)
         self.verified_runs += part.verified_runs
         self.pending_runs.extend(part.pending_runs)
+        self.csv_only_failures.extend(part.csv_only_failures)
         for fid, finding in part.findings.items():
             self.findings.setdefault(fid, finding)
         self.remediation_refs.extend(part.remediation_refs)
 
 
-def campaign_summaries(store: Store, *, catalog: dict | None = None) -> dict[str, CampaignSummary]:
+def campaign_summaries(store: Store, *, catalog: dict | None = None, on_verified=None,
+                       include_csv=True) -> dict[str, CampaignSummary]:
     """台帳上の案件IDを正本とし、読めない実行の所属確認にだけ索引を使う。"""
     if catalog is None:
         catalog = store.load_catalog().get("runs", {})
@@ -53,14 +65,15 @@ def campaign_summaries(store: Store, *, catalog: dict | None = None) -> dict[str
     for rid in sorted(run_ids):
         if not ID_RE.fullmatch(rid):
             continue
-        cid, part = summarize_run(store, rid, (catalog.get(rid) or {}).get("campaign_id"))
+        cid, part = summarize_run(store, rid, (catalog.get(rid) or {}).get("campaign_id"),
+                                  on_verified=on_verified, include_csv=include_csv)
         summaries.setdefault(cid, CampaignSummary()).include(part)
     return summaries
 
 
 def summarize_run(store: Store, rid: str, hint: str | None,
                   finding_refs: set[str] | None = None, *, strict_io: bool = False,
-                  on_verified=None) -> tuple[str, CampaignSummary]:
+                  on_verified=None, include_csv=True) -> tuple[str, CampaignSummary]:
     """1台帳を検証する。参照先が欠損した検知も、後から復旧を検出できるようにする。"""
     summary = CampaignSummary()
     unavailable_io = FileNotFoundError if strict_io else OSError
@@ -83,6 +96,7 @@ def summarize_run(store: Store, rid: str, hint: str | None,
     if on_verified is not None:
         on_verified(rid, cid, events)
     complete = True
+    csv_complete = True
     started_at = ""
     for event in events:
         ext = event.get("extensions") or {}
@@ -98,6 +112,13 @@ def summarize_run(store: Store, rid: str, hint: str | None,
             started_at = run["started_at"]
         if ext.get("record_kind") == "remediation" and isinstance(ext.get("record_ref"), str):
             summary.remediation_refs.append(ext["record_ref"])
+        if include_csv and "notion_csv_ref" in ext:
+            from .notion_import import batch_findings
+            try:
+                for fid, issue in batch_findings(store, event, finding_refs).items():
+                    summary.findings.setdefault(fid, issue)
+            except (DataError, unavailable_io):
+                csv_complete = False
         if ext.get("record_kind") != "finding":
             continue
         ref = ext.get("record_ref")
@@ -111,10 +132,12 @@ def summarize_run(store: Store, rid: str, hint: str | None,
             summary.findings.setdefault(fid, finding)
         except (DataError, unavailable_io):
             complete = False
-    if complete:
+    if complete and csv_complete:
         summary.verified_runs += 1
     else:
         summary.pending_runs.append(rid)
+        if complete:
+            summary.csv_only_failures.append(rid)
     if not started_at:
         try:
             run = (store.load_manifest(rid) or {}).get("run") or {}

@@ -1,5 +1,5 @@
 {
-  "generated_at": "00054",
+  "generated_at": "00055",
   "index_snapshot": "docs/birdseye/index.json",
   "refresh_command": "RUNBOOK.md#execute と docs/BIRDSEYE.md の PowerShell 手順を参照",
   "curation_notes": "ローカル製品、要件、検収、文書運用の入口。生成世代と原文・要約の内容確認を区別する。",
@@ -7,7 +7,7 @@
     {
       "id": "README.md",
       "role": "overview",
-      "reason": "製品の起動と操作。案件・検知・判断画面、構成図での入力経路の編集、利用者の関与範囲の指定とJSON保存を案内する。",
+      "reason": "製品の起動、案件・検知の表示、構成図と受付、Notion の課題 CSV と観測を照合する手順を案内する。",
       "caps": "docs/birdseye/caps/README.md.json",
       "edges": [
         "BLUEPRINT.md",
@@ -17,6 +17,7 @@
         "HUB.codex.md",
         "RUNBOOK.md",
         "docs/INSTALL-DGX.md",
+        "docs/NOTION-IMPORT.md",
         "docs/PRODUCT-GUIDE.md",
         "docs/RSI.md",
         "docs/SOURCES.md",
@@ -41,12 +42,12 @@
         "docs/tasks/TASK.architecture-map-11-23-2026.md",
         "docs/workflow-adoption.md"
       ],
-      "last_verified_at": "2026-11-23T11:09:37+00:00"
+      "last_verified_at": "2026-11-26T12:47:39+00:00"
     },
     {
       "id": "HUB.codex.md",
       "role": "navigation",
-      "reason": "製品要件と作業の案内。モニター・判断・構成図・受付の画面設計と検収を引ける。",
+      "reason": "製品の作業と文書の入口。案件画面の操作、課題 CSV と観測の照合、各機能の検収へ案内する。",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
       "edges": [
         ".agents/skills/security-audit/SKILL.md",
@@ -64,6 +65,7 @@
         "docs/CONTRACTS.md",
         "docs/INCIDENT_TEMPLATE.md",
         "docs/INSTALL-DGX.md",
+        "docs/NOTION-IMPORT.md",
         "docs/PRODUCT-GUIDE.md",
         "docs/RSI.md",
         "docs/SECURITY-AUDIT.md",
@@ -86,6 +88,7 @@
         "docs/acceptance/AC-20261123-08.md",
         "docs/acceptance/AC-20261123-09.md",
         "docs/acceptance/AC-20261124-01.md",
+        "docs/acceptance/AC-20261126-01.md",
         "docs/acceptance/INDEX.md",
         "docs/acceptance/README.md",
         "docs/releases/README.md",
@@ -111,7 +114,7 @@
         "docs/workflow-adoption.md",
         "governance/policy.yaml"
       ],
-      "last_verified_at": "2026-11-23T16:21:04+00:00"
+      "last_verified_at": "2026-11-26T12:47:39+00:00"
     },
     {
       "id": "GUARDRAILS.md",
@@ -206,7 +209,7 @@
     {
       "id": "docs/tasks/README.md",
       "role": "guide",
-      "reason": "Taskの運用・状態と一覧。案件表示や構成図の改修から、文書整合性を確認したTaskと各検収をたどれる。",
+      "reason": "Task の運用規約と索引。課題 CSV の取り込みと照合を含む作業から対応する検収記録を引ける。",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
       "edges": [
         "CHANGELOG.md",
@@ -238,6 +241,7 @@
         "docs/acceptance/AC-20261123-08.md",
         "docs/acceptance/AC-20261123-09.md",
         "docs/acceptance/AC-20261124-01.md",
+        "docs/acceptance/AC-20261126-01.md",
         "docs/acceptance/README.md",
         "docs/releases/README.md",
         "docs/tasks/TASK.agent-core-11-08-2026.md",
@@ -255,6 +259,7 @@
         "docs/tasks/TASK.monitor-counts-11-23-2026.md",
         "docs/tasks/TASK.monitor-index-11-23-2026.md",
         "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
+        "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md",
         "docs/tasks/TASK.p2-rsi-experiment-11-09-2026.md",
         "docs/tasks/TASK.p2-sqli-11-09-2026.md",
         "docs/tasks/TASK.p2-wazuh-blue-11-09-2026.md",
@@ -270,12 +275,12 @@
         "docs/tasks/TASK.version-011-11-08-2026.md",
         "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
       ],
-      "last_verified_at": "2026-11-23T16:21:04+00:00"
+      "last_verified_at": "2026-11-26T12:47:39+00:00"
     },
     {
       "id": "docs/acceptance/INDEX.md",
       "role": "index",
-      "reason": "技術検収と公開状態の一覧。文書整合性の検収と、実機結果が記録されていないLLM接続の検収計画を区別して掲載する。",
+      "reason": "案件画面や取り込みを含む検収の一覧。課題 CSV から照合結果までの対象と公開記録を引ける。",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
       "edges": [
         "docs/acceptance/AC-20261106-01.md",
@@ -304,6 +309,8 @@
         "docs/acceptance/AC-20261123-08.md",
         "docs/acceptance/AC-20261123-09.md",
         "docs/acceptance/AC-20261124-01.md",
+        "docs/acceptance/AC-20261126-01.md",
+        "docs/releases/RA-20261126-01.md",
         "docs/tasks/TASK.agent-core-11-08-2026.md",
         "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
         "docs/tasks/TASK.architecture-canvas-11-23-2026.md",
@@ -319,6 +326,7 @@
         "docs/tasks/TASK.monitor-counts-11-23-2026.md",
         "docs/tasks/TASK.monitor-index-11-23-2026.md",
         "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
+        "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md",
         "docs/tasks/TASK.product-clarity-11-07-2026.md",
         "docs/tasks/TASK.product-completion-11-06-2026.md",
         "docs/tasks/TASK.quality-integration-11-09-2026.md",
@@ -331,7 +339,7 @@
         "docs/tasks/TASK.version-011-11-08-2026.md",
         "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
       ],
-      "last_verified_at": "2026-11-23T16:21:04+00:00"
+      "last_verified_at": "2026-11-26T12:47:39+00:00"
     },
     {
       "id": "docs/RSI.md",

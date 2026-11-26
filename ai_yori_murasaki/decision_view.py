@@ -335,14 +335,25 @@ def build_view(campaign: dict, findings: list[dict], records: dict[str, dict] | 
 
 def _load(runtime, store, campaign_id: str, summaries=None) -> tuple[dict, list[dict], dict[str, dict]]:
     if summaries is None:
+        from .notion_import import campaign_issues
         campaign = runtime.get_campaign(campaign_id)
-        findings = _unique_findings([store.get_object(ref) for ref in runtime.list_records(campaign_id, "finding")])
+        findings = [store.get_object(ref) for ref in runtime.list_records(campaign_id, "finding")]
+        findings = _unique_findings([*findings, *campaign_issues(store, campaign_id).values()])
     else:
         campaign = summaries[campaign_id].campaign
         findings = list(summaries[campaign_id].findings.values())
+    return campaign, findings, read_source_records(store, findings)
+
+
+def read_source_records(store, findings: list[dict]) -> dict[str, dict]:
     records: dict[str, dict] = {}
     for f in findings:
-        ref = ((f.get("extensions") or {}).get("notion") or {}).get("source_record_ref")
+        notion = (f.get("extensions") or {}).get("notion") or {}
+        ref = notion.get("source_record_ref")
+        if notion.get("source_kind") == "notion_csv/1":
+            from .notion_import import load_csv_row
+            records[f["finding_id"]] = load_csv_row(store, ref)
+            continue
         if not ref:
             continue
         try:
@@ -351,7 +362,7 @@ def _load(runtime, store, campaign_id: str, summaries=None) -> tuple[dict, list[
             continue
         if isinstance(obj, dict) and isinstance(obj.get("record"), dict):
             records[f["finding_id"]] = obj["record"]
-    return campaign, findings, records
+    return records
 
 
 def _series(campaign: dict) -> str:

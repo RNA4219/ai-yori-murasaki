@@ -1,0 +1,29 @@
+{
+  "id": "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "summary": "ローカルにある課題 CSV と観測の取り込み、候補分類、根拠表示と書き出しの要件・検収を定める。",
+  "generated_at": "00055",
+  "source_sha256": "7703da6f3476030db6e434076b981ddaed00dca7ade1439e75edbf5493411871",
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261126-01.md",
+    "docs/acceptance/INDEX.md",
+    "docs/releases/RA-20261126-01.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "docs/NOTION-IMPORT.md",
+    "docs/acceptance/AC-20261126-01.md",
+    "docs/releases/RA-20261126-01.md"
+  ],
+  "review": {
+    "reviewed_at": "2026-11-26T12:47:39+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "7703da6f3476030db6e434076b981ddaed00dca7ade1439e75edbf5493411871",
+    "summary_sha256": "3886091282a7c27998c7274f14f6fdbc78fe5dafc0d2c656dbf4b9321ff48ef9",
+    "scope": "課題 CSV と観測の照合に関する本文・要約・参照を確認。"
+  }
+}

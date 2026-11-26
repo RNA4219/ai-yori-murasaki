@@ -18,6 +18,7 @@ from .monitor_summary import CampaignSummary, summarize_run
 from .storage import ID_RE, Store, _is_reparse, _safe_join
 
 PAGE_SIZE = 50
+_COUNT_FIELDS = ("finding_count", "finding_count_status", "verified_run_count", "unverified_run_count")
 
 
 def _index_path(store: Store) -> Path:
@@ -98,17 +99,46 @@ def _pack(part: CampaignSummary) -> str:
                      if k in part.campaign},
         "snapshot_at": part.snapshot_at, "last_run_at": part.last_run_at,
         "verified_runs": part.verified_runs, "pending_runs": part.pending_runs,
+        "csv_only_failures": part.csv_only_failures,
         "findings": {fid: _project_finding(value) for fid, value in part.findings.items()},
     }, ensure_ascii=False)
+
+
+def _combined_summary(parts):
+    summary = CampaignSummary()
+    for data in parts:
+        summary.include(CampaignSummary(**json.loads(data)))
+    return summary
+
+
+def _blue_counts(cid, summary):
+    from .server import _project_campaign
+    row = _project_campaign(cid, summary.diagnostics_only(), "blue")
+    return {key: row[key] for key in _COUNT_FIELDS}
+
+
+def _valid_blue_counts(value):
+    if not isinstance(value, dict) or set(value) != set(_COUNT_FIELDS):
+        return False
+    verified, pending = value["verified_run_count"], value["unverified_run_count"]
+    if type(verified) is not int or verified < 0 or type(pending) is not int or pending < 0:
+        return False
+    count, status = value["finding_count"], value["finding_count_status"]
+    if status == "unavailable":
+        return verified == 0 and count is None
+    if type(count) is not int or count < 0:
+        return False
+    if status == "complete":
+        return verified > 0 and pending == 0
+    return status == "partial" and pending > 0 and (verified > 0 or count > 0)
 
 
 def _write_case(db, cid, parts):
     from .decision_view import series_position
     from .server import _project_campaign
-    summary = CampaignSummary()
-    for data in parts:
-        summary.include(CampaignSummary(**json.loads(data)))
+    summary = _combined_summary(parts)
     row = _project_campaign(cid, summary)
+    row["blue_counts"] = _blue_counts(cid, summary)
     row["unverified_run_ids"] = row["unverified_run_ids"][:4]
     excerpt = list(islice(summary.findings.values(), 4))
     db.execute("INSERT OR REPLACE INTO cases VALUES (?, ?, ?, ?)", (
@@ -139,13 +169,13 @@ def _refresh(store, db, full):
     if version == 0:
         _setup(db)
         full = True
-    elif version not in (1, 2, 3):
+    elif version not in (1, 2, 3, 4):
         raise DataError("未知のモニター索引形式です")
     if version < 2:
         db.execute("CREATE TABLE case_series (cid TEXT PRIMARY KEY, family TEXT, moment TEXT, dated INTEGER)")
         db.execute("CREATE INDEX series_by_time ON case_series(family, moment, cid)")
-    if version < 3:
-        db.execute("PRAGMA user_version = 3")
+    if version < 4:
+        db.execute("PRAGMA user_version = 4")
     hints = _hints(db, store, full)
     runs = _safe_join(store.workspace, "runs")
     objects = _safe_join(store.workspace, "objects")
@@ -190,7 +220,7 @@ def _refresh(store, db, full):
         affected.add(cid)
         db.execute("DELETE FROM run_cache WHERE rid = ?", (rid,))
 
-    if full or version < 3:
+    if full or version < 4:
         db.execute("DELETE FROM case_series")
         db.execute("DELETE FROM cases")
         rows = db.execute("SELECT cid, part FROM run_cache ORDER BY cid, rid")
@@ -239,11 +269,23 @@ def read_page(store: Store, page: int, view: str) -> dict | None:
         page = min(page, pages)
         query = "SELECT row_json, excerpt FROM cases ORDER BY created DESC, id LIMIT ? OFFSET ?"
         campaigns = []
+        version = db.execute("PRAGMA user_version").fetchone()[0]
         for data, excerpt in db.execute(query, (PAGE_SIZE, (page-1)*PAGE_SIZE)):
             row = json.loads(data)
+            blue_counts = row.pop("blue_counts", None)
             if view == "operator":
                 row["finding_excerpt"] = json.loads(excerpt)
             else:
+                if version in (1, 2, 3):
+                    # 更新前の世代も同じ読み取りトランザクション内の保存済み集計から回答する。
+                    cid = row["campaign_id"]
+                    parts = db.execute("SELECT part FROM run_cache WHERE cid = ? ORDER BY rid", (cid,))
+                    blue_counts = _blue_counts(cid, _combined_summary(map(itemgetter(0), parts)))
+                if version != 0:
+                    if version not in (1, 2, 3, 4) or not _valid_blue_counts(blue_counts):
+                        from .monitor_detail import IndexUpdateRequired
+                        raise IndexUpdateRequired("Blue の案件集計を更新してください")
+                    row.update(blue_counts)
                 row.pop("unverified_run_ids", None)
                 row.pop("severity_counts", None)
             campaigns.append(row)

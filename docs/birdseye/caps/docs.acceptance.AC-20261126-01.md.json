@@ -1,0 +1,30 @@
+{
+  "id": "docs/acceptance/AC-20261126-01.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "summary": "合成した課題の取り込みから照合、書き出し、判断画面までの受入条件と検証範囲を記録する。",
+  "generated_at": "00055",
+  "source_sha256": "1de23154f5dcdb9ac0db0075ffd33f4983894de1f7acf82a5472c4f141978571",
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/INDEX.md",
+    "docs/releases/RA-20261126-01.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md"
+  ],
+  "deps_out": [
+    "docs/NOTION-IMPORT.md",
+    "docs/releases/RA-20261126-01.md",
+    "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md"
+  ],
+  "review": {
+    "reviewed_at": "2026-11-26T12:47:39+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "1de23154f5dcdb9ac0db0075ffd33f4983894de1f7acf82a5472c4f141978571",
+    "summary_sha256": "af3ef9d48b4f79bfd23bf027eee7e6616be5d063d43da667b5e11dd5c591aa49",
+    "scope": "課題 CSV と観測の照合に関する本文・要約・参照を確認。"
+  }
+}

@@ -2,7 +2,7 @@
   "id": "HUB.codex.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "製品要件と作業の案内。モニター・判断・構成図・受付の画面設計と検収を引ける。",
+  "summary": "製品の作業と文書の入口。案件画面の操作、課題 CSV と観測の照合、各機能の検収へ案内する。",
   "deps_out": [
     ".agents/skills/security-audit/SKILL.md",
     "AGENTS.md",
@@ -19,6 +19,7 @@
     "docs/CONTRACTS.md",
     "docs/INCIDENT_TEMPLATE.md",
     "docs/INSTALL-DGX.md",
+    "docs/NOTION-IMPORT.md",
     "docs/PRODUCT-GUIDE.md",
     "docs/RSI.md",
     "docs/SECURITY-AUDIT.md",
@@ -41,6 +42,7 @@
     "docs/acceptance/AC-20261123-08.md",
     "docs/acceptance/AC-20261123-09.md",
     "docs/acceptance/AC-20261124-01.md",
+    "docs/acceptance/AC-20261126-01.md",
     "docs/acceptance/INDEX.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
@@ -76,13 +78,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "6129fc5b2fe40efcae518ba068d53a5d41a5a8f8d10d5d85d021beeb45e2461b",
-  "generated_at": "00052",
+  "source_sha256": "006d53bae3e19c3a175fdc089ecad4a7a75ab3e98d4b2aa1ca9a51bfa4562389",
+  "generated_at": "00055",
   "review": {
-    "reviewed_at": "2026-11-23T16:21:04+00:00",
+    "reviewed_at": "2026-11-26T12:47:39+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "6129fc5b2fe40efcae518ba068d53a5d41a5a8f8d10d5d85d021beeb45e2461b",
-    "summary_sha256": "0f9934aa7ae7e5cdd2dff30354f747e498ff06d08b9d19b22c8b3cc4658d7238",
-    "scope": "製品画面の役割、重要度の表示、操作試験と参照先を原文に照合。"
+    "source_sha256": "006d53bae3e19c3a175fdc089ecad4a7a75ab3e98d4b2aa1ca9a51bfa4562389",
+    "summary_sha256": "e360f54fc93ba160ae7dfffef5b6eaa4017e882ba176056adec5850762183bcf",
+    "scope": "課題 CSV と観測の照合に関する本文・要約・参照を確認。"
   }
 }

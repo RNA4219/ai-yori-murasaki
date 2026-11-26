@@ -2,7 +2,7 @@
   "id": "README.md",
   "role": "overview",
   "public_api": [],
-  "summary": "製品の起動と操作。案件・検知・判断画面、構成図での入力経路の編集、利用者の関与範囲の指定とJSON保存を案内する。",
+  "summary": "製品の起動、案件・検知の表示、構成図と受付、Notion の課題 CSV と観測を照合する手順を案内する。",
   "deps_out": [
     "BLUEPRINT.md",
     "CHANGELOG.md",
@@ -11,6 +11,7 @@
     "HUB.codex.md",
     "RUNBOOK.md",
     "docs/INSTALL-DGX.md",
+    "docs/NOTION-IMPORT.md",
     "docs/PRODUCT-GUIDE.md",
     "docs/RSI.md",
     "docs/SOURCES.md",
@@ -49,13 +50,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "687fea1b1a99c0be0647c54a0eb1dd8d92c2ba2e4dde53659cff20585edcf94b",
-  "generated_at": "00050",
+  "source_sha256": "b2e1d522b44a862655e86f8e2b90c8cbe18be0ec6ec3c4e2ff7edadce7940f5b",
+  "generated_at": "00055",
   "review": {
-    "reviewed_at": "2026-11-23T11:09:37+00:00",
+    "reviewed_at": "2026-11-26T12:47:39+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "687fea1b1a99c0be0647c54a0eb1dd8d92c2ba2e4dde53659cff20585edcf94b",
-    "summary_sha256": "b2ccf27e09cc5ae360551e7c71ef176eae67ac02f09caf7cefdf0345ac5470a6",
-    "scope": "利用者の関与範囲の枠と編集・復元の検収を原文に照合。"
+    "source_sha256": "b2e1d522b44a862655e86f8e2b90c8cbe18be0ec6ec3c4e2ff7edadce7940f5b",
+    "summary_sha256": "378ef71520feface86b9ffad3ad1f8cfdda889df297e7e2ff921545027fe2479",
+    "scope": "課題 CSV と観測の照合に関する本文・要約・参照を確認。"
   }
 }

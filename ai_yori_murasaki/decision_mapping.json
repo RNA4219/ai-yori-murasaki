@@ -2,6 +2,7 @@
  "_note": "元の行（Notion など）の列名と、状態の値の対応。自分のデータベースの列名・値に合わせて書き換える。状態は open（手つかず）・in_progress（対応中）・waiting（判断待ち）・done（終わった）・wont_fix（対応しない）・other のどれかに寄せる。",
  "fields": {
   "status": "ステータス",
+  "scope": "原典の環境",
   "key": "棚卸キー",
   "due": "date:対応期限:start"
  },

@@ -22,6 +22,7 @@ Task、[Acceptance](../acceptance/README.md)、[CHANGELOG](../../CHANGELOG.md)�
 
 | task_id | 作業 | 検収 |
 | --- | --- | --- |
+| 20261126-01 | [課題一覧と観測の照合](TASK.offline-tracker-drift-11-26-2026.md) | [AC-20261126-01](../acceptance/AC-20261126-01.md) |
 | 20261124-01 | [製品4画面のデザインと画面移動](TASK.frontend-workspace-11-24-2026.md) | [AC-20261124-01](../acceptance/AC-20261124-01.md) |
 | 20261123-09 | [構成と接続の図を直接操作する](TASK.architecture-canvas-11-23-2026.md) | [AC-20261123-09](../acceptance/AC-20261123-09.md) |
 | 20261123-08 | [案件の重要度別件数と検知](TASK.case-severity-11-23-2026.md) | [AC-20261123-08](../acceptance/AC-20261123-08.md) |
