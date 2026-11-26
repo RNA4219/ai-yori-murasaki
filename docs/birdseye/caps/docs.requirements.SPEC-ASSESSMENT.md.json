@@ -4,16 +4,19 @@
   "public_api": [],
   "summary": "R-051〜R-056,R-060,R-062の評価系実装仕様。assessment report契約をassessment_contracts.pyとschemas/v1/assessment.schema.jsonで既存8契約と分離して新設し、Coverage/Claim/Classification/Remediation/Validation/CVSS/BusinessImpactの型、semantic検証規則、advisories.pyによる版適合判定、投影規則、診断producerの境界を固定する。",
   "deps_out": [],
-  "deps_in": [],
+  "deps_in": [
+    "docs/requirements/REQUIREMENTS-DUAL-VIEW.md",
+    "docs/requirements/SPEC-DUAL-VIEW.md"
+  ],
   "risks": [],
   "tests": [],
   "source_sha256": "1573d1d7c0262b7d4235039a253c6335a996ab662a13b03813736fafa1f054df",
-  "generated_at": "00021",
+  "generated_at": "00058",
   "review": {
-    "reviewed_at": "2026-11-06T23:49:11.901048+00:00",
-    "reviewed_by": "GLM",
+    "reviewed_at": "2026-11-26T23:08:12+00:00",
+    "reviewed_by": "Codex",
     "source_sha256": "1573d1d7c0262b7d4235039a253c6335a996ab662a13b03813736fafa1f054df",
-    "summary_sha256": "e7a8a1b7a5b0a659a3328e96e26768b92826d77ade28be59637fd1fde0b6d977",
-    "scope": "GLMが原文全文と要約・依存を照合して確定。文書・要約・リンク整合の確認であり、製品実測や検収の実証ではない。"
+    "summary_sha256": "e82ff346a568036068d6f82e435dd5f5b6bc2408399a7895df3632e894b3fb87",
+    "scope": "既存の原文と要約、追加要件・仕様からの参照を照合。"
   }
 }

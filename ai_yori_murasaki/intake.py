@@ -6,7 +6,7 @@ import re
 import sqlite3
 
 from .jsonio import DataError
-from .storage import Store, _safe_join, sanitize
+from .storage import ID_RE, Store, _safe_join, sanitize
 
 PAGE_SIZE = 50
 RECEIPT_ID = re.compile(r"int-[0-9a-f]{32}")
@@ -43,6 +43,30 @@ def register(store: Store, name: str, key: str) -> dict:
     return {"receipt_id": receipt_id, "name": name, "registered_at": registered_at}
 
 
+def link(store: Store, receipt_id: str, campaign_id: str) -> dict:
+    from . import _intake_index
+    from .runtime import Runtime
+
+    if not RECEIPT_ID.fullmatch(receipt_id) or not ID_RE.fullmatch(campaign_id):
+        raise DataError("受付IDまたは監査案件IDが不正です")
+    if sanitize([receipt_id, campaign_id], store.secrets) != [receipt_id, campaign_id]:
+        raise DataError("受付IDまたは監査案件IDを公開できません")
+    path = _path(store)
+    if not path.exists():
+        raise DataError("受付が見つかりません", "not_found")
+    # 書き込みの前に、このワークスペースの検証済み台帳に監査が存在することを確かめる。
+    Runtime(store).get_campaign(campaign_id)
+    try:
+        saved = _intake_index.link(path, receipt_id, campaign_id)
+    except OSError as exc:
+        raise DataError("受付台帳を更新できません", "intake_unavailable") from exc
+    if saved is None:
+        raise DataError("受付が見つかりません", "not_found")
+    if saved != campaign_id:
+        raise DataError("受付は別の監査に連結されています", "intake_link_conflict")
+    return {"receipt_id": receipt_id, "campaign_id": campaign_id}
+
+
 def search(store: Store, query: str) -> dict:
     query = query.strip()
     if query and not _valid_text(query, 160):
@@ -52,21 +76,32 @@ def search(store: Store, query: str) -> dict:
     if not path.exists():
         return page
 
-    sql = "SELECT receipt_id, name, registered_at FROM receipts "
     params = []
     if RECEIPT_ID.fullmatch(query):
-        sql += "WHERE receipt_id = ?"
+        clause = "WHERE receipts.receipt_id = ?"
         params.append(query)
     elif query:
         prefix = query.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
-        sql += "WHERE name LIKE ? ESCAPE '\\' ORDER BY name COLLATE NOCASE, receipt_id"
+        clause = "WHERE name LIKE ? ESCAPE '\\' ORDER BY name COLLATE NOCASE, receipts.receipt_id"
         params.append(prefix + "%")
     else:
-        sql += "ORDER BY rowid DESC"
+        clause = "ORDER BY receipts.rowid DESC"
     with closing(sqlite3.connect(path.as_uri() + "?mode=ro", uri=True)) as db:
         db.execute("PRAGMA trusted_schema = OFF")
+        db.execute("BEGIN")
         db.row_factory = sqlite3.Row
-        rows = db.execute(sql + " LIMIT ?", (*params, PAGE_SIZE + 1)).fetchall()
-    page["receipts"] = [sanitize(dict(row), store.secrets) for row in rows[:PAGE_SIZE]]
+        # 初回連結前の台帳を、閲覧だけで移行しない。
+        has_links = db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='receipt_campaigns'").fetchone()
+        sql = "SELECT receipts.receipt_id, name, registered_at"
+        if has_links:
+            sql += ", campaign_id FROM receipts LEFT JOIN receipt_campaigns USING(receipt_id)"
+        else:
+            sql += " FROM receipts"
+        rows = db.execute(f"{sql} {clause} LIMIT ?", (*params, PAGE_SIZE + 1)).fetchall()
+    for row in rows[:PAGE_SIZE]:
+        record = dict(row)
+        if record.get("campaign_id") is None:
+            record.pop("campaign_id", None)
+        page["receipts"].append(sanitize(record, store.secrets))
     page["has_more"] = len(rows) > PAGE_SIZE
     return page

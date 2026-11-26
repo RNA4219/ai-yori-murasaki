@@ -100,6 +100,48 @@ def test_severity_outside_the_list_becomes_info():
     assert v["items"][0]["severity"] == "info"
 
 
+def test_comparison_keeps_distinct_findings_at_one_path():
+    def issue(fid, status="未対応"):
+        return f(fid, title=fid, path="shared.py", status=status)
+
+    previous = {"findings": [issue("A"), issue("B"), issue("B")]}
+    for current in ([issue("B"), issue("C"), issue("B")], [issue("C"), issue("B")]):
+        view = mod.build_view({}, current, previous=previous, mapping=MAPPING, now=NOW)
+        assert {it["title"]: it["change"] for it in view["items"]} == {"B": "unchanged", "C": "new"}
+        assert [it["title"] for it in view["removed"]] == ["A"]
+    view = mod.build_view({}, [issue("B", "対応中"), issue("A")], previous=previous, mapping=MAPPING, now=NOW)
+    assert [(it["title"], it["change"]) for it in view["items"]] == [("B", "state_changed"), ("A", "unchanged")]
+    assert not view["removed"]
+
+
+def test_comparison_preserves_unique_source_rows_and_prioritizes_id():
+    url = "https://example.invalid/row/42"
+    before = {"findings": [f("first", path=url, status="未対応")]}
+    after = f("second", path=url, status="対応中")
+    view = mod.build_view({}, [after], previous=before, mapping=MAPPING, now=NOW)
+    assert view["items"][0]["change"] == "state_changed"
+    assert not view["removed"]
+
+    # Old imported rows may carry only the Notion row location and no mapped key.
+    before["findings"][0]["source"] = "notion"
+    before["findings"][0]["extensions"]["notion"].pop("url")
+    after["extensions"]["notion"]["properties"]["棚卸キー"] = "EX-42"
+    view = mod.build_view({}, [after], previous=before, mapping=MAPPING, now=NOW)
+    assert view["items"][0]["change"] == "state_changed" and not view["removed"]
+
+    # A stable source key still identifies the row after its ID and URL change.
+    before["records"] = {"first": {"棚卸キー": "EX-42", "ステータス": "未対応"}}
+    records = {"second": {"棚卸キー": "EX-42", "ステータス": "対応中"}}
+    view = mod.build_view({}, [f("second")], records, previous=before, mapping=MAPPING, now=NOW)
+    assert view["items"][0]["change"] == "state_changed" and not view["removed"]
+
+    # Neither row may claim the only old record by URL when the same ID is present.
+    before.pop("records")
+    view = mod.build_view({}, [after, f("first", path=url, status="未対応")], previous=before, mapping=MAPPING, now=NOW)
+    assert [it["change"] for it in view["items"]] == ["new", "unchanged"]
+    assert not view["removed"]
+
+
 def test_pick_previous_by_intent_prefix():
     cur = {"campaign_id": "c3", "intent_id": "INT-X-BACKLOG-20261116A", "created_at": "2026-11-16T00:00:00Z"}
     cs = [

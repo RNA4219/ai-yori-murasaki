@@ -13,7 +13,8 @@ from urllib.parse import urlencode
 import pytest
 
 from ai_yori_murasaki import intake
-from ai_yori_murasaki.jsonio import DataError
+from ai_yori_murasaki.jsonio import DataError, digest
+from ai_yori_murasaki.runtime import Runtime
 from ai_yori_murasaki.server import handle_request
 from ai_yori_murasaki.storage import Store
 
@@ -23,14 +24,18 @@ def store(tmp_path):
     return Store(tmp_path / "workspace", tmp_path / "trusted")
 
 
-def cli(store, name, key):
+def intake_cli(store, *action):
     # 独立したプロセスで実際のCLIから台帳を開き直す。
     args = [sys.executable, "-m", "ai_yori_murasaki.cli",
             "--workspace", str(store.workspace), "--trusted-root", str(store.trusted_root),
-            "intake", "register", "--name", name, "--idempotency-key", key]
+            "intake", *action]
     result = subprocess.run(args, capture_output=True, encoding="utf-8", timeout=60,
                             env={**os.environ, "PYTHONIOENCODING": "utf-8"})
     return result.returncode, json.loads(result.stdout)
+
+
+def cli(store, name, key):
+    return intake_cli(store, "register", "--name", name, "--idempotency-key", key)
 
 
 def api(store, **query):
@@ -128,3 +133,59 @@ def test_failed_insert_can_be_retried(store):
     new = intake.register(store, "追加", "retry")
     assert intake.register(store, "追加", "retry") == new
     assert len(intake.search(store, "")["receipts"]) == 2
+
+
+@pytest.fixture
+def campaigns(store):
+    scope = {"targets": [{"kind": "fixture", "identifier": "intake"}], "max_targets": 1}
+    auth = {"operator_id": "intake-test", "granted_at": "2026-01-01T00:00:00Z",
+            "expires_at": "2099-01-01T00:00:00Z", "scope_digest": digest(scope)}
+    runtime = Runtime(store)
+    return [runtime.create_campaign(key, scope, auth, key)["campaign_id"]
+            for key in ("INT-AUDIT-A", "INT-AUDIT-B")]
+
+
+def test_link_existing_receipt_and_search_from_cli(store, campaigns):
+    left, right = [intake.register(store, "同名の受付", key) for key in ("first", "second")]
+    receipt_id, campaign_id = left["receipt_id"], campaigns[0]
+    path = store.workspace / "case-intake.sqlite3"
+    before = path.read_bytes()
+    # 連結表のない従来の台帳を閲覧しても移行や更新は発生しない。
+    assert api(store, q=receipt_id)[1]["receipts"] == [left]
+    assert path.read_bytes() == before
+    assert api(store, q=right["receipt_id"])[1]["receipts"] == [right]
+
+    args = ("link", "--receipt-id", receipt_id, "--campaign-id", campaign_id)
+    code, saved = intake_cli(store, *args)
+    assert code == 0 and saved["data"] == {"receipt_id": receipt_id, "campaign_id": campaign_id}
+    assert intake_cli(store, *args) == (code, saved)
+    assert intake.register(store, left["name"], "first") == left
+    for invalid_receipt, invalid_campaign in (
+            ("int-" + "0" * 32, campaign_id), (receipt_id, "missing"), ("../receipt", campaign_id),
+            (receipt_id, "../audit"), (receipt_id, campaigns[1])):
+        assert intake_cli(store, "link", "--receipt-id", invalid_receipt, "--campaign-id", invalid_campaign)[0] != 0
+
+    before = path.read_bytes()
+    linked = {**left, "campaign_id": campaign_id}
+    assert api(store, q=receipt_id)[1]["receipts"] == [linked]
+    assert api(store, q=right["receipt_id"])[1]["receipts"] == [right]
+    assert api(store, q="同名")[1]["receipts"] == sorted([linked, right], key=lambda row: row["receipt_id"])
+    assert api(store, q=receipt_id, view="blue") == (200, {"status": "withheld"})
+    assert path.read_bytes() == before
+    code, _, body = handle_request(Runtime(store), "GET", "/api/campaigns/" + campaign_id)
+    assert code == 200 and json.loads(body)["campaign"]["campaign_id"] == campaign_id
+
+
+def test_first_link_competes_without_overwriting(store, campaigns):
+    receipt_id = intake.register(store, "同時連結", "one")["receipt_id"]
+    barrier = Barrier(2)
+
+    def submit(cid):
+        barrier.wait(timeout=30)
+        return intake_cli(store, "link", "--receipt-id", receipt_id, "--campaign-id", cid)
+
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        outcomes = list(executor.map(submit, campaigns))
+    assert sorted((code, reply["reason_code"]) for code, reply in outcomes) == [(0, "ok"), (2, "intake_link_conflict")]
+    winner = next(reply["campaign_id"] for code, reply in outcomes if code == 0)
+    assert api(store, q=receipt_id)[1]["receipts"][0]["campaign_id"] == winner

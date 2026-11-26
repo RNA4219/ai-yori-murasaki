@@ -80,11 +80,14 @@ try {
         finding_id:'legacy-item', title:'以前の照合結果', source_status:'未対応', classification:'open_absent',
         collected_at:[observedAt], matches:[{id:'archive-a', type:null, method:'id', in_inventory:false, detections:[]}]
       };
-      await page.route('**/api/campaigns/'+cid+'/drift',route=>route.fulfill({json:{
+      let driftReport = {
         campaign_id:cid, observations:[{kind:'inventory',collected_at:observedAt}],
         counts:{open_absent:1, open_resolved:0, closed_active:0, aligned:1, uncomparable:1},
         reasons:{no_detections:1}, items:[aligned, uncertain, legacy]
-      }}));
+      };
+      await page.route('**/api/campaigns/'+cid+'/drift', route => route.fulfill(
+        driftReport ? {json:driftReport} : {status:503, body:'unavailable'}
+      ));
       await page.goto(base+'/decision?campaign='+cid);
       await page.locator('#h-sum').waitFor({state:'visible'});
       assert.match(await page.locator('#h-sum').innerText(),/終わっていない課題は全部で 1 件です/);
@@ -97,6 +100,36 @@ try {
       await page.locator('#now .item details').first().evaluate(e=>{e.open=true;});
       assert.equal(await page.getByText('internal-finding-abc').first().isVisible(),true);
       assert.equal(await page.locator('#now .item a').first().getAttribute('href'),'/#/campaign/'+cid);
+      // 修正後に失敗した課題は両画面で同じ次の行動を案内する。
+      mock.items[0].assessment_status = 'retest_failed';
+      mock.previous = {id:'previous-case',created_at:'2026-11-13T00:00:00Z'};
+      mock.items[0].change = 'new';
+      mock.items.push({...mock.items[0],key:'B',title:'継続した課題B',assessment_status:'retested',change:'unchanged'});
+      mock.removed = [{key:'A',title:'前回だけの課題A',ref:null,prev_state:'open',prev_state_label:'未対応'}];
+      await page.locator('#refresh-view').click();
+      await page.locator('#now .item-action').getByText(/失敗した検査を確認し、修正内容を見直して/).waitFor();
+      assert.match(await page.locator('#h-sum').innerText(), /終わっていない課題は全部で 1 件/);
+      const changes = page.locator('#changes');
+      const disappeared = changes.locator('details').filter({hasText:'今回の記録にない課題'});
+      await disappeared.locator('summary').click();
+      await disappeared.getByText('前回だけの課題A（前は 未対応）',{exact:true}).waitFor();
+      assert.match(await changes.locator('summary').filter({hasText:'片付いた'}).innerText(), /なし/);
+      assert.match(await changes.locator('summary').filter({hasText:'新しく入った'}).innerText(), /1 件/);
+      await page.route('**/api/campaigns/'+cid+'/assessment', route => route.fulfill({json:{
+        report:{status:'ready',coverage:{categories:[]},findings:[{finding_id:'failed-retest',
+          title:mock.items[0].title,remediation:{proposal_ref:'a'},validation:{result:'failed',
+            checks:{benign_continued:false}}}]}
+      }}));
+      await page.locator('#to-monitor').click();
+      await page.getByRole('button',{name:'評価',exact:true}).click();
+      const finding = page.locator('[data-key="assess-finding-failed-retest"]');
+      await finding.locator(':scope > summary .badge').filter({hasText:'再検証失敗'}).waitFor();
+      await finding.locator(':scope > summary').click();
+      await finding.getByText('失敗した検査を確認し、修正内容を見直してください。',{exact:true}).waitFor();
+      await finding.getByText('技術詳細',{exact:true}).click();
+      assert.match(await finding.getByRole('row').filter({hasText:'正常動作継続'}).innerText(), /条件未達/);
+      await page.locator('#switch-to-decision').click();
+      await page.locator('#now .item-action').getByText(/失敗した検査を確認し、修正内容を見直して/).waitFor();
       const size=await page.locator('#to-monitor').evaluate(e=>e.getBoundingClientRect().height);
       assert.ok(size>=44,'switch target >= 44px, got '+size);
       await page.keyboard.press('Tab');
@@ -124,6 +157,42 @@ try {
       for (const label of ['絞り込みなし','該当する検知なし','disk','未確認']) {
         await uncertainRow.getByText(label,{exact:true}).waitFor();
       }
+
+      const scope = page.locator('#product-verification');
+      await scope.locator('summary').focus();
+      await page.keyboard.press('Enter');
+      await scope.getByRole('table',{name:'製品検収で確認した範囲（2026年11月8日時点）'}).waitFor();
+      assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 2));
+      const rows = scope.getByRole('table').locator('tbody tr');
+      assert.deepEqual(await rows.evaluateAll(entries => entries.map(row =>
+        Array.from(row.cells, cell => cell.textContent))), [
+          ['認可不備','確認済み','確認済み'],
+          ['SQLインジェクション','確認済み','未検証'],
+          ['XSS','確認済み','未検証'],
+          ['パストラバーサル','確認済み','未検証'],
+          ['既知依存脆弱性','確認済み','未検証']
+        ]);
+      const sources = await scope.getByRole('link').evaluateAll(links => links.map(link => link.href));
+      assert.ok(sources.some(link => link.endsWith('/docs/acceptance/AC-20261107-03.md')));
+      assert.ok(sources.some(link => link.endsWith('/docs/acceptance/AC-20261108-01.md')));
+
+      // 取込前と、観測を取り込んでずれが0件の状態を、同じ案件で読み分ける。
+      const recorded = {...driftReport, items:[aligned], counts:{
+        open_absent:0, open_resolved:0, closed_active:0, aligned:1, uncomparable:0}, reasons:{}};
+      driftReport = {...recorded, observations:[], items:[uncertain],
+        counts:{...recorded.counts, aligned:0, uncomparable:1}, reasons:{out_of_scope:1}};
+      await page.locator('#refresh-view').click();
+      await page.locator('#sec-drift').getByText('観測未取込・照合待ち 1 件',{exact:true}).waitFor();
+      assert.match(await page.locator('#sec-drift').innerText(), /資源一覧または検知一覧を取り込んで/);
+      assert.equal(await page.locator('#drift-others-list').isVisible(),false);
+      driftReport = recorded;
+      await page.locator('#refresh-view').click();
+      await page.locator('#sec-drift').getByText('ずれの候補 0 件',{exact:true}).waitFor();
+      assert.doesNotMatch(await page.locator('#sec-drift').innerText(), /観測未取込/);
+      driftReport = null;
+      await page.locator('#refresh-view').click();
+      await page.getByText(/課題と観測のずれを取得できません/).waitFor();
+      assert.equal(await page.locator('#sec-drift').isVisible(),false);
 
       // 公開済みの画面を読み直しても、非公開応答の後に以前の件数を残さない。
       await page.route('**/api/campaigns/'+cid+'/decision-view',

@@ -2,7 +2,7 @@
   "id": "docs/acceptance/INDEX.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "検収、対応する Task、ソース反映の記録を引くための一覧。課題の照合条件に関する技術検収の合格を含む。",
+  "summary": "技術検収、対応する Task、ソース反映の記録の一覧。案件判断と受付連結に関する検収の対象と記録を引ける。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -32,12 +32,15 @@
     "docs/acceptance/AC-20261124-01.md",
     "docs/acceptance/AC-20261126-01.md",
     "docs/acceptance/AC-20261126-02.md",
+    "docs/acceptance/AC-20261127-01.md",
     "docs/releases/RA-20261126-01.md",
     "docs/releases/RA-20261126-02.md",
+    "docs/releases/RA-20261127-01.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
     "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
     "docs/tasks/TASK.architecture-canvas-11-23-2026.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
+    "docs/tasks/TASK.case-decisions-11-27-2026.md",
     "docs/tasks/TASK.case-intake-11-23-2026.md",
     "docs/tasks/TASK.case-severity-11-23-2026.md",
     "docs/tasks/TASK.document-consistency-11-23-2026.md",
@@ -72,13 +75,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "efef6def1cef56a657b3d77dbac49d1261b19d152ff99f20d3b1000122ac3cf9",
-  "generated_at": "00057",
+  "source_sha256": "59f23db2ccde233f943d8ff86a24d821c19c7604a3e71b01c6bd044aaab5e7e6",
+  "generated_at": "00058",
   "review": {
-    "reviewed_at": "2026-11-26T18:00:09+00:00",
+    "reviewed_at": "2026-11-26T23:08:12+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "efef6def1cef56a657b3d77dbac49d1261b19d152ff99f20d3b1000122ac3cf9",
-    "summary_sha256": "20ae4a82521fb6eef4e3e231f63e3521c1a6b89277853252fdb48d4519803c8a",
-    "scope": "課題に適用する検査と資源の観測範囲に関する本文、要約、参照を確認。"
+    "source_sha256": "59f23db2ccde233f943d8ff86a24d821c19c7604a3e71b01c6bd044aaab5e7e6",
+    "summary_sha256": "b1ad0ffbf351a7908ba8bccf9b0ad8274d8a2892550088d924909e3b6eaa7c94",
+    "scope": "案件判断・受付連結に関する原文、要約、参照を確認。"
   }
 }

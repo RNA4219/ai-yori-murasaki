@@ -1,0 +1,26 @@
+{
+  "id": "docs/releases/RA-20261127-01.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "追加要求5件の実装・テスト・CIを経てソースをmainへ反映する依頼者の承認と、結果の確認先を記す。",
+  "deps_out": [
+    "docs/acceptance/AC-20261127-01.md",
+    "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md"
+  ],
+  "deps_in": [
+    "docs/acceptance/INDEX.md",
+    "docs/releases/README.md",
+    "docs/tasks/TASK.case-decisions-11-27-2026.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "f7320d4657b0e085dfadaaf47e7c47d42e0a7d3f9e65a03604c7481c45fef91c",
+  "generated_at": "00058",
+  "review": {
+    "reviewed_at": "2026-11-26T23:08:12+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "f7320d4657b0e085dfadaaf47e7c47d42e0a7d3f9e65a03604c7481c45fef91c",
+    "summary_sha256": "782ae29f87ce603677f7fa50e957d5f89a947b4d8e94ddad8521c28feb38e7fb",
+    "scope": "案件判断・受付連結に関する原文、要約、参照を確認。"
+  }
+}

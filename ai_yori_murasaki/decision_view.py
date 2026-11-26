@@ -17,6 +17,7 @@ import json
 import os
 import re
 import sys
+from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 from importlib import resources
@@ -108,7 +109,7 @@ def _item(finding: dict, record: dict | None, mapping: dict) -> dict:
         state = "other"
     severity = finding.get("severity") if finding.get("severity") in SEVERITIES else "info"
     item = {
-        "key": ((finding.get("location") or {}).get("path")) or finding.get("finding_id"),
+        "key": finding.get("finding_id") or (finding.get("location") or {}).get("path"),
         "ref": props.get(fields.get("key", "")) if fields.get("key") else None,
         "title": finding.get("title") or "",
         "severity": severity,
@@ -124,7 +125,7 @@ def _item(finding: dict, record: dict | None, mapping: dict) -> dict:
 
 
 # モニターの deriveFindingStatus() / nextActionFor() と同一の評価規則。
-ASSESSMENT_STATUSES = ("confirmed", "candidate", "refuted", "retested", "proposed", "undetermined", "historical", "unknown")
+ASSESSMENT_STATUSES = ("confirmed", "candidate", "refuted", "retested", "retest_failed", "proposed", "undetermined", "historical", "unknown")
 
 def derive_assessment_status(f: dict | None, historical: bool = False) -> str:
     # An empty finding object is still a finding: JS treats {} as truthy.
@@ -136,6 +137,8 @@ def derive_assessment_status(f: dict | None, historical: bool = False) -> str:
     val = f.get("validation") or {}
     if val.get("result") == "success":
         return "retested"
+    if val.get("result") == "failed":
+        return "retest_failed"
     if val.get("result") == "undetermined":
         return "undetermined"
     if f.get("remediation"):
@@ -272,6 +275,54 @@ def read_decision_view(runtime, campaign_id: str, selected_previous: str | None 
     return sanitize(result, runtime.store.secrets)
 
 
+def _source_rows(findings: list[dict], items: list[dict]) -> tuple[dict, dict]:
+    by_ref, by_url = defaultdict(list), defaultdict(list)
+    for index, (finding, item) in enumerate(zip(findings, items)):
+        notion = (finding.get("extensions") or {}).get("notion") or {}
+        ref = item["ref"]
+        if isinstance(ref, str) and ref.strip():
+            by_ref[(finding.get("source") or "notion", ref)].append(index)
+        legacy_url = (finding.get("location") or {}).get("path") if finding.get("source") == "notion" else None
+        url = _http_link(notion.get("url"), legacy_url)
+        if url:
+            by_url[url].append(index)
+    return by_ref, by_url
+
+
+def _compare_items(findings: list[dict], items: list[dict], previous: dict, mapping: dict) -> list[dict]:
+    old_findings = _unique_findings(previous.get("findings") or [])
+    records = previous.get("records") or {}
+    old_items = [_item(f, records.get(f.get("finding_id")), mapping) for f in old_findings]
+    old_ids = {f["finding_id"]: i for i, f in enumerate(old_findings) if f.get("finding_id")}
+    matches = {i: old_ids[f["finding_id"]] for i, f in enumerate(findings) if f.get("finding_id") in old_ids}
+    used = set(matches.values())
+    current_sources = _source_rows(findings, items)
+    old_sources = _source_rows(old_findings, old_items)
+    for current_index, old_index in zip(current_sources, old_sources):
+        for key, indices in current_index.items():
+            candidates = old_index.get(key, [])
+            if len(indices) != 1 or len(candidates) != 1:
+                continue
+            current, old = indices[0], candidates[0]
+            current_ref, old_ref = items[current]["ref"], old_items[old]["ref"]
+            if current in matches or old in used or (current_ref and old_ref and current_ref != old_ref):
+                continue
+            matches[current] = old
+            used.add(old)
+    for index, item in enumerate(items):
+        if index not in matches:
+            item["change"] = "new"
+            continue
+        before = old_items[matches[index]]
+        if (before["state"], before["state_label"]) == (item["state"], item["state_label"]):
+            item["change"] = "unchanged"
+        else:
+            item.update(change="state_changed", prev_state=before["state"], prev_state_label=before["state_label"])
+    return [{"key": item["key"], "ref": item["ref"], "title": item["title"],
+             "prev_state": item["state"], "prev_state_label": item["state_label"]}
+            for i, item in enumerate(old_items) if i not in used]
+
+
 def build_view(campaign: dict, findings: list[dict], records: dict[str, dict] | None = None, *,
                mapping: dict, now: datetime, previous: dict | None = None,
                name: str | None = None, assessment: dict | None = None) -> dict:
@@ -288,29 +339,10 @@ def build_view(campaign: dict, findings: list[dict], records: dict[str, dict] | 
         for f, it in zip(findings, items):
             match = by_id.get(f.get("finding_id"))
             it["assessment_status"] = derive_assessment_status(match, bool(assessment.get("historical"))) if match else None
-    by_key: dict[str, dict] = {}
-    for it in items:
-        by_key.setdefault(it["key"], it)
     removed: list[dict] = []
     prev_info = None
     if previous:
-        prev_recs = previous.get("records") or {}
-        prev_items = {}
-        for f in _unique_findings(previous.get("findings") or []):
-            it = _item(f, prev_recs.get(f.get("finding_id")), mapping)
-            prev_items.setdefault(it["key"], it)
-        for it in items:
-            p = prev_items.get(it["key"])
-            if p is None:
-                it["change"] = "new"
-            elif p["state"] != it["state"] or p["state_label"] != it["state_label"]:
-                it["change"] = "state_changed"
-                it["prev_state"] = p["state"]
-                it["prev_state_label"] = p["state_label"]
-            else:
-                it["change"] = "unchanged"
-        removed = [{"key": k, "ref": p["ref"], "title": p["title"], "prev_state": p["state"],
-                    "prev_state_label": p["state_label"]} for k, p in prev_items.items() if k not in by_key]
+        removed = _compare_items(findings, items, previous, mapping)
         pc = previous.get("campaign") or {}
         prev_info = {"id": pc.get("campaign_id"), "created_at": pc.get("created_at")}
     result = {

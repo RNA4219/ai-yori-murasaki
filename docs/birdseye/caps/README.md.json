@@ -2,7 +2,7 @@
   "id": "README.md",
   "role": "overview",
   "public_api": [],
-  "summary": "製品の起動、案件・検知の表示、構成図と受付、Notion の課題 CSV と観測を照合する手順を案内する。",
+  "summary": "製品の起動、監視、課題と観測の照合、受付IDを既存監査に結んで結果を読む手順を案内する。",
   "deps_out": [
     "BLUEPRINT.md",
     "CHANGELOG.md",
@@ -30,6 +30,7 @@
     "docs/requirements/API-CONTRACTS.md",
     "docs/requirements/DECISIONS.md",
     "docs/requirements/REQUIREMENTS.md",
+    "docs/requirements/SPEC-CASE-DECISIONS.md",
     "docs/requirements/SPEC-CORE.md",
     "docs/requirements/SPEC-EVALUATION.md",
     "docs/tasks/README.md",
@@ -40,6 +41,7 @@
     "GUARDRAILS.md",
     "HUB.codex.md",
     "RUNBOOK.md",
+    "decision_view/README.md",
     "docs/PRODUCT-GUIDE.md",
     "docs/workflow-adoption.md"
   ],
@@ -50,13 +52,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "b2e1d522b44a862655e86f8e2b90c8cbe18be0ec6ec3c4e2ff7edadce7940f5b",
-  "generated_at": "00055",
+  "source_sha256": "12a1fdff21c64a4fb468211d27b34cb0921dc49d2824a54a96bc922b597b2873",
+  "generated_at": "00058",
   "review": {
-    "reviewed_at": "2026-11-26T12:47:39+00:00",
+    "reviewed_at": "2026-11-26T23:08:12+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "b2e1d522b44a862655e86f8e2b90c8cbe18be0ec6ec3c4e2ff7edadce7940f5b",
-    "summary_sha256": "378ef71520feface86b9ffad3ad1f8cfdda889df297e7e2ff921545027fe2479",
-    "scope": "課題 CSV と観測の照合に関する本文・要約・参照を確認。"
+    "source_sha256": "12a1fdff21c64a4fb468211d27b34cb0921dc49d2824a54a96bc922b597b2873",
+    "summary_sha256": "91020e601e9db7c1b3c38e7ed649905d5df0b167e4ee3a537f6d6286b6fbe239",
+    "scope": "案件判断・受付連結に関する原文、要約、参照を確認。"
   }
 }

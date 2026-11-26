@@ -2,29 +2,33 @@
   "id": "docs/requirements/API-CONTRACTS.md",
   "role": "doc",
   "public_api": [],
-  "summary": "CLIと読み取りAPIの契約。案件の重要度別件数、未集計、Blueの表示範囲、既存索引の移行を含む。",
+  "summary": "CLIと読み取りAPIの契約。受付登録・既存監査への連結、案件・検知の取得、Blueの公開範囲を記す。",
   "deps_out": [
     "docs/PRODUCT-ACCEPTANCE.md",
     "docs/SOURCES.md",
     "docs/acceptance/AC-20261123-07.md",
     "docs/acceptance/AC-20261123-08.md",
-    "docs/requirements/QUALITY-INTEGRATION.md"
+    "docs/requirements/QUALITY-INTEGRATION.md",
+    "docs/requirements/SPEC-CASE-DECISIONS.md"
   ],
   "deps_in": [
     "BLUEPRINT.md",
     "README.md",
     "docs/CONTRACTS.md",
-    "docs/requirements/COMPACTION-02.md"
+    "docs/requirements/COMPACTION-02.md",
+    "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md",
+    "docs/requirements/REQUIREMENTS-DUAL-VIEW.md",
+    "docs/requirements/SPEC-DUAL-VIEW.md"
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "9c761fd6150d6e167b3673cbd09a6d1e7a69da294065f43131dc177663a2bb4f",
-  "generated_at": "00043",
+  "source_sha256": "92a71c26c6000bf1928b53bf691335cff7b60d040d471024187810a2e7017352",
+  "generated_at": "00058",
   "review": {
-    "reviewed_at": "2026-11-23T09:59:17+00:00",
+    "reviewed_at": "2026-11-26T23:08:12+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "9c761fd6150d6e167b3673cbd09a6d1e7a69da294065f43131dc177663a2bb4f",
-    "summary_sha256": "964e621fd9bb85d260c49cc3a716bf2bdac7bf0a1ee38bceab499044f03f40b8",
-    "scope": "重要度別件数の意味、操作、索引の移行と検収の参照を原文に照合。"
+    "source_sha256": "92a71c26c6000bf1928b53bf691335cff7b60d040d471024187810a2e7017352",
+    "summary_sha256": "bb428263b205b191b75578ab82188904143decbead7b3888e0d2bbf7e3d747cd",
+    "scope": "案件判断・受付連結に関する原文、要約、参照を確認。"
   }
 }

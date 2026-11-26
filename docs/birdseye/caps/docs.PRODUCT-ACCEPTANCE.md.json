@@ -6,15 +6,18 @@
   "deps_out": [
     "docs/acceptance/AC-20261106-06.md",
     "docs/acceptance/AC-20261108-01.md",
-    "docs/requirements/ACCEPTANCE-PLAN.md"
+    "docs/requirements/ACCEPTANCE-PLAN.md",
+    "docs/reviews/REVIEW-INTAKE-20261107.md"
   ],
   "deps_in": [
     "docs/acceptance/AC-20261106-06.md",
+    "docs/acceptance/AC-20261127-01.md",
     "docs/requirements/ACCEPTANCE-PLAN.md",
     "docs/requirements/API-CONTRACTS.md",
     "docs/requirements/DECISIONS.md",
     "docs/requirements/FRONTEND-DESIGN.md",
     "docs/requirements/IMPLEMENTATION-PLAN.md",
+    "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md",
     "docs/requirements/REQUIREMENTS.md",
     "docs/requirements/SPEC-CORE.md",
     "docs/requirements/SPEC-EVALUATION.md",
@@ -23,12 +26,12 @@
   "risks": [],
   "tests": [],
   "source_sha256": "21eaa9d9a016dd8e881b77ca2877ad03a217a5e6a58d9416b9b88af4a142e4f0",
-  "generated_at": "00025",
+  "generated_at": "00058",
   "review": {
-    "reviewed_at": "2026-11-09T01:36:25.430824+00:00",
+    "reviewed_at": "2026-11-26T23:08:12+00:00",
     "reviewed_by": "Codex",
     "source_sha256": "21eaa9d9a016dd8e881b77ca2877ad03a217a5e6a58d9416b9b88af4a142e4f0",
-    "summary_sha256": "c9290d47bed9749762e668f29cf19aa58fa7ff5bcd22aaed524427fa6602b7d9",
-    "scope": "今回の原文・要約・依存を照合。P0/P1の実測、P2設計のみ、未実行と性能未実証を区別する。"
+    "summary_sha256": "bff7639944b9f0bd2ff6a68255c825f14ca9f38b2ee51ad48f0ccc0a920374ef",
+    "scope": "既存の原文と要約、追加要件・仕様からの参照を照合。"
   }
 }

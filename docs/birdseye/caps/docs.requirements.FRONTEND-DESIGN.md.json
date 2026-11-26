@@ -8,17 +8,19 @@
     "docs/requirements/MONITOR-REDESIGN.md"
   ],
   "deps_in": [
-    "docs/requirements/COMPACTION-01.md"
+    "docs/requirements/COMPACTION-01.md",
+    "docs/requirements/REQUIREMENTS-DUAL-VIEW.md",
+    "docs/requirements/SPEC-DUAL-VIEW.md"
   ],
   "risks": [],
   "tests": [],
   "source_sha256": "2f7a98ac6e70192c2d80f23bd9243b0be0a2996a10de9faabe1cacc5c8d04c60",
-  "generated_at": "00021",
+  "generated_at": "00058",
   "review": {
-    "reviewed_at": "2026-11-06T20:01:26.138861+00:00",
+    "reviewed_at": "2026-11-26T23:08:12+00:00",
     "reviewed_by": "Codex",
     "source_sha256": "2f7a98ac6e70192c2d80f23bd9243b0be0a2996a10de9faabe1cacc5c8d04c60",
-    "summary_sha256": "d6fd0a12a2817bc0469ed4c8faf15092266d8ab1e94c74e6dc5849460691b643",
-    "scope": "原文と要約・実リンクを照合。モニターの変更と技術検収を確認し、見た目のユーザー承認を代行しない。"
+    "summary_sha256": "29fdeabf28df50ee92f5c78d6b84a3e7c7305f34d1d8a8a889193b668bb7e54a",
+    "scope": "既存の原文と要約、追加要件・仕様からの参照を照合。"
   }
 }

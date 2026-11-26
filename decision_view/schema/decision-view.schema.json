@@ -272,7 +272,7 @@
    "properties": {
     "key": {
      "type": "string",
-     "description": "前回と突き合わせるための鍵（finding の location.path、なければ finding_id）"
+     "description": "課題の識別子。旧形式のJSONでは原典URLや場所が入る場合がある。"
     },
     "ref": {
      "type": [
@@ -374,6 +374,7 @@
       "candidate",
       "refuted",
       "retested",
+      "retest_failed",
       "proposed",
       "undetermined",
       "historical",

@@ -1,0 +1,30 @@
+{
+  "id": "docs/requirements/SPEC-DUAL-VIEW.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "判断画面の配信、読取API、表示と操作、試験の仕様。再検証失敗を未完了として表示し、次の行動と前回比較を示す。",
+  "deps_out": [
+    "docs/requirements/API-CONTRACTS.md",
+    "docs/requirements/FRONTEND-DESIGN.md",
+    "docs/requirements/MONITOR-ASSESSMENT.md",
+    "docs/requirements/REQUIREMENTS-DUAL-VIEW.md",
+    "docs/requirements/SPEC-ASSESSMENT.md",
+    "docs/requirements/SPEC-CASE-DECISIONS.md"
+  ],
+  "deps_in": [
+    "decision_view/README.md",
+    "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md",
+    "docs/requirements/REQUIREMENTS-DUAL-VIEW.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "cbdf488818b2002cdd42c35d61e699a7c5af149c801f2fa078986614ff6ad348",
+  "generated_at": "00058",
+  "review": {
+    "reviewed_at": "2026-11-26T23:08:12+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "cbdf488818b2002cdd42c35d61e699a7c5af149c801f2fa078986614ff6ad348",
+    "summary_sha256": "e3efa41668a9f625b7512905b8d81916c802dc28643f4f4b11dd3a17e6f84d32",
+    "scope": "案件判断・受付連結に関する原文、要約、参照を確認。"
+  }
+}

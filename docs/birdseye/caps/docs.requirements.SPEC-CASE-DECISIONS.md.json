@@ -1,0 +1,29 @@
+{
+  "id": "docs/requirements/SPEC-CASE-DECISIONS.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "T53〜T57の入力・表示・期待値を定める。受付IDと既存監査の連結、旧データ、読み取り専用画面、過去の製品検収の扱いを含む。",
+  "deps_out": [
+    "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md"
+  ],
+  "deps_in": [
+    "HUB.codex.md",
+    "README.md",
+    "docs/acceptance/AC-20261127-01.md",
+    "docs/requirements/API-CONTRACTS.md",
+    "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md",
+    "docs/requirements/SPEC-DUAL-VIEW.md",
+    "docs/tasks/TASK.case-decisions-11-27-2026.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "99115f2a863364cba69dcbf54decdb3377b11a15d373c5c925869b393393f581",
+  "generated_at": "00058",
+  "review": {
+    "reviewed_at": "2026-11-26T23:08:12+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "99115f2a863364cba69dcbf54decdb3377b11a15d373c5c925869b393393f581",
+    "summary_sha256": "f4514279670b1fa66602209e2d60763677f707dc03014cf97e5e492b92d4c712",
+    "scope": "案件判断・受付連結に関する原文、要約、参照を確認。"
+  }
+}

@@ -38,6 +38,7 @@ h1 { font-size: clamp(26px, 3vw, 40px); }
 #results { padding-inline: clamp(16px, 3vw, 28px); }
 #results li { padding: 14px 0; border-top: 1px solid #ddd9de; border-bottom: 0; }
 #results time, #results code { font-variant-numeric: tabular-nums; }
+#results .audit { grid-column: 1 / -1; overflow-wrap: anywhere; }
 .skip-link:not(:focus) { position: absolute; clip-path: inset(50%); width: 1px; height: 1px; overflow: hidden; }
 .skip-link:focus { position: absolute; z-index: 2; padding: 8px; background: #fff; }
 @media (max-width: 760px) {
@@ -111,6 +112,17 @@ async function showReceipts() {
       time.dateTime = receipt.registered_at;
       time.textContent = new Date(receipt.registered_at).toLocaleString('ja-JP');
       row.append(title, id, time);
+      const audit = document.createElement('div');
+      audit.className = 'audit';
+      if (receipt.campaign_id) {
+        const link = document.createElement('a');
+        link.href = '/#/campaign/' + encodeURIComponent(receipt.campaign_id);
+        link.textContent = '監査結果を開く（' + receipt.campaign_id + '）';
+        audit.append(link);
+      } else {
+        audit.textContent = '監査との連結なし';
+      }
+      row.append(audit);
       results.append(row);
     }
     const n = page.receipts.length;

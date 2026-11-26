@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "製品と開発手順の変更履歴。課題の検査・資源・収集範囲の更新を Task と技術検収結果に結び付ける。",
+  "summary": "製品と開発手順の変更履歴。再検証失敗、前回比較、観測の取込待ち、受付連結、類型別検証範囲を扱う変更からTaskと検収へ案内する。",
   "deps_out": [
     "docs/NOTION-IMPORT.md",
     "docs/SOURCES.md",
@@ -33,6 +33,7 @@
     "docs/acceptance/AC-20261124-01.md",
     "docs/acceptance/AC-20261126-01.md",
     "docs/acceptance/AC-20261126-02.md",
+    "docs/acceptance/AC-20261127-01.md",
     "docs/evidence/quality-integration-20261109/README.md",
     "docs/evidence/sources-light-ui-20261109/README.md",
     "docs/evidence/wazuh-live-20261108.md",
@@ -40,6 +41,7 @@
     "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
     "docs/tasks/TASK.architecture-canvas-11-23-2026.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
+    "docs/tasks/TASK.case-decisions-11-27-2026.md",
     "docs/tasks/TASK.case-intake-11-23-2026.md",
     "docs/tasks/TASK.case-severity-11-23-2026.md",
     "docs/tasks/TASK.document-consistency-11-23-2026.md",
@@ -90,13 +92,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "16e84551efde10b09de89b531a54873ad06d8340a7f2ff3ed040978f31d51158",
-  "generated_at": "00057",
+  "source_sha256": "46bbbae6bfe635d28703d2b794197be5f96439500acab282bbb4c35377f2c76b",
+  "generated_at": "00058",
   "review": {
-    "reviewed_at": "2026-11-26T18:00:09+00:00",
+    "reviewed_at": "2026-11-26T23:08:12+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "16e84551efde10b09de89b531a54873ad06d8340a7f2ff3ed040978f31d51158",
-    "summary_sha256": "83688fb0be7aae8aa684b7684bc3a615053f4033846a9628f043147d89477b8f",
-    "scope": "課題に適用する検査と資源の観測範囲に関する本文、要約、参照を確認。"
+    "source_sha256": "46bbbae6bfe635d28703d2b794197be5f96439500acab282bbb4c35377f2c76b",
+    "summary_sha256": "d48782d5973ae7641cb6cc4b38e7bc5a04a315538b6e0c341520a9939b569b69",
+    "scope": "案件判断・受付連結に関する原文、要約、参照を確認。"
   }
 }
