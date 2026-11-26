@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 import os
+import re
 from datetime import datetime
+from functools import lru_cache
 from pathlib import Path
 
 from . import assessment
@@ -60,6 +62,42 @@ def _timestamp(value) -> bool:
         return False
 
 
+_ID_CLASS = r"\[(?:0-9|a-z|A-Z|0-9a-f|0-9A-F|a-z0-9|A-Za-z0-9)\]"
+_ID_LITERAL = r"(?:[a-zA-Z0-9_-]|\\\.)"
+_ID_PATTERN = re.compile(
+    rf"\^?{_ID_LITERAL}*(?:{_ID_CLASS}(?:\+|\{{([0-9]{{1,3}})(?:,([0-9]{{1,3}}))?\}})){_ID_LITERAL}*\$?"
+)
+
+
+@lru_cache(maxsize=256)
+def id_pattern(value: str) -> re.Pattern:
+    """ID 全体に適用する。可変長部分を一つに制限して後戻りの重複を防ぐ。"""
+    match = _ID_PATTERN.fullmatch(value) if len(value) <= 128 else None
+    if not match:
+        raise DataError("invalid inventory ID pattern")
+    if match[1] and not 1 <= int(match[1]) <= int(match[2] or match[1]) <= 256:
+        raise DataError("invalid inventory ID pattern length")
+    return re.compile(value, re.ASCII)
+
+
+def _validate_coverage(doc):
+    if "types" in doc:
+        types = doc["types"]
+        if (not isinstance(types, list) or not all(_text(t) for t in types)
+                or len(types) != len(set(types))):
+            raise DataError("invalid inventory types")
+    if "id_patterns" in doc:
+        patterns = doc["id_patterns"]
+        if not isinstance(patterns, dict):
+            raise DataError("invalid inventory ID patterns")
+        for kind, values in patterns.items():
+            if (not _text(kind) or not isinstance(values, list) or not values
+                    or not all(_text(v) for v in values)):
+                raise DataError("invalid inventory ID patterns")
+            for value in values:
+                id_pattern(value)
+
+
 def _validate_observation(doc: dict) -> None:
     if not isinstance(doc, dict) or doc.get("schema_version") != "1.0.0":
         raise DataError("invalid observation version")
@@ -77,17 +115,25 @@ def _validate_observation(doc: dict) -> None:
     rows = doc.get("resources" if kind == "inventory" else "detections")
     if not isinstance(rows, list):
         raise DataError("missing observation entries")
+    if kind == "inventory":
+        _validate_coverage(doc)
     ids = set()
     for row in rows:
-        if not isinstance(row, dict) or not _text(row.get("id")) or row["id"] in ids:
-            raise DataError("missing or duplicate observation entry ID")
-        ids.add(row["id"])
+        if not isinstance(row, dict) or not _text(row.get("id")):
+            raise DataError("missing observation entry ID")
         if kind == "inventory":
             if not (_text(row.get("type")) and isinstance(row.get("name"), str) and _text(row.get("state"))):
                 raise DataError("invalid inventory entry")
+            key = (row["id"], row["type"])
         elif not (_text(row.get("resource_id")) and _text(row.get("rule"))
-                  and row.get("status") in ("active", "resolved") and _timestamp(row.get("updated_at"))):
+                  and row.get("status") in ("active", "resolved") and _timestamp(row.get("updated_at"))
+                  and ("resource_type" not in row or _text(row["resource_type"]))):
             raise DataError("invalid detection entry")
+        else:
+            key = row["id"]
+        if key in ids:
+            raise DataError("duplicate observation entry ID")
+        ids.add(key)
 
 
 def _run_events(store, campaign_id, run_id):

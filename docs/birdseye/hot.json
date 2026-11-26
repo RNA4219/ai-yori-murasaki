@@ -1,5 +1,5 @@
 {
-  "generated_at": "00055",
+  "generated_at": "00057",
   "index_snapshot": "docs/birdseye/index.json",
   "refresh_command": "RUNBOOK.md#execute と docs/BIRDSEYE.md の PowerShell 手順を参照",
   "curation_notes": "ローカル製品、要件、検収、文書運用の入口。生成世代と原文・要約の内容確認を区別する。",
@@ -47,7 +47,7 @@
     {
       "id": "HUB.codex.md",
       "role": "navigation",
-      "reason": "製品の作業と文書の入口。案件画面の操作、課題 CSV と観測の照合、各機能の検収へ案内する。",
+      "reason": "案件と製品操作の文書ハブ。課題の検査ルールと観測範囲の指定、判断画面での確認、技術検収へ案内する。",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
       "edges": [
         ".agents/skills/security-audit/SKILL.md",
@@ -89,6 +89,7 @@
         "docs/acceptance/AC-20261123-09.md",
         "docs/acceptance/AC-20261124-01.md",
         "docs/acceptance/AC-20261126-01.md",
+        "docs/acceptance/AC-20261126-02.md",
         "docs/acceptance/INDEX.md",
         "docs/acceptance/README.md",
         "docs/releases/README.md",
@@ -114,7 +115,7 @@
         "docs/workflow-adoption.md",
         "governance/policy.yaml"
       ],
-      "last_verified_at": "2026-11-26T12:47:39+00:00"
+      "last_verified_at": "2026-11-26T17:52:19+00:00"
     },
     {
       "id": "GUARDRAILS.md",
@@ -209,7 +210,7 @@
     {
       "id": "docs/tasks/README.md",
       "role": "guide",
-      "reason": "Task の運用規約と索引。課題 CSV の取り込みと照合を含む作業から対応する検収記録を引ける。",
+      "reason": "Task と対応する検収の一覧。課題の検査・資源・観測範囲を扱う Task の技術検収結果を引ける。",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
       "edges": [
         "CHANGELOG.md",
@@ -242,6 +243,7 @@
         "docs/acceptance/AC-20261123-09.md",
         "docs/acceptance/AC-20261124-01.md",
         "docs/acceptance/AC-20261126-01.md",
+        "docs/acceptance/AC-20261126-02.md",
         "docs/acceptance/README.md",
         "docs/releases/README.md",
         "docs/tasks/TASK.agent-core-11-08-2026.md",
@@ -272,15 +274,16 @@
         "docs/tasks/TASK.rsi-policy-11-06-2026.md",
         "docs/tasks/TASK.security-audit-skill-11-06-2026.md",
         "docs/tasks/TASK.sources-light-ui-11-09-2026.md",
+        "docs/tasks/TASK.tracker-evidence-11-26-2026.md",
         "docs/tasks/TASK.version-011-11-08-2026.md",
         "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
       ],
-      "last_verified_at": "2026-11-26T12:47:39+00:00"
+      "last_verified_at": "2026-11-26T18:00:09+00:00"
     },
     {
       "id": "docs/acceptance/INDEX.md",
       "role": "index",
-      "reason": "案件画面や取り込みを含む検収の一覧。課題 CSV から照合結果までの対象と公開記録を引ける。",
+      "reason": "検収、対応する Task、ソース反映の記録を引くための一覧。課題の照合条件に関する技術検収の合格を含む。",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
       "edges": [
         "docs/acceptance/AC-20261106-01.md",
@@ -310,7 +313,9 @@
         "docs/acceptance/AC-20261123-09.md",
         "docs/acceptance/AC-20261124-01.md",
         "docs/acceptance/AC-20261126-01.md",
+        "docs/acceptance/AC-20261126-02.md",
         "docs/releases/RA-20261126-01.md",
+        "docs/releases/RA-20261126-02.md",
         "docs/tasks/TASK.agent-core-11-08-2026.md",
         "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
         "docs/tasks/TASK.architecture-canvas-11-23-2026.md",
@@ -336,10 +341,11 @@
         "docs/tasks/TASK.rsi-policy-11-06-2026.md",
         "docs/tasks/TASK.security-audit-skill-11-06-2026.md",
         "docs/tasks/TASK.sources-light-ui-11-09-2026.md",
+        "docs/tasks/TASK.tracker-evidence-11-26-2026.md",
         "docs/tasks/TASK.version-011-11-08-2026.md",
         "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
       ],
-      "last_verified_at": "2026-11-26T12:47:39+00:00"
+      "last_verified_at": "2026-11-26T18:00:09+00:00"
     },
     {
       "id": "docs/RSI.md",

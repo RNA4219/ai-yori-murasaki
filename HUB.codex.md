@@ -27,6 +27,7 @@ template_version: 1.0.0
 
 | 依頼 | 入口 | 続けて読むもの |
 | --- | --- | --- |
+| 課題に関係する検査を選ぶ・資源の不在の根拠を確かめる | [列と収集範囲の設定例](docs/NOTION-IMPORT.md#利用する検査と観測範囲を指定する) | [検査名・種類・在否の検収](docs/acceptance/AC-20261126-02.md) |
 | 課題一覧と観測のずれを確かめる | [Notion CSV と観測の取り込み](docs/NOTION-IMPORT.md) | [分類・出力・画面の検収](docs/acceptance/AC-20261126-01.md) |
 | 案件を先に受け付ける・再送する | [案件受付と登録索引](docs/tasks/TASK.case-intake-11-23-2026.md) | [10万件からの登録と再送](docs/acceptance/AC-20261123-05.md) |
 | 大規模な案件一覧を構築・更新する | [台帳の検証と一覧の索引](docs/tasks/TASK.monitor-index-11-23-2026.md) | [10万案件の検収](docs/acceptance/AC-20261123-04.md) |

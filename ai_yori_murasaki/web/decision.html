@@ -293,6 +293,10 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
         <summary id="drift-list-label">ずれの候補を見る</summary>
         <div class="items" id="drift-candidates"></div>
       </details>
+      <details class="fold" id="drift-others-list">
+        <summary id="drift-others-label">そのほかの照合結果を見る</summary>
+        <div class="items" id="drift-others"></div>
+      </details>
     </section>
 
     <section class="sec" id="sec-soon" aria-labelledby="h-soon">
@@ -763,30 +767,42 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
   };
   var driftMethods = {id: 'ID の一致', name: '名前の一致', inferred: '推定'};
 
-  function driftCandidate(item) {
+  function driftItem(item, candidate) {
     var row = el('details', 'item');
     var summary = el('summary');
-    summary.appendChild(el('span', 'chip warn', '候補'));
+    var label = driftLabels[item.classification];
+    summary.appendChild(el('span', candidate ? 'chip warn' : 'chip', candidate ? '候補' : label));
     var heading = el('span', 'item-main');
     heading.appendChild(el('span', 'item-title', item.title || item.finding_id));
-    heading.appendChild(el('span', 'item-meta', driftLabels[item.classification]));
+    var description = candidate ? label : driftReasons[item.reason];
+    if (description) heading.appendChild(el('span', 'item-meta', description));
     summary.appendChild(heading);
     var arrow = el('span', 'chev');
     arrow.setAttribute('aria-hidden', 'true');
     summary.appendChild(arrow);
     row.appendChild(summary);
+    row.addEventListener('toggle', function () { row.appendChild(driftEvidence(item)); }, {once:true});
+    return row;
+  }
+
+  function driftEvidence(item) {
     var evidence = el('div', 'item-more');
     var source = el('dl', 'facts');
     fact(source, '課題 ID', item.finding_id);
     fact(source, '一覧の状態', item.source_status || '未記録');
-    fact(source, '観測の取得日時', item.collected_at.join('、'));
+    fact(source, '観測の取得日時', item.collected_at.join('、') || '該当する観測なし');
+    if (Array.isArray(item.rules_used)) {
+      fact(source, 'ルールの絞り込み', item.rules_unfiltered ? '絞り込みなし' : '指定したルールのみ');
+      fact(source, '照合に使ったルール', item.rules_used.join('、') || '該当する検知なし');
+      fact(source, '除外した資源', item.excluded_resource_count + ' 件');
+    }
     if (item.stale) fact(source, '鮮度', '古い観測を含みます');
     evidence.appendChild(source);
     item.matches.forEach(function (match) {
       var details = el('dl', 'facts');
       fact(details, '資源 ID', match.id);
       if (match.name) fact(details, '資源名', match.name);
-      if (match.type) fact(details, '資源の種類', match.type);
+      fact(details, '資源の種類', match.type || '不明');
       fact(details, '結び方', driftMethods[match.method]);
       fact(details, '資源の一覧', match.in_inventory === true ? 'あり' :
         match.in_inventory === false ? '一覧に無し' : '未確認');
@@ -798,8 +814,7 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
       fact(details, '検知', detections.childElementCount ? detections : '対応する記録なし');
       evidence.appendChild(details);
     });
-    row.appendChild(evidence);
-    return row;
+    return evidence;
   }
 
   function renderDrift(report, cid) {
@@ -808,9 +823,10 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     if (report.status === 'withheld') return;
     if (report.campaign_id !== cid || !Array.isArray(report.observations)) throw Error('drift unavailable');
     if (!report.observations.length) return;
-    var counts = $('drift-counts'), candidates = $('drift-candidates');
+    var counts = $('drift-counts'), candidates = $('drift-candidates'), others = $('drift-others');
     clear(counts);
     clear(candidates);
+    clear(others);
     Object.keys(driftLabels).forEach(function (key) {
       var count = report.counts[key];
       if (!Number.isInteger(count) || count < 0) throw Error('invalid count');
@@ -825,13 +841,14 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
       fact(counts, '照らせない理由', reasons);
     }
     report.items.forEach(function (item) {
-      if (['open_absent', 'open_resolved', 'closed_active'].includes(item.classification)) {
-        candidates.appendChild(driftCandidate(item));
-      }
+      var candidate = ['open_absent', 'open_resolved', 'closed_active'].includes(item.classification);
+      (candidate ? candidates : others).appendChild(driftItem(item, candidate));
     });
     var total = candidates.childElementCount;
     $('drift-list').hidden = !total;
     $('drift-list-label').textContent = 'ずれの候補を見る（' + total + ' 件）';
+    $('drift-others-list').hidden = !others.childElementCount;
+    $('drift-others-label').textContent = 'そのほかの照合結果を見る（' + others.childElementCount + ' 件）';
     section.hidden = false;
   }
 

@@ -1,0 +1,30 @@
+{
+  "id": "docs/acceptance/AC-20261126-02.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "summary": "T49〜T52 と旧形式の受入条件および製品コミットの正式な manual-bb、回帰試験と CI の結果を記録。最終 PR head の記録へ案内する。",
+  "generated_at": "00057",
+  "source_sha256": "c96ee7195c1eef715f63ec0f91a272cb5f955b0464cf9ffab7b92eefe0dcd257",
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/INDEX.md",
+    "docs/releases/RA-20261126-02.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.tracker-evidence-11-26-2026.md"
+  ],
+  "deps_out": [
+    "docs/NOTION-IMPORT.md",
+    "docs/releases/RA-20261126-02.md",
+    "docs/tasks/TASK.tracker-evidence-11-26-2026.md"
+  ],
+  "review": {
+    "reviewed_at": "2026-11-26T18:00:09+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "c96ee7195c1eef715f63ec0f91a272cb5f955b0464cf9ffab7b92eefe0dcd257",
+    "summary_sha256": "45d01084f1e6c5b5fe21e08b30b2249796a4cba24a261a575a17188721514865",
+    "scope": "課題に適用する検査と資源の観測範囲に関する本文、要約、参照を確認。"
+  }
+}

@@ -2,7 +2,7 @@
   "id": "docs/releases/README.md",
   "role": "guide",
   "public_api": [],
-  "summary": "公開承認記録の一覧。課題 CSV と観測照合のソース反映について、対象 Task と承認の範囲を示す。",
+  "summary": "公開承認の一覧と運用手順。課題と観測の照合条件を追加するソース反映の範囲を案内する。",
   "deps_out": [
     "docs/CONTRACTS.md",
     "docs/acceptance/AC-20261107-03.md",
@@ -14,6 +14,7 @@
     "docs/releases/RA-20261109-01.md",
     "docs/releases/RA-20261109-02.md",
     "docs/releases/RA-20261126-01.md",
+    "docs/releases/RA-20261126-02.md",
     "docs/tasks/TASK.readme-release-11-08-2026.md",
     "docs/tasks/TASK.version-011-11-08-2026.md"
   ],
@@ -27,13 +28,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "b2bb2fc0db0531e195ae8d98fe20381dab001a7b8d15b90d7d44dbe8d86a9a43",
-  "generated_at": "00055",
+  "source_sha256": "3c84b58b320487b8e35d02b758548383f4ebd91b2ef028e298dd47c2a567819d",
+  "generated_at": "00056",
   "review": {
-    "reviewed_at": "2026-11-26T12:47:39+00:00",
+    "reviewed_at": "2026-11-26T17:52:19+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "b2bb2fc0db0531e195ae8d98fe20381dab001a7b8d15b90d7d44dbe8d86a9a43",
-    "summary_sha256": "80090bcf2667edb211548ea6011271314a4a84d52cd5f32c5f28332108fc1119",
-    "scope": "課題 CSV と観測の照合に関する本文・要約・参照を確認。"
+    "source_sha256": "3c84b58b320487b8e35d02b758548383f4ebd91b2ef028e298dd47c2a567819d",
+    "summary_sha256": "09b8aff58139b87f9eac01506b4ec58f3d6caac364ff8c8ab0c5aca5be675450",
+    "scope": "課題に適用する検査と資源の観測範囲に関する本文、要約、参照を確認。"
   }
 }

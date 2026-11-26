@@ -2,7 +2,7 @@
   "id": "HUB.codex.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "製品の作業と文書の入口。案件画面の操作、課題 CSV と観測の照合、各機能の検収へ案内する。",
+  "summary": "案件と製品操作の文書ハブ。課題の検査ルールと観測範囲の指定、判断画面での確認、技術検収へ案内する。",
   "deps_out": [
     ".agents/skills/security-audit/SKILL.md",
     "AGENTS.md",
@@ -43,6 +43,7 @@
     "docs/acceptance/AC-20261123-09.md",
     "docs/acceptance/AC-20261124-01.md",
     "docs/acceptance/AC-20261126-01.md",
+    "docs/acceptance/AC-20261126-02.md",
     "docs/acceptance/INDEX.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
@@ -78,13 +79,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "006d53bae3e19c3a175fdc089ecad4a7a75ab3e98d4b2aa1ca9a51bfa4562389",
-  "generated_at": "00055",
+  "source_sha256": "f0c3f2a49c81338682d660be0449876e23beeb109f62d49fde6688f145456dae",
+  "generated_at": "00056",
   "review": {
-    "reviewed_at": "2026-11-26T12:47:39+00:00",
+    "reviewed_at": "2026-11-26T17:52:19+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "006d53bae3e19c3a175fdc089ecad4a7a75ab3e98d4b2aa1ca9a51bfa4562389",
-    "summary_sha256": "e360f54fc93ba160ae7dfffef5b6eaa4017e882ba176056adec5850762183bcf",
-    "scope": "課題 CSV と観測の照合に関する本文・要約・参照を確認。"
+    "source_sha256": "f0c3f2a49c81338682d660be0449876e23beeb109f62d49fde6688f145456dae",
+    "summary_sha256": "aec1caff9dab8c5f18484f70a3932be72156eaf7b5a37f9ad337b2774118c73c",
+    "scope": "課題に適用する検査と資源の観測範囲に関する本文、要約、参照を確認。"
   }
 }

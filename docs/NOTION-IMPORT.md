@@ -88,3 +88,74 @@ aym assess drift --campaign $campaign --format csv --output drift.csv
 ```
 
 分類は人が確認するための候補です。結果を読んでも課題の状態は変わりません。観測範囲や取得日時を見て、追加調査や原典での更新を判断してください。
+
+## 利用する検査と観測範囲を指定する
+
+たとえば、同じディスクに「暗号化」と「バックアップ」の検知があるとします。暗号化の課題を閉じたあと、その課題の解決状況は暗号化の検査だけで判断できます。次の例は、空の検証用案件で上と同じ取り込みコマンドを使います。`context.json` の対象と版を案件に合わせてください。
+
+ワークスペースの `decision-view/mapping.json` に次の列の対応を設定します。既存の設定を使う場合は `fields` に利用する列を足し、同じ階層に `drift` を置きます。
+
+```json
+{
+  "fields": {
+    "status": "ステータス", "key": "棚卸キー", "scope": "対象環境",
+    "provider": "提供元", "region": "対象地域"
+  },
+  "status_values": {"未対応": "open", "修正済": "done"},
+  "drift": {
+    "rule_field": "課題種別",
+    "rules_by_value": {"暗号化": ["DiskEncrypted"]},
+    "excluded_terms": ["共有ラベル"]
+  }
+}
+```
+
+**issues.csv**
+
+```csv
+タイトル,棚卸キー,ステータス,対象環境,提供元,対象地域,課題種別,概要
+暗号化の確認,EX-11,修正済,example-team,example,east,暗号化,disk-0012 を確認
+廃止申請の確認,EX-12,未対応,example-team,example,east,棚卸,disk-0013 を確認
+```
+
+**inventory.json**
+
+```json
+{
+  "schema_version": "1.0.0", "kind": "inventory", "collected_at": "2026-01-10T10:00:00Z",
+  "scope": {"provider": "example", "account": "example-team", "regions": ["east"]},
+  "method": "例示用のディスク一覧", "types": ["disk"],
+  "id_patterns": {"disk": ["disk-[0-9]{4}"]},
+  "resources": [{"id": "disk-0012", "type": "disk", "name": "ArchiveDisk", "state": "ready"}]
+}
+```
+
+**detections.json**
+
+```json
+{
+  "schema_version": "1.0.0", "kind": "detections", "collected_at": "2026-01-10T10:00:00Z",
+  "scope": {"provider": "example", "account": "example-team", "regions": ["east"]},
+  "method": "例示用の検査結果",
+  "detections": [
+    {"id": "check-21", "resource_id": "disk-0012", "resource_type": "disk",
+     "rule": "DiskEncrypted", "status": "resolved", "updated_at": "2026-01-10T09:50:00Z"},
+    {"id": "check-22", "resource_id": "disk-0012", "resource_type": "disk",
+     "rule": "BackupRecent", "status": "active", "updated_at": "2026-01-10T09:55:00Z"}
+  ]
+}
+```
+
+取り込み後に `aym assess drift --campaign $campaign` を実行します。「暗号化の確認」は `aligned`、使った検査は `DiskEncrypted` です。「廃止申請の確認」は `open_absent` です。提供元・アカウント・地域・収集した種類が一致し、指定した形式に合う `disk-0013` が資源一覧にないことを確認できます。
+
+### 設定を自分のデータに合わせる
+
+- **関係する検査**　`rule_field` は CSV の1列を指します。その列の値から `rules_by_value` で検査名のリストを引きます。列値・検査名は大文字小文字を区別して完全一致で比較します。設定を省くか、列の値に対応がなければ、該当資源のすべての検知を使い、`rules_unfiltered` が `true` になります。対応を設定した課題で該当する検知が0件でも、解決を裏付ける検知には数えません。
+- **除外する資源**　観測の `scope.account` と同じ資源 ID は常に除きます。さらに `excluded_terms` に資源の ID または名前を完全一致で指定できます。追加の除外語の既定値は空です。`excluded_resource_count` は、その課題で照合候補になって除かれた資源の件数です。
+- **同じ ID の別種の資源**　検知の `resource_type` は対象資源の `type` と同じ値にします。複数の種類が同じ ID を使う場合、型がない検知との結び付きは推定になります。種類を省いても ID が一意な従来の入力は照合できます。
+- **資源の在否**　`types` には今回実際に収集した種類を書きます。資源が一覧にないことを確かめるには、その種類が収集対象で、課題の提供元・アカウント・地域に該当する観測範囲が一意に定まる必要があります。収集対象外や範囲不明なら JSON の `in_inventory` は `null`（不明）です。アカウント用の種類名が必要なら収集側で決めます。`scope.account` と同じ ID の除外は種類にかかわらず適用されます。一意な既知の ID は、観測がすべて従来形式なら従来どおり照合します。種類を指定した検知と従来の資源一覧を組み合わせた場合にも、不在の判定には課題の提供元・アカウント・地域の明示が必要です。
+- **課題本文にだけある ID**　`id_patterns` は種類ごとの ID の書式です。例の `disk-[0-9]{4}` は、末尾が数字4桁の ID 全体に一致します。課題のアカウント・提供元・地域が明示され、観測の範囲と資源の種類を一意に特定できるときに不在を判定します。書式を省いた場合は本文だけから新しい資源を作りません。パスや ARN の一部分にも適用しません。
+
+ID の書式は ASCII の英数字・`_`・`-`・ドットを含む識別子に使えます。ドットは書式内で `\.`（JSON 文字列内では `\\.`）と書きます。可変部分は1か所で、`[0-9]`、`[a-z]`、`[A-Z]`、`[0-9a-f]`、`[0-9A-F]`、`[a-z0-9]`、`[A-Za-z0-9]` から1つ選び、その後ろに繰り返しの `+`、`{n}`、`{n,m}` のいずれかを付けます。回数を指定する場合は1〜256です。
+
+判断画面では候補一覧のほか「そのほかの照合結果を見る」からも課題を選べます。実際に使った検査名は `rules_used`、検査を絞ったかどうかは `rules_unfiltered` で確認できます。Markdown と CSV の表にも、この2項目と除外件数・資源の種類・在否が並びます。表の `unknown` は在否不明を表します。

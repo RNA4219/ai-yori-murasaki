@@ -2,7 +2,7 @@
   "id": "docs/tasks/README.md",
   "role": "operations",
   "public_api": [],
-  "summary": "Task の運用規約と索引。課題 CSV の取り込みと照合を含む作業から対応する検収記録を引ける。",
+  "summary": "Task と対応する検収の一覧。課題の検査・資源・観測範囲を扱う Task の技術検収結果を引ける。",
   "deps_out": [
     "CHANGELOG.md",
     "HUB.codex.md",
@@ -34,6 +34,7 @@
     "docs/acceptance/AC-20261123-09.md",
     "docs/acceptance/AC-20261124-01.md",
     "docs/acceptance/AC-20261126-01.md",
+    "docs/acceptance/AC-20261126-02.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
@@ -64,6 +65,7 @@
     "docs/tasks/TASK.rsi-policy-11-06-2026.md",
     "docs/tasks/TASK.security-audit-skill-11-06-2026.md",
     "docs/tasks/TASK.sources-light-ui-11-09-2026.md",
+    "docs/tasks/TASK.tracker-evidence-11-26-2026.md",
     "docs/tasks/TASK.version-011-11-08-2026.md",
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
   ],
@@ -77,13 +79,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "bcab0b9f0221bef7f11b61f7104bdbb93c09493c2ec42f9b3ab29e4e187f4fde",
-  "generated_at": "00055",
+  "source_sha256": "22aac1cddf2927807b90ce5a1893291f6dba11e38c5e724c21db6e8dbbc89530",
+  "generated_at": "00057",
   "review": {
-    "reviewed_at": "2026-11-26T12:47:39+00:00",
+    "reviewed_at": "2026-11-26T18:00:09+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "bcab0b9f0221bef7f11b61f7104bdbb93c09493c2ec42f9b3ab29e4e187f4fde",
-    "summary_sha256": "af5f73fe98ea564ee3e45e84168068abea6033f248e58b6ae49cbd9f2cbd91b6",
-    "scope": "課題 CSV と観測の照合に関する本文・要約・参照を確認。"
+    "source_sha256": "22aac1cddf2927807b90ce5a1893291f6dba11e38c5e724c21db6e8dbbc89530",
+    "summary_sha256": "5529985238a168e371b7487e7570a972a962597d85174365e612682a8058dfd8",
+    "scope": "課題に適用する検査と資源の観測範囲に関する本文、要約、参照を確認。"
   }
 }

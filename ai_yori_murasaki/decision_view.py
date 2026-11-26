@@ -20,6 +20,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from importlib import resources
+from .drift_policy import validate_drift_policy
 from .jsonio import DataError
 from .storage import sanitize
 from urllib.parse import urlsplit
@@ -236,6 +237,7 @@ def load_mapping(store) -> dict:
         for key, lower in (("due_soon_days", 0), ("top_n", 1)):
             if key in rules and (type(rules[key]) is not int or rules[key] < lower):
                 raise ValueError("mapping rule bounds")
+        validate_drift_policy(mapping.get("drift", {}))
         return mapping
     except (OSError, ValueError, UnicodeDecodeError, TypeError) as exc:
         raise DataError("decision-view mapping unavailable", "hold") from exc

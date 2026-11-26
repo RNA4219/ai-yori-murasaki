@@ -55,7 +55,9 @@ def read_drift(runtime, campaign_id: str, *, use_index: bool = True) -> dict:
 
 
 _COLUMNS = ("finding_id", "title", "source_status", "classification", "reason", "stale",
-            "resource_id", "match_method", "detection_id", "collected_at")
+            "resource_id", "match_method", "detection_id", "collected_at", "rules_used",
+            "rules_unfiltered", "excluded_resource_count", "resource_type", "in_inventory")
+_PRESENCE = {True: "true", False: "false", None: "unknown"}
 
 
 def _rows(report):
@@ -65,7 +67,10 @@ def _rows(report):
                item["reason"] or "", str(item["stale"]).lower(),
                ", ".join(m["id"] for m in matches), ", ".join(m["method"] for m in matches),
                ", ".join(det["id"] for m in matches for det in m["detections"]),
-               ", ".join(item["collected_at"]))
+               ", ".join(item["collected_at"]), ", ".join(item["rules_used"]),
+               str(item["rules_unfiltered"]).lower(), str(item["excluded_resource_count"]),
+               ", ".join(m["type"] or "" for m in matches),
+               ", ".join(_PRESENCE[m["in_inventory"]] for m in matches))
 
 
 def _csv_cell(value: str) -> str:
