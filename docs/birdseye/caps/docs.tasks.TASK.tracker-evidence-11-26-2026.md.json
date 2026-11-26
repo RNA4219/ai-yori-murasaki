@@ -1,0 +1,29 @@
+{
+  "id": "docs/tasks/TASK.tracker-evidence-11-26-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "summary": "課題ごとの検査ルール、除外資源、同じ ID の異なる種類、観測範囲から判断できる在否の要件を記す。",
+  "generated_at": "00056",
+  "source_sha256": "d7a76ffdb2ab00bbc2b23b8231e5e549246ffb4e9a914c5ff3d2ca61b325c61b",
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261126-02.md",
+    "docs/acceptance/INDEX.md",
+    "docs/releases/RA-20261126-02.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "docs/NOTION-IMPORT.md",
+    "docs/acceptance/AC-20261126-02.md",
+    "docs/releases/RA-20261126-02.md"
+  ],
+  "review": {
+    "reviewed_at": "2026-11-26T17:52:19+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "d7a76ffdb2ab00bbc2b23b8231e5e549246ffb4e9a914c5ff3d2ca61b325c61b",
+    "summary_sha256": "2c337820b8f8597db31c6f6f14020d1edee6a8cfd02e033bbe6de4e31ed23c9b",
+    "scope": "課題に適用する検査と資源の観測範囲に関する本文、要約、参照を確認。"
+  }
+}

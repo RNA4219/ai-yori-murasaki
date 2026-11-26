@@ -1,0 +1,27 @@
+{
+  "id": "docs/releases/RA-20261126-02.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "summary": "照合条件の更新を main に反映するソース承認範囲と検証条件、取り消し方法を定める。",
+  "generated_at": "00056",
+  "source_sha256": "af956e3a22c637208783b0206f727b4081b093e00ed956ff87fd130f5c200b57",
+  "deps_in": [
+    "docs/acceptance/AC-20261126-02.md",
+    "docs/acceptance/INDEX.md",
+    "docs/releases/README.md",
+    "docs/tasks/TASK.tracker-evidence-11-26-2026.md"
+  ],
+  "deps_out": [
+    "docs/acceptance/AC-20261126-02.md",
+    "docs/tasks/TASK.tracker-evidence-11-26-2026.md"
+  ],
+  "review": {
+    "reviewed_at": "2026-11-26T17:52:19+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "af956e3a22c637208783b0206f727b4081b093e00ed956ff87fd130f5c200b57",
+    "summary_sha256": "5f55ac0aec1792c340953480e7c6af5e340010c8117cbe308174216dae4df1f2",
+    "scope": "課題に適用する検査と資源の観測範囲に関する本文、要約、参照を確認。"
+  }
+}

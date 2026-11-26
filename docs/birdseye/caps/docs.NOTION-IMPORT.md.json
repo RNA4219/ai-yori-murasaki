@@ -4,22 +4,24 @@
   "public_api": [],
   "risks": [],
   "tests": [],
-  "summary": "合成した Notion の課題 CSV と観測ファイルを取り込み、判断画面で課題と観測のずれを調べて結果を書き出す手順。",
-  "generated_at": "00055",
-  "source_sha256": "0d216b415ffb2f02892fe3b39a52faee04e700301ed44f38065848dba6f45627",
+  "summary": "合成した課題 CSV と観測 JSON の取り込み、判断画面と書き出しの操作例。課題列と検査名、除外語、資源の種類と ID の書式を設定する手順を示す。",
+  "generated_at": "00056",
+  "source_sha256": "c6451a8f944005b3ae52cec4bb32fa98a5f5319272e9857fe94a3f182d47ca89",
   "deps_in": [
     "CHANGELOG.md",
     "HUB.codex.md",
     "README.md",
     "docs/acceptance/AC-20261126-01.md",
-    "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md"
+    "docs/acceptance/AC-20261126-02.md",
+    "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md",
+    "docs/tasks/TASK.tracker-evidence-11-26-2026.md"
   ],
   "deps_out": [],
   "review": {
-    "reviewed_at": "2026-11-26T12:47:39+00:00",
+    "reviewed_at": "2026-11-26T17:52:19+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "0d216b415ffb2f02892fe3b39a52faee04e700301ed44f38065848dba6f45627",
-    "summary_sha256": "e3a553b03456183fb7c4bf824ab810055a3802d10e755d76c3a470a94fa0a002",
-    "scope": "課題 CSV と観測の照合に関する本文・要約・参照を確認。"
+    "source_sha256": "c6451a8f944005b3ae52cec4bb32fa98a5f5319272e9857fe94a3f182d47ca89",
+    "summary_sha256": "1f409da7b15d3fd1f94dea4466adddf44a37eae1db7f57de57eedd069e12143c",
+    "scope": "課題に適用する検査と資源の観測範囲に関する本文、要約、参照を確認。"
   }
 }

@@ -2,7 +2,7 @@
   "id": "docs/acceptance/INDEX.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "案件画面や取り込みを含む検収の一覧。課題 CSV から照合結果までの対象と公開記録を引ける。",
+  "summary": "製品の技術検収、対応する Task、ソース反映の記録を引くための一覧。課題の照合条件の検収を含む。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -31,7 +31,9 @@
     "docs/acceptance/AC-20261123-09.md",
     "docs/acceptance/AC-20261124-01.md",
     "docs/acceptance/AC-20261126-01.md",
+    "docs/acceptance/AC-20261126-02.md",
     "docs/releases/RA-20261126-01.md",
+    "docs/releases/RA-20261126-02.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
     "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
     "docs/tasks/TASK.architecture-canvas-11-23-2026.md",
@@ -57,6 +59,7 @@
     "docs/tasks/TASK.rsi-policy-11-06-2026.md",
     "docs/tasks/TASK.security-audit-skill-11-06-2026.md",
     "docs/tasks/TASK.sources-light-ui-11-09-2026.md",
+    "docs/tasks/TASK.tracker-evidence-11-26-2026.md",
     "docs/tasks/TASK.version-011-11-08-2026.md",
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
   ],
@@ -69,13 +72,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "94575673825384ebaaac56fa849d0441f4bfb7c5d14c6e5d68a8e288a701989f",
-  "generated_at": "00055",
+  "source_sha256": "937d0798a438855c268f5d045c0ceff977bab4cef2181336f51323562e98cea5",
+  "generated_at": "00056",
   "review": {
-    "reviewed_at": "2026-11-26T12:47:39+00:00",
+    "reviewed_at": "2026-11-26T17:52:19+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "94575673825384ebaaac56fa849d0441f4bfb7c5d14c6e5d68a8e288a701989f",
-    "summary_sha256": "d1d81f080afb3513582bcc7d4496f954df5196c1f3be6ccf5c3d2e4dec714066",
-    "scope": "課題 CSV と観測の照合に関する本文・要約・参照を確認。"
+    "source_sha256": "937d0798a438855c268f5d045c0ceff977bab4cef2181336f51323562e98cea5",
+    "summary_sha256": "3ce03658144b9701e11a08d18c1dfff1573702227cf3dcd385663f16ed9b82ac",
+    "scope": "課題に適用する検査と資源の観測範囲に関する本文、要約、参照を確認。"
   }
 }

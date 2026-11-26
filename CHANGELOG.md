@@ -14,6 +14,8 @@ Keep a Changelog の区分で管理する。記録には既存最大番号 +1 �
 
 ### Changed
 
+- 0045 — 2026-11-26。課題ごとに検査を絞り、使用したルールと除外した資源の件数を確認できる。資源の種類と収集範囲を指定し、同じ ID の検知の混同や、対象外の資源を不在とする判定を防ぐ。[設定例](docs/NOTION-IMPORT.md)・[Task 20261126-02](docs/tasks/TASK.tracker-evidence-11-26-2026.md)・[技術検収](docs/acceptance/AC-20261126-02.md)
+
 - 0044 — 2026-11-26。Notion の課題 CSV とローカルの資源・検知一覧を取り込み、判断画面や CLI で照合できるようにした。[操作例](docs/NOTION-IMPORT.md)・[Task 20261126-01](docs/tasks/TASK.offline-tracker-drift-11-26-2026.md)・[検収](docs/acceptance/AC-20261126-01.md)
 
 - 0043 — 2026-11-24。構成図の通常保存でダウンロードを拒否されても、利用者が保存を確認するまで未保存の編集を保護する。[Task 20261124-01](docs/tasks/TASK.frontend-workspace-11-24-2026.md)・[技術検収](docs/acceptance/AC-20261124-01.md)

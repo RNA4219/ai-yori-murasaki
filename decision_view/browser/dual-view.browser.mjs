@@ -64,6 +64,27 @@ try {
       };
       await page.route('**/api/campaigns/'+cid+'/decision-view',r=>r.fulfill({
         status:200,contentType:'application/json',body:JSON.stringify({decision_view:mock})}));
+      const observedAt = '2026-11-20T00:00:00Z';
+      const aligned = {
+        finding_id:'reviewed-item', title:'通知ルールを照合', source_status:'完了', classification:'aligned',
+        rules_used:['audit-setting'], rules_unfiltered:false, excluded_resource_count:1,
+        collected_at:[observedAt], matches:[{id:'node-a', type:'node', method:'id', in_inventory:true,
+          detections:[{id:'notice-a', rule:'audit-setting', status:'resolved', updated_at:observedAt}]}]
+      };
+      const uncertain = {
+        ...aligned, finding_id:'unverified-item', title:'範囲外の種類を照合', source_status:'未対応',
+        classification:'uncomparable', reason:'no_detections', rules_used:[], rules_unfiltered:true,
+        matches:[{id:'disk-a', type:'disk', method:'id', in_inventory:null, detections:[]}]
+      };
+      const legacy = {
+        finding_id:'legacy-item', title:'以前の照合結果', source_status:'未対応', classification:'open_absent',
+        collected_at:[observedAt], matches:[{id:'archive-a', type:null, method:'id', in_inventory:false, detections:[]}]
+      };
+      await page.route('**/api/campaigns/'+cid+'/drift',route=>route.fulfill({json:{
+        campaign_id:cid, observations:[{kind:'inventory',collected_at:observedAt}],
+        counts:{open_absent:1, open_resolved:0, closed_active:0, aligned:1, uncomparable:1},
+        reasons:{no_detections:1}, items:[aligned, uncertain, legacy]
+      }}));
       await page.goto(base+'/decision?campaign='+cid);
       await page.locator('#h-sum').waitFor({state:'visible'});
       assert.match(await page.locator('#h-sum').innerText(),/終わっていない課題は全部で 1 件です/);
@@ -88,6 +109,21 @@ try {
       assert.equal(await page.locator('#q').inputValue(),'');
       assert.equal(await page.locator('#f-any').getAttribute('aria-pressed'),'true');
       assert.equal(await page.locator('#all .item').count(),mock.items.length);
+      await page.locator('#drift-list > summary').click();
+      await page.locator('#drift-candidates .item > summary').click();
+      await page.locator('#drift-candidates').getByText('一覧に無し',{exact:true}).waitFor();
+      await page.locator('#drift-others-list > summary').click();
+      const reviewedRow = page.locator('#drift-others .item').filter({hasText:aligned.title});
+      await reviewedRow.locator('summary').focus();
+      await page.keyboard.press('Enter');
+      await reviewedRow.getByText('指定したルールのみ',{exact:true}).waitFor();
+      await reviewedRow.getByText('audit-setting',{exact:true}).waitFor();
+      await reviewedRow.getByText('1 件',{exact:true}).waitFor();
+      const uncertainRow = page.locator('#drift-others .item').filter({hasText:uncertain.title});
+      await uncertainRow.locator('summary').click();
+      for (const label of ['絞り込みなし','該当する検知なし','disk','未確認']) {
+        await uncertainRow.getByText(label,{exact:true}).waitFor();
+      }
 
       // 公開済みの画面を読み直しても、非公開応答の後に以前の件数を残さない。
       await page.route('**/api/campaigns/'+cid+'/decision-view',
