@@ -2,6 +2,7 @@
 
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
+import unicodedata
 
 
 CLASSIFICATIONS = ("open_absent", "open_resolved", "closed_active", "aligned", "uncomparable")
@@ -29,8 +30,22 @@ def _text(value):
     return value if isinstance(value, str) else ""
 
 
+def _continues_identifier(neighbor, edge):
+    if neighbor in ("_", "-"):
+        return True
+    if not neighbor.isalnum():
+        return False
+    if edge.isascii() and not neighbor.isascii():
+        # 和文の中の ASCII 識別子は、助詞や漢字との間に空白が入らないことがある。
+        return not unicodedata.name(neighbor, "").startswith((
+            "HIRAGANA", "KATAKANA", "HALFWIDTH KATAKANA", "CJK UNIFIED IDEOGRAPH",
+            "CJK COMPATIBILITY IDEOGRAPH", "IDEOGRAPHIC ITERATION MARK",
+        ))
+    return True
+
+
 def _word(text, term):
-    """英数字、アンダースコア、ハイフンで続く識別子の一部を除く。"""
+    """識別子全体の一致を、日本語の文中でも判定する。"""
     if not term:
         return False
     offset = 0
@@ -38,8 +53,7 @@ def _word(text, term):
         end = pos + len(term)
         before = text[pos - 1] if pos else ""
         after = text[end:end + 1]
-        if not (before.isalnum() or before in ("_", "-") or
-                after.isalnum() or after in ("_", "-")):
+        if not (_continues_identifier(before, term[0]) or _continues_identifier(after, term[-1])):
             return True
         offset = pos + 1
     return False

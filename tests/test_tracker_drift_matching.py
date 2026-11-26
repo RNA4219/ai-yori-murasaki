@@ -36,6 +36,18 @@ def report(findings, observations, records=None):
 
 
 class TrackerDriftMatchingTests(unittest.TestCase):
+    def test_japanese_prose_delimits_ascii_ids_but_longer_identifiers_do_not(self):
+        observations = [observation("detections", [detection("node-27", "active")])]
+        for title in ("node-27の通知設定", "対象node-27を確認", "テストnode-27用"):
+            with self.subTest(title=title):
+                item = report([issue("task", title, "済")], observations)["items"][0]
+                self.assertEqual(item["classification"], "closed_active")
+                self.assertEqual(item["matches"][0]["method"], "id")
+        for title in ("node-270の通知", "xnode-27", "node-27_backup", "node-27-other", "énode-27"):
+            with self.subTest(title=title):
+                item = report([issue("task", title, "済")], observations)["items"][0]
+                self.assertEqual(item["reason"], "no_resource")
+
     def test_five_classes_four_reasons_and_source_evidence(self):
         findings = [
             issue("gone", "確認 (node-gone)"),

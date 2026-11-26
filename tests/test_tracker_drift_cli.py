@@ -37,7 +37,7 @@ def tracker_cases():
     return [
         ("case-absent", "Open", ACCOUNT, "inspect asset-removed"),
         ("case-resolved", "Open", ACCOUNT, "inspect QuartzName"),
-        ("case-active", "Closed", ACCOUNT, "inspect asset-active"),
+        ("case-active", "Closed", ACCOUNT, "対象asset-activeの通知設定"),
         ("case-aligned", "UnknownLabel", ACCOUNT, "inspect asset-active"),
         ("case-outside", "Open", "unobserved", "inspect asset-active"),
         ("case-unlinked", "Open", ACCOUNT, "awaiting reference"),
