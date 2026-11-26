@@ -64,6 +64,10 @@ operatorの案件一覧と詳細の `severity_counts` は、同じ案件内の�
 
 `--name <案件名>`（前後の空白を除き1〜160文字）と `--idempotency-key <キー>`（1〜256文字）を受け取る。キーはワークスペース単位。同じキーと案件名なら初回の `data.receipt_id, name, registered_at` をそのまま返す。別名で同じキーを使うと終了コード2、`idempotency_conflict`。同名でもキーが異なれば別の受付となる。受付では `campaign_id` と `run_id` はどちらもnullで、監査の作成や実行は行わない。
 
+#### `aym intake link`
+
+`--receipt-id <受付ID> --campaign-id <案件ID>` で既存の受付を同一ワークスペースの監査に結ぶ。成功時は `data.receipt_id` と `data.campaign_id` を返す。同じ対応は再送できる。別の監査との競合は `intake_link_conflict` で拒否し、元の対応を保持する。存在しないIDも拒否する。受付台帳の検索では連結済みの行に `campaign_id` を含め、未連結の行は以前と同じ形式で返す。[T56 の仕様](SPEC-CASE-DECISIONS.md)
+
 #### `aym campaign create`
 
 - args: `--intent-id <string>`, `--scope-file <path>`, `--authorization-file <path>`, `--idempotency-key <string>`（必須）。

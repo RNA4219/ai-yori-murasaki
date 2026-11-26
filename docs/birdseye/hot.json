@@ -1,5 +1,5 @@
 {
-  "generated_at": "00057",
+  "generated_at": "00058",
   "index_snapshot": "docs/birdseye/index.json",
   "refresh_command": "RUNBOOK.md#execute と docs/BIRDSEYE.md の PowerShell 手順を参照",
   "curation_notes": "ローカル製品、要件、検収、文書運用の入口。生成世代と原文・要約の内容確認を区別する。",
@@ -7,7 +7,7 @@
     {
       "id": "README.md",
       "role": "overview",
-      "reason": "製品の起動、案件・検知の表示、構成図と受付、Notion の課題 CSV と観測を照合する手順を案内する。",
+      "reason": "製品の起動、監視、課題と観測の照合、受付IDを既存監査に結んで結果を読む手順を案内する。",
       "caps": "docs/birdseye/caps/README.md.json",
       "edges": [
         "BLUEPRINT.md",
@@ -40,14 +40,15 @@
         "docs/requirements/SPEC-EVALUATION.md",
         "docs/tasks/README.md",
         "docs/tasks/TASK.architecture-map-11-23-2026.md",
-        "docs/workflow-adoption.md"
+        "docs/workflow-adoption.md",
+        "docs/requirements/SPEC-CASE-DECISIONS.md"
       ],
       "last_verified_at": "2026-11-26T12:47:39+00:00"
     },
     {
       "id": "HUB.codex.md",
       "role": "navigation",
-      "reason": "案件と製品操作の文書ハブ。課題の検査ルールと観測範囲の指定、判断画面での確認、技術検収へ案内する。",
+      "reason": "製品と運用の文書ハブ。案件の判断と受付連結の要件・仕様や課題と観測の照合手順へ案内する。",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
       "edges": [
         ".agents/skills/security-audit/SKILL.md",
@@ -113,7 +114,9 @@
         "docs/tasks/TASK.monitor-index-11-23-2026.md",
         "docs/tasks/TASK.sources-light-ui-11-09-2026.md",
         "docs/workflow-adoption.md",
-        "governance/policy.yaml"
+        "governance/policy.yaml",
+        "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md",
+        "docs/requirements/SPEC-CASE-DECISIONS.md"
       ],
       "last_verified_at": "2026-11-26T17:52:19+00:00"
     },
@@ -210,7 +213,7 @@
     {
       "id": "docs/tasks/README.md",
       "role": "guide",
-      "reason": "Task と対応する検収の一覧。課題の検査・資源・観測範囲を扱う Task の技術検収結果を引ける。",
+      "reason": "各Taskと検収の索引。案件の判断と受付連結、課題と観測の照合に関する作業記録を引ける。",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
       "edges": [
         "CHANGELOG.md",
@@ -276,14 +279,16 @@
         "docs/tasks/TASK.sources-light-ui-11-09-2026.md",
         "docs/tasks/TASK.tracker-evidence-11-26-2026.md",
         "docs/tasks/TASK.version-011-11-08-2026.md",
-        "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
+        "docs/tasks/TASK.workflow-adoption-11-06-2026.md",
+        "docs/acceptance/AC-20261127-01.md",
+        "docs/tasks/TASK.case-decisions-11-27-2026.md"
       ],
       "last_verified_at": "2026-11-26T18:00:09+00:00"
     },
     {
       "id": "docs/acceptance/INDEX.md",
       "role": "index",
-      "reason": "検収、対応する Task、ソース反映の記録を引くための一覧。課題の照合条件に関する技術検収の合格を含む。",
+      "reason": "技術検収、対応する Task、ソース反映の記録の一覧。案件判断と受付連結に関する検収の対象と記録を引ける。",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
       "edges": [
         "docs/acceptance/AC-20261106-01.md",
@@ -343,7 +348,10 @@
         "docs/tasks/TASK.sources-light-ui-11-09-2026.md",
         "docs/tasks/TASK.tracker-evidence-11-26-2026.md",
         "docs/tasks/TASK.version-011-11-08-2026.md",
-        "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
+        "docs/tasks/TASK.workflow-adoption-11-06-2026.md",
+        "docs/acceptance/AC-20261127-01.md",
+        "docs/releases/RA-20261127-01.md",
+        "docs/tasks/TASK.case-decisions-11-27-2026.md"
       ],
       "last_verified_at": "2026-11-26T18:00:09+00:00"
     },

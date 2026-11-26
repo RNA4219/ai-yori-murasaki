@@ -5,13 +5,14 @@
   "risks": [],
   "tests": [],
   "summary": "課題ごとの検査、除外資源、同じ ID の異なる種類、収集範囲に応じた在否の要件と技術検収完了を記す。",
-  "generated_at": "00057",
+  "generated_at": "00058",
   "source_sha256": "989a5b321a103ffda80b0c84d93c2a32a6d93fcf6ae194a38d37ba8c5f214095",
   "deps_in": [
     "CHANGELOG.md",
     "docs/acceptance/AC-20261126-02.md",
     "docs/acceptance/INDEX.md",
     "docs/releases/RA-20261126-02.md",
+    "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md",
     "docs/tasks/README.md"
   ],
   "deps_out": [
@@ -20,10 +21,10 @@
     "docs/releases/RA-20261126-02.md"
   ],
   "review": {
-    "reviewed_at": "2026-11-26T18:00:09+00:00",
+    "reviewed_at": "2026-11-26T23:08:12+00:00",
     "reviewed_by": "Codex",
     "source_sha256": "989a5b321a103ffda80b0c84d93c2a32a6d93fcf6ae194a38d37ba8c5f214095",
-    "summary_sha256": "93fbc1e5b8813cfef8b21f5818e6b5a11914d00c18a3ffdbf14f496acfb7a2cb",
-    "scope": "課題に適用する検査と資源の観測範囲に関する本文、要約、参照を確認。"
+    "summary_sha256": "6f6d1e0baea6e46085907bb108c1d54a15d6823d9b612bd9ed911014da255788",
+    "scope": "既存の原文と要約、追加要件・仕様からの参照を照合。"
   }
 }

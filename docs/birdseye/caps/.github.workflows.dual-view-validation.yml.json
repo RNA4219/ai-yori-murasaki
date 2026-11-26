@@ -1,0 +1,19 @@
+{
+  "id": ".github/workflows/dual-view-validation.yml",
+  "role": "doc",
+  "public_api": [],
+  "summary": "GitHub ActionsでPython全体回帰、判断画面のJavaScript試験、実Chromiumでの判断画面と受付などの画面試験を実行する。",
+  "deps_out": [],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "86f1e95129eb6df506e66b24006655d65834169d93988d1a6c37fca9b8793180",
+  "generated_at": "00058",
+  "review": {
+    "reviewed_at": "2026-11-26T23:08:12+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "86f1e95129eb6df506e66b24006655d65834169d93988d1a6c37fca9b8793180",
+    "summary_sha256": "9921dc86c893499d1de3a41d21a7a23c22b1613c71af92da2be0bb14aef0341f",
+    "scope": "案件判断・受付連結に関する原文、要約、参照を確認。"
+  }
+}

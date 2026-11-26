@@ -1,0 +1,23 @@
+{
+  "id": "decision_view/README.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "判断画面とモニターの使い分け、課題の評価状態と次の行動、今回の記録にない課題を含む前回比較を案内する。",
+  "deps_out": [
+    "README.md",
+    "docs/requirements/REQUIREMENTS-DUAL-VIEW.md",
+    "docs/requirements/SPEC-DUAL-VIEW.md"
+  ],
+  "deps_in": [],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "b7bc17ffdd01aee8f9c5d6ed26948115bff8ed80a0eb3f77faa99950861aa1a9",
+  "generated_at": "00058",
+  "review": {
+    "reviewed_at": "2026-11-26T23:08:12+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "b7bc17ffdd01aee8f9c5d6ed26948115bff8ed80a0eb3f77faa99950861aa1a9",
+    "summary_sha256": "fb69db7533155303adc4e4c2e8fa7987cea71bc5f7c9eab24b500600a817e9ed",
+    "scope": "案件判断・受付連結に関する原文、要約、参照を確認。"
+  }
+}

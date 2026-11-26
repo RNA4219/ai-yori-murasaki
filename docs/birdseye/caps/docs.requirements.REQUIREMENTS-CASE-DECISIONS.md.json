@@ -1,0 +1,32 @@
+{
+  "id": "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "承認済みR-081〜R-085について、再検証の失敗、同一場所の課題比較、観測の取込待ち、受付からの結果確認、類型別の実証範囲の要求と受入条件を記す。",
+  "deps_out": [
+    "docs/PRODUCT-ACCEPTANCE.md",
+    "docs/requirements/API-CONTRACTS.md",
+    "docs/requirements/REQUIREMENTS-EXTENSION.md",
+    "docs/requirements/SPEC-CASE-DECISIONS.md",
+    "docs/requirements/SPEC-DUAL-VIEW.md",
+    "docs/tasks/TASK.tracker-evidence-11-26-2026.md"
+  ],
+  "deps_in": [
+    "HUB.codex.md",
+    "docs/releases/RA-20261127-01.md",
+    "docs/requirements/REQUIREMENTS-DUAL-VIEW.md",
+    "docs/requirements/SPEC-CASE-DECISIONS.md",
+    "docs/tasks/TASK.case-decisions-11-27-2026.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "8f0b08172184e84a16c4a6f6eb3f5a7af3d5910514a46328cbf58fbfef0d9c88",
+  "generated_at": "00058",
+  "review": {
+    "reviewed_at": "2026-11-26T23:08:12+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "8f0b08172184e84a16c4a6f6eb3f5a7af3d5910514a46328cbf58fbfef0d9c88",
+    "summary_sha256": "9666359b85ad26e34f4426e2f5a2024db1342d01d9b78cb0492d29ea2d0ba962",
+    "scope": "案件判断・受付連結に関する原文、要約、参照を確認。"
+  }
+}

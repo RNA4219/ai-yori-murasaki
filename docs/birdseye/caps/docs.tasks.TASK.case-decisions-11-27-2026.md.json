@@ -1,0 +1,29 @@
+{
+  "id": "docs/tasks/TASK.case-decisions-11-27-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "案件の判断と受付連結の5要件をT53〜T57に結ぶTask。範囲、担当モデルの代行承認、検収とソース反映の記録を示す。",
+  "deps_out": [
+    "docs/acceptance/AC-20261127-01.md",
+    "docs/releases/RA-20261127-01.md",
+    "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md",
+    "docs/requirements/SPEC-CASE-DECISIONS.md"
+  ],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261127-01.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "3f5ed8d90c7172473b3ab2e4f7a0091c4ccd8b3cd4e9acd6f93b6ddc8e4dc1ac",
+  "generated_at": "00058",
+  "review": {
+    "reviewed_at": "2026-11-26T23:08:12+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "3f5ed8d90c7172473b3ab2e4f7a0091c4ccd8b3cd4e9acd6f93b6ddc8e4dc1ac",
+    "summary_sha256": "e09cdcf8644b85eeaf93249ee0be66233064f866e9fc027505bb9d9005b6e89e",
+    "scope": "案件判断・受付連結に関する原文、要約、参照を確認。"
+  }
+}

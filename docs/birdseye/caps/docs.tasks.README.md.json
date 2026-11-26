@@ -2,7 +2,7 @@
   "id": "docs/tasks/README.md",
   "role": "operations",
   "public_api": [],
-  "summary": "Task と対応する検収の一覧。課題の検査・資源・観測範囲を扱う Task の技術検収結果を引ける。",
+  "summary": "各Taskと検収の索引。案件の判断と受付連結、課題と観測の照合に関する作業記録を引ける。",
   "deps_out": [
     "CHANGELOG.md",
     "HUB.codex.md",
@@ -35,12 +35,14 @@
     "docs/acceptance/AC-20261124-01.md",
     "docs/acceptance/AC-20261126-01.md",
     "docs/acceptance/AC-20261126-02.md",
+    "docs/acceptance/AC-20261127-01.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
     "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
     "docs/tasks/TASK.architecture-canvas-11-23-2026.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
+    "docs/tasks/TASK.case-decisions-11-27-2026.md",
     "docs/tasks/TASK.case-intake-11-23-2026.md",
     "docs/tasks/TASK.case-severity-11-23-2026.md",
     "docs/tasks/TASK.document-consistency-11-23-2026.md",
@@ -79,13 +81,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "22aac1cddf2927807b90ce5a1893291f6dba11e38c5e724c21db6e8dbbc89530",
-  "generated_at": "00057",
+  "source_sha256": "b30873543f1397a64944c4803c053cc8778d8c16b318ae9e058ee68acf880882",
+  "generated_at": "00058",
   "review": {
-    "reviewed_at": "2026-11-26T18:00:09+00:00",
+    "reviewed_at": "2026-11-26T23:08:12+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "22aac1cddf2927807b90ce5a1893291f6dba11e38c5e724c21db6e8dbbc89530",
-    "summary_sha256": "5529985238a168e371b7487e7570a972a962597d85174365e612682a8058dfd8",
-    "scope": "課題に適用する検査と資源の観測範囲に関する本文、要約、参照を確認。"
+    "source_sha256": "b30873543f1397a64944c4803c053cc8778d8c16b318ae9e058ee68acf880882",
+    "summary_sha256": "46841f00c3131c6bb2d116651bfcdc65194740a002a7cdde2c5d4a50e6466bf4",
+    "scope": "案件判断・受付連結に関する原文、要約、参照を確認。"
   }
 }

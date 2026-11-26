@@ -10,17 +10,18 @@
     "BLUEPRINT.md",
     "README.md",
     "RUNBOOK.md",
-    "docs/requirements/COMPACTION-01.md"
+    "docs/requirements/COMPACTION-01.md",
+    "docs/requirements/REQUIREMENTS-DUAL-VIEW.md"
   ],
   "risks": [],
   "tests": [],
   "source_sha256": "99bf49a3316384b0430bd755dd665d1f47b1dfb28f80473f3c321b59e89c1ca7",
-  "generated_at": "00021",
+  "generated_at": "00058",
   "review": {
-    "reviewed_at": "2026-11-06T19:30:36.760596+00:00",
+    "reviewed_at": "2026-11-26T23:08:12+00:00",
     "reviewed_by": "Codex",
     "source_sha256": "99bf49a3316384b0430bd755dd665d1f47b1dfb28f80473f3c321b59e89c1ca7",
-    "summary_sha256": "79dd0ed1e845541e964a9347493f265e865d4c6cb5df2840289f8074a0297834",
-    "scope": "原文と要約・導線を照合。製品の実測範囲と未検証の区別を維持。"
+    "summary_sha256": "4b5120b05d841176798a1afe926f9c8b31e7301bd559bf84bbc6b0ed7abd6f33",
+    "scope": "既存の原文と要約、追加要件・仕様からの参照を照合。"
   }
 }

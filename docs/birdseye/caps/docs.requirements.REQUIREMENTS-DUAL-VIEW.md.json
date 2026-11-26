@@ -1,0 +1,31 @@
+{
+  "id": "docs/requirements/REQUIREMENTS-DUAL-VIEW.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "R-064〜R-070。判断と監視の両画面の目的、案件単位の切り替え、評価状態、未確認の扱いとT36〜T42を定める。再検証失敗を評価状態に含む。",
+  "deps_out": [
+    "docs/requirements/API-CONTRACTS.md",
+    "docs/requirements/DECISIONS.md",
+    "docs/requirements/FRONTEND-DESIGN.md",
+    "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md",
+    "docs/requirements/REQUIREMENTS-EXTENSION.md",
+    "docs/requirements/REQUIREMENTS.md",
+    "docs/requirements/SPEC-ASSESSMENT.md",
+    "docs/requirements/SPEC-DUAL-VIEW.md"
+  ],
+  "deps_in": [
+    "decision_view/README.md",
+    "docs/requirements/SPEC-DUAL-VIEW.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "e007975d10ce4b829f5992e739c6edb25ffb93d646d2038bbe8678f18f5b5f8a",
+  "generated_at": "00058",
+  "review": {
+    "reviewed_at": "2026-11-26T23:08:12+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "e007975d10ce4b829f5992e739c6edb25ffb93d646d2038bbe8678f18f5b5f8a",
+    "summary_sha256": "c16cc2217fa5ead35a1d1dfc8d2c4aefa7312526e2d8f1f953ed50e6018e7b4e",
+    "scope": "案件判断・受付連結に関する原文、要約、参照を確認。"
+  }
+}

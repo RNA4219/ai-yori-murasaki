@@ -1,5 +1,5 @@
 {
-  "generated_at": "00057",
+  "generated_at": "00058",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -15,8 +15,8 @@
     "CHANGELOG.md": {
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
-      "mtime": "00057",
-      "source_sha256": "16e84551efde10b09de89b531a54873ad06d8340a7f2ff3ed040978f31d51158"
+      "mtime": "00058",
+      "source_sha256": "46bbbae6bfe635d28703d2b794197be5f96439500acab282bbb4c35377f2c76b"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -36,14 +36,14 @@
     "HUB.codex.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
-      "mtime": "00056",
-      "source_sha256": "f0c3f2a49c81338682d660be0449876e23beeb109f62d49fde6688f145456dae"
+      "mtime": "00058",
+      "source_sha256": "c7d733c65842abcc1d428dcae212ebf31d500a5378de453335340ff6cbdc466d"
     },
     "README.md": {
       "role": "overview",
       "caps": "docs/birdseye/caps/README.md.json",
-      "mtime": "00055",
-      "source_sha256": "b2e1d522b44a862655e86f8e2b90c8cbe18be0ec6ec3c4e2ff7edadce7940f5b"
+      "mtime": "00058",
+      "source_sha256": "12a1fdff21c64a4fb468211d27b34cb0921dc49d2824a54a96bc922b597b2873"
     },
     "RUNBOOK.md": {
       "role": "operations",
@@ -70,8 +70,8 @@
     "docs/acceptance/INDEX.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
-      "mtime": "00057",
-      "source_sha256": "efef6def1cef56a657b3d77dbac49d1261b19d152ff99f20d3b1000122ac3cf9"
+      "mtime": "00058",
+      "source_sha256": "59f23db2ccde233f943d8ff86a24d821c19c7604a3e71b01c6bd044aaab5e7e6"
     },
     "docs/acceptance/README.md": {
       "role": "guide",
@@ -107,14 +107,14 @@
     "docs/releases/README.md": {
       "role": "guide",
       "caps": "docs/birdseye/caps/docs.releases.README.md.json",
-      "mtime": "00056",
-      "source_sha256": "3c84b58b320487b8e35d02b758548383f4ebd91b2ef028e298dd47c2a567819d"
+      "mtime": "00058",
+      "source_sha256": "b1668e848314964d50ffde9beb669a46059d7540a98714be3b4f8051a783048a"
     },
     "docs/tasks/README.md": {
       "role": "operations",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
-      "mtime": "00057",
-      "source_sha256": "22aac1cddf2927807b90ce5a1893291f6dba11e38c5e724c21db6e8dbbc89530"
+      "mtime": "00058",
+      "source_sha256": "b30873543f1397a64944c4803c053cc8778d8c16b318ae9e058ee68acf880882"
     },
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md": {
       "role": "task",
@@ -292,8 +292,8 @@
     "docs/requirements/API-CONTRACTS.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.requirements.API-CONTRACTS.md.json",
-      "mtime": "00043",
-      "source_sha256": "9c761fd6150d6e167b3673cbd09a6d1e7a69da294065f43131dc177663a2bb4f"
+      "mtime": "00058",
+      "source_sha256": "92a71c26c6000bf1928b53bf691335cff7b60d040d471024187810a2e7017352"
     },
     "docs/requirements/COMPACTION-01.md": {
       "role": "doc",
@@ -764,6 +764,60 @@
       "caps": "docs/birdseye/caps/docs.releases.RA-20261126-02.md.json",
       "mtime": "00056",
       "source_sha256": "af956e3a22c637208783b0206f727b4081b093e00ed956ff87fd130f5c200b57"
+    },
+    "docs/acceptance/AC-20261127-01.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261127-01.md.json",
+      "mtime": "00106",
+      "source_sha256": "315bd8e6506a10538a4de7952692c14a90fc7dc39d7b20b8d456def5e1251786"
+    },
+    "docs/releases/RA-20261127-01.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.releases.RA-20261127-01.md.json",
+      "mtime": "00107",
+      "source_sha256": "f7320d4657b0e085dfadaaf47e7c47d42e0a7d3f9e65a03604c7481c45fef91c"
+    },
+    "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.REQUIREMENTS-CASE-DECISIONS.md.json",
+      "mtime": "00108",
+      "source_sha256": "8f0b08172184e84a16c4a6f6eb3f5a7af3d5910514a46328cbf58fbfef0d9c88"
+    },
+    "docs/requirements/REQUIREMENTS-DUAL-VIEW.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.REQUIREMENTS-DUAL-VIEW.md.json",
+      "mtime": "00109",
+      "source_sha256": "e007975d10ce4b829f5992e739c6edb25ffb93d646d2038bbe8678f18f5b5f8a"
+    },
+    "docs/requirements/SPEC-CASE-DECISIONS.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.SPEC-CASE-DECISIONS.md.json",
+      "mtime": "00110",
+      "source_sha256": "99115f2a863364cba69dcbf54decdb3377b11a15d373c5c925869b393393f581"
+    },
+    "docs/requirements/SPEC-DUAL-VIEW.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.SPEC-DUAL-VIEW.md.json",
+      "mtime": "00111",
+      "source_sha256": "cbdf488818b2002cdd42c35d61e699a7c5af149c801f2fa078986614ff6ad348"
+    },
+    "docs/tasks/TASK.case-decisions-11-27-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.case-decisions-11-27-2026.md.json",
+      "mtime": "00112",
+      "source_sha256": "3f5ed8d90c7172473b3ab2e4f7a0091c4ccd8b3cd4e9acd6f93b6ddc8e4dc1ac"
+    },
+    "decision_view/README.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/decision_view.README.md.json",
+      "mtime": "00113",
+      "source_sha256": "b7bc17ffdd01aee8f9c5d6ed26948115bff8ed80a0eb3f77faa99950861aa1a9"
+    },
+    ".github/workflows/dual-view-validation.yml": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/.github.workflows.dual-view-validation.yml.json",
+      "mtime": "00114",
+      "source_sha256": "86f1e95129eb6df506e66b24006655d65834169d93988d1a6c37fca9b8793180"
     }
   },
   "edges": [
@@ -2794,6 +2848,186 @@
     [
       "docs/tasks/TASK.tracker-evidence-11-26-2026.md",
       "docs/releases/RA-20261126-02.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/acceptance/AC-20261127-01.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.case-decisions-11-27-2026.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/requirements/SPEC-CASE-DECISIONS.md"
+    ],
+    [
+      "README.md",
+      "docs/requirements/SPEC-CASE-DECISIONS.md"
+    ],
+    [
+      "decision_view/README.md",
+      "README.md"
+    ],
+    [
+      "decision_view/README.md",
+      "docs/requirements/REQUIREMENTS-DUAL-VIEW.md"
+    ],
+    [
+      "decision_view/README.md",
+      "docs/requirements/SPEC-DUAL-VIEW.md"
+    ],
+    [
+      "docs/acceptance/AC-20261127-01.md",
+      "docs/PRODUCT-ACCEPTANCE.md"
+    ],
+    [
+      "docs/acceptance/AC-20261127-01.md",
+      "docs/requirements/SPEC-CASE-DECISIONS.md"
+    ],
+    [
+      "docs/acceptance/AC-20261127-01.md",
+      "docs/tasks/TASK.case-decisions-11-27-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261127-01.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/releases/RA-20261127-01.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.case-decisions-11-27-2026.md"
+    ],
+    [
+      "docs/releases/RA-20261127-01.md",
+      "docs/acceptance/AC-20261127-01.md"
+    ],
+    [
+      "docs/releases/RA-20261127-01.md",
+      "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md"
+    ],
+    [
+      "docs/releases/README.md",
+      "docs/releases/RA-20261127-01.md"
+    ],
+    [
+      "docs/requirements/API-CONTRACTS.md",
+      "docs/requirements/SPEC-CASE-DECISIONS.md"
+    ],
+    [
+      "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md",
+      "docs/PRODUCT-ACCEPTANCE.md"
+    ],
+    [
+      "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md",
+      "docs/requirements/API-CONTRACTS.md"
+    ],
+    [
+      "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md",
+      "docs/requirements/REQUIREMENTS-EXTENSION.md"
+    ],
+    [
+      "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md",
+      "docs/requirements/SPEC-CASE-DECISIONS.md"
+    ],
+    [
+      "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md",
+      "docs/requirements/SPEC-DUAL-VIEW.md"
+    ],
+    [
+      "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md",
+      "docs/tasks/TASK.tracker-evidence-11-26-2026.md"
+    ],
+    [
+      "docs/requirements/REQUIREMENTS-DUAL-VIEW.md",
+      "docs/requirements/API-CONTRACTS.md"
+    ],
+    [
+      "docs/requirements/REQUIREMENTS-DUAL-VIEW.md",
+      "docs/requirements/DECISIONS.md"
+    ],
+    [
+      "docs/requirements/REQUIREMENTS-DUAL-VIEW.md",
+      "docs/requirements/FRONTEND-DESIGN.md"
+    ],
+    [
+      "docs/requirements/REQUIREMENTS-DUAL-VIEW.md",
+      "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md"
+    ],
+    [
+      "docs/requirements/REQUIREMENTS-DUAL-VIEW.md",
+      "docs/requirements/REQUIREMENTS-EXTENSION.md"
+    ],
+    [
+      "docs/requirements/REQUIREMENTS-DUAL-VIEW.md",
+      "docs/requirements/REQUIREMENTS.md"
+    ],
+    [
+      "docs/requirements/REQUIREMENTS-DUAL-VIEW.md",
+      "docs/requirements/SPEC-ASSESSMENT.md"
+    ],
+    [
+      "docs/requirements/REQUIREMENTS-DUAL-VIEW.md",
+      "docs/requirements/SPEC-DUAL-VIEW.md"
+    ],
+    [
+      "docs/requirements/SPEC-CASE-DECISIONS.md",
+      "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md"
+    ],
+    [
+      "docs/requirements/SPEC-DUAL-VIEW.md",
+      "docs/requirements/API-CONTRACTS.md"
+    ],
+    [
+      "docs/requirements/SPEC-DUAL-VIEW.md",
+      "docs/requirements/FRONTEND-DESIGN.md"
+    ],
+    [
+      "docs/requirements/SPEC-DUAL-VIEW.md",
+      "docs/requirements/MONITOR-ASSESSMENT.md"
+    ],
+    [
+      "docs/requirements/SPEC-DUAL-VIEW.md",
+      "docs/requirements/REQUIREMENTS-DUAL-VIEW.md"
+    ],
+    [
+      "docs/requirements/SPEC-DUAL-VIEW.md",
+      "docs/requirements/SPEC-ASSESSMENT.md"
+    ],
+    [
+      "docs/requirements/SPEC-DUAL-VIEW.md",
+      "docs/requirements/SPEC-CASE-DECISIONS.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261127-01.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.case-decisions-11-27-2026.md"
+    ],
+    [
+      "docs/tasks/TASK.case-decisions-11-27-2026.md",
+      "docs/acceptance/AC-20261127-01.md"
+    ],
+    [
+      "docs/tasks/TASK.case-decisions-11-27-2026.md",
+      "docs/releases/RA-20261127-01.md"
+    ],
+    [
+      "docs/tasks/TASK.case-decisions-11-27-2026.md",
+      "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md"
+    ],
+    [
+      "docs/tasks/TASK.case-decisions-11-27-2026.md",
+      "docs/requirements/SPEC-CASE-DECISIONS.md"
     ]
   ]
 }

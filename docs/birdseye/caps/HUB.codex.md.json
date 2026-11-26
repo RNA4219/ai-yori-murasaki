@@ -2,7 +2,7 @@
   "id": "HUB.codex.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "案件と製品操作の文書ハブ。課題の検査ルールと観測範囲の指定、判断画面での確認、技術検収へ案内する。",
+  "summary": "製品と運用の文書ハブ。案件の判断と受付連結の要件・仕様や課題と観測の照合手順へ案内する。",
   "deps_out": [
     ".agents/skills/security-audit/SKILL.md",
     "AGENTS.md",
@@ -50,8 +50,10 @@
     "docs/requirements/MONITOR-REDESIGN.md",
     "docs/requirements/P2-VALIDATION-PLAN.md",
     "docs/requirements/QUALITY-INTEGRATION.md",
+    "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md",
     "docs/requirements/REQUIREMENTS-EXTENSION.md",
     "docs/requirements/SPEC-ASSESSMENT.md",
+    "docs/requirements/SPEC-CASE-DECISIONS.md",
     "docs/reviews/REVIEW-INTAKE-20261107.md",
     "docs/tasks/README.md",
     "docs/tasks/TASK.architecture-canvas-11-23-2026.md",
@@ -79,13 +81,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "f0c3f2a49c81338682d660be0449876e23beeb109f62d49fde6688f145456dae",
-  "generated_at": "00056",
+  "source_sha256": "c7d733c65842abcc1d428dcae212ebf31d500a5378de453335340ff6cbdc466d",
+  "generated_at": "00058",
   "review": {
-    "reviewed_at": "2026-11-26T17:52:19+00:00",
+    "reviewed_at": "2026-11-26T23:08:12+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "f0c3f2a49c81338682d660be0449876e23beeb109f62d49fde6688f145456dae",
-    "summary_sha256": "aec1caff9dab8c5f18484f70a3932be72156eaf7b5a37f9ad337b2774118c73c",
-    "scope": "課題に適用する検査と資源の観測範囲に関する本文、要約、参照を確認。"
+    "source_sha256": "c7d733c65842abcc1d428dcae212ebf31d500a5378de453335340ff6cbdc466d",
+    "summary_sha256": "04a0a8379869b2a6f222c159be4b783287066a8a88286b608e13b01a475f64c5",
+    "scope": "案件判断・受付連結に関する原文、要約、参照を確認。"
   }
 }

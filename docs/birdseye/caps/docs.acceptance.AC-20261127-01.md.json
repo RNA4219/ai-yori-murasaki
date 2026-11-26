@@ -1,0 +1,29 @@
+{
+  "id": "docs/acceptance/AC-20261127-01.md",
+  "role": "doc",
+  "public_api": [],
+  "summary": "案件の判断と受付連結に関するT53〜T57のローカル技術検収。Python回帰とChromiumでの結果、最終CIを確認する記録先を示す。",
+  "deps_out": [
+    "docs/PRODUCT-ACCEPTANCE.md",
+    "docs/requirements/SPEC-CASE-DECISIONS.md",
+    "docs/tasks/TASK.case-decisions-11-27-2026.md"
+  ],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/acceptance/INDEX.md",
+    "docs/releases/RA-20261127-01.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.case-decisions-11-27-2026.md"
+  ],
+  "risks": [],
+  "tests": [],
+  "source_sha256": "315bd8e6506a10538a4de7952692c14a90fc7dc39d7b20b8d456def5e1251786",
+  "generated_at": "00058",
+  "review": {
+    "reviewed_at": "2026-11-26T23:08:12+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "315bd8e6506a10538a4de7952692c14a90fc7dc39d7b20b8d456def5e1251786",
+    "summary_sha256": "117b3703673e0de79dcd4ca664f08b767e0a4e3d5d2f04598f8364354e9c82a8",
+    "scope": "案件判断・受付連結に関する原文、要約、参照を確認。"
+  }
+}
