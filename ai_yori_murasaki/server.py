@@ -52,6 +52,7 @@ ROUTES: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("campaign_rsi", re.compile(r"^/api/campaigns/([a-z0-9][a-z0-9-]{0,63})/rsi$")),
     ("campaign_assessment", re.compile(r"^/api/campaigns/([a-z0-9][a-z0-9-]{0,63})/assessment$")),
     ("campaign_decision_view", re.compile(r"^/api/campaigns/([a-z0-9][a-z0-9-]{0,63})/decision-view$")),
+    ("campaign_drift", re.compile(r"^/api/campaigns/([a-z0-9][a-z0-9-]{0,63})/drift$")),
     ("run", re.compile(r"^/api/runs/([a-z0-9][a-z0-9-]{0,63})$")),
     ("run_events", re.compile(r"^/api/runs/([a-z0-9][a-z0-9-]{0,63})/events$")),
     ("verification", re.compile(r"^/api/verification/([a-z0-9][a-z0-9-]{0,63})$")),
@@ -573,6 +574,20 @@ def _error(status: int, code: str) -> tuple[int, dict, bytes]:
     return _json_response(status, {"error": code})
 
 
+def _drift_response(report: dict) -> tuple[int, dict, bytes]:
+    # 複数の CAS オブジェクトから作るレポートは、応答上限に達した時点で符号化を止める。
+    encoder = json.JSONEncoder(ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False)
+    body = bytearray()
+    for chunk in encoder.iterencode(report):
+        if len(chunk) > MAX_RESPONSE_BYTES - len(body):
+            return _error(500, "response_too_large")
+        data = chunk.encode("utf-8")
+        if len(data) > MAX_RESPONSE_BYTES - len(body):
+            return _error(500, "response_too_large")
+        body.extend(data)
+    return 200, {"Content-Type": "application/json; charset=utf-8", "Content-Length": str(len(body))}, bytes(body)
+
+
 def _parse_query(raw_query: str) -> dict[str, str] | None:
     if not raw_query:
         return {}
@@ -784,7 +799,7 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
                 if needs_index(store):
                     return _error(409, "monitor_index_required")
             campaigns = [_project_campaign(cid, summary, view)
-                         for cid, summary in campaign_summaries(store).items()]
+                          for cid, summary in campaign_summaries(store, include_csv=view == "operator").items()]
             campaigns.sort(key=lambda c: not c["created_at"])
             if "page" in query:
                 total = len(campaigns)
@@ -806,6 +821,21 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
                      "previous_candidates": list(ids) if len(ids) > 1 else []}
                     for c in campaigns for ids in [previous.get(c["campaign_id"], ())]]
             return _json_response(200, {"campaigns": sanitize(rows, store.secrets)})
+
+        if name == "campaign_drift":
+            if view == "blue":
+                return _json_response(200, {"status": "withheld"})
+            from .drift_report import read_drift
+
+            try:
+                report = read_drift(runtime, groups[0])
+            except DataError as exc:
+                if exc.reason_code == "not_found":
+                    return _error(404, "not_found")
+                if exc.reason_code == "hold":
+                    return _json_response(200, {"status": "hold"})
+                raise
+            return _drift_response(report)
 
         indexed = None
         if name in ("campaign", "campaign_decision_view", "campaign_runs", "campaign_rsi", "campaign_assessment"):

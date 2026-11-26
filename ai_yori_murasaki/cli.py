@@ -435,7 +435,20 @@ def main(argv: list[str] | None = None) -> int:
             receipt = register(_make_store(args), args.name, args.idempotency_key)
             _emit(command, "ok", "ok", None, None, receipt)
             return 0
+        if args.group == "assess" and (args.action == "drift" or
+                                       (args.action == "import" and args.format in ("observation", "notion"))):
+            from .observations import local_path
+            for name in ("workspace", "trusted_root", "policy"):
+                value = getattr(args, name)
+                if value is not None:
+                    if name != "policy" and not Path(value).is_absolute():
+                        raise DataError("storage root must be absolute")
+                    setattr(args, name, local_path(value))
         rt = _make_runtime(args)
+        if args.group == "assess" and args.action == "drift":
+            from .drift_report import export_drift
+            export_drift(rt, args.campaign_id, args.format, args.output)
+            return 0
         if args.group == "rsi":
             data = cli_rsi.dispatch(args, rt)
             cid = data.get("campaign_id") if isinstance(data, dict) else None

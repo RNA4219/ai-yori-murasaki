@@ -1,5 +1,5 @@
 {
-  "generated_at": "00054",
+  "generated_at": "00055",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -15,8 +15,8 @@
     "CHANGELOG.md": {
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
-      "mtime": "00054",
-      "source_sha256": "25776e6dc87304ec1b3ffc5eecf7ff6ffb0e35cb0126906494e06d22a75de9b1"
+      "mtime": "00055",
+      "source_sha256": "5b85b4c2c74ce9f5f3222d7a3ed5c40ea6088f2cf434042e109b385061397b6d"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -36,14 +36,14 @@
     "HUB.codex.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
-      "mtime": "00052",
-      "source_sha256": "6129fc5b2fe40efcae518ba068d53a5d41a5a8f8d10d5d85d021beeb45e2461b"
+      "mtime": "00055",
+      "source_sha256": "006d53bae3e19c3a175fdc089ecad4a7a75ab3e98d4b2aa1ca9a51bfa4562389"
     },
     "README.md": {
       "role": "overview",
       "caps": "docs/birdseye/caps/README.md.json",
-      "mtime": "00050",
-      "source_sha256": "687fea1b1a99c0be0647c54a0eb1dd8d92c2ba2e4dde53659cff20585edcf94b"
+      "mtime": "00055",
+      "source_sha256": "b2e1d522b44a862655e86f8e2b90c8cbe18be0ec6ec3c4e2ff7edadce7940f5b"
     },
     "RUNBOOK.md": {
       "role": "operations",
@@ -70,8 +70,8 @@
     "docs/acceptance/INDEX.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
-      "mtime": "00052",
-      "source_sha256": "6562f632f9b501060c64a32a7d92bf87dcb6da6a14f424f3c475e2620decb79d"
+      "mtime": "00055",
+      "source_sha256": "94575673825384ebaaac56fa849d0441f4bfb7c5d14c6e5d68a8e288a701989f"
     },
     "docs/acceptance/README.md": {
       "role": "guide",
@@ -107,14 +107,14 @@
     "docs/releases/README.md": {
       "role": "guide",
       "caps": "docs/birdseye/caps/docs.releases.README.md.json",
-      "mtime": "00021",
-      "source_sha256": "4d083638fdb2c7891be665ffa7278c3d08fa6fe511f0c5ecdcba5a05f98114cf"
+      "mtime": "00055",
+      "source_sha256": "b2bb2fc0db0531e195ae8d98fe20381dab001a7b8d15b90d7d44dbe8d86a9a43"
     },
     "docs/tasks/README.md": {
       "role": "operations",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
-      "mtime": "00052",
-      "source_sha256": "1ca5c8e0c93b3627ff4836527b5b998914a961d81d1f33fdba77ff46bc0e9492"
+      "mtime": "00055",
+      "source_sha256": "bcab0b9f0221bef7f11b61f7104bdbb93c09493c2ec42f9b3ab29e4e187f4fde"
     },
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md": {
       "role": "task",
@@ -722,6 +722,30 @@
       "caps": "docs/birdseye/caps/docs.acceptance.AC-20261124-01.md.json",
       "source_sha256": "0e626db09296001e2c54a6cd3e23b2e2bbd6cd91c8fe363677d7c28daa6ea226",
       "mtime": "00054"
+    },
+    "docs/NOTION-IMPORT.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.NOTION-IMPORT.md.json",
+      "mtime": "00055",
+      "source_sha256": "0d216b415ffb2f02892fe3b39a52faee04e700301ed44f38065848dba6f45627"
+    },
+    "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.offline-tracker-drift-11-26-2026.md.json",
+      "mtime": "00055",
+      "source_sha256": "7703da6f3476030db6e434076b981ddaed00dca7ade1439e75edbf5493411871"
+    },
+    "docs/acceptance/AC-20261126-01.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261126-01.md.json",
+      "mtime": "00055",
+      "source_sha256": "1de23154f5dcdb9ac0db0075ffd33f4983894de1f7acf82a5472c4f141978571"
+    },
+    "docs/releases/RA-20261126-01.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.releases.RA-20261126-01.md.json",
+      "mtime": "00055",
+      "source_sha256": "8327de6dd9f1227a1bc08a10f54b3e2bd95dd1ffd0d67857abc0b0ac0c62a73b"
     }
   },
   "edges": [
@@ -2604,6 +2628,86 @@
     [
       "governance/policy.yaml",
       "docs/RSI.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/NOTION-IMPORT.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/acceptance/AC-20261126-01.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/NOTION-IMPORT.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/acceptance/AC-20261126-01.md"
+    ],
+    [
+      "README.md",
+      "docs/NOTION-IMPORT.md"
+    ],
+    [
+      "docs/acceptance/AC-20261126-01.md",
+      "docs/NOTION-IMPORT.md"
+    ],
+    [
+      "docs/acceptance/AC-20261126-01.md",
+      "docs/releases/RA-20261126-01.md"
+    ],
+    [
+      "docs/acceptance/AC-20261126-01.md",
+      "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261126-01.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/releases/RA-20261126-01.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md"
+    ],
+    [
+      "docs/releases/RA-20261126-01.md",
+      "docs/acceptance/AC-20261126-01.md"
+    ],
+    [
+      "docs/releases/RA-20261126-01.md",
+      "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md"
+    ],
+    [
+      "docs/releases/README.md",
+      "docs/releases/RA-20261126-01.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261126-01.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md"
+    ],
+    [
+      "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md",
+      "docs/NOTION-IMPORT.md"
+    ],
+    [
+      "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md",
+      "docs/acceptance/AC-20261126-01.md"
+    ],
+    [
+      "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md",
+      "docs/releases/RA-20261126-01.md"
     ]
   ]
 }

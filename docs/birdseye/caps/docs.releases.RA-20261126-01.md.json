@@ -1,0 +1,27 @@
+{
+  "id": "docs/releases/RA-20261126-01.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "summary": "課題 CSV と観測照合のソースを PR 経由で main に反映する承認範囲、検証条件、結果の参照先を記録する。",
+  "generated_at": "00055",
+  "source_sha256": "8327de6dd9f1227a1bc08a10f54b3e2bd95dd1ffd0d67857abc0b0ac0c62a73b",
+  "deps_in": [
+    "docs/acceptance/AC-20261126-01.md",
+    "docs/acceptance/INDEX.md",
+    "docs/releases/README.md",
+    "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md"
+  ],
+  "deps_out": [
+    "docs/acceptance/AC-20261126-01.md",
+    "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md"
+  ],
+  "review": {
+    "reviewed_at": "2026-11-26T12:47:39+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "8327de6dd9f1227a1bc08a10f54b3e2bd95dd1ffd0d67857abc0b0ac0c62a73b",
+    "summary_sha256": "456cb12fd9238d64d2fee709e91319b7079666643cc704e1768a5dad522d4b84",
+    "scope": "課題 CSV と観測の照合に関する本文・要約・参照を確認。"
+  }
+}

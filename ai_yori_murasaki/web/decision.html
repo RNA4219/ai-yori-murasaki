@@ -286,6 +286,15 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     </aside>
     </div>
 
+    <section class="sec" id="sec-drift" aria-labelledby="h-drift" hidden>
+      <h2 id="h-drift">課題の一覧と実物のずれ</h2>
+      <dl class="facts" id="drift-counts"></dl>
+      <details class="fold" id="drift-list">
+        <summary id="drift-list-label">ずれの候補を見る</summary>
+        <div class="items" id="drift-candidates"></div>
+      </details>
+    </section>
+
     <section class="sec" id="sec-soon" aria-labelledby="h-soon">
       <div class="sec-head"><h2 id="h-soon">早めに対応すること</h2><p class="sec-sub" id="soon-sub"></p></div>
       <div class="items" id="soon"></div>
@@ -744,6 +753,88 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     f.appendChild(el('span', null, '期限の日数は、この画面を開いた日を今日として数えています。'));
   }
 
+  var driftLabels = {
+    open_absent: '一覧は未解決、実物は無い', open_resolved: '一覧は未解決、検知は消えた',
+    closed_active: '一覧は解決、検知が残る', aligned: '合っている', uncomparable: '照らせない'
+  };
+  var driftReasons = {
+    out_of_scope: '観測の範囲外', no_resource: '結べる資源が無い',
+    inferred_only: '推定のみ', no_detections: '検知の根拠が足りない'
+  };
+  var driftMethods = {id: 'ID の一致', name: '名前の一致', inferred: '推定'};
+
+  function driftCandidate(item) {
+    var row = el('details', 'item');
+    var summary = el('summary');
+    summary.appendChild(el('span', 'chip warn', '候補'));
+    var heading = el('span', 'item-main');
+    heading.appendChild(el('span', 'item-title', item.title || item.finding_id));
+    heading.appendChild(el('span', 'item-meta', driftLabels[item.classification]));
+    summary.appendChild(heading);
+    var arrow = el('span', 'chev');
+    arrow.setAttribute('aria-hidden', 'true');
+    summary.appendChild(arrow);
+    row.appendChild(summary);
+    var evidence = el('div', 'item-more');
+    var source = el('dl', 'facts');
+    fact(source, '課題 ID', item.finding_id);
+    fact(source, '一覧の状態', item.source_status || '未記録');
+    fact(source, '観測の取得日時', item.collected_at.join('、'));
+    if (item.stale) fact(source, '鮮度', '古い観測を含みます');
+    evidence.appendChild(source);
+    item.matches.forEach(function (match) {
+      var details = el('dl', 'facts');
+      fact(details, '資源 ID', match.id);
+      if (match.name) fact(details, '資源名', match.name);
+      if (match.type) fact(details, '資源の種類', match.type);
+      fact(details, '結び方', driftMethods[match.method]);
+      fact(details, '資源の一覧', match.in_inventory === true ? 'あり' :
+        match.in_inventory === false ? '一覧に無し' : '未確認');
+      var detections = el('ul');
+      match.detections.forEach(function (d) {
+        detections.appendChild(el('li', null, [d.id, d.rule, d.status === 'active' ? '検知中' : '解消',
+          d.updated_at].join(' · ')));
+      });
+      fact(details, '検知', detections.childElementCount ? detections : '対応する記録なし');
+      evidence.appendChild(details);
+    });
+    row.appendChild(evidence);
+    return row;
+  }
+
+  function renderDrift(report, cid) {
+    var section = $('sec-drift');
+    section.hidden = true;
+    if (report.status === 'withheld') return;
+    if (report.campaign_id !== cid || !Array.isArray(report.observations)) throw Error('drift unavailable');
+    if (!report.observations.length) return;
+    var counts = $('drift-counts'), candidates = $('drift-candidates');
+    clear(counts);
+    clear(candidates);
+    Object.keys(driftLabels).forEach(function (key) {
+      var count = report.counts[key];
+      if (!Number.isInteger(count) || count < 0) throw Error('invalid count');
+      fact(counts, driftLabels[key], count + ' 件');
+    });
+    if (report.counts.uncomparable) {
+      var reasons = el('ul');
+      Object.keys(driftReasons).forEach(function (key) {
+        var count = report.reasons[key];
+        if (count > 0) reasons.appendChild(el('li', null, driftReasons[key] + '　' + count + ' 件'));
+      });
+      fact(counts, '照らせない理由', reasons);
+    }
+    report.items.forEach(function (item) {
+      if (['open_absent', 'open_resolved', 'closed_active'].includes(item.classification)) {
+        candidates.appendChild(driftCandidate(item));
+      }
+    });
+    var total = candidates.childElementCount;
+    $('drift-list').hidden = !total;
+    $('drift-list-label').textContent = 'ずれの候補を見る（' + total + ' 件）';
+    section.hidden = false;
+  }
+
   function show(view) {
     clear($('notes'));
     try {
@@ -890,7 +981,17 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     $('refresh-view').disabled = true;
     var prev=null;
     try {prev=localStorage.getItem('aym.previous.'+campaign);} catch (_) {}
-    return fetchView('/api/campaigns/'+encodeURIComponent(campaign)+'/decision-view'+(prev?'?previous='+encodeURIComponent(prev):'')).then(showResponse).catch(function(e){
+    var campaignPath = '/api/campaigns/' + encodeURIComponent(campaign);
+    return fetchView(campaignPath + '/decision-view' + (prev?'?previous='+encodeURIComponent(prev):'')).then(function (response) {
+      showResponse(response);
+      if (!state.view || locationView) return;
+      $('sec-drift').hidden = true;
+      return fetchView(campaignPath + '/drift').then(function (report) {
+        renderDrift(report, campaign);
+      }).catch(function () {
+        note('warn', '課題と観測のずれを取得できません。「読み直す」で再試行できます。');
+      });
+    }).catch(function(e){
       clear($('notes'));
       if(e.message==='HTTP 404') unavailable('err','この Campaign は見つかりません。');
       else if(e.message==='HTTP 409') unavailable('warn','案件の索引を更新する必要があります。管理者に更新を依頼してください。');

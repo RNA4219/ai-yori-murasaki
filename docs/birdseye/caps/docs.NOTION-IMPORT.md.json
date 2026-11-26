@@ -1,0 +1,25 @@
+{
+  "id": "docs/NOTION-IMPORT.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "summary": "合成した Notion の課題 CSV と観測ファイルを取り込み、判断画面で課題と観測のずれを調べて結果を書き出す手順。",
+  "generated_at": "00055",
+  "source_sha256": "0d216b415ffb2f02892fe3b39a52faee04e700301ed44f38065848dba6f45627",
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "README.md",
+    "docs/acceptance/AC-20261126-01.md",
+    "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md"
+  ],
+  "deps_out": [],
+  "review": {
+    "reviewed_at": "2026-11-26T12:47:39+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "0d216b415ffb2f02892fe3b39a52faee04e700301ed44f38065848dba6f45627",
+    "summary_sha256": "e3a553b03456183fb7c4bf824ab810055a3802d10e755d76c3a470a94fa0a002",
+    "scope": "課題 CSV と観測の照合に関する本文・要約・参照を確認。"
+  }
+}

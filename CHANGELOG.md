@@ -14,6 +14,8 @@ Keep a Changelog の区分で管理する。記録には既存最大番号 +1 �
 
 ### Changed
 
+- 0044 — 2026-11-26。Notion の課題 CSV とローカルの資源・検知一覧を取り込み、判断画面や CLI で照合できるようにした。[操作例](docs/NOTION-IMPORT.md)・[Task 20261126-01](docs/tasks/TASK.offline-tracker-drift-11-26-2026.md)・[検収](docs/acceptance/AC-20261126-01.md)
+
 - 0043 — 2026-11-24。構成図の通常保存でダウンロードを拒否されても、利用者が保存を確認するまで未保存の編集を保護する。[Task 20261124-01](docs/tasks/TASK.frontend-workspace-11-24-2026.md)・[技術検収](docs/acceptance/AC-20261124-01.md)
 
 - 0042 — 2026-11-24。Blueの補助リンク、モニターの最終取得時刻と再取得失敗の表示、図を切り替えるときの未保存編集の保護を修正。敵対的検証13件を再実行した。[Task 20261124-01](docs/tasks/TASK.frontend-workspace-11-24-2026.md)・[技術検収](docs/acceptance/AC-20261124-01.md)
