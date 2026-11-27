@@ -22,6 +22,7 @@ Task、[Acceptance](../acceptance/README.md)、[CHANGELOG](../../CHANGELOG.md)�
 
 | task_id | 作業 | 検収 |
 | --- | --- | --- |
+| 20261127-04 | [ローカルモニターの Google ログイン](TASK.google-monitor-sso-11-27-2026.md) | [AC-20261127-04](../acceptance/AC-20261127-04.md)（技術検収合格） |
 | 20261127-03 | [構成図の可読性と独自の種類](TASK.architecture-readability-11-27-2026.md) | [AC-20261127-03](../acceptance/AC-20261127-03.md)（技術検収合格） |
 | 20261127-02 | [ワークスペースの構成図切替](TASK.architecture-switch-11-27-2026.md) | [AC-20261127-02](../acceptance/AC-20261127-02.md)（技術検収合格） |
 | 20261127-01 | [案件の状態、前回比較、受付後の結果確認](TASK.case-decisions-11-27-2026.md) | [AC-20261127-01](../acceptance/AC-20261127-01.md) |

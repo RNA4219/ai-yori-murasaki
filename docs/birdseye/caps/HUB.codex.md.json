@@ -2,7 +2,7 @@
   "id": "HUB.codex.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "製品の作業と文書の入口。案件判断、受付連結、構成図の配置・切替、要素の探索と種類編集の操作・検収へ案内する。",
+  "summary": "依頼別の文書ハブ。モニターの Google ログイン、案件判断、構成図などの導入手順と技術検収へ案内する。",
   "deps_out": [
     ".agents/skills/security-audit/SKILL.md",
     "AGENTS.md",
@@ -46,11 +46,13 @@
     "docs/acceptance/AC-20261126-02.md",
     "docs/acceptance/AC-20261127-02.md",
     "docs/acceptance/AC-20261127-03.md",
+    "docs/acceptance/AC-20261127-04.md",
     "docs/acceptance/INDEX.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
     "docs/requirements/ARCHITECTURE-MAP-SELECTION.md",
     "docs/requirements/ARCHITECTURE-READABILITY.md",
+    "docs/requirements/GOOGLE-MONITOR-SSO.md",
     "docs/requirements/MONITOR-REDESIGN.md",
     "docs/requirements/P2-VALIDATION-PLAN.md",
     "docs/requirements/QUALITY-INTEGRATION.md",
@@ -85,13 +87,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "4c87806245cb1226c94dee720e819cd77e434c72ab5436e9381d677e70b9bdad",
-  "generated_at": "00062",
+  "source_sha256": "a0a5f0c89c8828fbd582f156bb8863e05d5ffbae2076c843b4e7d73ac43ff508",
+  "generated_at": "00064",
   "review": {
-    "reviewed_at": "2026-11-27T04:34:25+00:00",
+    "reviewed_at": "2026-11-27T08:44:47+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "4c87806245cb1226c94dee720e819cd77e434c72ab5436e9381d677e70b9bdad",
-    "summary_sha256": "c760e8e417a71bf483d0e7b739842a8798fdbb785c6cd295ff21bd918c641ccd",
-    "scope": "構成図の等倍表示・要素の検索・種類の編集に関する本文、要約、参照を照合。"
+    "source_sha256": "a0a5f0c89c8828fbd582f156bb8863e05d5ffbae2076c843b4e7d73ac43ff508",
+    "summary_sha256": "2bd7d152afb53e9a9af0d53b91e0ed3a0d5c71ab8e6bb3667fecdd774a2d3c5e",
+    "scope": "モニターの Google ログインに関わる手順・検収・参照先を照合。"
   }
 }

@@ -1,5 +1,5 @@
 {
-  "generated_at": "00063",
+  "generated_at": "00065",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -15,8 +15,8 @@
     "CHANGELOG.md": {
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
-      "mtime": "00063",
-      "source_sha256": "3a1a943c1117d157c79cbafbebbd2bec27d490e50b735d94bc1ce8458add2eec"
+      "mtime": "00065",
+      "source_sha256": "357b0bcac28838bf78ca3ac265944a40b3403ff17047b4736a348694f7540b8d"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -36,14 +36,14 @@
     "HUB.codex.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
-      "mtime": "00062",
-      "source_sha256": "4c87806245cb1226c94dee720e819cd77e434c72ab5436e9381d677e70b9bdad"
+      "mtime": "00064",
+      "source_sha256": "a0a5f0c89c8828fbd582f156bb8863e05d5ffbae2076c843b4e7d73ac43ff508"
     },
     "README.md": {
       "role": "overview",
       "caps": "docs/birdseye/caps/README.md.json",
-      "mtime": "00062",
-      "source_sha256": "1818f2dff5b48f28389a47ccae4bde758ee42e47407206af96e6e6116fb44153"
+      "mtime": "00064",
+      "source_sha256": "77066d04fabd812e7bcbe597e29cfcc247b80716739e90cf99c6ea674d1d8631"
     },
     "RUNBOOK.md": {
       "role": "operations",
@@ -70,8 +70,8 @@
     "docs/acceptance/INDEX.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
-      "mtime": "00063",
-      "source_sha256": "c5a0e978db14dd7ee168085873e2a56529d43af8e784c3e4d1dc849641dd7448"
+      "mtime": "00065",
+      "source_sha256": "4b6f0c64a125a41c943ae0a2b9606d0d37f75041e5ba50623acaea82a35021eb"
     },
     "docs/acceptance/README.md": {
       "role": "guide",
@@ -113,8 +113,8 @@
     "docs/tasks/README.md": {
       "role": "operations",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
-      "mtime": "00063",
-      "source_sha256": "915c2e76971358407a4c3a229d892d8341cbd78107d83c8ac66bc920cb5a6cfb"
+      "mtime": "00065",
+      "source_sha256": "5482f8c18593e0a6b1cae2c1b798b9cd8efba3add5fa4303b00dde955c6b6cb9"
     },
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md": {
       "role": "task",
@@ -255,7 +255,8 @@
     ".agents/skills/security-audit/SKILL.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/.agents.skills.security-audit.SKILL.md.json",
-      "mtime": "00046"
+      "mtime": "00064",
+      "source_sha256": "af5d1c7a8a0abf476302a6271a827a545b6cac8387b074fb7efb5a8b298536ea"
     },
     ".agents/skills/security-audit/AUDIT-PLANNING.md": {
       "role": "doc",
@@ -292,8 +293,8 @@
     "docs/requirements/API-CONTRACTS.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.requirements.API-CONTRACTS.md.json",
-      "mtime": "00059",
-      "source_sha256": "de4a04f3adc27a26115f75d916dd5ffde454c65c1a754986bbd2a9410f68b252"
+      "mtime": "00064",
+      "source_sha256": "70beb6f1517ec0375e0a5f2fad9eb0224b40bae8b5bd47450b0af12c4781c431"
     },
     "docs/requirements/COMPACTION-01.md": {
       "role": "doc",
@@ -434,8 +435,8 @@
     "THIRD_PARTY_NOTICES.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/THIRD_PARTY_NOTICES.md.json",
-      "mtime": "00040",
-      "source_sha256": "ce48ed878e910ed0a45cb8ee802428a5bcbe4015a9485f681ac21a1770eca3e6"
+      "mtime": "00064",
+      "source_sha256": "0ff14f1c5c1abee53f3abf5d3d51489951ee24906732c117799cfa4633dcab7f"
     },
     "docs/acceptance/AC-20261108-02.md": {
       "role": "doc",
@@ -816,8 +817,8 @@
     ".github/workflows/dual-view-validation.yml": {
       "role": "doc",
       "caps": "docs/birdseye/caps/.github.workflows.dual-view-validation.yml.json",
-      "mtime": "00062",
-      "source_sha256": "b26cfe3fe21d87f70178b9007f20f1f17fa9afcb64b8bcdff1363e946739bc62"
+      "mtime": "00064",
+      "source_sha256": "b807b7ea210743b0deef232768016bbeb60080c926fe8197abfbf5f22f91356a"
     },
     "docs/acceptance/AC-20261127-02.md": {
       "role": "doc",
@@ -860,6 +861,24 @@
       "caps": "docs/birdseye/caps/docs.tasks.TASK.architecture-readability-11-27-2026.md.json",
       "mtime": "00063",
       "source_sha256": "8f8d1b5432553c07f35f23d557c7669273988711edb76e03da51a67c4480f777"
+    },
+    "docs/acceptance/AC-20261127-04.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261127-04.md.json",
+      "mtime": "00065",
+      "source_sha256": "e90dcf531239cc8e6c026188c78bd7f8975f9411239f9756af9e8ba3b3daac13"
+    },
+    "docs/requirements/GOOGLE-MONITOR-SSO.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.GOOGLE-MONITOR-SSO.md.json",
+      "mtime": "00064",
+      "source_sha256": "79a9e5f411454577483707f7b7d63c1b790fc6a94fc146761f02727ac86d5a86"
+    },
+    "docs/tasks/TASK.google-monitor-sso-11-27-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.google-monitor-sso-11-27-2026.md.json",
+      "mtime": "00065",
+      "source_sha256": "b16f28659ccbc25c70d2009ad18685d7aae7a7dc1330fe14c2a99ff5bc2f7766"
     }
   },
   "edges": [
@@ -3230,6 +3249,86 @@
     [
       "docs/tasks/TASK.architecture-readability-11-27-2026.md",
       "docs/requirements/ARCHITECTURE-READABILITY.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/acceptance/AC-20261127-04.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.google-monitor-sso-11-27-2026.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/acceptance/AC-20261127-04.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/requirements/GOOGLE-MONITOR-SSO.md"
+    ],
+    [
+      "README.md",
+      "docs/requirements/GOOGLE-MONITOR-SSO.md"
+    ],
+    [
+      "docs/acceptance/AC-20261127-04.md",
+      "docs/requirements/API-CONTRACTS.md"
+    ],
+    [
+      "docs/acceptance/AC-20261127-04.md",
+      "docs/requirements/GOOGLE-MONITOR-SSO.md"
+    ],
+    [
+      "docs/acceptance/AC-20261127-04.md",
+      "docs/tasks/TASK.google-monitor-sso-11-27-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261127-04.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.google-monitor-sso-11-27-2026.md"
+    ],
+    [
+      "docs/requirements/API-CONTRACTS.md",
+      "docs/requirements/GOOGLE-MONITOR-SSO.md"
+    ],
+    [
+      "docs/requirements/GOOGLE-MONITOR-SSO.md",
+      "README.md"
+    ],
+    [
+      "docs/requirements/GOOGLE-MONITOR-SSO.md",
+      "docs/acceptance/AC-20261127-04.md"
+    ],
+    [
+      "docs/requirements/GOOGLE-MONITOR-SSO.md",
+      "docs/requirements/API-CONTRACTS.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261127-04.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.google-monitor-sso-11-27-2026.md"
+    ],
+    [
+      "docs/tasks/TASK.google-monitor-sso-11-27-2026.md",
+      ".agents/skills/security-audit/SKILL.md"
+    ],
+    [
+      "docs/tasks/TASK.google-monitor-sso-11-27-2026.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "docs/tasks/TASK.google-monitor-sso-11-27-2026.md",
+      "docs/acceptance/AC-20261127-04.md"
+    ],
+    [
+      "docs/tasks/TASK.google-monitor-sso-11-27-2026.md",
+      "docs/requirements/GOOGLE-MONITOR-SSO.md"
     ]
   ]
 }

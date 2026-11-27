@@ -137,18 +137,25 @@ operatorの案件一覧と詳細の `severity_counts` は、同じ案件内の�
 
 #### `aym monitor serve`
 
-- args: `--bind <host:port>`（既定 `127.0.0.1:8765`）。
+- `--bind <host:port>` の既定値は `127.0.0.1:8765`。
+- `--google-sso` を指定すると、環境変数 `AYM_GOOGLE_CLIENT_ID`、`AYM_GOOGLE_CLIENT_SECRET`、`AYM_GOOGLE_ALLOWED_SUBJECTS`（カンマ区切りの Google `sub`）と任意依存 `sso` が必要になる。不備がある場合は `google_sso_configuration` で起動を中止する。[設定手順](GOOGLE-MONITOR-SSO.md)
 - `127.0.0.1` 以外: exit 2、`reason_code=bind_not_loopback`。
 
 ## 2. read-only HTTP monitor
 
 ### 2.1 基本
 
-- bind: `127.0.0.1:8765` のみ。
+- 待受アドレスは `127.0.0.1` に限定する。ポートは起動時に指定できる。
 - read-only。HTML/assets と明示的 snapshot API のみ。raw objects / private events は非公開。
-- Host ヘッダ検証: `127.0.0.1:8765` または `localhost:8765` のみ許可。他は 400。
+- Host は `127.0.0.1` または `localhost` に限定し、ポートの指定があれば待受ポートと照合する。不一致は 400。Google SSO のコールバックは登録した `127.0.0.1:<port>` で受ける。
 - Origin ヘッダ検証: 同一 origin のみ許可。他は 403。
 - projection リスト: `campaigns`, `runs`, `events_public`, `verification`, `approvals`。
+
+#### Google SSO を有効にした場合（R-089）
+
+- セッションがないとき、`/`、`/decision`、`/architecture`、`/intake` は 401 とログイン用 HTML を返す。データ API と配信ファイルは 401 を返す。ログイン後も指定された Blue ビューの制限が適用される。
+- `GET /auth/google/start` で Google の同意画面へ進む。Google は `GET /auth/google/callback` に応答する。ログインに成功するとモニター内の元の画面に戻る。戻り先には対象ページに対応する `view`、`campaign`、`map`、`system` の有効な値を引き継ぐ。
+- 各画面のログアウトフォームは同一オリジンの `POST /auth/logout` にセッションに対応する確認トークンを送る。モニター内のセッションだけを終了し、モニターの入口に戻る。
 
 ### 2.2 endpoints
 

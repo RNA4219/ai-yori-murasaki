@@ -1,0 +1,29 @@
+{
+  "id": "docs/tasks/TASK.google-monitor-sso-11-27-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261127-04.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    ".agents/skills/security-audit/SKILL.md",
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261127-04.md",
+    "docs/requirements/GOOGLE-MONITOR-SSO.md"
+  ],
+  "summary": "モニターの Google ログインを導入した Task。担当・レビューの範囲、製品コミットでの T61 検収完了と実アカウント未検証を記す。",
+  "source_sha256": "b16f28659ccbc25c70d2009ad18685d7aae7a7dc1330fe14c2a99ff5bc2f7766",
+  "generated_at": "00065",
+  "review": {
+    "reviewed_at": "2026-11-27T08:51:47+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "b16f28659ccbc25c70d2009ad18685d7aae7a7dc1330fe14c2a99ff5bc2f7766",
+    "summary_sha256": "65b5a145efbbc0cfd95db2d5d411ef56d1940fc8eb4d3e7eecc6292589629ad5",
+    "scope": "Google ログインの製品コミット、技術検収と未実施範囲を照合。"
+  }
+}

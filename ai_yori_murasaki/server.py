@@ -13,8 +13,8 @@ import re
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from importlib import resources
-from typing import Any
-from urllib.parse import parse_qsl, urlsplit
+from typing import TYPE_CHECKING, Any, Callable
+from urllib.parse import parse_qsl, urlencode, urlsplit
 
 from .jsonio import DataError, canonical, loads
 from .runtime import Runtime
@@ -22,6 +22,10 @@ from .monitor_summary import CampaignSummary, campaign_summaries
 from .monitor_detail import IndexUpdateRequired, read_selection
 from .storage import Store
 from . import lab_metrics
+from . import monitor_auth
+
+if TYPE_CHECKING:
+    from .google_sso import GoogleSSO
 
 MAX_RESPONSE_BYTES = 1024 * 1024
 MAX_HTML_BYTES = 256 * 1024
@@ -625,11 +629,14 @@ def _check_host(host_header: str | None, port: int) -> bool:
     return True
 
 
+def _matches_http_port(value: str | None, base: str, port: int) -> bool:
+    return value == f"{base}:{port}" or (port == 80 and value == base)
+
+
 def _check_origin(origin: str | None, port: int) -> bool:
     if origin is None:
         return True
-    allowed = {f"http://127.0.0.1:{port}", f"http://localhost:{port}"}
-    return origin in allowed
+    return any(_matches_http_port(origin, "http://" + host, port) for host in ALLOWED_HOSTS)
 
 
 def _load_page(filename: str, *, blue: bool = False) -> bytes:
@@ -690,7 +697,7 @@ def _inline_style_hashes(html: bytes) -> list[str]:
     return hashes
 
 
-def _security_headers(html: bytes | None = None) -> dict[str, str]:
+def _security_headers(html: bytes | None = None, *, logout_form: bool = False) -> dict[str, str]:
     script_hashes = _inline_script_hashes(html) if html else []
     style_hashes = _inline_style_hashes(html) if html else []
     script_src = "'self'"
@@ -707,20 +714,103 @@ def _security_headers(html: bytes | None = None) -> dict[str, str]:
         "connect-src 'self'; "
         "frame-ancestors 'none'; "
         "base-uri 'none'; "
-        "form-action 'none'"
+        + ("form-action 'self'" if logout_form else "form-action 'none'")
     )
     return {
         "Cache-Control": "no-store",
         "X-Content-Type-Options": "nosniff",
         "Content-Security-Policy": csp,
         "X-Frame-Options": "DENY",
-        "Referrer-Policy": "no-referrer",
+        # ログアウトフォームは同一オリジンの POST に Origin が必要。
+        "Referrer-Policy": "same-origin" if logout_form else "no-referrer",
     }
 
 
+def _html_response(status: int, html: bytes, *, logout_form: bool = False) -> tuple[int, dict, bytes]:
+    headers = _security_headers(html, logout_form=logout_form)
+    headers.update({"Content-Type": "text/html; charset=utf-8", "Content-Length": str(len(html))})
+    return status, headers, html
+
+
+def _redirect(location: str, *cookies: str) -> tuple[int, dict, bytes]:
+    headers = {"Location": location, "Content-Length": "0"}
+    if cookies:
+        headers["Set-Cookie"] = cookies
+    return 303, headers, b""
+
+
+def _auth_gate(auth: monitor_auth.MonitorAuth, method: str, path: str, query: dict[str, str],
+               headers: dict, port: int, read_csrf: Callable[[], str | None] | None
+               ) -> tuple[int, dict, bytes] | str:
+    """認証済みならセッション、それ以外は公開可能な応答のみを返す。"""
+    from .google_sso import GoogleLoginError, PENDING_TTL, SESSION_TTL
+    from .monitor_auth_ui import render_auth_page
+
+    canonical_host = f"127.0.0.1:{port}"
+    origin = "http://" + canonical_host
+    canonical_request = _matches_http_port(headers["Host"], "127.0.0.1", port)
+    session_name = f"aym_session_{port}"
+    pending_name = f"aym_login_{port}"
+    jar = headers.get("Cookie", "") if canonical_request else ""
+    session = monitor_auth.read_cookie(jar, session_name)
+    if path == "/auth/google/start":
+        if method != "GET":
+            return _error(405, "method_not_allowed")
+        target = monitor_auth.return_target(query.get("next", "/"))
+        if not canonical_request:
+            return _redirect(origin + monitor_auth.login_path(target))
+        try:
+            url, correlation = auth.provider.begin(port, target)
+        except GoogleLoginError:
+            return _html_response(503, render_auth_page("unavailable", monitor_auth.login_path(target)))
+        return _redirect(url, monitor_auth.cookie(pending_name, correlation, "/auth/google", PENDING_TTL))
+    if path == "/auth/google/callback":
+        if method != "GET":
+            return _error(405, "method_not_allowed")
+        if not canonical_request:
+            return _error(400, "bad_host")
+        correlation = monitor_auth.read_cookie(jar, pending_name)
+        # state は照合時に消費される。並行して始めた次の試行の Cookie を
+        # 古い応答で消さず、5分の期限または次回開始時の上書きに任せる。
+        try:
+            issued, target = auth.provider.complete(port, query, correlation)
+        except GoogleLoginError as exc:
+            result = urlencode({"state": exc.state, "next": monitor_auth.return_target(exc.return_to)})
+            return _redirect("/auth/result?" + result)
+        if session:
+            auth.provider.logout(session)
+        return _redirect(monitor_auth.return_target(target),
+                         monitor_auth.cookie(session_name, issued, "/", SESSION_TTL))
+    if path == "/auth/result":
+        state = query.get("state", "")
+        codes = {"cancelled": 401, "denied": 403, "unavailable": 503}
+        if state not in codes:
+            return _error(404, "not_found")
+        retry = monitor_auth.login_path(monitor_auth.return_target(query.get("next", "/")))
+        return _html_response(codes[state], render_auth_page(state, retry))
+    if path == "/auth/logout":
+        if method != "POST":
+            return _error(405, "method_not_allowed")
+        if not canonical_request or not _matches_http_port(headers.get("Origin"), "http://127.0.0.1", port):
+            return _error(403, "bad_origin")
+        if not session or not auth.provider.authenticated(session):
+            return _error(401, "authentication_required")
+        if not read_csrf or not auth.accepts(session, read_csrf()):
+            return _error(403, "invalid_csrf")
+        auth.provider.logout(session)
+        return _redirect("/", monitor_auth.cookie(session_name, "", "/", 0))
+    if session and auth.provider.authenticated(session):
+        return session
+    if path in monitor_auth.PAGES:
+        target = monitor_auth.page_target(path, query)
+        return _html_response(401, render_auth_page("login", monitor_auth.login_path(target)))
+    return _error(401, "authentication_required")
+
+
 def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
-            headers: dict[str, str], port: int) -> tuple[int, dict, bytes]:
-    if method not in ("GET", "HEAD"):
+            headers: dict, port: int, auth: monitor_auth.MonitorAuth | None = None,
+            read_csrf: Callable[[], str | None] | None = None) -> tuple[int, dict, bytes]:
+    if method not in ("GET", "HEAD") and not (auth and method == "POST" and path == "/auth/logout"):
         return _error(405, "method_not_allowed")
     if not _check_host(headers.get("Host"), port):
         return _error(400, "bad_host")
@@ -732,6 +822,10 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
         return _error(400, "bad_path")
     if ".." in path:
         return _error(400, "bad_path")
+    if auth is not None:
+        access = _auth_gate(auth, method, path, query, headers, port, read_csrf)
+        if isinstance(access, tuple):
+            return access
     matched = _match_route(path)
     if matched is None:
         return _error(404, "not_found")
@@ -746,10 +840,10 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
             html = _load_page(name + ".html", blue=view == "blue")
             if not html:
                 return _error(500, "index_unavailable")
-            hdrs = _security_headers(html)
-            hdrs["Content-Type"] = "text/html; charset=utf-8"
-            hdrs["Content-Length"] = str(len(html))
-            return 200, hdrs, html
+            if auth is not None:
+                from .monitor_auth_ui import add_logout
+                html = add_logout(html, auth.for_session(access))
+            return _html_response(200, html, logout_form=auth is not None)
 
         if name == "architecture_asset":
             asset = groups[0]
@@ -1098,6 +1192,17 @@ class _Handler(BaseHTTPRequestHandler):
     def log_message(self, format: str, *args: Any) -> None:  # noqa: A002
         return
 
+    def _read_logout_csrf(self) -> str | None:
+        length = self.headers.get("Content-Length", "")
+        if (self.headers.get("Transfer-Encoding") is not None
+                or len(self.headers.get_all("Content-Length", [])) != 1
+                or self.headers.get_content_type() != "application/x-www-form-urlencoded"
+                or length != "69"):
+            return None
+        body = self.rfile.read(69)
+        match = re.fullmatch(rb"csrf=([a-f0-9]{64})", body)
+        return match[1].decode("ascii") if match else None
+
     def _dispatch(self, method: str) -> None:
         runtime: Runtime = self.server.runtime  # type: ignore[attr-defined]
         port: int = self.server.server_address[1]  # type: ignore[attr-defined]
@@ -1110,9 +1215,10 @@ class _Handler(BaseHTTPRequestHandler):
             req_headers = {
                 "Host": self.headers.get("Host", ""),
                 "Origin": self.headers.get("Origin"),
+                "Cookie": "; ".join(self.headers.get_all("Cookie", [])),
             }
             status, headers, body = _handle(runtime, method, path, query,
-                                            req_headers, port)
+                                            req_headers, port, self.server.auth, self._read_logout_csrf)
         # Merge security headers with route headers so each header is
         # emitted exactly once.  Route-specific headers (e.g. the HTML CSP
         # with inline hashes) take precedence over the default CSP.
@@ -1120,7 +1226,11 @@ class _Handler(BaseHTTPRequestHandler):
         merged.update(headers)
         self.send_response(status)
         for key, value in merged.items():
-            self.send_header(key, value)
+            if key == "Set-Cookie":
+                for item in value:
+                    self.send_header(key, item)
+            else:
+                self.send_header(key, value)
         self.end_headers()
         if method != "HEAD" and body:
             self.wfile.write(body)
@@ -1151,8 +1261,9 @@ class _Server(ThreadingHTTPServer):
     daemon_threads = True
     allow_reuse_address = True
 
-    def __init__(self, addr: tuple[str, int], runtime: Runtime) -> None:
+    def __init__(self, addr: tuple[str, int], runtime: Runtime, google_sso: GoogleSSO | None) -> None:
         self.runtime = runtime
+        self.auth = monitor_auth.MonitorAuth(google_sso) if google_sso is not None else None
         super().__init__(addr, _Handler)
 
 
@@ -1173,9 +1284,10 @@ def _parse_bind(bind: str) -> tuple[str, int]:
     return host, port
 
 
-def create_server(runtime: Runtime, bind: str = "127.0.0.1:8765") -> ThreadingHTTPServer:
+def create_server(runtime: Runtime, bind: str = "127.0.0.1:8765", *,
+                  google_sso: GoogleSSO | None = None) -> ThreadingHTTPServer:
     host, port = _parse_bind(bind)
-    return _Server((host, port), runtime)
+    return _Server((host, port), runtime, google_sso)
 
 
 def serve(bind: str = "127.0.0.1:8765", runtime: Runtime | None = None) -> None:

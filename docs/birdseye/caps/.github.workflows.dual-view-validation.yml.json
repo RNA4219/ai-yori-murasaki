@@ -2,18 +2,18 @@
   "id": ".github/workflows/dual-view-validation.yml",
   "role": "doc",
   "public_api": [],
-  "summary": "GitHub ActionsでPythonの回帰とJavaScriptを検査し、Chromiumで判断画面・受付・構成図の挙動を確認する。",
+  "summary": "SSO 依存を含む Python 全体と JavaScript を検査し、Chromium で判断、受付、構成図、Google ログインを確認する GitHub Actions。",
   "deps_out": [],
   "deps_in": [],
   "risks": [],
   "tests": [],
-  "source_sha256": "b26cfe3fe21d87f70178b9007f20f1f17fa9afcb64b8bcdff1363e946739bc62",
-  "generated_at": "00062",
+  "source_sha256": "b807b7ea210743b0deef232768016bbeb60080c926fe8197abfbf5f22f91356a",
+  "generated_at": "00064",
   "review": {
-    "reviewed_at": "2026-11-27T04:34:25+00:00",
+    "reviewed_at": "2026-11-27T08:44:47+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "b26cfe3fe21d87f70178b9007f20f1f17fa9afcb64b8bcdff1363e946739bc62",
-    "summary_sha256": "f63f322281d3ff00daadba3317cb1a64cad91d1dae477b9509354057a4fe6927",
-    "scope": "構成図の等倍表示・要素の検索・種類の編集に関する本文、要約、参照を照合。"
+    "source_sha256": "b807b7ea210743b0deef232768016bbeb60080c926fe8197abfbf5f22f91356a",
+    "summary_sha256": "e9d2835f07330176347b4b3ceebe4a8df64c9ea518533f284bcb8ad213c5aa91",
+    "scope": "モニターの Google ログインに関わる手順・検収・参照先を照合。"
   }
 }

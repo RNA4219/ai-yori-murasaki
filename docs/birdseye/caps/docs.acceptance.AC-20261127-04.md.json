@@ -1,0 +1,30 @@
+{
+  "id": "docs/acceptance/AC-20261127-04.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/INDEX.md",
+    "docs/requirements/GOOGLE-MONITOR-SSO.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.google-monitor-sso-11-27-2026.md"
+  ],
+  "deps_out": [
+    "docs/requirements/API-CONTRACTS.md",
+    "docs/requirements/GOOGLE-MONITOR-SSO.md",
+    "docs/tasks/TASK.google-monitor-sso-11-27-2026.md"
+  ],
+  "summary": "T61 の技術検収結果。合成アカウントでの4画面の保護、Blue への復帰、セッション失効、正式 strict の go、独立レビューと未検証範囲を記す。",
+  "source_sha256": "e90dcf531239cc8e6c026188c78bd7f8975f9411239f9756af9e8ba3b3daac13",
+  "generated_at": "00065",
+  "review": {
+    "reviewed_at": "2026-11-27T08:51:47+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "e90dcf531239cc8e6c026188c78bd7f8975f9411239f9756af9e8ba3b3daac13",
+    "summary_sha256": "1cfeec2308747b26c31fc22b436b694aa8789da24c8c6d2d3ab99cc79258d511",
+    "scope": "Google ログインの製品コミット、技術検収と未実施範囲を照合。"
+  }
+}

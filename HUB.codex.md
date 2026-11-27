@@ -38,6 +38,7 @@ template_version: 1.0.0
 | 案件から判断・構成・受付に移る | [製品4画面の設計](docs/tasks/TASK.frontend-workspace-11-24-2026.md) | [表示と操作の検収](docs/acceptance/AC-20261124-01.md) |
 | 箱を並べ、線から接続の根拠を読む | [構成図の操作](docs/tasks/TASK.architecture-canvas-11-23-2026.md) | [マウスとタッチの検収](docs/acceptance/AC-20261123-09.md) |
 | ワークスペース内の構成図を切り替える | [図の配置と選択](docs/requirements/ARCHITECTURE-MAP-SELECTION.md) | [画面と API の検収](docs/acceptance/AC-20261127-02.md) |
+| モニターの4画面で Google ログインを必須にする | [クライアントの設定と利用者の登録](docs/requirements/GOOGLE-MONITOR-SSO.md) | [ログインとセッションの技術検収](docs/acceptance/AC-20261127-04.md) |
 | 大きな構成図から要素を探し、種類を追加する | [表示・検索と独自の種類](docs/requirements/ARCHITECTURE-READABILITY.md) | [選択と保存の検収](docs/acceptance/AC-20261127-03.md) |
 | 文書索引と過去の検収状態を確認する | [整合性のTask](docs/tasks/TASK.document-consistency-11-23-2026.md) | [形式・鮮度の検収](docs/acceptance/AC-20261123-03.md) |
 | 案件の集計状況・前回比較・改修後の構成 | [改修要件](docs/tasks/TASK.monitor-counts-11-23-2026.md) | [技術検収](docs/acceptance/AC-20261123-02.md) |

@@ -1,0 +1,29 @@
+{
+  "id": "docs/requirements/GOOGLE-MONITOR-SSO.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "HUB.codex.md",
+    "README.md",
+    "docs/acceptance/AC-20261127-04.md",
+    "docs/requirements/API-CONTRACTS.md",
+    "docs/tasks/TASK.google-monitor-sso-11-27-2026.md"
+  ],
+  "deps_out": [
+    "README.md",
+    "docs/acceptance/AC-20261127-04.md",
+    "docs/requirements/API-CONTRACTS.md"
+  ],
+  "summary": "R-089 の利用者向け手順。ループバックの戻り先・許可する Google sub の設定、初回ログイン、Blue への復帰、期限とログアウトを説明する。",
+  "source_sha256": "79a9e5f411454577483707f7b7d63c1b790fc6a94fc146761f02727ac86d5a86",
+  "generated_at": "00064",
+  "review": {
+    "reviewed_at": "2026-11-27T08:44:47+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "79a9e5f411454577483707f7b7d63c1b790fc6a94fc146761f02727ac86d5a86",
+    "summary_sha256": "449689e236919e795d2a532cf2dc3719762a4c074e45f6a5b93173bb3702388c",
+    "scope": "モニターの Google ログインに関わる手順・検収・参照先を照合。"
+  }
+}
