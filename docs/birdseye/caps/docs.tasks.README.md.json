@@ -2,7 +2,7 @@
   "id": "docs/tasks/README.md",
   "role": "operations",
   "public_api": [],
-  "summary": "Taskの運用規約と索引。構成図の可読性と種類の編集を含む各作業の技術検収を引ける。",
+  "summary": "Taskの運用規約と索引。構成図の可読性と種類編集の合格記録を含む各作業の技術検収を引ける。",
   "deps_out": [
     "CHANGELOG.md",
     "HUB.codex.md",
@@ -85,13 +85,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "270e878ffad64caf119732849816c245a11d060a6ca8f3cf63b22061cbafe2a1",
-  "generated_at": "00062",
+  "source_sha256": "915c2e76971358407a4c3a229d892d8341cbd78107d83c8ac66bc920cb5a6cfb",
+  "generated_at": "00063",
   "review": {
-    "reviewed_at": "2026-11-27T04:34:25+00:00",
+    "reviewed_at": "2026-11-27T04:42:35+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "270e878ffad64caf119732849816c245a11d060a6ca8f3cf63b22061cbafe2a1",
-    "summary_sha256": "0b69d8d8923e679f26a2cecbca23c4413b3ab424133a72decf71d9cba145dd22",
-    "scope": "構成図の等倍表示・要素の検索・種類の編集に関する本文、要約、参照を照合。"
+    "source_sha256": "915c2e76971358407a4c3a229d892d8341cbd78107d83c8ac66bc920cb5a6cfb",
+    "summary_sha256": "50faa0a7f514acb23b0a579abb653cccb1d35a952e7369e68ac76d045b047e61",
+    "scope": "構成図の等倍表示・独自の種類について、製品コミットの実測結果、本文、要約、参照を照合。"
   }
 }

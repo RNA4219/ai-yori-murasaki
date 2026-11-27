@@ -2,7 +2,7 @@
 task_id: 20261127-03
 intent_id: INT-AYM-PRODUCT-20261106
 owner: RNA4219
-status: reviewing
+status: done
 last_reviewed_at: 2026-11-27
 next_review_due: 2026-12-27
 ---

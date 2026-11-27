@@ -2,7 +2,7 @@
   "id": "docs/acceptance/INDEX.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "案件と画面の技術検収の索引。構成図の切替、等倍表示・独自の種類などの対象と関連記録を引ける。",
+  "summary": "案件や画面の技術検収の索引。構成図の等倍表示・独自の種類の検収結果とPRを引ける。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -80,13 +80,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "df0b6fd34621e9d8864bc66632a94fe3725e18e92796691e528536db1f66ddd0",
-  "generated_at": "00062",
+  "source_sha256": "c5a0e978db14dd7ee168085873e2a56529d43af8e784c3e4d1dc849641dd7448",
+  "generated_at": "00063",
   "review": {
-    "reviewed_at": "2026-11-27T04:34:25+00:00",
+    "reviewed_at": "2026-11-27T04:42:35+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "df0b6fd34621e9d8864bc66632a94fe3725e18e92796691e528536db1f66ddd0",
-    "summary_sha256": "5ee7a14ec8d218ca0badfb4f8ca619aa0d6fb5be701eb3f9f907b6d4b27c3b00",
-    "scope": "構成図の等倍表示・要素の検索・種類の編集に関する本文、要約、参照を照合。"
+    "source_sha256": "c5a0e978db14dd7ee168085873e2a56529d43af8e784c3e4d1dc849641dd7448",
+    "summary_sha256": "1fc0668e416b46e4b216b5c61d1c0285c250606d8c76996d7fa1f2cce49dc2a0",
+    "scope": "構成図の等倍表示・独自の種類について、製品コミットの実測結果、本文、要約、参照を照合。"
   }
 }

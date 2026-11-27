@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "製品と開発手順の変更を日付・連番でまとめ、構成図の等倍表示・独自の種類を含む各変更をTaskと検収に結ぶ。",
+  "summary": "製品と開発手順の変更を日付・連番でまとめ、構成図の等倍表示と独自の種類の技術検収を含む各作業記録に結ぶ。",
   "deps_out": [
     "docs/NOTION-IMPORT.md",
     "docs/SOURCES.md",
@@ -98,13 +98,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "82ea8dae815c536047038b8dcf259907df2f0def6ef4666094f28dd01d702895",
-  "generated_at": "00062",
+  "source_sha256": "3a1a943c1117d157c79cbafbebbd2bec27d490e50b735d94bc1ce8458add2eec",
+  "generated_at": "00063",
   "review": {
-    "reviewed_at": "2026-11-27T04:34:25+00:00",
+    "reviewed_at": "2026-11-27T04:42:35+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "82ea8dae815c536047038b8dcf259907df2f0def6ef4666094f28dd01d702895",
-    "summary_sha256": "c0819e3c7639f2eb9a45e1701394ef67fc2a86caf3520d565fd78bfbb9aedc92",
-    "scope": "構成図の等倍表示・要素の検索・種類の編集に関する本文、要約、参照を照合。"
+    "source_sha256": "3a1a943c1117d157c79cbafbebbd2bec27d490e50b735d94bc1ce8458add2eec",
+    "summary_sha256": "ca22b3c3b8fe586c45ad533c598655f609e0df5077e1486d26ccfe31afcdc538",
+    "scope": "構成図の等倍表示・独自の種類について、製品コミットの実測結果、本文、要約、参照を照合。"
   }
 }

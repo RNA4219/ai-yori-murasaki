@@ -16,14 +16,14 @@
     "docs/requirements/ARCHITECTURE-READABILITY.md",
     "docs/tasks/TASK.architecture-readability-11-27-2026.md"
   ],
-  "summary": "構成図を等倍で開き、要素を検索して詳細から戻る操作と、独自の種類を割り当てて保存する際の技術検収を記録する。",
-  "source_sha256": "57c45fe27263de40050cbfcbd6537fb8e3e3a08e1a6d0bad4f475c55766b0ce5",
-  "generated_at": "00062",
+  "summary": "製品コミットのT59・T60の技術検収7件、PC・狭幅の文字サイズ、種類を2件追加した図の保存・再読込、原本2枚の照合結果を記す。",
+  "source_sha256": "28896d496a92073d66fbae5334864a7bc50edb82c1f55d32809bb236cc0f4f63",
+  "generated_at": "00063",
   "review": {
-    "reviewed_at": "2026-11-27T04:34:25+00:00",
+    "reviewed_at": "2026-11-27T04:42:35+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "57c45fe27263de40050cbfcbd6537fb8e3e3a08e1a6d0bad4f475c55766b0ce5",
-    "summary_sha256": "2aad0432aa1eb202a5e7bae5b3c0df08f0d96dd849f80533a22cc078a5657983",
-    "scope": "構成図の等倍表示・要素の検索・種類の編集に関する本文、要約、参照を照合。"
+    "source_sha256": "28896d496a92073d66fbae5334864a7bc50edb82c1f55d32809bb236cc0f4f63",
+    "summary_sha256": "b0eb6409c94107b73828a6df5ab6932ac09c9dd4eda58972ad18abcc7c3e155d",
+    "scope": "構成図の等倍表示・独自の種類について、製品コミットの実測結果、本文、要約、参照を照合。"
   }
 }

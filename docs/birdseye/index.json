@@ -1,5 +1,5 @@
 {
-  "generated_at": "00062",
+  "generated_at": "00063",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -15,8 +15,8 @@
     "CHANGELOG.md": {
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
-      "mtime": "00062",
-      "source_sha256": "82ea8dae815c536047038b8dcf259907df2f0def6ef4666094f28dd01d702895"
+      "mtime": "00063",
+      "source_sha256": "3a1a943c1117d157c79cbafbebbd2bec27d490e50b735d94bc1ce8458add2eec"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -70,8 +70,8 @@
     "docs/acceptance/INDEX.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
-      "mtime": "00062",
-      "source_sha256": "df0b6fd34621e9d8864bc66632a94fe3725e18e92796691e528536db1f66ddd0"
+      "mtime": "00063",
+      "source_sha256": "c5a0e978db14dd7ee168085873e2a56529d43af8e784c3e4d1dc849641dd7448"
     },
     "docs/acceptance/README.md": {
       "role": "guide",
@@ -113,8 +113,8 @@
     "docs/tasks/README.md": {
       "role": "operations",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
-      "mtime": "00062",
-      "source_sha256": "270e878ffad64caf119732849816c245a11d060a6ca8f3cf63b22061cbafe2a1"
+      "mtime": "00063",
+      "source_sha256": "915c2e76971358407a4c3a229d892d8341cbd78107d83c8ac66bc920cb5a6cfb"
     },
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md": {
       "role": "task",
@@ -846,8 +846,8 @@
     "docs/acceptance/AC-20261127-03.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.acceptance.AC-20261127-03.md.json",
-      "mtime": "00062",
-      "source_sha256": "57c45fe27263de40050cbfcbd6537fb8e3e3a08e1a6d0bad4f475c55766b0ce5"
+      "mtime": "00063",
+      "source_sha256": "28896d496a92073d66fbae5334864a7bc50edb82c1f55d32809bb236cc0f4f63"
     },
     "docs/requirements/ARCHITECTURE-READABILITY.md": {
       "role": "doc",
@@ -858,8 +858,8 @@
     "docs/tasks/TASK.architecture-readability-11-27-2026.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.tasks.TASK.architecture-readability-11-27-2026.md.json",
-      "mtime": "00062",
-      "source_sha256": "36e42e1e552e824e02f938f2f65c5eb059b81a79e3f9f4e3d64f0df13a161c5f"
+      "mtime": "00063",
+      "source_sha256": "8f8d1b5432553c07f35f23d557c7669273988711edb76e03da51a67c4480f777"
     }
   },
   "edges": [
