@@ -1,0 +1,29 @@
+{
+  "id": "docs/acceptance/AC-20261127-03.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/INDEX.md",
+    "docs/requirements/ARCHITECTURE-READABILITY.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.architecture-readability-11-27-2026.md"
+  ],
+  "deps_out": [
+    "docs/requirements/ARCHITECTURE-READABILITY.md",
+    "docs/tasks/TASK.architecture-readability-11-27-2026.md"
+  ],
+  "summary": "構成図を等倍で開き、要素を検索して詳細から戻る操作と、独自の種類を割り当てて保存する際の技術検収を記録する。",
+  "source_sha256": "57c45fe27263de40050cbfcbd6537fb8e3e3a08e1a6d0bad4f475c55766b0ce5",
+  "generated_at": "00062",
+  "review": {
+    "reviewed_at": "2026-11-27T04:34:25+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "57c45fe27263de40050cbfcbd6537fb8e3e3a08e1a6d0bad4f475c55766b0ce5",
+    "summary_sha256": "2aad0432aa1eb202a5e7bae5b3c0df08f0d96dd849f80533a22cc078a5657983",
+    "scope": "構成図の等倍表示・要素の検索・種類の編集に関する本文、要約、参照を照合。"
+  }
+}

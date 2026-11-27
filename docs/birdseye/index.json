@@ -1,5 +1,5 @@
 {
-  "generated_at": "00061",
+  "generated_at": "00062",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -15,8 +15,8 @@
     "CHANGELOG.md": {
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
-      "mtime": "00061",
-      "source_sha256": "d19c3246c8644d0c5b6ef702911fcdd02997b951d5dab77ceb51f7886431593b"
+      "mtime": "00062",
+      "source_sha256": "82ea8dae815c536047038b8dcf259907df2f0def6ef4666094f28dd01d702895"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -36,14 +36,14 @@
     "HUB.codex.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
-      "mtime": "00059",
-      "source_sha256": "07bef488ea95e6971bdffc63abe3e387f938ad910d7ff7feafc96475976d469e"
+      "mtime": "00062",
+      "source_sha256": "4c87806245cb1226c94dee720e819cd77e434c72ab5436e9381d677e70b9bdad"
     },
     "README.md": {
       "role": "overview",
       "caps": "docs/birdseye/caps/README.md.json",
-      "mtime": "00059",
-      "source_sha256": "ec5e210028a5e9ab7f72d5df0faed2427ce13734713c85944bdf941b42cc8e48"
+      "mtime": "00062",
+      "source_sha256": "1818f2dff5b48f28389a47ccae4bde758ee42e47407206af96e6e6116fb44153"
     },
     "RUNBOOK.md": {
       "role": "operations",
@@ -70,8 +70,8 @@
     "docs/acceptance/INDEX.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
-      "mtime": "00061",
-      "source_sha256": "e8e916d2a34a4fc01ba1cb4afab0be83efd5aaf01e931609a284713628e58607"
+      "mtime": "00062",
+      "source_sha256": "df0b6fd34621e9d8864bc66632a94fe3725e18e92796691e528536db1f66ddd0"
     },
     "docs/acceptance/README.md": {
       "role": "guide",
@@ -113,8 +113,8 @@
     "docs/tasks/README.md": {
       "role": "operations",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
-      "mtime": "00061",
-      "source_sha256": "3aa387b35fe454eb34797b7d2d7f9c75ea7a884dcf944ab15366f6fd9790b585"
+      "mtime": "00062",
+      "source_sha256": "270e878ffad64caf119732849816c245a11d060a6ca8f3cf63b22061cbafe2a1"
     },
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md": {
       "role": "task",
@@ -816,8 +816,8 @@
     ".github/workflows/dual-view-validation.yml": {
       "role": "doc",
       "caps": "docs/birdseye/caps/.github.workflows.dual-view-validation.yml.json",
-      "mtime": "00059",
-      "source_sha256": "02ce7d80417dc9b277c1b4be47e7ee889a1d9f6f62c0be7eefb5064860672132"
+      "mtime": "00062",
+      "source_sha256": "b26cfe3fe21d87f70178b9007f20f1f17fa9afcb64b8bcdff1363e946739bc62"
     },
     "docs/acceptance/AC-20261127-02.md": {
       "role": "doc",
@@ -834,7 +834,7 @@
     "docs/requirements/ARCHITECTURE-MAP-SELECTION.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.requirements.ARCHITECTURE-MAP-SELECTION.md.json",
-      "mtime": "00060",
+      "mtime": "00062",
       "source_sha256": "7af13c9cbd5aad582af76df7041576c0e21003e1aa21435d93ec8e1e38e85e70"
     },
     "docs/tasks/TASK.architecture-switch-11-27-2026.md": {
@@ -842,6 +842,24 @@
       "caps": "docs/birdseye/caps/docs.tasks.TASK.architecture-switch-11-27-2026.md.json",
       "mtime": "00061",
       "source_sha256": "7fe58e9d36f1a43d6f6aeaa36a45395ee32f0cc9c2ed2435b060c9e5a4508d5f"
+    },
+    "docs/acceptance/AC-20261127-03.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261127-03.md.json",
+      "mtime": "00062",
+      "source_sha256": "57c45fe27263de40050cbfcbd6537fb8e3e3a08e1a6d0bad4f475c55766b0ce5"
+    },
+    "docs/requirements/ARCHITECTURE-READABILITY.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.requirements.ARCHITECTURE-READABILITY.md.json",
+      "mtime": "00062",
+      "source_sha256": "228b9143a16b8fb6ae70d0531e819b331f1559b4576a6e596fab1919f166eaeb"
+    },
+    "docs/tasks/TASK.architecture-readability-11-27-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.architecture-readability-11-27-2026.md.json",
+      "mtime": "00062",
+      "source_sha256": "36e42e1e552e824e02f938f2f65c5eb059b81a79e3f9f4e3d64f0df13a161c5f"
     }
   },
   "edges": [
@@ -3148,6 +3166,70 @@
     [
       "docs/tasks/TASK.architecture-switch-11-27-2026.md",
       "docs/requirements/ARCHITECTURE-MAP-SELECTION.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/acceptance/AC-20261127-03.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.architecture-readability-11-27-2026.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/acceptance/AC-20261127-03.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/requirements/ARCHITECTURE-READABILITY.md"
+    ],
+    [
+      "README.md",
+      "docs/requirements/ARCHITECTURE-READABILITY.md"
+    ],
+    [
+      "docs/acceptance/AC-20261127-03.md",
+      "docs/requirements/ARCHITECTURE-READABILITY.md"
+    ],
+    [
+      "docs/acceptance/AC-20261127-03.md",
+      "docs/tasks/TASK.architecture-readability-11-27-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261127-03.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.architecture-readability-11-27-2026.md"
+    ],
+    [
+      "docs/requirements/ARCHITECTURE-READABILITY.md",
+      "docs/acceptance/AC-20261127-03.md"
+    ],
+    [
+      "docs/requirements/ARCHITECTURE-READABILITY.md",
+      "docs/requirements/ARCHITECTURE-MAP-SELECTION.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261127-03.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.architecture-readability-11-27-2026.md"
+    ],
+    [
+      "docs/tasks/TASK.architecture-readability-11-27-2026.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "docs/tasks/TASK.architecture-readability-11-27-2026.md",
+      "docs/acceptance/AC-20261127-03.md"
+    ],
+    [
+      "docs/tasks/TASK.architecture-readability-11-27-2026.md",
+      "docs/requirements/ARCHITECTURE-READABILITY.md"
     ]
   ]
 }

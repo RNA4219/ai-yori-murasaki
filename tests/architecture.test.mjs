@@ -1,10 +1,90 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {parseFile,validateMap,importDocuments,serializeMap} from '../ai_yori_murasaki/web/architecture/model.mjs';
+import {parseFile,validateMap,importDocuments,serializeMap,nodeKindOptions,registerNodeKind,setNodeKind} from '../ai_yori_murasaki/web/architecture/model.mjs';
 
 const example=JSON.parse(await readFile(new URL('../ai_yori_murasaki/web/architecture/sample.json',import.meta.url)));
 const loadOne=(value,name='template.json')=>importDocuments([{name,value}]);
+
+test('既存の種類と未登録の種類IDを表示し、宣言のない既存JSONをそのまま保存する',()=>{
+  const original=structuredClone(example);
+  original.nodes[0].kind='手続き / 受付';
+  original.nodes[1].kind='external';
+  const {map}=loadOne(original);
+  assert.deepEqual([...nodeKindOptions(map)],[
+    ['repository','リポジトリ'],['service','サービス'],['store','データストア'],
+    ['external','外部システム'],['手続き / 受付','手続き / 受付']
+  ]);
+  assert.deepEqual(JSON.parse(serializeMap(map,original)),original);
+  assert.equal(Object.hasOwn(JSON.parse(serializeMap(map)), 'nodeKinds'),false);
+});
+
+test('独自種類をIDで登録・割り当てし、要素の並び・type・拡張項目を保って再読込できる',()=>{
+  const original=structuredClone(example);
+  original.nodeKinds=[{id:'office',label:'窓口',legend:{color:'orange'}}];
+  original.nodes[0].kind='日本語 / 受付';
+  original.nodes[0].type='受付票';
+  original.nodes[0].owner='例示部署';
+  original.nodes[1].id=' '+original.nodes[1].id+' ';
+  original.extension={version:2};
+  original.connections[0].userInput={mode:'ui',scope:'件名',extension:true};
+  const {map}=loadOne(original);
+  const changed=map.nodes[1];
+  assert.equal(registerNodeKind(map,'日本語 / 受付','窓口'),'日本語 / 受付');
+  const kind=registerNodeKind(map,'constructor','保管 <一時>');
+  setNodeKind(map,changed.id,kind);
+  map.nodes.reverse();
+  map.connections[0].userInput={mode:'internal'};
+  const saved=JSON.parse(serializeMap(map,original));
+  const expected=structuredClone(original);
+  expected.nodeKinds.push({id:'日本語 / 受付',label:'窓口'},{id:'constructor',label:'保管 <一時>'});
+  expected.nodes[1].kind='constructor';
+  expected.connections[0].userInput={mode:'internal',extension:true};
+  assert.deepEqual(saved,expected);
+  const restored=loadOne(saved).map;
+  assert.equal(nodeKindOptions(restored).get(restored.nodes[1].kind),'保管 <一時>');
+  assert.equal(nodeKindOptions(restored).get('日本語 / 受付'),'窓口');
+  assert.equal(restored.nodes[0].type,'受付票');
+  assert.deepEqual(JSON.parse(serializeMap(restored,saved)),saved);
+  assert.equal(original.nodeKinds.length,1);
+  assert.notEqual(original.nodes[1].kind,'constructor');
+});
+
+test('種類の重複や不正な入力は読み込み・登録・割り当て時に拒否し、編集中の図を保つ',()=>{
+  const entry={id:'desk',label:'窓口'};
+  for (const nodeKinds of [null,{},[null],[entry,{id:' desk ',label:'二番'}],
+    [{...entry,id:'service'}],[{...entry,id:' '}],[{...entry,label:20}],[{id:5,label:'名'}],
+    [{id:'長'.repeat(161),label:'名'}],[{...entry,label:'長'.repeat(161)}],Array(101).fill(entry)]) {
+    assert.throws(()=>loadOne({...example,nodeKinds}));
+  }
+  for (const kind of ['',null,{},'名'.repeat(161)]) {
+    const invalid=structuredClone(example);
+    invalid.nodes[0].kind=kind;
+    assert.throws(()=>loadOne(invalid),/kind/);
+  }
+  const {map}=loadOne({...example,nodeKinds:[entry]});
+  const snapshot=structuredClone(map);
+  assert.throws(()=>registerNodeKind(map,'desk','複製'),/重複/);
+  assert.throws(()=>registerNodeKind(map,'external','別名'),/重複/);
+  assert.throws(()=>registerNodeKind(map,'queue',' '),/表示名/);
+  assert.throws(()=>setNodeKind(map,map.nodes[0].id,'窓口'),/種類/);
+  assert.throws(()=>setNodeKind(map,'missing','desk'),/ID/);
+  assert.deepEqual(map,snapshot);
+});
+
+test('種類の長さは前後の空白を除いたUnicodeコードポイントで数える',()=>{
+  const original=structuredClone(example);
+  const id='🧩'.repeat(160), label='📦'.repeat(160);
+  original.nodes[0].kind=' '+id+' ';
+  const {map}=loadOne(original);
+  assert.equal(map.nodes[0].kind,id);
+  assert.equal(registerNodeKind(map,' '+id+' ',' '+label+' '),id);
+  const saved=JSON.parse(serializeMap(map,original));
+  assert.deepEqual(saved.nodeKinds,[{id,label}]);
+  assert.equal(nodeKindOptions(loadOne(saved).map).get(id),label);
+  assert.throws(()=>registerNodeKind(map,'x',label+'📦'),/表示名/);
+  assert.throws(()=>registerNodeKind(map,id+'🧩','名称'),/ID/);
+});
 
 test('利用者の関与範囲は指定された部品IDだけを保存する',()=>{
   const original=structuredClone(example);

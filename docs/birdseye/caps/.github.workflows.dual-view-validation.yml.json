@@ -2,18 +2,18 @@
   "id": ".github/workflows/dual-view-validation.yml",
   "role": "doc",
   "public_api": [],
-  "summary": "Python全体と判断画面のJavaScriptを検査し、Chromiumで判断画面・受付・構成図切替を確認するGitHub Actions。",
+  "summary": "GitHub ActionsでPythonの回帰とJavaScriptを検査し、Chromiumで判断画面・受付・構成図の挙動を確認する。",
   "deps_out": [],
   "deps_in": [],
   "risks": [],
   "tests": [],
-  "source_sha256": "02ce7d80417dc9b277c1b4be47e7ee889a1d9f6f62c0be7eefb5064860672132",
-  "generated_at": "00059",
+  "source_sha256": "b26cfe3fe21d87f70178b9007f20f1f17fa9afcb64b8bcdff1363e946739bc62",
+  "generated_at": "00062",
   "review": {
-    "reviewed_at": "2026-11-27T00:30:32+00:00",
+    "reviewed_at": "2026-11-27T04:34:25+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "02ce7d80417dc9b277c1b4be47e7ee889a1d9f6f62c0be7eefb5064860672132",
-    "summary_sha256": "6e99ca20e16bda5d9096c65604a2923c65f977bb0e386726f641d2b1ce669311",
-    "scope": "構成図切替の本文・要約・参照を照合。"
+    "source_sha256": "b26cfe3fe21d87f70178b9007f20f1f17fa9afcb64b8bcdff1363e946739bc62",
+    "summary_sha256": "f63f322281d3ff00daadba3317cb1a64cad91d1dae477b9509354057a4fe6927",
+    "scope": "構成図の等倍表示・要素の検索・種類の編集に関する本文、要約、参照を照合。"
   }
 }

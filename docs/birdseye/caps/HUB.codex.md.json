@@ -2,7 +2,7 @@
   "id": "HUB.codex.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "製品の作業と文書の入口。案件判断、受付連結、構成図の配置・切替を含む機能の使い方と検収へ案内する。",
+  "summary": "製品の作業と文書の入口。案件判断、受付連結、構成図の配置・切替、要素の探索と種類編集の操作・検収へ案内する。",
   "deps_out": [
     ".agents/skills/security-audit/SKILL.md",
     "AGENTS.md",
@@ -45,10 +45,12 @@
     "docs/acceptance/AC-20261126-01.md",
     "docs/acceptance/AC-20261126-02.md",
     "docs/acceptance/AC-20261127-02.md",
+    "docs/acceptance/AC-20261127-03.md",
     "docs/acceptance/INDEX.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
     "docs/requirements/ARCHITECTURE-MAP-SELECTION.md",
+    "docs/requirements/ARCHITECTURE-READABILITY.md",
     "docs/requirements/MONITOR-REDESIGN.md",
     "docs/requirements/P2-VALIDATION-PLAN.md",
     "docs/requirements/QUALITY-INTEGRATION.md",
@@ -83,13 +85,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "07bef488ea95e6971bdffc63abe3e387f938ad910d7ff7feafc96475976d469e",
-  "generated_at": "00059",
+  "source_sha256": "4c87806245cb1226c94dee720e819cd77e434c72ab5436e9381d677e70b9bdad",
+  "generated_at": "00062",
   "review": {
-    "reviewed_at": "2026-11-27T00:30:32+00:00",
+    "reviewed_at": "2026-11-27T04:34:25+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "07bef488ea95e6971bdffc63abe3e387f938ad910d7ff7feafc96475976d469e",
-    "summary_sha256": "76326beb8810ceabdca3b042698bb6de0c78b549b5b26292e2a32b1969c33dc9",
-    "scope": "構成図切替の本文・要約・参照を照合。"
+    "source_sha256": "4c87806245cb1226c94dee720e819cd77e434c72ab5436e9381d677e70b9bdad",
+    "summary_sha256": "c760e8e417a71bf483d0e7b739842a8798fdbb785c6cd295ff21bd918c641ccd",
+    "scope": "構成図の等倍表示・要素の検索・種類の編集に関する本文、要約、参照を照合。"
   }
 }

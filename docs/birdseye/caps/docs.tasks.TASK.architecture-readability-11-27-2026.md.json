@@ -1,0 +1,28 @@
+{
+  "id": "docs/tasks/TASK.architecture-readability-11-27-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261127-03.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261127-03.md",
+    "docs/requirements/ARCHITECTURE-READABILITY.md"
+  ],
+  "summary": "構成図の倍率と領域の変更前実測、設計の対象と根拠、独自種類の保存に関する作業をR-087・R-088の検収に結ぶ。",
+  "source_sha256": "36e42e1e552e824e02f938f2f65c5eb059b81a79e3f9f4e3d64f0df13a161c5f",
+  "generated_at": "00062",
+  "review": {
+    "reviewed_at": "2026-11-27T04:34:25+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "36e42e1e552e824e02f938f2f65c5eb059b81a79e3f9f4e3d64f0df13a161c5f",
+    "summary_sha256": "f67cb9f449bc4cfb1eee8f177c07992e92ac9d2288b43e248fc09dcebb21e242",
+    "scope": "構成図の等倍表示・要素の検索・種類の編集に関する本文、要約、参照を照合。"
+  }
+}

@@ -8,6 +8,7 @@
     "HUB.codex.md",
     "README.md",
     "docs/acceptance/AC-20261127-02.md",
+    "docs/requirements/ARCHITECTURE-READABILITY.md",
     "docs/tasks/TASK.architecture-switch-11-27-2026.md"
   ],
   "deps_out": [
@@ -17,12 +18,12 @@
   ],
   "summary": "R-086 と T58 の構成図切替要件。合成した図の配置・選択・再読込、API の照会例、原案番号との対応を記す。",
   "source_sha256": "7af13c9cbd5aad582af76df7041576c0e21003e1aa21435d93ec8e1e38e85e70",
-  "generated_at": "00060",
+  "generated_at": "00062",
   "review": {
-    "reviewed_at": "2026-11-27T00:34:48+00:00",
+    "reviewed_at": "2026-11-27T04:34:25+00:00",
     "reviewed_by": "Codex",
     "source_sha256": "7af13c9cbd5aad582af76df7041576c0e21003e1aa21435d93ec8e1e38e85e70",
-    "summary_sha256": "506ca7dd3bec6a90b33874ea6c9d45a8934af1e116bf41b65df8fc7261fe4330",
-    "scope": "構成図切替の本文・要約・参照を照合。"
+    "summary_sha256": "47bd3b34b48c808fabd750c754edc3121d585fc388b7d1b423cd1e86e49a6402",
+    "scope": "構成図の等倍表示・要素の検索・種類の編集に関する本文、要約、参照を照合。"
   }
 }

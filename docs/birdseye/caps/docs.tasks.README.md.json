@@ -2,7 +2,7 @@
   "id": "docs/tasks/README.md",
   "role": "operations",
   "public_api": [],
-  "summary": "Task の運用規約と索引。構成図切替を含む作業と対応する技術検収を引ける。",
+  "summary": "Taskの運用規約と索引。構成図の可読性と種類の編集を含む各作業の技術検収を引ける。",
   "deps_out": [
     "CHANGELOG.md",
     "HUB.codex.md",
@@ -37,12 +37,14 @@
     "docs/acceptance/AC-20261126-02.md",
     "docs/acceptance/AC-20261127-01.md",
     "docs/acceptance/AC-20261127-02.md",
+    "docs/acceptance/AC-20261127-03.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
     "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
     "docs/tasks/TASK.architecture-canvas-11-23-2026.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
+    "docs/tasks/TASK.architecture-readability-11-27-2026.md",
     "docs/tasks/TASK.architecture-switch-11-27-2026.md",
     "docs/tasks/TASK.case-decisions-11-27-2026.md",
     "docs/tasks/TASK.case-intake-11-23-2026.md",
@@ -83,13 +85,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "3aa387b35fe454eb34797b7d2d7f9c75ea7a884dcf944ab15366f6fd9790b585",
-  "generated_at": "00061",
+  "source_sha256": "270e878ffad64caf119732849816c245a11d060a6ca8f3cf63b22061cbafe2a1",
+  "generated_at": "00062",
   "review": {
-    "reviewed_at": "2026-11-27T00:37:46+00:00",
+    "reviewed_at": "2026-11-27T04:34:25+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "3aa387b35fe454eb34797b7d2d7f9c75ea7a884dcf944ab15366f6fd9790b585",
-    "summary_sha256": "1827590b341fff8f893254891b1839202a8a7acca5abf385aed867804eb4ab7f",
-    "scope": "構成図切替の本文・要約・参照を照合。"
+    "source_sha256": "270e878ffad64caf119732849816c245a11d060a6ca8f3cf63b22061cbafe2a1",
+    "summary_sha256": "0b69d8d8923e679f26a2cecbca23c4413b3ab424133a72decf71d9cba145dd22",
+    "scope": "構成図の等倍表示・要素の検索・種類の編集に関する本文、要約、参照を照合。"
   }
 }

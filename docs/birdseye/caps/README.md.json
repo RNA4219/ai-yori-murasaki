@@ -2,7 +2,7 @@
   "id": "README.md",
   "role": "overview",
   "public_api": [],
-  "summary": "製品の起動、監視、課題と観測の照合、受付IDから監査の結果を読む操作、ワークスペースの構成図の切替手順を案内する。",
+  "summary": "製品の起動・監視と案件の操作、ワークスペースの構成図の切替・検索、独自の種類を使う手順を案内する。",
   "deps_out": [
     "BLUEPRINT.md",
     "CHANGELOG.md",
@@ -29,6 +29,7 @@
     "docs/releases/README.md",
     "docs/requirements/API-CONTRACTS.md",
     "docs/requirements/ARCHITECTURE-MAP-SELECTION.md",
+    "docs/requirements/ARCHITECTURE-READABILITY.md",
     "docs/requirements/DECISIONS.md",
     "docs/requirements/REQUIREMENTS.md",
     "docs/requirements/SPEC-CASE-DECISIONS.md",
@@ -53,13 +54,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "ec5e210028a5e9ab7f72d5df0faed2427ce13734713c85944bdf941b42cc8e48",
-  "generated_at": "00059",
+  "source_sha256": "1818f2dff5b48f28389a47ccae4bde758ee42e47407206af96e6e6116fb44153",
+  "generated_at": "00062",
   "review": {
-    "reviewed_at": "2026-11-27T00:30:32+00:00",
+    "reviewed_at": "2026-11-27T04:34:25+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "ec5e210028a5e9ab7f72d5df0faed2427ce13734713c85944bdf941b42cc8e48",
-    "summary_sha256": "3e7bc4ab7d0700436a97935f568a246d37e5223cf4cb7e645fc9d37a82d54674",
-    "scope": "構成図切替の本文・要約・参照を照合。"
+    "source_sha256": "1818f2dff5b48f28389a47ccae4bde758ee42e47407206af96e6e6116fb44153",
+    "summary_sha256": "4e259060b53426abefc78d0af387230755136382e4e857f6850e83d0b5126bb8",
+    "scope": "構成図の等倍表示・要素の検索・種類の編集に関する本文、要約、参照を照合。"
   }
 }

@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "製品と開発手順の変更を日付・連番でまとめ、構成図切替を含む変更のTaskと検収へ結び付ける。",
+  "summary": "製品と開発手順の変更を日付・連番でまとめ、構成図の等倍表示・独自の種類を含む各変更をTaskと検収に結ぶ。",
   "deps_out": [
     "docs/NOTION-IMPORT.md",
     "docs/SOURCES.md",
@@ -35,6 +35,7 @@
     "docs/acceptance/AC-20261126-02.md",
     "docs/acceptance/AC-20261127-01.md",
     "docs/acceptance/AC-20261127-02.md",
+    "docs/acceptance/AC-20261127-03.md",
     "docs/evidence/quality-integration-20261109/README.md",
     "docs/evidence/sources-light-ui-20261109/README.md",
     "docs/evidence/wazuh-live-20261108.md",
@@ -42,6 +43,7 @@
     "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
     "docs/tasks/TASK.architecture-canvas-11-23-2026.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
+    "docs/tasks/TASK.architecture-readability-11-27-2026.md",
     "docs/tasks/TASK.architecture-switch-11-27-2026.md",
     "docs/tasks/TASK.case-decisions-11-27-2026.md",
     "docs/tasks/TASK.case-intake-11-23-2026.md",
@@ -82,6 +84,7 @@
     "docs/acceptance/README.md",
     "docs/tasks/README.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
+    "docs/tasks/TASK.architecture-readability-11-27-2026.md",
     "docs/tasks/TASK.architecture-switch-11-27-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
@@ -95,13 +98,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "d19c3246c8644d0c5b6ef702911fcdd02997b951d5dab77ceb51f7886431593b",
-  "generated_at": "00061",
+  "source_sha256": "82ea8dae815c536047038b8dcf259907df2f0def6ef4666094f28dd01d702895",
+  "generated_at": "00062",
   "review": {
-    "reviewed_at": "2026-11-27T00:37:46+00:00",
+    "reviewed_at": "2026-11-27T04:34:25+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "d19c3246c8644d0c5b6ef702911fcdd02997b951d5dab77ceb51f7886431593b",
-    "summary_sha256": "cf349189f37b45a44cb77d7c6d953bca3f208be65865335746843d874336f0fa",
-    "scope": "構成図切替の本文・要約・参照を照合。"
+    "source_sha256": "82ea8dae815c536047038b8dcf259907df2f0def6ef4666094f28dd01d702895",
+    "summary_sha256": "c0819e3c7639f2eb9a45e1701394ef67fc2a86caf3520d565fd78bfbb9aedc92",
+    "scope": "構成図の等倍表示・要素の検索・種類の編集に関する本文、要約、参照を照合。"
   }
 }

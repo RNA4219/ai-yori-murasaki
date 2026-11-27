@@ -1,9 +1,9 @@
-import { parseFile, importDocuments, validateMap, serializeMap, MAX_BYTES, kindNames, severityNames, inputModes } from './model.mjs';
+import { parseFile, importDocuments, validateMap, serializeMap, MAX_BYTES, nodeKindOptions, registerNodeKind, setNodeKind, severityNames, inputModes } from './model.mjs';
 
 const $=id=>document.getElementById(id);
 const ns='http://www.w3.org/2000/svg';
 const priorities=[...severityNames.keys()];
-const state={map:null,byId:new Map(),findingsByNode:new Map(),selected:null,mode:'all',packages:new Map(),load:0,note:'',choice:'sample'};
+const state={map:null,kinds:new Map(),byId:new Map(),findingsByNode:new Map(),selected:null,mode:'all',packages:new Map(),load:0,note:'',choice:'sample'};
 const params=new URLSearchParams(location.search);
 const blueView=params.get('view')==='blue';
 const mapIdPattern=/^[a-z0-9][a-z0-9-]{0,63}$/;
@@ -27,6 +27,14 @@ function svg(tag,attrs={},text) {
   return e;
 }
 function issues(id) { return state.findingsByNode.get(id); }
+function displayKinds(map) {
+  const options=nodeKindOptions(map), counts=new Map();
+  for(const label of options.values()) counts.set(label,(counts.get(label) || 0)+1);
+  for(const [id,label] of options) {
+    if(counts.get(label)>1 && id!==label) options.set(id,label+' ('+id+')');
+  }
+  return options;
+}
 function levelName(severity) {
   return severity==='info' ? severityNames.get(severity) : severity[0].toUpperCase()+severity.slice(1);
 }
@@ -76,8 +84,13 @@ function apply(result) {
   const sample=result.choice==='sample';
   let keptEdits=false;
   if(result.packages && state.packages.size){
+    // 追加した package.json から依存関係を再構築しても、同じリポジトリの編集は維持する。
+    result.map.nodeKinds=state.map.nodeKinds.map(kind=>({...kind}));
+    const priorKinds=new Map(state.map.nodes.map(node=>[node.description,node.kind]));
+    for(const node of result.map.nodes) node.kind=priorKinds.get(node.description) ?? node.kind;
     result.map.userScope=result.map.nodes.filter(n=>scopeMembers.has(n.id)).map(n=>n.id);
-    keptEdits=!$('unsaved').hidden || result.map.userScope.length>0;
+    keptEdits=!$('unsaved').hidden || result.map.userScope.length>0 || result.map.nodeKinds.length>0 ||
+      result.map.nodes.some(node=>node.kind!=='repository');
     const key=c=>JSON.stringify([c.from,c.to,c.label,c.evidence]);
     const inputs=new Map(state.map.connections.filter(c=>c.userInput).map(c=>[key(c),c.userInput]));
     for(const c of result.map.connections){
@@ -86,6 +99,7 @@ function apply(result) {
     }
   }
   state.map=result.map;
+  state.kinds=displayKinds(state.map);
   state.choice=result.choice || 'file';
   syncChoice();
   const url=new URL(location.href);
@@ -110,6 +124,9 @@ function apply(result) {
   state.packages=result.packages || new Map();
   state.selected=initial(state.map.nodes);
   state.note=result.note || '';
+  $('node-search').value='';
+  $('kind-form').reset();
+  $('kind-editor').open=false;
   $('nearby').checked=false;
   $('workspace').hidden=false;
   $('error').hidden=true;
@@ -132,7 +149,7 @@ function setEdited(edited){
   $('unsaved').hidden=!edited;
   $('edited-label').hidden=false;
   $('confirm-saved').hidden=true;
-  $('save-changes').hidden=!edited || !selectedWire;
+  $('save-changes').hidden=!edited;
   if(!edited) $('scope-save').hidden=true;
 }
 function syncChoice() {
@@ -259,11 +276,9 @@ function cardSize(id,width,inputSources) {
 function layout(nodes,edges,width) {
   const inputSources=new Set(state.map.connections.filter(c=>c.userInput?.mode==='ui').map(c=>c.from));
   const repoOnly=nodes.every(n=>n.kind==='repository');
-  const bands=repoOnly ? repoBands(nodes,edges) : [
-    {label:'リポジトリ',nodes:nodes.filter(n=>n.kind==='repository')},
-    {label:'サービス',nodes:nodes.filter(n=>n.kind==='service' || n.kind==='external')},
-    {label:'データストア',nodes:nodes.filter(n=>n.kind==='store')}
-  ].filter(b=>b.nodes.length);
+  const bands=repoOnly ? repoBands(nodes,edges) : [...state.kinds].map(([id,label])=>({
+    label,nodes:nodes.filter(n=>n.kind===id)
+  })).filter(band=>band.nodes.length);
   const vertical=width<580 || bands.length>4;
   const positions=new Map(), zones=[];
   const gap=36, margin=12;
@@ -271,7 +286,7 @@ function layout(nodes,edges,width) {
   if(vertical) {
     let top=14;
     for(const band of bands){
-      const columns=width>=460 ? 3 : width>=290 ? 2 : 1;
+      const columns=width>=580 ? Math.max(3,Math.floor((width-margin*2)/190)) : width>=460 ? 3 : width>=290 ? 2 : 1;
       const cell=(width-margin*2)/columns;
       const bw=Math.min(186,cell-18);
       const start=band.label ? 64 : 12;
@@ -338,12 +353,32 @@ function fit(text,width,size,bold=false) {
   for(const char of text){if(measure.measureText(s+char+'…').width>width) break; s+=char;}
   return s+'…';
 }
-const glyphs={
-  repository:'M3 4h13v13H5a2 2 0 0 1-2-2z M6 4v9 M3 14h13',
-  service:'M6 3h7l4 6-4 6H6L2 9z M7 9h5',
-  store:'M3 5c0-4 13-4 13 0s-13 4-13 0 M3 5v9c0 4 13 4 13 0V5 M3 10c0 4 13 4 13 0',
-  external:'M3 5h13v10H3z M6 9h7 M9 7l3 2-3 2'
-};
+const glyphs=new Map([
+  ['repository',['M3 4h13v13H5a2 2 0 0 1-2-2z M6 4v9 M3 14h13','#68487a']],
+  ['service',['M6 3h7l4 6-4 6H6L2 9z M7 9h5','#915031']],
+  ['store',['M3 5c0-4 13-4 13 0s-13 4-13 0 M3 5v9c0 4 13 4 13 0V5 M3 10c0 4 13 4 13 0','#29676c']],
+  ['external',['M3 5h13v10H3z M6 9h7 M9 7l3 2-3 2','#355f87']]
+]);
+function kindGlyph(kind,attrs={}) {
+  const [d,color]=glyphs.get(kind) ?? ['M10 2l8 7-8 7-8-7z M7 9h6','#68487a'];
+  return svg('path',{class:'glyph',d,color,...attrs});
+}
+function drawLegend(nodes) {
+  const counts=new Map();
+  for(const node of nodes) counts.set(node.kind,(counts.get(node.kind) || 0)+1);
+  const items=[];
+  for(const [id,label] of state.kinds) {
+    if(!counts.has(id)) continue;
+    const item=html('span');
+    item.setAttribute('role','listitem');
+    item.dataset.kind=id;
+    const icon=svg('svg',{width:20,height:18,viewBox:'0 0 20 18','aria-hidden':true});
+    icon.append(kindGlyph(id));
+    item.append(icon,' '+label+' ('+counts.get(id)+')');
+    items.push(item);
+  }
+  $('kind-legend').replaceChildren(...items);
+}
 function userPeg(){
   const peg=svg('g',{class:'user-peg',transform:'translate(10 '+(-actorHeight)+')','aria-hidden':true});
   peg.append(svg('circle',{cx:10,cy:7,r:5.6}),
@@ -385,11 +420,9 @@ function reveal(target) {
   if(!target) return;
   const box=target.getBoundingClientRect(), view=diagram.getBoundingClientRect();
   const x=(box.left+box.right)/2, y=(box.top+box.bottom)/2;
-  if(x<view.left+8 || x>view.right-8 || y<view.top+8 || y>view.bottom-8) {
-    camera.x+=(x-view.left-view.width/2)/camera.zoom;
-    camera.y+=(y-view.top-view.height/2)/camera.zoom;
-    updateCamera();
-  }
+  if(box.left<view.left+4 || box.right>view.right-4) camera.x+=(x-view.left-view.width/2)/camera.zoom;
+  if(box.top<view.top+4 || box.bottom>view.bottom-4) camera.y+=(y-view.top-view.height/2)/camera.zoom;
+  updateCamera();
 }
 function drawScope(){
   const layer=$('scope-frame');
@@ -481,9 +514,13 @@ function draw(reset=false){
   fragment.append(defs,svg('rect',{id:'grid-background',fill:'url(#grid)','pointer-events':'none'}));
   const lanes=svg('g',{id:'lanes'});
   for(const z of chart.zones) if(z.label){
-    lanes.append(svg('rect',{class:'lane',x:z.x,y:z.y,width:z.w,height:z.h,rx:9}));
+    const zone=svg('rect',{class:'lane',x:z.x,y:z.y,width:z.w,height:z.h,rx:9});
+    zone.append(svg('title',{},z.label));
+    lanes.append(zone);
     lanes.append(svg('line',{class:'lane-divider',x1:z.x+1,y1:z.y+30,x2:z.x+z.w-1,y2:z.y+30}));
-    lanes.append(svg('text',{class:'lane-title',x:z.x+10,y:z.y+22},z.label));
+    const label=svg('text',{class:'lane-title',x:z.x+10,y:z.y+22},fit(z.label,z.w-20,14,true));
+    label.setAttribute('aria-label',z.label);
+    lanes.append(label);
   }
   fragment.append(lanes);
   fragment.append(svg('g',{id:'scope-frame',class:'scope-frame','aria-hidden':true}));
@@ -509,12 +546,12 @@ function draw(reset=false){
   for(const n of nodes){
     const p=chart.positions.get(n.id), findings=issues(n.id), selected=!selectedWire && n.id===state.selected;
     const g=svg('g',{class:'node'+(selected?' selected':'')+(findings.length?' flagged':'')+(emphasized.has(n.id)?' near':''),
-      transform:'translate('+p.x+' '+p.y+')',role:'button',tabindex:0,'aria-pressed':selected,'data-id':n.id});
+      transform:'translate('+p.x+' '+p.y+')',role:'button',tabindex:0,'aria-pressed':selected,'data-id':n.id,'data-kind':n.kind});
     g.append(svg('rect',{class:'box',width:p.w,height:p.h,rx:8}));
     if(selected) g.append(svg('rect',{class:'selection-frame',x:-4,y:-4,width:p.w+8,height:p.h+8,rx:10}));
-    const color=n.kind==='repository'?'#68487a':n.kind==='store'?'#29676c':'#915031';
-    g.append(svg('path',{class:'glyph',d:glyphs[n.kind],transform:'translate(9 8)',color}));
-    g.append(svg('text',{class:'node-type',x:32,y:23},fit(n.type || kindNames.get(n.kind),p.w-42,12)));
+    const kind=state.kinds.get(n.kind);
+    g.append(kindGlyph(n.kind,{transform:'translate(9 8)'}));
+    g.append(svg('text',{class:'node-type',x:32,y:23},fit(n.type || kind,p.w-42,12)));
     g.append(svg('text',{class:'node-title',x:11,y:48},fit(n.name,p.w-21,15,true)));
     if(findings.length){
       g.dataset.severity=findings[0].severity;
@@ -530,12 +567,14 @@ function draw(reset=false){
     const inside=scopeMembers.has(n.id);
     g.dataset.inScope=String(inside);
     if(editingScope) g.setAttribute('aria-pressed',inside);
-    g.setAttribute('aria-label',(p.actorSpace?'利用者が操作する画面。':'')+visibleLabel+'。'+n.name+'、'+kindNames.get(n.kind)+'、指摘'+findings.length+'件'+(inside?'、利用者の関与範囲内':''));
+    g.append(svg('title',{},[n.name,kind,n.type].filter(Boolean).join(' / ')));
+    g.setAttribute('aria-label',(p.actorSpace?'利用者が操作する画面。':'')+visibleLabel+'。'+n.name+'、'+kind+'、指摘'+findings.length+'件'+(inside?'、利用者の関与範囲内':''));
     nodesDrawn.set(n.id,g);
     if(active?.id===n.id) focusTarget=g;
     fragment.append(g);
   }
   diagram.replaceChildren(fragment);
+  drawLegend(nodes);
   drawScope();
   diagram.classList.toggle('scope-editing',editingScope);
   $('scope-toggle').setAttribute('aria-pressed',editingScope);
@@ -543,32 +582,36 @@ function draw(reset=false){
   const visibleScope=nodes.filter(n=>scopeMembers.has(n.id)).length;
   $('scope-count').textContent=visibleScope===scopeMembers.size?scopeMembers.size+'要素':'表示'+visibleScope+' / 全'+scopeMembers.size+'要素';
   $('scope-help').hidden=!editingScope;
-  if(initial && width>=580) fitMap();
-  else {
-    if(initial) camera={x:0,y:0,zoom:1};
-    updateCamera();
-  }
+  if(initial) camera={x:0,y:0,zoom:1};
+  updateCamera();
+  if(initial) reveal(nodesDrawn.get(state.selected));
   if(focusTarget) focusTarget.focus({preventScroll:true});
 }
 
+function focusDetails(){
+  $('detail').focus({preventScroll:true});
+  $('detail').scrollIntoView({block:'start'});
+}
+function selectedTarget(){
+  return selectedWire ? wiresDrawn.get(selectedWire)?.group : nodesDrawn.get(state.selected);
+}
 function select(id,showDetail=false) {
   if(!state.byId.has(id)) return;
   selectedWire=null;
   state.selected=id;
-  $('choose').value=id;
+  if(![...$('choose').options].some(option=>option.value===id)) $('node-search').value='';
+  fillChoices();
   draw();details();
   reveal(nodesDrawn.get(id));
   $('status').textContent=state.byId.get(id).name+'、指摘'+issues(id).length+'件を選択しました。';
-  if(showDetail && matchMedia('(max-width:900px)').matches) {
-    $('detail').focus({preventScroll:true});$('detail').scrollIntoView({block:'start'});
-  }
+  if(showDetail) focusDetails();
 }
 function selectWire(key,choices=[]) {
   if(!wiresDrawn.has(key)) return;
   selectedWire=key;wireChoices=choices;draw();details();
-  $('choose').value='';
+  fillChoices();
   $('status').textContent='接続を選択しました。'+$('detail-name').textContent;
-  if(matchMedia('(max-width:900px)').matches) $('detail').focus();
+  focusDetails();
 }
 function updateInputLines(){
   let marked=false;
@@ -612,7 +655,9 @@ function inputEditor(connection){
   return [label,scopeLabel];
 }
 function details(){
-  $('save-changes').hidden=$('unsaved').hidden || !selectedWire;
+  $('kind-editor').hidden=!!selectedWire;
+  $('kind-error').hidden=true;
+  $('kind-note').textContent='';
   if(selectedWire) {
     const records=wiresDrawn.get(selectedWire).records, {from,to}=records[0];
     const source=state.byId.get(from), target=state.byId.get(to);
@@ -647,7 +692,9 @@ function details(){
   $('links-title').textContent='この要素の接続';
   const n=state.byId.get(state.selected), list=issues(n.id);
   $('detail-name').textContent=n.name;
-  $('detail-kind').textContent=[kindNames.get(n.kind),n.type].filter(Boolean).join('　/　');
+  $('detail-kind').textContent=[state.kinds.get(n.kind),n.type].filter(Boolean).join('　/　');
+  $('kind-select').replaceChildren(...[...state.kinds].map(([id,label])=>new Option(label,id)));
+  $('kind-select').value=n.kind;
   $('description').textContent=n.description;
   $('description').hidden=!n.description;
   $('finding-count').textContent=list.length?'この要素の指摘　'+list.length+' 件':'この要素の指摘';
@@ -684,14 +731,35 @@ function details(){
   });
   $('links').replaceChildren(...(links.length?links:[html('li','接続の記録はありません。','hint')]));
 }
+function searchKey(text) { return text.normalize('NFKC').toLowerCase(); }
+function fillChoices() {
+  const menu=$('choose'), nodes=eligible(), term=searchKey($('node-search').value.trim());
+  const matches=term ? nodes.filter(n=>[n.name,n.id,n.type,n.kind,state.kinds.get(n.kind)]
+    .some(value=>searchKey(value).includes(term))) : nodes;
+  const names=new Set(), duplicates=new Set();
+  for(const n of nodes) {
+    if(names.has(n.name)) duplicates.add(n.name);
+    names.add(n.name);
+  }
+  menu.replaceChildren(...matches.map(n=>{
+    const name=duplicates.has(n.name) ? n.name+' ('+n.id+')' : n.name;
+    return new Option(name+(issues(n.id).length?'　· 指摘あり':''),n.id);
+  }));
+  if(!matches.length || (selectedWire && !term)) {
+    const placeholder=new Option(matches.length?'接続線を選択中':'一致する要素がありません','');
+    placeholder.disabled=true;
+    menu.prepend(placeholder);
+    menu.value='';
+  } else if(matches.some(n=>n.id===state.selected)) menu.value=state.selected;
+  menu.disabled=!matches.length;
+  $('open-element').disabled=!menu.value;
+  $('search-count').textContent=matches.length+' / '+nodes.length+' 件';
+}
 function render() {
   const nodes=eligible();
   $('repos').disabled=!state.map.nodes.some(n=>n.kind==='repository');
   $('repos').setAttribute('aria-pressed',state.mode==='repos');$('all').setAttribute('aria-pressed',state.mode==='all');
-  $('choose').replaceChildren(...nodes.map(n=>new Option(n.name+(issues(n.id).length?'　· 指摘あり':''),n.id)));
-  const wireOption=new Option('接続線を選択中','');wireOption.disabled=true;wireOption.hidden=true;
-  $('choose').prepend(wireOption);
-  $('choose').value=state.selected;
+  fillChoices();
   $('map-title').textContent=state.mode==='repos'?'リポジトリの依存関係':'構成と接続';
   $('flags').replaceChildren();
   const flagged=nodes.filter(n=>issues(n.id).length);
@@ -716,8 +784,36 @@ for(const mode of ['all','repos']) $(mode).addEventListener('click',()=>{
   if(!nodes.some(n=>n.id===state.selected)) state.selected=initial(nodes);
   render();
 });
-$('choose').addEventListener('change',()=>select($('choose').value,true));
-$('nearby').addEventListener('change',()=>{selectedWire=null;$('choose').value=state.selected;draw(true);details();});
+$('node-search').addEventListener('input',fillChoices);
+function openChoice() {
+  if($('choose').value) select($('choose').value,true);
+}
+for(const id of ['node-search','choose']) $(id).addEventListener('keydown',event=>{
+  if(event.key==='Enter' && !event.isComposing) {event.preventDefault();openChoice();}
+});
+$('choose').addEventListener('change',()=>select($('choose').value));
+$('open-element').addEventListener('click',openChoice);
+$('nearby').addEventListener('change',()=>{selectedWire=null;fillChoices();draw(true);details();});
+function changeKind(create) {
+  if(selectedWire || !state.map) return;
+  try {
+    const id=create ? registerNodeKind(state.map,$('kind-id').value,$('kind-label').value) : $('kind-select').value;
+    setNodeKind(state.map,state.selected,id);
+    state.kinds=displayKinds(state.map);
+    if(state.mode==='repos' && id!=='repository') state.mode='all';
+    setEdited(true);
+    render();
+    reveal(selectedTarget());
+    if(create) $('kind-form').reset();
+    $('kind-note').textContent=state.byId.get(state.selected).name+'の種類を「'+state.kinds.get(id)+'」に変更しました。';
+  } catch(err) {
+    $('kind-error').textContent=err.message;
+    $('kind-error').hidden=false;
+    $('kind-note').textContent='';
+  }
+}
+$('kind-form').addEventListener('submit',event=>{event.preventDefault();changeKind(true);});
+$('kind-select').addEventListener('change',()=>changeKind(false));
 function highlight(id) {
   if(selectedWire) return;
   for (const edge of $('diagram').querySelectorAll('.edge')) {
@@ -873,6 +969,7 @@ diagram.addEventListener('wheel',e=>{
 $('zoom-in').addEventListener('click',()=>zoomAt(camera.zoom*1.25));
 $('zoom-out').addEventListener('click',()=>zoomAt(camera.zoom*.8));
 $('fit-map').addEventListener('click',fitMap);
+$('actual-size').addEventListener('click',()=>{zoomAt(1);reveal(selectedTarget());});
 $('scope-toggle').addEventListener('click',()=>setScopeMode(!editingScope));
 function downloadMap(){
   try{
@@ -900,8 +997,13 @@ $('confirm-saved').addEventListener('click',()=>{
 $('save-map').addEventListener('click',saveMap);
 $('scope-save').addEventListener('click',saveMap);
 $('save-changes').addEventListener('click',saveMap);
-$('reset-layout').addEventListener('click',()=>{offsets[state.mode].clear();draw();fitMap();});
-$('return').addEventListener('click',()=>{const target=diagram.querySelector('[aria-pressed="true"]');target?.focus();frame.scrollIntoView({block:'center'});});
+$('reset-layout').addEventListener('click',()=>{offsets[state.mode].clear();draw();reveal(selectedTarget());});
+$('return').addEventListener('click',()=>{
+  const target=selectedTarget();
+  reveal(target);
+  (target || frame).focus({preventScroll:true});
+  frame.scrollIntoView({block:'center'});
+});
 $('file').addEventListener('change',e=>{const files=[...e.target.files];e.target.value='';if(files.length) openFiles(files);});
 $('reset').addEventListener('click',()=>loadChoice('sample'));
 mapChoice.addEventListener('change',()=>{
@@ -910,7 +1012,13 @@ mapChoice.addEventListener('change',()=>{
   loadChoice(requested);
 });
 let chartWidth=0;
-new ResizeObserver(([entry])=>{if(entry.contentRect.width!==chartWidth){chartWidth=entry.contentRect.width;draw(true);}else if(chart)updateCamera();}).observe(frame);
+new ResizeObserver(([entry])=>{
+  if(entry.contentRect.width!==chartWidth){
+    chartWidth=entry.contentRect.width;
+    draw();
+    reveal(selectedTarget());
+  } else if(chart) updateCamera();
+}).observe(frame);
 loadChoices();
 if (!blueView && params.has('map')) loadChoice('map:'+params.get('map'),{fallback:true});
 else loadChoice(params.get('system')==='aym' ? 'aym' : 'sample');
