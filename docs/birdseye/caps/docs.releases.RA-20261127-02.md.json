@@ -1,0 +1,27 @@
+{
+  "id": "docs/releases/RA-20261127-02.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "docs/acceptance/AC-20261127-02.md",
+    "docs/acceptance/INDEX.md",
+    "docs/releases/README.md",
+    "docs/tasks/TASK.architecture-switch-11-27-2026.md"
+  ],
+  "deps_out": [
+    "docs/acceptance/AC-20261127-02.md",
+    "docs/tasks/TASK.architecture-switch-11-27-2026.md"
+  ],
+  "summary": "ワークスペースの構成図切替をPR経由でmainに反映する承認範囲と、最終コミットの検収・レビュー・CIの条件を記す。",
+  "source_sha256": "4d18afa4f48dcecb482739c262bc1f6c66176f79950001aa5aa4061885a8a39b",
+  "generated_at": "00059",
+  "review": {
+    "reviewed_at": "2026-11-27T00:30:32+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "4d18afa4f48dcecb482739c262bc1f6c66176f79950001aa5aa4061885a8a39b",
+    "summary_sha256": "eff50617e08d5cc9e870901b4d3d76c139e09a9d9e04b1130b634a280c07274a",
+    "scope": "構成図切替の本文・要約・参照を照合。"
+  }
+}

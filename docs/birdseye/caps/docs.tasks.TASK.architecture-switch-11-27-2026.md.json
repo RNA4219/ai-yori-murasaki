@@ -1,0 +1,30 @@
+{
+  "id": "docs/tasks/TASK.architecture-switch-11-27-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261127-02.md",
+    "docs/acceptance/INDEX.md",
+    "docs/releases/RA-20261127-02.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261127-02.md",
+    "docs/releases/RA-20261127-02.md",
+    "docs/requirements/ARCHITECTURE-MAP-SELECTION.md"
+  ],
+  "summary": "ワークスペースの構成図を切り替えるTask。要件・技術検収・ソース反映、今回の担当代行の範囲と設計資料のハッシュを記す。",
+  "source_sha256": "d68b51e4a687dd9f8170280eb5d0a7a0e769eb18239e12b7938c3e66f02f6608",
+  "generated_at": "00059",
+  "review": {
+    "reviewed_at": "2026-11-27T00:30:32+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "d68b51e4a687dd9f8170280eb5d0a7a0e769eb18239e12b7938c3e66f02f6608",
+    "summary_sha256": "9607d7368480016fbf32a34d572cfea880bd3a1a31bf2f920ea34cec9301b858",
+    "scope": "構成図切替の本文・要約・参照を照合。"
+  }
+}

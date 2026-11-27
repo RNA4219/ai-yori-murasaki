@@ -2,7 +2,7 @@
   "id": "docs/acceptance/INDEX.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "技術検収、対応する Task、ソース反映の記録の一覧。案件判断と受付連結に関する検収の対象と記録を引ける。",
+  "summary": "案件や画面の技術検収の索引。構成図の切替・未保存編集・Blue表示などの受入条件とソース反映の対象を示す。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -33,13 +33,16 @@
     "docs/acceptance/AC-20261126-01.md",
     "docs/acceptance/AC-20261126-02.md",
     "docs/acceptance/AC-20261127-01.md",
+    "docs/acceptance/AC-20261127-02.md",
     "docs/releases/RA-20261126-01.md",
     "docs/releases/RA-20261126-02.md",
     "docs/releases/RA-20261127-01.md",
+    "docs/releases/RA-20261127-02.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
     "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
     "docs/tasks/TASK.architecture-canvas-11-23-2026.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
+    "docs/tasks/TASK.architecture-switch-11-27-2026.md",
     "docs/tasks/TASK.case-decisions-11-27-2026.md",
     "docs/tasks/TASK.case-intake-11-23-2026.md",
     "docs/tasks/TASK.case-severity-11-23-2026.md",
@@ -75,13 +78,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "59f23db2ccde233f943d8ff86a24d821c19c7604a3e71b01c6bd044aaab5e7e6",
-  "generated_at": "00058",
+  "source_sha256": "6a4ee3c3d3e4f53a654b5221e6ca35780527e50380b1b658c9a3678c635c2340",
+  "generated_at": "00059",
   "review": {
-    "reviewed_at": "2026-11-26T23:08:12+00:00",
+    "reviewed_at": "2026-11-27T00:30:32+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "59f23db2ccde233f943d8ff86a24d821c19c7604a3e71b01c6bd044aaab5e7e6",
-    "summary_sha256": "b1ad0ffbf351a7908ba8bccf9b0ad8274d8a2892550088d924909e3b6eaa7c94",
-    "scope": "案件判断・受付連結に関する原文、要約、参照を確認。"
+    "source_sha256": "6a4ee3c3d3e4f53a654b5221e6ca35780527e50380b1b658c9a3678c635c2340",
+    "summary_sha256": "0673eb1fb5d64d657f157a7b851bf4e8e82a5dc5c4363187804346f40c2db959",
+    "scope": "構成図切替の本文・要約・参照を照合。"
   }
 }

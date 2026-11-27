@@ -155,7 +155,9 @@ operatorの案件一覧と詳細の `severity_counts` は、同じ案件内の�
 | method | path | query | 成功 | 失敗 | max size |
 |---|---|---|---|---|---|
 | GET | `/` | - | HTML index | 500 | 256 KiB |
-| GET | `/architecture` | `?system=aym` | 既定は注文管理の見本。aym指定で製品自身の改修後の図を開く | 500 | 256 KiB |
+| GET | `/architecture` | `?map=<ID>`、`?system=aym` | 既定は注文管理の見本。ID を指定するとワークスペースの図、aym を指定すると製品自身の図を開く | 500 | 256 KiB |
+| GET | `/api/architecture/maps` | `?view=blue` | `{"maps":[{"id":"dispatch","name":"配送受付"}]}`。対象なしなら空配列。Blue は `{"status":"withheld"}` | 500 | 1 MiB |
+| GET | `/api/architecture/maps/<ID>` | `?view=blue` | 保存された構成図の JSON。Blue は `{"status":"withheld"}` | 404（該当なし）／409（読取不能） | 1 MiB |
 | GET | `/architecture/<asset>` | - | 同梱した `map.mjs`、`model.mjs`、`js-yaml.mjs`、`sample.json`、`product.json` | 404 | 1 MiB |
 | GET | `/assets/<path>` | - | static asset | 404 | 1 MiB |
 | GET | `/api/campaigns` | - | `{campaigns: [...]}` | 500 | 1 MiB |

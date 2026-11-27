@@ -42,6 +42,8 @@ ROUTES: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("decision", re.compile(r"^/decision$")),
     ("architecture", re.compile(r"^/architecture$")),
     ("architecture_asset", re.compile(r"^/architecture/(map\.mjs|model\.mjs|js-yaml\.mjs|sample\.json|product\.json)$")),
+    ("architecture_maps", re.compile(r"^/api/architecture/maps\Z")),
+    ("architecture_map", re.compile(r"^/api/architecture/maps/([a-z0-9][a-z0-9-]{0,63})\Z")),
     ("health", re.compile(r"^/api/health$")),
     ("sources", re.compile(r"^/api/sources$")),
     ("source", re.compile(r"^/api/sources/(src-[0-9a-f]{32})$")),
@@ -757,6 +759,23 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
             hdrs = _security_headers()
             media = "application/json" if asset.endswith(".json") else "text/javascript"
             hdrs.update({"Content-Type": media + "; charset=utf-8", "Content-Length": str(len(data))})
+            return 200, hdrs, data
+
+        if name in ("architecture_maps", "architecture_map"):
+            # 作業場所に置いた構成図。読み取りだけで、Blue には出さない。
+            if view == "blue":
+                return _json_response(200, {"status": "withheld"})
+            from .architecture_maps import MapUnavailable, list_maps, read_map
+            if name == "architecture_maps":
+                return _json_response(200, {"maps": list_maps(store.workspace)})
+            try:
+                data = read_map(store.workspace, groups[0])
+            except (MapUnavailable, OSError):
+                return _error(409, "map_unavailable")
+            if data is None:
+                return _error(404, "not_found")
+            hdrs = _security_headers()
+            hdrs.update({"Content-Type": "application/json; charset=utf-8", "Content-Length": str(len(data))})
             return 200, hdrs, data
 
         if name == "health":

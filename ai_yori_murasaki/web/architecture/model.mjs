@@ -2,6 +2,7 @@ import { CORE_SCHEMA, Type, load } from './js-yaml.mjs';
 
 export const SCHEMA = 'aym.architecture/v1';
 export const MAX_BYTES = 1024 * 1024;
+export const MAX_MAP_NAME = 200;
 export const inputModes = new Map([['','未指定'],['ui','利用者入力'],['internal','内部処理']]);
 export const severityNames = new Map([
   ['critical','重大'], ['high','高'], ['medium','中'], ['low','低'], ['info','情報']
@@ -41,7 +42,8 @@ function rows(value,label,limit) {
 }
 export function validateMap(raw) {
   if (!plain(raw) || raw.schema !== SCHEMA) throw Error('構成図の形式を確認してください。');
-  const name = string(raw.name,'構成名',160);
+  const name = typeof raw.name==='string' ? raw.name.trim() : '';
+  if (!name || Array.from(name).length>MAX_MAP_NAME) throw Error('構成名に1〜'+MAX_MAP_NAME+'文字の文字列を指定してください。');
   const ids = new Set();
   const nodes = rows(raw.nodes,'nodes',100).map(n=>{
     const id=string(n.id,'構成要素のID',180);

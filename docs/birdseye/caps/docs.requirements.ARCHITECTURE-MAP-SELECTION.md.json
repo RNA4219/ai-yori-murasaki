@@ -1,0 +1,28 @@
+{
+  "id": "docs/requirements/ARCHITECTURE-MAP-SELECTION.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "HUB.codex.md",
+    "README.md",
+    "docs/acceptance/AC-20261127-02.md",
+    "docs/tasks/TASK.architecture-switch-11-27-2026.md"
+  ],
+  "deps_out": [
+    "docs/acceptance/AC-20261127-02.md",
+    "docs/requirements/API-CONTRACTS.md",
+    "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md"
+  ],
+  "summary": "R-086 と T58 の構成図切替要件。合成した図の配置・選択・再読込、API の照会例、原案番号との対応を記す。",
+  "source_sha256": "662f87306315074f9d7507888667cde5b929b90681d3dbb4869e354ed9c1b392",
+  "generated_at": "00059",
+  "review": {
+    "reviewed_at": "2026-11-27T00:30:32+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "662f87306315074f9d7507888667cde5b929b90681d3dbb4869e354ed9c1b392",
+    "summary_sha256": "506ca7dd3bec6a90b33874ea6c9d45a8934af1e116bf41b65df8fc7261fe4330",
+    "scope": "構成図切替の本文・要約・参照を照合。"
+  }
+}

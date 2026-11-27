@@ -26,6 +26,10 @@ h2 {font-size:20px;line-height:1.45} h3 {font-size:17px}
 .source-row {margin-top:10px;gap:8px 16px}.source {display:inline-flex;align-items:center;gap:6px;font-weight:650}
 .source:before {content:"";width:8px;height:8px;border-radius:50%;background:var(--purple)}
 .toolbar {gap:8px}.btn,.file,.mode button,.chip {display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:7px 12px;border:1px solid #bcb1c3;border-radius:7px;background:#fff;color:var(--purple);font-weight:650;text-decoration:none}
+.toolbar,.heading>div {min-width:0;max-width:100%}
+.map-choice {display:inline-flex;align-items:center;gap:8px;max-width:100%;min-width:0;font-weight:650}
+.map-choice select {min-width:0;text-overflow:ellipsis}
+.source {overflow-wrap:anywhere}
 .file {background:var(--purple);color:#fff;border-color:var(--purple);position:relative;overflow:hidden}
 .file input {position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
 .file:focus-within {outline:3px solid #87639c;outline-offset:3px}
@@ -190,7 +194,9 @@ main { width: min(calc(100% - 64px), 1440px); padding: 24px 0 44px; }
 </header>
 <main id="main" tabindex="-1">
 <div class="heading"><div><h1 id="name">構成図を読み込み中</h1><div class="source-row"><span class="source" id="source"></span><span class="meta" id="counts"></span></div></div>
-<div class="toolbar"><button type="button" class="btn" id="reset" hidden>見本に戻す</button><label class="file">構成ファイルを開く<input id="file" type="file" multiple accept=".json,.yaml,.yml" aria-label="構成ファイルを開く"></label><button type="button" class="btn" id="save-map" disabled>構成図を保存</button><span id="unsaved" class="meta" hidden><span id="edited-label">未保存の変更</span><button type="button" class="btn" id="confirm-saved" hidden>JSONの保存を確認した</button></span></div></div>
+<div class="toolbar">
+<label class="map-choice" id="map-choice-wrap" hidden>図<select class="btn" id="map-choice"><option value="sample">見本</option><option value="aym">製品自身の図</option></select></label>
+<button type="button" class="btn" id="reset" hidden>見本に戻す</button><label class="file">構成ファイルを開く<input id="file" type="file" multiple accept=".json,.yaml,.yml" aria-label="構成ファイルを開く"></label><button type="button" class="btn" id="save-map" disabled>構成図を保存</button><span id="unsaved" class="meta" hidden><span id="edited-label">未保存の変更</span><button type="button" class="btn" id="confirm-saved" hidden>JSONの保存を確認した</button></span></div></div>
 <details class="guide"><summary>読み込めるファイルと見本</summary>
 <p>構成図（JSON・YAML）では、リポジトリ、AWSリソース、接続の理由、対象ごとの指摘を指定できます。<a href="/architecture/sample.json" download="architecture-sample.json">編集用の見本JSONを保存</a></p>
 <p>CloudFormation（JSON・YAML）はリソースと設定上の依存関係を読み取ります。package.json は repository を指定したものを順に追加すると、読み込んだリポジトリ間の依存が線になります。</p>
