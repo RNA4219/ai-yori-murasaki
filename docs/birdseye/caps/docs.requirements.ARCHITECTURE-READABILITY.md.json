@@ -1,0 +1,27 @@
+{
+  "id": "docs/requirements/ARCHITECTURE-READABILITY.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "HUB.codex.md",
+    "README.md",
+    "docs/acceptance/AC-20261127-03.md",
+    "docs/tasks/TASK.architecture-readability-11-27-2026.md"
+  ],
+  "deps_out": [
+    "docs/acceptance/AC-20261127-03.md",
+    "docs/requirements/ARCHITECTURE-MAP-SELECTION.md"
+  ],
+  "summary": "R-087・R-088の要件とT59・T60の操作例。図と詳細の移動、検索、種類定義付きJSONの編集・保存と再読込を説明する。",
+  "source_sha256": "228b9143a16b8fb6ae70d0531e819b331f1559b4576a6e596fab1919f166eaeb",
+  "generated_at": "00062",
+  "review": {
+    "reviewed_at": "2026-11-27T04:39:28+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "228b9143a16b8fb6ae70d0531e819b331f1559b4576a6e596fab1919f166eaeb",
+    "summary_sha256": "158f7b89dcd079e45acd4790d7b85636c8489f661bc738281d754fa825204390",
+    "scope": "構成図の等倍表示・要素の検索・種類の編集に関する本文、要約、参照を照合。"
+  }
+}

@@ -32,6 +32,8 @@ jobs:
         run: python -m pytest -q tests/ decision_view/tests/test_aym_decision_view.py
       - name: All decision-view JavaScript tests
         run: node --test decision_view/tests/*.mjs
+      - name: Architecture map model and JSON round trips
+        run: node --test tests/architecture.test.mjs
 
       - name: Install Chromium for real UI acceptance
         run: |
@@ -51,3 +53,4 @@ jobs:
           node decision_view/browser/dual-view.browser.mjs
           node tests/browser/workspace.browser.mjs
           node tests/browser/architecture-switch.browser.mjs
+          node tests/browser/architecture-readability.browser.mjs

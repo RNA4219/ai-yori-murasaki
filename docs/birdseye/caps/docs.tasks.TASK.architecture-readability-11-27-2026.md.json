@@ -1,0 +1,28 @@
+{
+  "id": "docs/tasks/TASK.architecture-readability-11-27-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261127-03.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261127-03.md",
+    "docs/requirements/ARCHITECTURE-READABILITY.md"
+  ],
+  "summary": "変更前の構成図の実測値と設計根拠、等倍表示・種類保存の実装を、合格したR-087・R-088の技術検収に結ぶ。",
+  "source_sha256": "8f8d1b5432553c07f35f23d557c7669273988711edb76e03da51a67c4480f777",
+  "generated_at": "00063",
+  "review": {
+    "reviewed_at": "2026-11-27T04:42:35+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "8f8d1b5432553c07f35f23d557c7669273988711edb76e03da51a67c4480f777",
+    "summary_sha256": "a28632485d350c06985e8e7931578ae947a55e0c586850653f4657231a9fbcff",
+    "scope": "構成図の等倍表示・独自の種類について、製品コミットの実測結果、本文、要約、参照を照合。"
+  }
+}

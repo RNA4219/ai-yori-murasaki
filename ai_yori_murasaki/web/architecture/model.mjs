@@ -39,19 +39,64 @@ function rows(value,label,limit) {
   }
   return value;
 }
+
+const maxNodeKinds = 100;
+
+function kindString(value, label) {
+  const text = typeof value === 'string' ? value.trim() : '';
+  if (!text || [...text].length > 160) {
+    throw Error(label + ' に1〜160文字の文字列を指定してください。');
+  }
+  return text;
+}
+
+function readNodeKinds(entries) {
+  const ids = new Set(kindNames.keys());
+  return rows(entries, 'nodeKinds', maxNodeKinds).map(entry => {
+    const id = kindString(entry.id, '種類のID');
+    const label = kindString(entry.label, '種類の表示名');
+    if (ids.has(id)) throw Error('種類のIDが重複しています。' + id);
+    ids.add(id);
+    return {...entry, id, label};
+  });
+}
+
+export function nodeKindOptions(map) {
+  const options = new Map(kindNames);
+  for (const {id, label} of map.nodeKinds) options.set(id, label);
+  for (const {kind} of map.nodes) {
+    if (!options.has(kind)) options.set(kind, kind);
+  }
+  return options;
+}
+
+export function registerNodeKind(map, id, label) {
+  const entries = readNodeKinds([...map.nodeKinds, {id, label}]);
+  map.nodeKinds = entries;
+  return entries.at(-1).id;
+}
+
+export function setNodeKind(map, nodeId, kindId) {
+  const node = map.nodes.find(item => item.id === nodeId);
+  if (!node) throw Error('構成要素のIDが見つかりません。');
+  if (!nodeKindOptions(map).has(kindId)) throw Error('構成要素の種類を選んでください。');
+  node.kind = kindId;
+}
+
 export function validateMap(raw) {
   if (!plain(raw) || raw.schema !== SCHEMA) throw Error('構成図の形式を確認してください。');
   // 表示名だけを200文字に収める。書き出しには元の文書を使う。
   const title = typeof raw.name==='string' ? raw.name.trim() : '';
   if (!title) throw Error('構成名を指定してください。');
   const name = title.match(/^.{1,200}/su)[0];
+  const nodeKinds = readNodeKinds(raw.nodeKinds === undefined ? [] : raw.nodeKinds);
   const ids = new Set();
   const nodes = rows(raw.nodes,'nodes',100).map(n=>{
     const id=string(n.id,'構成要素のID',180);
     if (ids.has(id)) throw Error('構成要素のIDが重複しています。' + id);
     ids.add(id);
-    if (!kindNames.has(n.kind)) throw Error(id + ' の種類（kind）を確認してください。');
-    return {id,kind:n.kind,name:string(n.name,'表示名',160),type:n.type ? string(n.type,'種別',160) : '',
+    const kind=kindString(n.kind,'構成要素の種類（kind）');
+    return {id,kind,name:string(n.name,'表示名',160),type:n.type ? string(n.type,'種別',160) : '',
       description:n.description ? string(n.description,'説明',1000) : ''};
   });
   if (!nodes.length) throw Error('少なくとも1件の構成要素が必要です。');
@@ -81,17 +126,31 @@ export function validateMap(raw) {
   if(!Array.isArray(userScope) || userScope.length>ids.size || new Set(userScope).size!==userScope.length || userScope.some(id=>!ids.has(id))){
     throw Error('userScope には関与範囲に含める構成要素のIDを重複なく指定してください。');
   }
-  return {name,nodes,connections,findings,userScope:[...userScope]};
+  return {name,nodeKinds,nodes,connections,findings,userScope:[...userScope]};
 }
 
 export function serializeMap(map,original) {
-  const document=original ? {...original,connections:original.connections.map((item,i)=>{
-    const connection={...item};
-    const input=map.connections[i].userInput;
-    if(input) connection.userInput=input;
-    else delete connection.userInput;
-    return connection;
-  })} : {schema:SCHEMA,...map};
+  const document = original ? {...original} : {schema:SCHEMA, ...map};
+  if (original) {
+    const nodesById = new Map(map.nodes.map(node => [node.id, node]));
+    document.nodes = original.nodes.map(item => {
+      const node = nodesById.get(item.id.trim());
+      return node.kind === item.kind.trim() ? item : {...item, kind:node.kind};
+    });
+    document.connections = original.connections.map((item, index) => {
+      const connection = {...item};
+      const input = map.connections[index].userInput;
+      if (input) {
+        connection.userInput = {...item.userInput, ...input};
+        if (!Object.hasOwn(input, 'scope')) delete connection.userInput.scope;
+      } else {
+        delete connection.userInput;
+      }
+      return connection;
+    });
+  }
+  if (map.nodeKinds.length || original?.nodeKinds) document.nodeKinds = map.nodeKinds;
+  else delete document.nodeKinds;
   if(map.userScope.length || original?.userScope) document.userScope=map.userScope;
   const tooLarge='保存する構成図が1 MiBを超えています。';
   // YAML の別名が繰り返し使われた場合も、JSONへの展開量を制限する。
