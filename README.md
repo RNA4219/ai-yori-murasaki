@@ -56,7 +56,7 @@ Notion の課題一覧を CSV で取り込むと、判断画面で資源・検�
 
 ## 判断の画面とモニター（2画面）
 
-Google ログインを必須にする場合は、クライアントと許可するアカウントを設定し、`aym monitor serve --google-sso` で起動します。モニター、判断の画面、システム構成図、案件受付の4画面と、それぞれが読むデータや配信ファイルが対象です。[Google SSO の設定と最初の利用者の登録](docs/requirements/GOOGLE-MONITOR-SSO.md)
+Google ログインを必須にする場合は、クライアントと許可するアカウントまたはメールドメイン（併用可）を設定し、`aym monitor serve --google-sso` で起動します。モニター、判断の画面、システム構成図、案件受付の4画面と、それぞれが読むデータや配信ファイルが対象です。[Google SSO の設定と個人・ドメイン別の許可例](docs/requirements/GOOGLE-MONITOR-SSO.md)
 
 `aym monitor serve --bind 127.0.0.1:8765` の同じサーバーから、次の2画面を開けます。
 

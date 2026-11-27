@@ -1,0 +1,28 @@
+{
+  "id": "docs/tasks/TASK.google-sso-email-domains-11-27-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261127-05.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261127-05.md",
+    "docs/requirements/GOOGLE-MONITOR-SSO.md"
+  ],
+  "summary": "Google ログインのドメイン許可を導入した Task。対象コミット、T62 の技術検収と独立レビューの完了、実アカウント未検証を記す。",
+  "source_sha256": "e92b309d47cbe6ded0cdaffdad0ef12d7f95c72db5dc9bba6644dcc99855f9b7",
+  "generated_at": "00067",
+  "review": {
+    "reviewed_at": "2026-11-27T09:12:58+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "e92b309d47cbe6ded0cdaffdad0ef12d7f95c72db5dc9bba6644dcc99855f9b7",
+    "summary_sha256": "667b4a620fd000edd0d9a07251816df620b6b47a7801bea665ad70d27976dfb3",
+    "scope": "Google ログインのドメイン許可の製品コミット、技術検収結果と未確認事項を照合。"
+  }
+}

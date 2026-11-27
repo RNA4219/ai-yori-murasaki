@@ -27,6 +27,8 @@ SESSION_TTL = 3600
 _MAX_PENDING = 256
 _MAX_SESSIONS = 1024
 _MAX_RESPONSE = 64 * 1024
+_SUBJECT = re.compile(r"[A-Za-z0-9._:-]{1,255}")
+_DNS_LABEL = re.compile(r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?")
 
 
 class GoogleLoginError(Exception):
@@ -67,6 +69,20 @@ def _callback(port: int) -> str:
     return f"http://127.0.0.1:{port}/auth/google/callback"
 
 
+def _domain(value: object) -> str | None:
+    if not isinstance(value, str) or len(value) > 253 or not value.isascii():
+        return None
+    labels = value.split(".")
+    if len(labels) < 2 or labels[-1].isdigit() or not all(_DNS_LABEL.fullmatch(label) for label in labels):
+        return None
+    return value.lower()
+
+
+def _env_list(name: str) -> list[str]:
+    value = os.getenv(name)
+    return [] if value is None else [item.strip() for item in value.split(",")]
+
+
 @dataclass(frozen=True, repr=False)
 class _Attempt:
     expires: float
@@ -78,14 +94,25 @@ class _Attempt:
 
 
 class GoogleSSO:
-    def __init__(self, client_id: str, client_secret: str, allowed_subjects: Collection[str],
-                 *, request_json: Callable[[str, bytes | None], dict] = _request_json,
+    def __init__(self, client_id: str, client_secret: str, allowed_subjects: Collection[str] = (),
+                 *, allowed_email_domains: Collection[str] = (),
+                 request_json: Callable[[str, bytes | None], dict] = _request_json,
                  clock: Callable[[], float] = time.monotonic) -> None:
-        if (not client_id or not client_secret or not allowed_subjects
-                or isinstance(allowed_subjects, str)
-                or any(not re.fullmatch(r"[A-Za-z0-9._:-]{1,255}", sub) for sub in allowed_subjects)):
-            raise DataError("Google SSO のクライアント設定・許可する sub を確認してください。",
+        for entries in (allowed_subjects, allowed_email_domains):
+            if not isinstance(entries, Collection) or isinstance(entries, (str, bytes)):
+                raise DataError("Google SSO の許可リストの形式を確認してください。", "google_sso_configuration")
+        subjects = tuple(allowed_subjects)
+        email_domains = tuple(allowed_email_domains)
+        if (not client_id or not client_secret or not (subjects or email_domains)
+                or any(not isinstance(sub, str) or not _SUBJECT.fullmatch(sub) for sub in subjects)):
+            raise DataError("Google SSO のクライアント設定・許可する sub またはメールドメインを確認してください。",
                             "google_sso_configuration")
+        domains = set()
+        for value in email_domains:
+            domain = _domain(value)
+            if domain is None:
+                raise DataError("Google SSO の許可メールドメインの形式を確認してください。", "google_sso_configuration")
+            domains.add(domain)
         try:
             from google.auth import jwt
         except ImportError:
@@ -93,7 +120,8 @@ class GoogleSSO:
         self._jwt = jwt
         self._client_id = client_id
         self._client_secret = client_secret
-        self._subjects = frozenset(allowed_subjects)
+        self._subjects = frozenset(subjects)
+        self._domains = frozenset(domains)
         self._request_json = request_json
         self._clock = clock
         self._lock = threading.Lock()
@@ -102,9 +130,10 @@ class GoogleSSO:
 
     @classmethod
     def from_env(cls) -> GoogleSSO:
-        subjects = [s.strip() for s in os.getenv("AYM_GOOGLE_ALLOWED_SUBJECTS", "").split(",")]
         return cls(os.getenv("AYM_GOOGLE_CLIENT_ID", "").strip(),
-                   os.getenv("AYM_GOOGLE_CLIENT_SECRET", "").strip(), subjects)
+                   os.getenv("AYM_GOOGLE_CLIENT_SECRET", "").strip(),
+                   _env_list("AYM_GOOGLE_ALLOWED_SUBJECTS"),
+                   allowed_email_domains=_env_list("AYM_GOOGLE_ALLOWED_EMAIL_DOMAINS"))
 
     def _prune(self, now: float) -> None:
         for key in [key for key, item in self._attempts.items() if item.expires <= now]:
@@ -123,12 +152,32 @@ class GoogleSSO:
                                secrets.token_urlsafe(32), port, _return_path(return_to))
             self._attempts[state] = attempt
         digest = hashlib.sha256(attempt.verifier.encode("ascii")).digest()
-        params = {"response_type": "code", "scope": "openid profile", "prompt": "select_account",
+        scope = "openid email" if self._domains else "openid profile"
+        params = {"response_type": "code", "scope": scope, "prompt": "select_account",
                   "client_id": self._client_id,
                   "redirect_uri": _callback(port), "state": state, "nonce": attempt.nonce,
                   "code_challenge": base64.urlsafe_b64encode(digest).rstrip(b"=").decode("ascii"),
                   "code_challenge_method": "S256"}
         return _AUTH_URL + "?" + urlencode(params), attempt.browser
+
+    def _allows_identity(self, claims: dict) -> bool:
+        subject = claims.get("sub")
+        if not isinstance(subject, str) or not _SUBJECT.fullmatch(subject):
+            return False
+        if self._subjects and subject not in self._subjects:
+            return False
+        if not self._domains:
+            return True
+        email = claims.get("email")
+        if claims.get("email_verified") is not True or not isinstance(email, str) or email.count("@") != 1:
+            return False
+        local, host = email.split("@")
+        domain = _domain(host)
+        if not local or not local.isprintable() or any(char.isspace() for char in local) or domain not in self._domains:
+            return False
+        if "hd" not in claims:
+            return domain == "gmail.com"
+        return _domain(claims["hd"]) == domain
 
     def _exchange(self, code: str, attempt: _Attempt) -> float:
         data = urlencode({"grant_type": "authorization_code", "code": code,
@@ -150,11 +199,10 @@ class GoogleSSO:
                 raise ValueError
             claims = self._jwt.decode(token, certs=certs, audience=self._client_id)
             nonce = claims.get("nonce")
-            subject = claims.get("sub")
             expiry = claims["exp"]
             if (claims.get("iss") not in _ISSUERS or claims.get("azp", self._client_id) != self._client_id
                     or not isinstance(nonce, str) or not hmac.compare_digest(nonce, attempt.nonce)
-                    or not isinstance(subject, str) or subject not in self._subjects
+                    or not self._allows_identity(claims)
                     or type(expiry) is not int or type(claims["iat"]) is not int or expiry <= time.time()):
                 raise ValueError
         except (ValueError, KeyError, TypeError, AttributeError, OverflowError, RecursionError):

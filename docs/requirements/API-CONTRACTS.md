@@ -138,7 +138,8 @@ operatorの案件一覧と詳細の `severity_counts` は、同じ案件内の�
 #### `aym monitor serve`
 
 - `--bind <host:port>` の既定値は `127.0.0.1:8765`。
-- `--google-sso` を指定すると、環境変数 `AYM_GOOGLE_CLIENT_ID`、`AYM_GOOGLE_CLIENT_SECRET`、`AYM_GOOGLE_ALLOWED_SUBJECTS`（カンマ区切りの Google `sub`）と任意依存 `sso` が必要になる。不備がある場合は `google_sso_configuration` で起動を中止する。[設定手順](GOOGLE-MONITOR-SSO.md)
+- `--google-sso` には任意依存 `sso`、`AYM_GOOGLE_CLIENT_ID`、`AYM_GOOGLE_CLIENT_SECRET`、および次の許可リストが必要になる。
+- `AYM_GOOGLE_ALLOWED_SUBJECTS` は Google `sub`、`AYM_GOOGLE_ALLOWED_EMAIL_DOMAINS` はメールドメインのカンマ区切り。片方を指定すればその条件を、両方を指定すれば両条件を適用する。両方とも未設定、またはいずれかに空値・空項目・不正な値がある場合は `google_sso_configuration` で起動を中止する。[設定手順](GOOGLE-MONITOR-SSO.md)
 - `127.0.0.1` 以外: exit 2、`reason_code=bind_not_loopback`。
 
 ## 2. read-only HTTP monitor
@@ -151,7 +152,9 @@ operatorの案件一覧と詳細の `severity_counts` は、同じ案件内の�
 - Origin ヘッダ検証: 同一 origin のみ許可。他は 403。
 - projection リスト: `campaigns`, `runs`, `events_public`, `verification`, `approvals`。
 
-#### Google SSO を有効にした場合（R-089）
+#### Google SSO を有効にした場合（R-089・R-090）
+
+- 個別の `sub` だけを使うときのスコープは `openid profile`。ドメインを指定したときは `openid email` を要求する。署名検証済みの ID トークンで `email_verified` が真であり、`email` のドメインが許可名と完全一致することを確認する。Workspace の `hd` はメールドメインと同じ許可名でなければならない。個人用 Gmail は `gmail.com` の明示指定で対象にでき、`hd` が存在する場合は同様に一致を求める。
 
 - セッションがないとき、`/`、`/decision`、`/architecture`、`/intake` は 401 とログイン用 HTML を返す。データ API と配信ファイルは 401 を返す。ログイン後も指定された Blue ビューの制限が適用される。
 - `GET /auth/google/start` で Google の同意画面へ進む。Google は `GET /auth/google/callback` に応答する。ログインに成功するとモニター内の元の画面に戻る。戻り先には対象ページに対応する `view`、`campaign`、`map`、`system` の有効な値を引き継ぐ。

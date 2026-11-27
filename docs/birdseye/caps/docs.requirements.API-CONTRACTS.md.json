@@ -2,7 +2,7 @@
   "id": "docs/requirements/API-CONTRACTS.md",
   "role": "doc",
   "public_api": [],
-  "summary": "CLI と HTTP の契約。ループバック監視の起動、任意の Google ログイン、API と配信ファイルの認証、Blue ビューの公開範囲を記す。",
+  "summary": "CLI と HTTP の契約。モニターでの Google ログイン、アカウント・メールドメインの許可条件とスコープ、Blue の公開範囲を記す。",
   "deps_out": [
     "docs/PRODUCT-ACCEPTANCE.md",
     "docs/SOURCES.md",
@@ -18,6 +18,7 @@
     "docs/CONTRACTS.md",
     "docs/acceptance/AC-20261127-02.md",
     "docs/acceptance/AC-20261127-04.md",
+    "docs/acceptance/AC-20261127-05.md",
     "docs/requirements/ARCHITECTURE-MAP-SELECTION.md",
     "docs/requirements/COMPACTION-02.md",
     "docs/requirements/GOOGLE-MONITOR-SSO.md",
@@ -27,13 +28,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "70beb6f1517ec0375e0a5f2fad9eb0224b40bae8b5bd47450b0af12c4781c431",
-  "generated_at": "00064",
+  "source_sha256": "5b590669f259d374898ef456e77505a7c7d2490b467d49d57f59b68fe00fe703",
+  "generated_at": "00066",
   "review": {
-    "reviewed_at": "2026-11-27T08:44:47+00:00",
+    "reviewed_at": "2026-11-27T09:09:00+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "70beb6f1517ec0375e0a5f2fad9eb0224b40bae8b5bd47450b0af12c4781c431",
-    "summary_sha256": "2157fed64662eb1680b82c618bd827d624df55925865db91734615b79236b292",
-    "scope": "モニターの Google ログインに関わる手順・検収・参照先を照合。"
+    "source_sha256": "5b590669f259d374898ef456e77505a7c7d2490b467d49d57f59b68fe00fe703",
+    "summary_sha256": "8c930874ad76eadbf0e1fac2917e3ee0f7013b6c8daeb3b001f056b872219211",
+    "scope": "Google ログインのドメイン許可について設定・契約・受入条件を照合。"
   }
 }

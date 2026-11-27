@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "製品・開発手順の変更履歴。モニターの Google ログインを合成アカウントで検収した結果と Task を参照できる。",
+  "summary": "製品の変更履歴。モニターの Google ログインでメールドメインを指定する変更と、合成アカウントによる技術検収の結果を含む。",
   "deps_out": [
     "docs/NOTION-IMPORT.md",
     "docs/SOURCES.md",
@@ -37,6 +37,7 @@
     "docs/acceptance/AC-20261127-02.md",
     "docs/acceptance/AC-20261127-03.md",
     "docs/acceptance/AC-20261127-04.md",
+    "docs/acceptance/AC-20261127-05.md",
     "docs/evidence/quality-integration-20261109/README.md",
     "docs/evidence/sources-light-ui-20261109/README.md",
     "docs/evidence/wazuh-live-20261108.md",
@@ -53,6 +54,7 @@
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
     "docs/tasks/TASK.frontend-workspace-11-24-2026.md",
     "docs/tasks/TASK.google-monitor-sso-11-27-2026.md",
+    "docs/tasks/TASK.google-sso-email-domains-11-27-2026.md",
     "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
     "docs/tasks/TASK.indexed-case-detail-11-23-2026.md",
     "docs/tasks/TASK.monitor-counts-11-23-2026.md",
@@ -90,6 +92,7 @@
     "docs/tasks/TASK.architecture-switch-11-27-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
     "docs/tasks/TASK.google-monitor-sso-11-27-2026.md",
+    "docs/tasks/TASK.google-sso-email-domains-11-27-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
     "docs/tasks/TASK.rsi-naming-11-06-2026.md",
     "docs/tasks/TASK.rsi-policy-11-06-2026.md",
@@ -101,13 +104,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "357b0bcac28838bf78ca3ac265944a40b3403ff17047b4736a348694f7540b8d",
-  "generated_at": "00065",
+  "source_sha256": "2eb8b61e38434af73e615eb36476591c49828b62872ff512c20755f040e0ace2",
+  "generated_at": "00067",
   "review": {
-    "reviewed_at": "2026-11-27T08:51:47+00:00",
+    "reviewed_at": "2026-11-27T09:12:58+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "357b0bcac28838bf78ca3ac265944a40b3403ff17047b4736a348694f7540b8d",
-    "summary_sha256": "9a023204a965cddae3c37c86321473644eac2576c174fd19c1e59879686d55b9",
-    "scope": "Google ログインの製品コミット、技術検収と未実施範囲を照合。"
+    "source_sha256": "2eb8b61e38434af73e615eb36476591c49828b62872ff512c20755f040e0ace2",
+    "summary_sha256": "b7e2b66f65ba5fb0edd299f1839d8d92570fec467cd9a8a780e4b974e40d4f38",
+    "scope": "Google ログインのドメイン許可の製品コミット、技術検収結果と未確認事項を照合。"
   }
 }

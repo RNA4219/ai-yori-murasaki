@@ -1,5 +1,5 @@
 {
-  "generated_at": "00065",
+  "generated_at": "00067",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -15,8 +15,8 @@
     "CHANGELOG.md": {
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
-      "mtime": "00065",
-      "source_sha256": "357b0bcac28838bf78ca3ac265944a40b3403ff17047b4736a348694f7540b8d"
+      "mtime": "00067",
+      "source_sha256": "2eb8b61e38434af73e615eb36476591c49828b62872ff512c20755f040e0ace2"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -36,14 +36,14 @@
     "HUB.codex.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
-      "mtime": "00064",
-      "source_sha256": "a0a5f0c89c8828fbd582f156bb8863e05d5ffbae2076c843b4e7d73ac43ff508"
+      "mtime": "00066",
+      "source_sha256": "32cdb3553c68aae2dd6630a78b3f0c0f239485712ae5157dbee090ef0f041a0c"
     },
     "README.md": {
       "role": "overview",
       "caps": "docs/birdseye/caps/README.md.json",
-      "mtime": "00064",
-      "source_sha256": "77066d04fabd812e7bcbe597e29cfcc247b80716739e90cf99c6ea674d1d8631"
+      "mtime": "00066",
+      "source_sha256": "89934be83771f6d4e426847e83e04daf2bbeb84b8ecc5a0e74734a6478d997d2"
     },
     "RUNBOOK.md": {
       "role": "operations",
@@ -70,8 +70,8 @@
     "docs/acceptance/INDEX.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
-      "mtime": "00065",
-      "source_sha256": "4b6f0c64a125a41c943ae0a2b9606d0d37f75041e5ba50623acaea82a35021eb"
+      "mtime": "00067",
+      "source_sha256": "ce6363b7ad726c6c03f413be95a2584e4b2d7800e1d432b4c7aacb572fceb1f7"
     },
     "docs/acceptance/README.md": {
       "role": "guide",
@@ -113,8 +113,8 @@
     "docs/tasks/README.md": {
       "role": "operations",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
-      "mtime": "00065",
-      "source_sha256": "5482f8c18593e0a6b1cae2c1b798b9cd8efba3add5fa4303b00dde955c6b6cb9"
+      "mtime": "00067",
+      "source_sha256": "e095a3b6da5e4b4275870accd863acb339f0cff778f6b1b4379a60378ddba15b"
     },
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md": {
       "role": "task",
@@ -293,8 +293,8 @@
     "docs/requirements/API-CONTRACTS.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.requirements.API-CONTRACTS.md.json",
-      "mtime": "00064",
-      "source_sha256": "70beb6f1517ec0375e0a5f2fad9eb0224b40bae8b5bd47450b0af12c4781c431"
+      "mtime": "00066",
+      "source_sha256": "5b590669f259d374898ef456e77505a7c7d2490b467d49d57f59b68fe00fe703"
     },
     "docs/requirements/COMPACTION-01.md": {
       "role": "doc",
@@ -871,14 +871,26 @@
     "docs/requirements/GOOGLE-MONITOR-SSO.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.requirements.GOOGLE-MONITOR-SSO.md.json",
-      "mtime": "00064",
-      "source_sha256": "79a9e5f411454577483707f7b7d63c1b790fc6a94fc146761f02727ac86d5a86"
+      "mtime": "00066",
+      "source_sha256": "512e0a91ca693d8475d6d7f4168b8190a6e0ef082b263b62b6be27be2637fb03"
     },
     "docs/tasks/TASK.google-monitor-sso-11-27-2026.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.tasks.TASK.google-monitor-sso-11-27-2026.md.json",
       "mtime": "00065",
       "source_sha256": "b16f28659ccbc25c70d2009ad18685d7aae7a7dc1330fe14c2a99ff5bc2f7766"
+    },
+    "docs/acceptance/AC-20261127-05.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261127-05.md.json",
+      "mtime": "00067",
+      "source_sha256": "5b17d18572f6d99159516534ac72b49d3925ca60d55a9ad5e7c1f492c6fecc9e"
+    },
+    "docs/tasks/TASK.google-sso-email-domains-11-27-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.google-sso-email-domains-11-27-2026.md.json",
+      "mtime": "00067",
+      "source_sha256": "e92b309d47cbe6ded0cdaffdad0ef12d7f95c72db5dc9bba6644dcc99855f9b7"
     }
   },
   "edges": [
@@ -3328,6 +3340,62 @@
     ],
     [
       "docs/tasks/TASK.google-monitor-sso-11-27-2026.md",
+      "docs/requirements/GOOGLE-MONITOR-SSO.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/acceptance/AC-20261127-05.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.google-sso-email-domains-11-27-2026.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/acceptance/AC-20261127-05.md"
+    ],
+    [
+      "docs/acceptance/AC-20261127-05.md",
+      "docs/requirements/API-CONTRACTS.md"
+    ],
+    [
+      "docs/acceptance/AC-20261127-05.md",
+      "docs/requirements/GOOGLE-MONITOR-SSO.md"
+    ],
+    [
+      "docs/acceptance/AC-20261127-05.md",
+      "docs/tasks/TASK.google-sso-email-domains-11-27-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261127-05.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.google-sso-email-domains-11-27-2026.md"
+    ],
+    [
+      "docs/requirements/GOOGLE-MONITOR-SSO.md",
+      "docs/acceptance/AC-20261127-05.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261127-05.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.google-sso-email-domains-11-27-2026.md"
+    ],
+    [
+      "docs/tasks/TASK.google-sso-email-domains-11-27-2026.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "docs/tasks/TASK.google-sso-email-domains-11-27-2026.md",
+      "docs/acceptance/AC-20261127-05.md"
+    ],
+    [
+      "docs/tasks/TASK.google-sso-email-domains-11-27-2026.md",
       "docs/requirements/GOOGLE-MONITOR-SSO.md"
     ]
   ]
