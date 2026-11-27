@@ -1,0 +1,29 @@
+{
+  "id": "docs/acceptance/AC-20261127-06.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.verification-evidence-11-27-2026.md"
+  ],
+  "deps_out": [
+    "docs/PRODUCT-GUIDE.md",
+    "docs/requirements/API-CONTRACTS.md",
+    "docs/tasks/TASK.verification-evidence-11-27-2026.md"
+  ],
+  "summary": "Wazuh の TLS、チェックポイントの案件所属、検証記録の互換性・ページ移動・Blue の範囲について合成入力で確かめる技術検収。",
+  "source_sha256": "eb4ba8fdcf998bb82317670b5d6f29bbf78c5d1bfc41fb5e3e37216aa7726da8",
+  "generated_at": "00068",
+  "review": {
+    "reviewed_at": "2026-11-27T09:34:31+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "eb4ba8fdcf998bb82317670b5d6f29bbf78c5d1bfc41fb5e3e37216aa7726da8",
+    "summary_sha256": "e98ed5c9d9f1a646dfdbcf014f4d59157c34bcafc1f49300c77fc7007b7020b3",
+    "scope": "Wazuh の TLS、封印と検証履歴の契約・受入条件の原文と要約を照合。"
+  }
+}

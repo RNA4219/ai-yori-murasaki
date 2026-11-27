@@ -2,11 +2,12 @@
   "id": "docs/PRODUCT-GUIDE.md",
   "role": "doc",
   "public_api": [],
-  "summary": "導入・保存先、ラボとモニター、CLI、RSI、停止・回復、配布の操作ガイド。認可済み案件の実ログを使うBlind Blue、入力元の証跡とOracleによる確認も扱う。",
+  "summary": "製品の運用手順。Wazuh 接続確認用 CA の指定、チェックポイントの発行条件、検証履歴で過去の結果と対象を読む方法を記す。",
   "deps_out": [
     "README.md",
     "docs/CONTRACTS.md",
-    "docs/acceptance/AC-20261106-06.md"
+    "docs/acceptance/AC-20261106-06.md",
+    "docs/requirements/API-CONTRACTS.md"
   ],
   "deps_in": [
     "BLUEPRINT.md",
@@ -14,17 +15,19 @@
     "README.md",
     "RUNBOOK.md",
     "docs/RSI.md",
-    "docs/acceptance/AC-20261123-03.md"
+    "docs/acceptance/AC-20261123-03.md",
+    "docs/acceptance/AC-20261127-06.md",
+    "docs/tasks/TASK.verification-evidence-11-27-2026.md"
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "47d39e9f88e9857d29cbf42e9e096e601a182ec0b07e479b4e9f393b107f093f",
-  "generated_at": "00038",
+  "source_sha256": "32b6d1aace05268579a0007c715b57a006af9fb70cf61d0ba77f6992c5a3924d",
+  "generated_at": "00068",
   "review": {
-    "reviewed_at": "2026-11-23T01:17:45+09:00",
+    "reviewed_at": "2026-11-27T09:34:31+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "47d39e9f88e9857d29cbf42e9e096e601a182ec0b07e479b4e9f393b107f093f",
-    "summary_sha256": "2f92d48a5ffc39de8d1f466b5afaae044104849b523db7a5b49a93f55f5effd2",
-    "scope": "製品ガイドの章構成、追記された実ログの取り込み・証跡・判定、参照先を照合。"
+    "source_sha256": "32b6d1aace05268579a0007c715b57a006af9fb70cf61d0ba77f6992c5a3924d",
+    "summary_sha256": "67c6da56ccd7f9776d5614c8c213c6b3caadbd8497a46e47cba25f683833da94",
+    "scope": "Wazuh の TLS、封印と検証履歴の契約・受入条件の原文と要約を照合。"
   }
 }

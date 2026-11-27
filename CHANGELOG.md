@@ -14,6 +14,8 @@ Keep a Changelog の区分で管理する。記録には既存最大番号 +1 �
 
 ### Changed
 
+- 0051 — 2026-11-27。Wazuh 接続確認でサーバー証明書を検証し、チェックポイント発行時に台帳の所属案件を照合する。モニターで検証当時の台帳末尾と履歴の過去ページを確認できる。[Task 20261127-06](docs/tasks/TASK.verification-evidence-11-27-2026.md)・[検収](docs/acceptance/AC-20261127-06.md)
+
 - 0050 — 2026-11-27。モニターの Google ログインでメールドメインを指定できるようにした。個別の `sub` も併用すると、そのドメインの登録利用者だけがログインできる。合成アカウントでの技術検収8件に合格した。[Task 20261127-05](docs/tasks/TASK.google-sso-email-domains-11-27-2026.md)・[検収](docs/acceptance/AC-20261127-05.md)
 
 - 0049 — 2026-11-27。ローカルモニターを `--google-sso` で起動すると、4画面とその配信データの閲覧に、登録済みの Google アカウントでのログインが必要になる。合成アカウントでの技術検収8件に合格した。[Task 20261127-04](docs/tasks/TASK.google-monitor-sso-11-27-2026.md)・[検収](docs/acceptance/AC-20261127-04.md)

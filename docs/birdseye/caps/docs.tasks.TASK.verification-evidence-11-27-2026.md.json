@@ -1,0 +1,29 @@
+{
+  "id": "docs/tasks/TASK.verification-evidence-11-27-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261127-06.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "CHANGELOG.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/acceptance/AC-20261127-06.md",
+    "docs/requirements/API-CONTRACTS.md"
+  ],
+  "summary": "Wazuh のサーバー確認、案件と台帳の照合、検証時点の対象を記録する履歴に関する Task。要件、製品操作と技術検収を結ぶ。",
+  "source_sha256": "ee655657235b73b171f476f5a77ae0acb0e10bb350a5c3d9cc568bac752caf7f",
+  "generated_at": "00068",
+  "review": {
+    "reviewed_at": "2026-11-27T09:34:31+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "ee655657235b73b171f476f5a77ae0acb0e10bb350a5c3d9cc568bac752caf7f",
+    "summary_sha256": "d3f84bb88855b075abedbc91d5d337cd66b1d6cf49c45a3f32d78a44e86c13e6",
+    "scope": "Wazuh の TLS、封印と検証履歴の契約・受入条件の原文と要約を照合。"
+  }
+}

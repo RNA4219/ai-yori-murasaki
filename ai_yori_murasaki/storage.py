@@ -15,6 +15,7 @@ import re
 import tempfile
 import threading
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Iterator
 
@@ -456,6 +457,7 @@ class Store:
         return events
 
     def _inspect_chain(self, run_id: str, events: list[dict], *,
+                       campaign_id: str | None = None,
                        validate_event: Callable[[dict], None] | None = None) -> dict:
         if validate_event is None:
             validate_event = _validate_evidence_event
@@ -472,29 +474,38 @@ class Store:
                 raise DataError("event chain mismatch")
             if event_hash(event) != event.get("event_hash"):
                 raise DataError("event hash mismatch")
+            if campaign_id is None:
+                campaign_id = event["campaign_id"]
+            if event["campaign_id"] != campaign_id:
+                raise DataError("run does not belong to campaign", "cross_campaign_ref")
             head = event["event_hash"]
         return {"result": "PASS", "reason_code": "ok",
                 "last_sequence": len(events), "last_event_hash": head}
 
-    def verify_chain(self, run_id: str) -> dict:
+    def verify_chain(self, run_id: str, *, campaign_id: str | None = None) -> dict:
+        try:
+            result, _ = self._verify_chain_snapshot(run_id, campaign_id)
+        except OSError:
+            return {"result": "HOLD", "reason_code": "hold"}
+        return result
+
+    def _verify_chain_snapshot(self, run_id: str, campaign_id: str | None) -> tuple[dict, bool]:
         try:
             events = self._read_events_raw(run_id)
+            if not events:
+                return {"result": "HOLD", "reason_code": "hold",
+                        "last_sequence": 0, "last_event_hash": ZERO}, False
+            result = self._inspect_chain(run_id, events, campaign_id=campaign_id)
+            return result, events[-1]["event_type"] == "chain_sealed"
         except DataError as exc:
-            return {"result": "FAIL", "reason_code": "verdict_fail",
+            reason = "cross_campaign_ref" if exc.reason_code == "cross_campaign_ref" else "verdict_fail"
+            return {"result": "FAIL", "reason_code": reason,
                     "last_sequence": 0, "last_event_hash": ZERO,
-                    "detail": str(exc)}
-        if not events:
-            return {"result": "HOLD", "reason_code": "hold",
-                    "last_sequence": 0, "last_event_hash": ZERO}
-        try:
-            return self._inspect_chain(run_id, events)
-        except DataError as exc:
-            return {"result": "FAIL", "reason_code": "verdict_fail",
-                    "last_sequence": 0, "last_event_hash": ZERO,
-                    "detail": str(exc)}
+                    "detail": str(exc)}, False
 
-    def _is_sealed(self, run_id: str) -> bool:
-        events = self._read_events_raw(run_id)
+    def _is_sealed(self, run_id: str, events: list[dict] | None = None) -> bool:
+        if events is None:
+            events = self._read_events_raw(run_id)
         if events and events[-1].get("event_type") == "chain_sealed":
             return True
         manifest = self.load_manifest(run_id)
@@ -508,10 +519,10 @@ class Store:
         if "run_id" in event and event.get("run_id") != run_id:
             raise DataError("event run_id mismatch")
         with self.lock():
-            if self._is_sealed(run_id):
-                raise DataError("chain is sealed", "policy_denied")
             events = self._read_events_raw(run_id)
-            self._inspect_chain(run_id, events)  # refuse append on broken chain
+            if self._is_sealed(run_id, events):
+                raise DataError("chain is sealed", "policy_denied")
+            self._inspect_chain(run_id, events, campaign_id=event.get("campaign_id"))
             record = sanitize(event, self.secrets)
             record["run_id"] = run_id
             record["sequence"] = len(events) + 1
@@ -564,21 +575,24 @@ class Store:
             os.close(descriptor)
 
     # -- checkpoint -------------------------------------------------------- #
+    def sealed_head(self, campaign_id: str, run_id: str) -> dict:
+        events = self._read_events_raw(run_id)
+        if not events:
+            raise DataError("cannot seal empty chain", "hold")
+        self._inspect_chain(run_id, events, campaign_id=campaign_id)
+        last = events[-1]
+        if last["event_type"] != "chain_sealed":
+            raise DataError("cannot confirm unsealed chain", "hold")
+        return {"last_sequence": len(events), "last_event_hash": last["event_hash"],
+                "sealed_at": last["timestamp"]}
+
     def seal_checkpoint(self, campaign_id: str, run_id: str, operator_id: str) -> dict:
         _check_id(operator_id, "operator_id")
         with self.lock():
-            events = self._read_events_raw(run_id)
-            if not events:
-                raise DataError("cannot seal empty chain", "hold")
-            self._inspect_chain(run_id, events)
-            if not self._is_sealed(run_id):
-                raise DataError("cannot issue checkpoint for unsealed chain", "hold")
             checkpoint = {
                 "campaign_id": campaign_id,
                 "run_id": run_id,
-                "last_sequence": len(events),
-                "last_event_hash": events[-1]["event_hash"],
-                "sealed_at": events[-1].get("timestamp"),
+                **self.sealed_head(campaign_id, run_id),
                 "operator_id": operator_id,
             }
             checkpoint["checkpoint_digest"] = digest(checkpoint)
@@ -596,12 +610,15 @@ class Store:
             return checkpoint
 
     def verify_checkpoint(self, campaign_id: str, run_id: str) -> dict:
+        return self._verify_checkpoint(campaign_id, run_id, {})
+
+    def _verify_checkpoint(self, campaign_id: str, run_id: str, evidence: dict) -> dict:
         path = self._checkpoint_path(campaign_id, run_id)
         if not path.exists():
             return {"result": "HOLD", "reason_code": "checkpoint_missing"}
         try:
             checkpoint = loads(path.read_bytes())
-        except DataError:
+        except (DataError, OSError):
             return {"result": "HOLD", "reason_code": "hold"}
         if not isinstance(checkpoint, dict):
             return {"result": "HOLD", "reason_code": "hold"}
@@ -612,15 +629,45 @@ class Store:
         body = {k: v for k, v in checkpoint.items() if k != "checkpoint_digest"}
         if checkpoint.get("checkpoint_digest") != digest(body):
             return {"result": "FAIL", "reason_code": "checkpoint_mismatch"}
-        chain = self.verify_chain(run_id)
+        evidence["checkpoint_digest"] = checkpoint["checkpoint_digest"]
+        try:
+            chain, sealed = self._verify_chain_snapshot(run_id, campaign_id)
+        except OSError:
+            return {"result": "HOLD", "reason_code": "hold"}
         if chain["result"] != "PASS":
+            if chain.get("reason_code") == "cross_campaign_ref":
+                return {"result": "FAIL", "reason_code": "cross_campaign_ref"}
             return {"result": "FAIL", "reason_code": "verdict_fail"}
-        if (chain["last_sequence"] != checkpoint.get("last_sequence")
+        evidence["target_last_sequence"] = chain["last_sequence"]
+        evidence["target_last_event_hash"] = chain["last_event_hash"]
+        if (not sealed or chain["last_sequence"] != checkpoint.get("last_sequence")
                 or chain["last_event_hash"] != checkpoint.get("last_event_hash")):
             return {"result": "FAIL", "reason_code": "checkpoint_mismatch"}
         return {"result": "PASS", "reason_code": "ok"}
 
     # -- verification journal --------------------------------------------- #
+    def verify_and_record(self, campaign_id: str, run_id: str, method: str) -> dict:
+        with self.lock():
+            evidence = {}
+            if method == "chain":
+                result = self.verify_chain(run_id, campaign_id=campaign_id)
+                if result["result"] == "PASS":
+                    evidence["target_last_sequence"] = result["last_sequence"]
+                    evidence["target_last_event_hash"] = result["last_event_hash"]
+            elif method == "checkpoint":
+                result = self._verify_checkpoint(campaign_id, run_id, evidence)
+            else:
+                raise DataError("unknown verification method")
+            if result["reason_code"] == "cross_campaign_ref":
+                raise DataError("run does not belong to campaign", "cross_campaign_ref")
+            self.append_verification({
+                "verify_id": run_id, "run_id": run_id, "campaign_id": campaign_id,
+                "checked_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "method": method, "result": result["result"],
+                "reason_code": result["reason_code"], **evidence,
+            })
+            return result
+
     def append_verification(self, record: dict) -> None:
         if not isinstance(record, dict):
             raise DataError("verification record must be an object")

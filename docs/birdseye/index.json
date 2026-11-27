@@ -1,5 +1,5 @@
 {
-  "generated_at": "00067",
+  "generated_at": "00068",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -15,8 +15,8 @@
     "CHANGELOG.md": {
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
-      "mtime": "00067",
-      "source_sha256": "2eb8b61e38434af73e615eb36476591c49828b62872ff512c20755f040e0ace2"
+      "mtime": "00068",
+      "source_sha256": "538c1f723784a8e4e819703bd6b83faa4de108b1593ef1814679d421ac4d9112"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -36,8 +36,8 @@
     "HUB.codex.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
-      "mtime": "00066",
-      "source_sha256": "32cdb3553c68aae2dd6630a78b3f0c0f239485712ae5157dbee090ef0f041a0c"
+      "mtime": "00068",
+      "source_sha256": "07e1cc91b93a8e5bac6818312623d0b39bc660381a67fb550cb64f8389fca357"
     },
     "README.md": {
       "role": "overview",
@@ -48,8 +48,8 @@
     "RUNBOOK.md": {
       "role": "operations",
       "caps": "docs/birdseye/caps/RUNBOOK.md.json",
-      "mtime": "00009",
-      "source_sha256": "8cf7ad403f4ee3ed5070d5e7f5985818da43d935f71d8a5411279a09396af61e"
+      "mtime": "00068",
+      "source_sha256": "9e572680a6c53865c7cbc5b84dbcb528b7cc8021745e836c0683cd768aba0855"
     },
     "TASK.codex.md": {
       "role": "template",
@@ -70,8 +70,8 @@
     "docs/acceptance/INDEX.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
-      "mtime": "00067",
-      "source_sha256": "ce6363b7ad726c6c03f413be95a2584e4b2d7800e1d432b4c7aacb572fceb1f7"
+      "mtime": "00068",
+      "source_sha256": "32949d5b80ef4343cc7ae9fe3471f8d86f9bf6f8de580825880e67cbf731482c"
     },
     "docs/acceptance/README.md": {
       "role": "guide",
@@ -113,8 +113,8 @@
     "docs/tasks/README.md": {
       "role": "operations",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
-      "mtime": "00067",
-      "source_sha256": "e095a3b6da5e4b4275870accd863acb339f0cff778f6b1b4379a60378ddba15b"
+      "mtime": "00068",
+      "source_sha256": "a5ac6d47314c12e3ba0ee2c157a4cff2ba0bc8a804e793d6552e7b754bd3fda9"
     },
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md": {
       "role": "task",
@@ -282,8 +282,8 @@
     "docs/PRODUCT-GUIDE.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.PRODUCT-GUIDE.md.json",
-      "mtime": "00038",
-      "source_sha256": "47d39e9f88e9857d29cbf42e9e096e601a182ec0b07e479b4e9f393b107f093f"
+      "mtime": "00068",
+      "source_sha256": "32b6d1aace05268579a0007c715b57a006af9fb70cf61d0ba77f6992c5a3924d"
     },
     "docs/requirements/ACCEPTANCE-PLAN.md": {
       "role": "doc",
@@ -293,8 +293,8 @@
     "docs/requirements/API-CONTRACTS.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.requirements.API-CONTRACTS.md.json",
-      "mtime": "00066",
-      "source_sha256": "5b590669f259d374898ef456e77505a7c7d2490b467d49d57f59b68fe00fe703"
+      "mtime": "00068",
+      "source_sha256": "53f81ca649e8b62bc5db86390cadda4353a126cc887ccb1920c80e87e61c4a60"
     },
     "docs/requirements/COMPACTION-01.md": {
       "role": "doc",
@@ -817,8 +817,8 @@
     ".github/workflows/dual-view-validation.yml": {
       "role": "doc",
       "caps": "docs/birdseye/caps/.github.workflows.dual-view-validation.yml.json",
-      "mtime": "00064",
-      "source_sha256": "b807b7ea210743b0deef232768016bbeb60080c926fe8197abfbf5f22f91356a"
+      "mtime": "00068",
+      "source_sha256": "36c35db8df3985c1c95613a0eace8a86bb0d2d16cc1b7a19e779a5eea69497e3"
     },
     "docs/acceptance/AC-20261127-02.md": {
       "role": "doc",
@@ -891,6 +891,18 @@
       "caps": "docs/birdseye/caps/docs.tasks.TASK.google-sso-email-domains-11-27-2026.md.json",
       "mtime": "00067",
       "source_sha256": "e92b309d47cbe6ded0cdaffdad0ef12d7f95c72db5dc9bba6644dcc99855f9b7"
+    },
+    "docs/acceptance/AC-20261127-06.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261127-06.md.json",
+      "mtime": "00068",
+      "source_sha256": "eb4ba8fdcf998bb82317670b5d6f29bbf78c5d1bfc41fb5e3e37216aa7726da8"
+    },
+    "docs/tasks/TASK.verification-evidence-11-27-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.verification-evidence-11-27-2026.md.json",
+      "mtime": "00068",
+      "source_sha256": "ee655657235b73b171f476f5a77ae0acb0e10bb350a5c3d9cc568bac752caf7f"
     }
   },
   "edges": [
@@ -3397,6 +3409,66 @@
     [
       "docs/tasks/TASK.google-sso-email-domains-11-27-2026.md",
       "docs/requirements/GOOGLE-MONITOR-SSO.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/acceptance/AC-20261127-06.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.verification-evidence-11-27-2026.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/acceptance/AC-20261127-06.md"
+    ],
+    [
+      "docs/PRODUCT-GUIDE.md",
+      "docs/requirements/API-CONTRACTS.md"
+    ],
+    [
+      "docs/acceptance/AC-20261127-06.md",
+      "docs/PRODUCT-GUIDE.md"
+    ],
+    [
+      "docs/acceptance/AC-20261127-06.md",
+      "docs/requirements/API-CONTRACTS.md"
+    ],
+    [
+      "docs/acceptance/AC-20261127-06.md",
+      "docs/tasks/TASK.verification-evidence-11-27-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261127-06.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.verification-evidence-11-27-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261127-06.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.verification-evidence-11-27-2026.md"
+    ],
+    [
+      "docs/tasks/TASK.verification-evidence-11-27-2026.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "docs/tasks/TASK.verification-evidence-11-27-2026.md",
+      "docs/PRODUCT-GUIDE.md"
+    ],
+    [
+      "docs/tasks/TASK.verification-evidence-11-27-2026.md",
+      "docs/acceptance/AC-20261127-06.md"
+    ],
+    [
+      "docs/tasks/TASK.verification-evidence-11-27-2026.md",
+      "docs/requirements/API-CONTRACTS.md"
     ]
   ]
 }

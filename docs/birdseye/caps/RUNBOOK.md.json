@@ -2,7 +2,7 @@
   "id": "RUNBOOK.md",
   "role": "operations",
   "public_api": [],
-  "summary": "製品・文書・RSIの手順。agent registry初期化、承認適用、通常実行のhash照合、rollbackと旧registry保全を案内する。",
+  "summary": "開発・検証・運用手順。Wazuh の CA、台帳のチェックポイントと検証履歴の操作ガイド、導入元の検査手順を参照できる。",
   "deps_out": [
     ".agents/skills/security-audit/SKILL.md",
     "CHANGELOG.md",
@@ -53,13 +53,13 @@
   "tests": [
     "RUNBOOK の Tier / Acceptance / Birdseye 検査と、ID・リンク・原資料 hash の照合。"
   ],
-  "source_sha256": "8cf7ad403f4ee3ed5070d5e7f5985818da43d935f71d8a5411279a09396af61e",
-  "generated_at": "00028",
+  "source_sha256": "9e572680a6c53865c7cbc5b84dbcb528b7cc8021745e836c0683cd768aba0855",
+  "generated_at": "00068",
   "review": {
-    "reviewed_at": "2026-11-09T01:36:25.430824+00:00",
+    "reviewed_at": "2026-11-27T09:34:31+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "8cf7ad403f4ee3ed5070d5e7f5985818da43d935f71d8a5411279a09396af61e",
-    "summary_sha256": "789565e4a7df9077d99ac942362ad5ee40da90f5f31e6a354c95634df7028301",
-    "scope": "今回の原文・要約・依存を照合。P0/P1の実測、P2設計のみ、未実行と性能未実証を区別する。"
+    "source_sha256": "9e572680a6c53865c7cbc5b84dbcb528b7cc8021745e836c0683cd768aba0855",
+    "summary_sha256": "946f4f415c7b636563efd618d3e5c66c11a16f588b520d6759834deb8cfd6c63",
+    "scope": "Wazuh の TLS、封印と検証履歴の契約・受入条件の原文と要約を照合。"
   }
 }

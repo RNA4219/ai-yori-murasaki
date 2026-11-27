@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import os
 import threading
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import pytest
@@ -54,6 +55,10 @@ def test_append_and_verify(store: Store) -> None:
 
 def test_empty_chain_hold(store: Store) -> None:
     assert store.verify_chain("r1")["result"] == "HOLD"
+    store.verify_and_record("c1", "r1", "chain")
+    journal = json.loads((store.workspace / "verification" / "r1.jsonl").read_bytes())
+    assert journal["result"] == "HOLD"
+    assert {"target_last_sequence", "target_last_event_hash", "checkpoint_digest"}.isdisjoint(journal)
     with pytest.raises(DataError):
         store.seal_checkpoint("c1", "r1", "op1")
 
@@ -123,15 +128,18 @@ def test_full_rewrite_detected_by_checkpoint(store: Store) -> None:
 
 
 def test_tail_deletion_detected(store: Store) -> None:
-    store.append_event("r1", _event("r1", 1))
+    first = store.append_event("r1", _event("r1", 1))
     _seal(store, "r1")
     store.save_manifest("r1", _manifest("r1"))
-    store.seal_checkpoint("c1", "r1", "op1")
+    checkpoint = store.seal_checkpoint("c1", "r1", "op1")
     path = store.workspace / "runs" / "r1" / "events.jsonl"
     lines = path.read_bytes().splitlines()
     path.write_bytes(lines[0] + b"\n")
-    result = store.verify_checkpoint("c1", "r1")
+    result = store.verify_and_record("c1", "r1", "checkpoint")
     assert result["result"] == "FAIL"
+    journal = json.loads((store.workspace / "verification" / "r1.jsonl").read_bytes())
+    assert (journal["target_last_sequence"], journal["target_last_event_hash"]) == (1, first)
+    assert journal["checkpoint_digest"] == checkpoint["checkpoint_digest"]
 
 
 def test_checkpoint_missing_hold(store: Store) -> None:
@@ -141,8 +149,10 @@ def test_checkpoint_missing_hold(store: Store) -> None:
 
 def test_unsealed_checkpoint_refused(store: Store) -> None:
     store.append_event("r1", _event("r1", 1))
+    store.save_manifest("r1", _manifest("r1"))
     with pytest.raises(DataError):
         store.seal_checkpoint("c1", "r1", "op1")
+    assert not (store.trusted_root / "checkpoints").exists()
 
 
 # -- sealed append --------------------------------------------------------- #
@@ -280,6 +290,61 @@ def test_checkpoint_roundtrip(store: Store) -> None:
     # idempotent re-seal with identical content
     again = store.seal_checkpoint("c1", "r1", "op1")
     assert again == cp
+
+
+def test_checkpoint_uses_ledger_owner_without_manifest(store: Store) -> None:
+    _seal(store, "r1")
+    with pytest.raises(DataError) as err:
+        store.seal_checkpoint("other", "r1", "op1")
+    assert err.value.reason_code == "cross_campaign_ref"
+    assert not (store.trusted_root / "checkpoints").exists()
+    with pytest.raises(DataError) as err:
+        store.verify_and_record("other", "r1", "chain")
+    assert err.value.reason_code == "cross_campaign_ref"
+    assert not (store.workspace / "verification").exists()
+    cp = store.seal_checkpoint("c1", "r1", "op1")
+    assert cp["campaign_id"] == "c1"
+    # 旧版が別案件に発行済みの場合も、正しい digest だけで PASS にしない。
+    prior = {**cp, "campaign_id": "other"}
+    prior["checkpoint_digest"] = digest({k: v for k, v in prior.items() if k != "checkpoint_digest"})
+    store.atomic_json(store.trusted_root / "checkpoints" / "other" / "r1.json", prior)
+    assert store.verify_checkpoint("other", "r1") == {"result": "FAIL", "reason_code": "cross_campaign_ref"}
+
+
+def test_journal_retains_the_verified_revision_after_ordinary_append(store: Store) -> None:
+    first = store.append_event("r1", _event("r1", 0))
+    store.verify_and_record("c1", "r1", "chain")
+    second = store.append_event("r1", _event("r1", 1))
+    store.verify_and_record("c1", "r1", "chain")
+    path = store.workspace / "verification" / "r1.jsonl"
+    entries = [json.loads(line) for line in path.read_bytes().splitlines()]
+    assert [(e["target_last_sequence"], e["target_last_event_hash"]) for e in entries] == [(1, first), (2, second)]
+
+
+def test_concurrent_append_and_verify_share_the_observed_revision(store: Store, monkeypatch) -> None:
+    first = store.append_event("r1", _event("r1", 0))
+    writer = Store(store.workspace, store.trusted_root)
+    inspected, writing = threading.Event(), threading.Event()
+    append_journal = store.append_verification
+
+    def record(entry):
+        inspected.set()
+        assert writing.wait(5)
+        append_journal(entry)
+
+    def append():
+        assert inspected.wait(5)
+        writing.set()
+        return writer.append_event("r1", _event("r1", 1))
+
+    monkeypatch.setattr(store, "append_verification", record)
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        verify = pool.submit(store.verify_and_record, "c1", "r1", "chain")
+        following = pool.submit(append)
+        assert verify.result(timeout=10)["last_event_hash"] == first
+        assert following.result(timeout=10) != first
+    journal = json.loads((store.workspace / "verification" / "r1.jsonl").read_bytes())
+    assert (journal["target_last_sequence"], journal["target_last_event_hash"]) == (1, first)
 
 
 def test_checkpoint_overwrite_refused(store: Store) -> None:

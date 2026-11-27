@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "製品の変更履歴。モニターの Google ログインでメールドメインを指定する変更と、合成アカウントによる技術検収の結果を含む。",
+  "summary": "製品と開発手順の変更履歴。Wazuh の TLS 検証、案件を照合したチェックポイント、検証履歴の対象記録とページ取得の変更を含む。",
   "deps_out": [
     "docs/NOTION-IMPORT.md",
     "docs/SOURCES.md",
@@ -38,6 +38,7 @@
     "docs/acceptance/AC-20261127-03.md",
     "docs/acceptance/AC-20261127-04.md",
     "docs/acceptance/AC-20261127-05.md",
+    "docs/acceptance/AC-20261127-06.md",
     "docs/evidence/quality-integration-20261109/README.md",
     "docs/evidence/sources-light-ui-20261109/README.md",
     "docs/evidence/wazuh-live-20261108.md",
@@ -71,6 +72,7 @@
     "docs/tasks/TASK.security-audit-skill-11-06-2026.md",
     "docs/tasks/TASK.sources-light-ui-11-09-2026.md",
     "docs/tasks/TASK.tracker-evidence-11-26-2026.md",
+    "docs/tasks/TASK.verification-evidence-11-27-2026.md",
     "docs/tasks/TASK.version-011-11-08-2026.md",
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
   ],
@@ -96,6 +98,7 @@
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
     "docs/tasks/TASK.rsi-naming-11-06-2026.md",
     "docs/tasks/TASK.rsi-policy-11-06-2026.md",
+    "docs/tasks/TASK.verification-evidence-11-27-2026.md",
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md",
     "docs/workflow-adoption.md"
   ],
@@ -104,13 +107,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "2eb8b61e38434af73e615eb36476591c49828b62872ff512c20755f040e0ace2",
-  "generated_at": "00067",
+  "source_sha256": "538c1f723784a8e4e819703bd6b83faa4de108b1593ef1814679d421ac4d9112",
+  "generated_at": "00068",
   "review": {
-    "reviewed_at": "2026-11-27T09:12:58+00:00",
+    "reviewed_at": "2026-11-27T09:34:31+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "2eb8b61e38434af73e615eb36476591c49828b62872ff512c20755f040e0ace2",
-    "summary_sha256": "b7e2b66f65ba5fb0edd299f1839d8d92570fec467cd9a8a780e4b974e40d4f38",
-    "scope": "Google ログインのドメイン許可の製品コミット、技術検収結果と未確認事項を照合。"
+    "source_sha256": "538c1f723784a8e4e819703bd6b83faa4de108b1593ef1814679d421ac4d9112",
+    "summary_sha256": "7758fc7eacaa310fe6fe2f9751de79398f66c85be660a01b9c596f2c9f66b124",
+    "scope": "Wazuh の TLS、封印と検証履歴の契約・受入条件の原文と要約を照合。"
   }
 }

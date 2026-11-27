@@ -1,5 +1,5 @@
 {
-  "generated_at": "00067",
+  "generated_at": "00068",
   "index_snapshot": "docs/birdseye/index.json",
   "refresh_command": "RUNBOOK.md#execute と docs/BIRDSEYE.md の PowerShell 手順を参照",
   "curation_notes": "ローカル製品、要件、検収、文書運用の入口。生成世代と原文・要約の内容確認を区別する。",
@@ -51,7 +51,7 @@
     {
       "id": "HUB.codex.md",
       "role": "navigation",
-      "reason": "依頼別の文書ハブ。モニターの Google ログインとドメインの許可、案件判断、構成図などの導入手順と技術検収へ案内する。",
+      "reason": "依頼別の文書ハブ。Wazuh の TLS、チェックポイント発行、検証履歴の操作・技術検収や、モニターの設定に案内する。",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
       "edges": [
         ".agents/skills/security-audit/SKILL.md",
@@ -98,6 +98,7 @@
         "docs/acceptance/AC-20261127-03.md",
         "docs/acceptance/AC-20261127-04.md",
         "docs/acceptance/AC-20261127-05.md",
+        "docs/acceptance/AC-20261127-06.md",
         "docs/acceptance/INDEX.md",
         "docs/acceptance/README.md",
         "docs/releases/README.md",
@@ -128,7 +129,7 @@
         "docs/workflow-adoption.md",
         "governance/policy.yaml"
       ],
-      "last_verified_at": "2026-11-27T09:09:00+00:00"
+      "last_verified_at": "2026-11-27T09:34:31+00:00"
     },
     {
       "id": "GUARDRAILS.md",
@@ -171,7 +172,7 @@
     {
       "id": "RUNBOOK.md",
       "role": "operations",
-      "reason": "製品起動・検証・復旧とWorkflow Cookbookの3ゲート、Imozuru、Yomiyasu、RSIの運用手順。",
+      "reason": "開発・検証・運用手順。Wazuh の CA、台帳のチェックポイントと検証履歴の操作ガイド、導入元の検査手順を参照できる。",
       "caps": "docs/birdseye/caps/RUNBOOK.md.json",
       "edges": [
         ".agents/skills/security-audit/SKILL.md",
@@ -195,7 +196,7 @@
         "docs/requirements/DECISIONS.md",
         "docs/tasks/README.md"
       ],
-      "last_verified_at": "2026-11-06T19:30:36.760596+00:00"
+      "last_verified_at": "2026-11-27T09:34:31+00:00"
     },
     {
       "id": "EVALUATION.md",
@@ -223,7 +224,7 @@
     {
       "id": "docs/tasks/README.md",
       "role": "guide",
-      "reason": "Task の運用と索引。モニターの Google ログインとドメイン許可、構成図などの作業と技術検収を引ける。",
+      "reason": "Task の運用規約と索引。Wazuh 接続確認・チェックポイント・履歴、Google ログインなどの作業と対応する技術検収を引ける。",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
       "edges": [
         "CHANGELOG.md",
@@ -262,6 +263,7 @@
         "docs/acceptance/AC-20261127-03.md",
         "docs/acceptance/AC-20261127-04.md",
         "docs/acceptance/AC-20261127-05.md",
+        "docs/acceptance/AC-20261127-06.md",
         "docs/acceptance/README.md",
         "docs/releases/README.md",
         "docs/tasks/TASK.agent-core-11-08-2026.md",
@@ -298,15 +300,16 @@
         "docs/tasks/TASK.security-audit-skill-11-06-2026.md",
         "docs/tasks/TASK.sources-light-ui-11-09-2026.md",
         "docs/tasks/TASK.tracker-evidence-11-26-2026.md",
+        "docs/tasks/TASK.verification-evidence-11-27-2026.md",
         "docs/tasks/TASK.version-011-11-08-2026.md",
         "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
       ],
-      "last_verified_at": "2026-11-27T09:12:58+00:00"
+      "last_verified_at": "2026-11-27T09:34:31+00:00"
     },
     {
       "id": "docs/acceptance/INDEX.md",
       "role": "index",
-      "reason": "技術検収の索引。モニターの Google ログインに関する T61・T62 の合格、構成図など各機能の結果と PR を引ける。",
+      "reason": "技術検収の索引。Wazuh の TLS、所属案件と検証履歴の受入条件、モニターの各機能の Task と結果を引ける。",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
       "edges": [
         "docs/acceptance/AC-20261106-01.md",
@@ -342,6 +345,7 @@
         "docs/acceptance/AC-20261127-03.md",
         "docs/acceptance/AC-20261127-04.md",
         "docs/acceptance/AC-20261127-05.md",
+        "docs/acceptance/AC-20261127-06.md",
         "docs/releases/RA-20261126-01.md",
         "docs/releases/RA-20261126-02.md",
         "docs/releases/RA-20261127-01.md",
@@ -377,10 +381,11 @@
         "docs/tasks/TASK.security-audit-skill-11-06-2026.md",
         "docs/tasks/TASK.sources-light-ui-11-09-2026.md",
         "docs/tasks/TASK.tracker-evidence-11-26-2026.md",
+        "docs/tasks/TASK.verification-evidence-11-27-2026.md",
         "docs/tasks/TASK.version-011-11-08-2026.md",
         "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
       ],
-      "last_verified_at": "2026-11-27T09:12:58+00:00"
+      "last_verified_at": "2026-11-27T09:34:31+00:00"
     },
     {
       "id": "docs/RSI.md",
@@ -405,14 +410,15 @@
     {
       "id": "docs/PRODUCT-GUIDE.md",
       "role": "doc",
-      "reason": "導入・保存先、ラボとモニター、CLI、RSI、停止・回復、配布の操作ガイド。認可済み案件の実ログを使うBlind Blue、入力元の証跡とOracleによる確認も扱う。",
+      "reason": "製品の運用手順。Wazuh 接続確認用 CA の指定、チェックポイントの発行条件、検証履歴で過去の結果と対象を読む方法を記す。",
       "caps": "docs/birdseye/caps/docs.PRODUCT-GUIDE.md.json",
       "edges": [
         "README.md",
         "docs/CONTRACTS.md",
-        "docs/acceptance/AC-20261106-06.md"
+        "docs/acceptance/AC-20261106-06.md",
+        "docs/requirements/API-CONTRACTS.md"
       ],
-      "last_verified_at": "2026-11-23T01:17:45+09:00"
+      "last_verified_at": "2026-11-27T09:34:31+00:00"
     },
     {
       "id": "docs/PRODUCT-ACCEPTANCE.md",

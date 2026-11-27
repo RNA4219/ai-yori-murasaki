@@ -2,18 +2,18 @@
   "id": ".github/workflows/dual-view-validation.yml",
   "role": "doc",
   "public_api": [],
-  "summary": "SSO 依存を含む Python 全体と JavaScript を検査し、Chromium で判断、受付、構成図、Google ログインを確認する GitHub Actions。",
+  "summary": "Python と JavaScript の回帰、Chromium で判断画面・受付・検証履歴のページ移動・構成図・Google ログインを検査する GitHub Actions。",
   "deps_out": [],
   "deps_in": [],
   "risks": [],
   "tests": [],
-  "source_sha256": "b807b7ea210743b0deef232768016bbeb60080c926fe8197abfbf5f22f91356a",
-  "generated_at": "00064",
+  "source_sha256": "36c35db8df3985c1c95613a0eace8a86bb0d2d16cc1b7a19e779a5eea69497e3",
+  "generated_at": "00068",
   "review": {
-    "reviewed_at": "2026-11-27T08:44:47+00:00",
+    "reviewed_at": "2026-11-27T09:34:31+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "b807b7ea210743b0deef232768016bbeb60080c926fe8197abfbf5f22f91356a",
-    "summary_sha256": "e9d2835f07330176347b4b3ceebe4a8df64c9ea518533f284bcb8ad213c5aa91",
-    "scope": "モニターの Google ログインに関わる手順・検収・参照先を照合。"
+    "source_sha256": "36c35db8df3985c1c95613a0eace8a86bb0d2d16cc1b7a19e779a5eea69497e3",
+    "summary_sha256": "b45c6d68e0d6a2096c9efedd6acfa19b7132c4ec71a2fc54f55211a512e198b8",
+    "scope": "Wazuh の TLS、封印と検証履歴の契約・受入条件の原文と要約を照合。"
   }
 }

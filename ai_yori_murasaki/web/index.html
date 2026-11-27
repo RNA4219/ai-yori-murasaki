@@ -209,6 +209,13 @@ button.refresh[data-manual-busy] { cursor: progress; color: var(--color-text-mut
 .panel p.lead { margin: 0 0 var(--space-12); color: var(--color-text-muted); font-size: var(--font-small); }
 
 /* Campaign detail header */
+.verification-list { padding: 0; list-style: none; }
+.verification-list li { padding: var(--space-12) 0; border-top: 1px solid var(--color-border-subtle); }
+.verification-list p { margin: var(--space-4) 0; overflow-wrap: anywhere; }
+.verification-list summary { cursor: pointer; padding: var(--space-8) 0; }
+.verification-list dd { margin: 0 0 var(--space-8); font-family: var(--font-mono); overflow-wrap: anywhere; }
+.verification-list dt { color: var(--color-text-muted); }
+.verification-pages { display: flex; flex-wrap: wrap; gap: var(--space-8); align-items: center; }
 .detail-head { margin-bottom: var(--space-16); }
 .detail-head h2 {
   font-size: var(--font-heading); font-weight: 600; margin: 0 0 var(--space-6);
@@ -689,6 +696,7 @@ body[data-screen="list"] main { padding: 28px clamp(16px, 3.4vw, 48px) 64px; }
     route: { name: 'list', params: {} },
     detail: null,
     detailVersion: 0,
+    verificationCursors: [null],
     detailError: null,
     detailLoading: false,
     assessment: null,
@@ -892,7 +900,7 @@ body[data-screen="list"] main { padding: 28px clamp(16px, 3.4vw, 48px) 64px; }
   }
 
   function fetchJSON(url, key) {
-    if (/^\/api\/campaigns(?:[/?]|$)/.test(url) && new URLSearchParams(location.search).get('view') === 'blue') {
+    if (/^\/api\/(?:campaigns|verification)(?:[/?]|$)/.test(url) && new URLSearchParams(location.search).get('view') === 'blue') {
       url += (url.includes('?') ? '&' : '?') + 'view=blue';
     }
     if (state.inflight[key]) {
@@ -1187,9 +1195,13 @@ body[data-screen="list"] main { padding: 28px clamp(16px, 3.4vw, 48px) 64px; }
         aggregate.events = null;
         aggregate.eventsError = m;
       }));
-      requests.push(fetchJSON('/api/verification/' + encodeURIComponent(id), 'detail-verify').then(function (d) {
+      var cursors = state.verificationCursors;
+      aggregate.verifyCursor = cursors[cursors.length - 1];
+      var verifyURL = '/api/verification/' + encodeURIComponent(id) + '?limit=25';
+      if (aggregate.verifyCursor !== null) verifyURL += '&before=' + aggregate.verifyCursor;
+      requests.push(fetchJSON(verifyURL, 'detail-verify').then(function (d) {
         if (!isCurrent()) return;
-        if (d) { aggregate.verify = d; }
+        if (d && Array.isArray(d.verification)) { aggregate.verify = d; }
         else { aggregate.verify = null; aggregate.verifyError = '応答形式が不正です'; }
       }).catch(function (e) {
         if (!isCurrent()) return;
@@ -1207,7 +1219,9 @@ body[data-screen="list"] main { padding: 28px clamp(16px, 3.4vw, 48px) 64px; }
           if (aggregate.runs === null && prevDetail.runs) { aggregate.runs = prevDetail.runs; aggregate.runsStale = true; }
           if (aggregate.rsi === null && prevDetail.rsi) { aggregate.rsi = prevDetail.rsi; aggregate.rsiStale = true; }
           if (aggregate.events === null && prevDetail.events) { aggregate.events = prevDetail.events; aggregate.eventsStale = true; }
-          if (aggregate.verify === null && prevDetail.verify) { aggregate.verify = prevDetail.verify; aggregate.verifyStale = true; }
+          if (aggregate.verify === null && prevDetail.verify && aggregate.verifyCursor === prevDetail.verifyCursor) {
+            aggregate.verify = prevDetail.verify; aggregate.verifyStale = true;
+          }
           if (aggregate.assessment === null && prevDetail.assessment) { aggregate.assessment = prevDetail.assessment; aggregate.assessmentStale = true; }
         }
         state.detail = aggregate;
@@ -1266,6 +1280,7 @@ body[data-screen="list"] main { padding: 28px clamp(16px, 3.4vw, 48px) 64px; }
       return;
     }
     state.route = next;
+    state.verificationCursors = [null];
     state.focusFindings = next.name === 'campaign' && !!next.params.severity;
     if (state.focusFindings) setCampaignView(next.params.id, 'overview');
     state.detail = null;
@@ -3259,31 +3274,72 @@ body[data-screen="list"] main { padding: 28px clamp(16px, 3.4vw, 48px) 64px; }
 
     var pV = document.createElement('section');
     pV.className = 'panel';
-    pV.appendChild(text('h2', '証跡verify結果'));
+    pV.setAttribute('aria-labelledby', 'verification-heading');
+    var heading = text('h2', '検証履歴');
+    heading.id = 'verification-heading';
+    heading.tabIndex = -1;
+    pV.appendChild(heading);
     if (state.detail.verify === null) {
-      pV.appendChild(text('p', 'verify APIが未提供です。', 'muted'));
+      pV.appendChild(text('p', '検証履歴を読み込めません。更新してもう一度お試しください。'));
     } else if (!state.detail.verify) {
       pV.appendChild(text('p', '読み込み中…', 'muted'));
     } else {
       var v = state.detail.verify;
-      var vlist = Array.isArray(v.verification) ? v.verification : [];
-      var vrows = [];
-      for (var vi = 0; vi < vlist.length; vi++) {
-        var vr = vlist[vi];
-        if (!vr) continue;
-        var vbadge;
-        if (vr.result === 'PASS') vbadge = badge('成功', 'ok', '●');
-        else if (vr.result === 'FAIL') vbadge = badge('失敗', 'error', '○');
-        else if (vr.result === null || vr.result === undefined || vr.result === '') vbadge = badge('未検証', 'warn', '○');
-        else vbadge = badge('未検証（' + String(vr.result) + '）', 'warn', '○');
-        vrows.push([
-          orUnrecorded(vr.verify_id),
-          vbadge,
-          orUnrecorded(vr.reason_code),
-          orUnrecorded(vr.checked_at ? fmtTime(vr.checked_at) : null)
-        ]);
+      if (v.omitted > 0) {
+        pV.appendChild(text('p', 'このページで読み取れなかった記録は ' + v.omitted + ' 件です。'));
       }
-      pV.appendChild(makeTable(['verify_id', 'result', 'reason_code', 'checked_at'], vrows, '検証履歴'));
+      if (v.journal_status === 'missing') {
+        pV.appendChild(text('p', '検証履歴ファイルが見つかりません。', 'muted'));
+      } else if (!v.verification.length && !v.omitted) {
+        pV.appendChild(text('p', '検証記録は0件です。', 'muted'));
+      }
+      var list = text('ol', null, 'verification-list');
+      // 同じページの再取得では詳細を保ち、表示範囲が変われば新しい一覧にする。
+      // verify_id は同じ実行の複数の記録で共通する。
+      list.dataset.key = ['verification-page', state.detail.verifyCursor, v.next_before,
+        v.verification.length, v.omitted].join(':');
+      for (var vi = 0; vi < v.verification.length; vi++) {
+        var vr = v.verification[vi];
+        var item = text('li');
+        item.appendChild(vr.result === 'PASS' ? badge('成功', 'ok', '●') :
+          vr.result === 'FAIL' ? badge('失敗', 'error', '○') : badge('未検証', 'warn', '○'));
+        item.appendChild(text('p', (fmtTime(vr.checked_at) || '日時未記録') + ' · ' +
+          (vr.reason_code || '理由未記録')));
+        var details = text('details');
+        details.appendChild(text('summary', '検証の詳細'));
+        var fields = [['検証ID', vr.verify_id]];
+        if (new URLSearchParams(location.search).get('view') !== 'blue') {
+          if (!vr.method) details.appendChild(text('p', '検証方法・対象は未記録', 'muted'));
+          else {
+            fields.push(['検証方法', vr.method === 'checkpoint' ? 'チェックポイント' : 'チェーン']);
+            if (vr.target_last_event_hash) {
+              fields.push(['検証対象の末尾番号', vr.target_last_sequence], ['末尾イベントのハッシュ', vr.target_last_event_hash]);
+            } else details.appendChild(text('p', '検証対象は未記録', 'muted'));
+            if (vr.method === 'checkpoint') fields.push(['チェックポイントのダイジェスト', vr.checkpoint_digest]);
+          }
+        }
+        var meta = text('dl');
+        fields.forEach(function (field) {
+          meta.appendChild(text('dt', field[0]));
+          meta.appendChild(text('dd', field[1] == null ? '未記録' : String(field[1])));
+        });
+        details.appendChild(meta);
+        item.appendChild(details);
+        list.appendChild(item);
+      }
+      if (list.childNodes.length) pV.appendChild(list);
+    }
+    if (state.verificationCursors.length > 1 || (v && v.next_before != null)) {
+      var pages = text('div', null, 'verification-pages');
+      var newer = text('button', '新しい記録'), older = text('button', '以前の記録');
+      newer.type = older.type = 'button';
+      newer.dataset.verificationPage = 'newer'; older.dataset.verificationPage = 'older';
+      newer.disabled = state.verificationCursors.length === 1 || state.detail.verifyBusy;
+      older.disabled = !v || v.next_before == null || state.detail.verifyBusy;
+      pages.appendChild(newer);
+      pages.appendChild(text('span', state.verificationCursors.length + ' ページ目'));
+      pages.appendChild(older);
+      pV.appendChild(pages);
     }
     frag.appendChild(pV);
 
@@ -3460,6 +3516,20 @@ body[data-screen="list"] main { padding: 28px clamp(16px, 3.4vw, 48px) 64px; }
     openCasePage(event.target.elements.page.valueAsNumber);
   });
   el.viewRoot.addEventListener('click', function (event) {
+    var verifyPage = event.target.closest('[data-verification-page]');
+    if (verifyPage && !verifyPage.disabled && state.detail && state.route.name === 'run') {
+      if (verifyPage.dataset.verificationPage === 'older') {
+        state.verificationCursors.push(state.detail.verify.next_before);
+      } else state.verificationCursors.pop();
+      state.detail.verifyBusy = true;
+      render();
+      var pageRoute = routeKey(state.route);
+      loadDetail().then(function () {
+        var heading = document.getElementById('verification-heading');
+        if (heading && pageRoute === routeKey(state.route)) heading.focus();
+      });
+      return;
+    }
     var pageButton = event.target.closest('[data-case-page]');
     if (pageButton) {
       openCasePage(Number(pageButton.dataset.casePage)); return;
