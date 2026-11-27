@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "製品の変更履歴。モニターの HTTPS と Google セッション、Blue ビューの継承、LLM 受信上限と受付索引の依存更新を含む。",
+  "summary": "モニターの HTTPS、Blue 表示・受信上限・依存更新・台帳検証などの修正、および Windows 並行受付を含む技術検収を記録する。",
   "deps_out": [
     "docs/NOTION-IMPORT.md",
     "docs/SOURCES.md",
@@ -110,13 +110,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "b909f2b1d370bfeecc173b8683dc7a5426bc24d48e33c1bf8c4022a642f5d6aa",
-  "generated_at": "00070",
+  "source_sha256": "b05c7183cde08621e6852b1db3d6ac54dc58ca7d68c58b832ca84e628fbca4e4",
+  "generated_at": "00071",
   "review": {
-    "reviewed_at": "2026-11-27T10:24:52+00:00",
+    "reviewed_at": "2026-11-27T10:36:39+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "b909f2b1d370bfeecc173b8683dc7a5426bc24d48e33c1bf8c4022a642f5d6aa",
-    "summary_sha256": "dc8d3a55257186dcaead4955902f1e459c7699035e02650df81b63cbc06488a0",
+    "source_sha256": "b05c7183cde08621e6852b1db3d6ac54dc58ca7d68c58b832ca84e628fbca4e4",
+    "summary_sha256": "2c957b189d5ce0637f4fb144e2511555ddadee693011a7121f999cfcea02afa1",
     "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
   }
 }

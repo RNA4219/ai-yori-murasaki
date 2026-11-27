@@ -93,12 +93,12 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "faaf69721bcf32b34ae533e9a2d1c2e87a1af449526b86c6dd6d48d9a547dccc",
-  "generated_at": "00070",
+  "source_sha256": "bafb7ced311e9339351f3b0f1476bea98a1240b4c5f2c9628593d1217f2873ba",
+  "generated_at": "00071",
   "review": {
-    "reviewed_at": "2026-11-27T10:24:52+00:00",
+    "reviewed_at": "2026-11-27T10:36:39+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "faaf69721bcf32b34ae533e9a2d1c2e87a1af449526b86c6dd6d48d9a547dccc",
+    "source_sha256": "bafb7ced311e9339351f3b0f1476bea98a1240b4c5f2c9628593d1217f2873ba",
     "summary_sha256": "dd4437682c6fce9bc25bba1b5e116959e5eb74123a65fba5d4cbd0865de70baa",
     "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
   }

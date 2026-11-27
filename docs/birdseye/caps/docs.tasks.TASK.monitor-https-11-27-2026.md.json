@@ -18,14 +18,14 @@
     "docs/requirements/API-CONTRACTS.md",
     "docs/requirements/GOOGLE-MONITOR-SSO.md"
   ],
-  "summary": "R-091 の HTTPS・セッションと、Blue 表示、LLM 受信上限、受付の依存、Obsidian の設定除外、実行台帳の整合性を対象とする Task。",
-  "source_sha256": "0aa8f14434e23294b3dd15cd67f0fcdf9a732585e2495755ef73220ddf825bfb",
-  "generated_at": "00070",
+  "summary": "R-091 の HTTPS モニターと再診断の修正。Windows の同時受付を含む製品候補の検収結果と実機試験の範囲を示す。",
+  "source_sha256": "e2c9c45200036238cefdd0fab94fd9a493c469025e18fd973b89dbb0de7fa39f",
+  "generated_at": "00071",
   "review": {
-    "reviewed_at": "2026-11-27T10:24:52+00:00",
+    "reviewed_at": "2026-11-27T10:36:39+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "0aa8f14434e23294b3dd15cd67f0fcdf9a732585e2495755ef73220ddf825bfb",
-    "summary_sha256": "732d7cda60561303d4f4ba758bcd0937b7ed632a712a5d5cfb61a7cf50faed5f",
+    "source_sha256": "e2c9c45200036238cefdd0fab94fd9a493c469025e18fd973b89dbb0de7fa39f",
+    "summary_sha256": "d3c7551984bec45b04749a635d0b82f116c305c4c542b201dd081204fa27d690",
     "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
   }
 }

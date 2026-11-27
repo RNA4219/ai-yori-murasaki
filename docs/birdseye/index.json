@@ -1,5 +1,5 @@
 {
-  "generated_at": "00070",
+  "generated_at": "00071",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -15,8 +15,8 @@
     "CHANGELOG.md": {
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
-      "mtime": "00070",
-      "source_sha256": "b909f2b1d370bfeecc173b8683dc7a5426bc24d48e33c1bf8c4022a642f5d6aa"
+      "mtime": "00071",
+      "source_sha256": "b05c7183cde08621e6852b1db3d6ac54dc58ca7d68c58b832ca84e628fbca4e4"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -70,8 +70,8 @@
     "docs/acceptance/INDEX.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
-      "mtime": "00070",
-      "source_sha256": "122aa34b8eea617620e6e83283ab243227fb6da1eface24e3332c11da4b862a7"
+      "mtime": "00071",
+      "source_sha256": "3b0114f07dc392c28d790c48e351000321e1cfb310fcb73648e56da1d6cc480a"
     },
     "docs/acceptance/README.md": {
       "role": "guide",
@@ -113,8 +113,8 @@
     "docs/tasks/README.md": {
       "role": "operations",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
-      "mtime": "00070",
-      "source_sha256": "faaf69721bcf32b34ae533e9a2d1c2e87a1af449526b86c6dd6d48d9a547dccc"
+      "mtime": "00071",
+      "source_sha256": "bafb7ced311e9339351f3b0f1476bea98a1240b4c5f2c9628593d1217f2873ba"
     },
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md": {
       "role": "task",
@@ -908,14 +908,14 @@
     "docs/acceptance/AC-20261127-07.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.acceptance.AC-20261127-07.md.json",
-      "mtime": "00070",
-      "source_sha256": "a29563c08b089253debaef2d7702436f4e8ba09c4b58e4646f47807bc978dbb9"
+      "mtime": "00071",
+      "source_sha256": "05a9af147b6c047c73433584cc9c0e0c8baec864f18f0aba5fb39c5d34fb50aa"
     },
     "docs/tasks/TASK.monitor-https-11-27-2026.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.tasks.TASK.monitor-https-11-27-2026.md.json",
-      "mtime": "00070",
-      "source_sha256": "0aa8f14434e23294b3dd15cd67f0fcdf9a732585e2495755ef73220ddf825bfb"
+      "mtime": "00071",
+      "source_sha256": "e2c9c45200036238cefdd0fab94fd9a493c469025e18fd973b89dbb0de7fa39f"
     }
   },
   "edges": [

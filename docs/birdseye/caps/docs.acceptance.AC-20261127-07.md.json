@@ -17,14 +17,14 @@
     "docs/requirements/GOOGLE-MONITOR-SSO.md",
     "docs/tasks/TASK.monitor-https-11-27-2026.md"
   ],
-  "summary": "T63 の HTTPS 起動、SSO の Cookie と認証、再診断した Blue 表示、LLM 受信上限、受付索引、Obsidian、実行台帳の技術検収。",
-  "source_sha256": "a29563c08b089253debaef2d7702436f4e8ba09c4b58e4646f47807bc978dbb9",
-  "generated_at": "00070",
+  "summary": "T63 の HTTPS 起動・セッションと再診断の技術検収。製品候補の13件合格、Windows 4並行の受付台帳と各種回帰の成績を示す。",
+  "source_sha256": "05a9af147b6c047c73433584cc9c0e0c8baec864f18f0aba5fb39c5d34fb50aa",
+  "generated_at": "00071",
   "review": {
-    "reviewed_at": "2026-11-27T10:24:52+00:00",
+    "reviewed_at": "2026-11-27T10:36:39+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "a29563c08b089253debaef2d7702436f4e8ba09c4b58e4646f47807bc978dbb9",
-    "summary_sha256": "212bf909ecb564fd3ee5450ff6ebf378da90205b8b6d9ab16f23403dd7605ce8",
+    "source_sha256": "05a9af147b6c047c73433584cc9c0e0c8baec864f18f0aba5fb39c5d34fb50aa",
+    "summary_sha256": "08398567975fc9e108d15f9232439459519840008cba8c2c16321a97ecc193cb",
     "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
   }
 }
