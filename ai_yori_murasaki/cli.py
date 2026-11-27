@@ -5,7 +5,6 @@ import argparse
 import json
 import os
 import sys
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -35,10 +34,6 @@ FAIL = {"verdict_fail", "checkpoint_mismatch"}
 class _Parser(argparse.ArgumentParser):
     def error(self, message: str) -> None:  # type: ignore[override]
         raise DataError("引数が不正です", "usage_error")
-
-
-def _now() -> str:
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def _reason_code(exc: BaseException) -> str:
@@ -352,19 +347,7 @@ def _dispatch(args: argparse.Namespace, rt: Runtime) -> tuple[Any, Any, Any, int
         run = rt.get_run(args.run_id)
         if run.get("campaign_id") != args.campaign_id:
             raise DataError("cross campaign reference", "cross_campaign_ref")
-        if action == "chain":
-            result = rt.store.verify_chain(args.run_id)
-        else:
-            result = rt.store.verify_checkpoint(args.campaign_id, args.run_id)
-        entry = {
-            "verify_id": args.run_id,
-            "run_id": args.run_id,
-            "campaign_id": args.campaign_id,
-            "checked_at": _now(),
-            "result": result.get("result"),
-            "reason_code": result.get("reason_code"),
-        }
-        rt.store.append_verification(entry)
+        result = rt.store.verify_and_record(args.campaign_id, args.run_id, action)
         outcome = result.get("result")
         if outcome == "PASS":
             code = 0

@@ -69,3 +69,37 @@ def test_missing_alert_endpoint_does_not_hide_invalid_alert_file(
     output = capsys.readouterr().out
     assert "query_alerts: skipped" in output
     assert "alerts_json_import: fail" in output
+
+
+@pytest.mark.parametrize("stage", ["authenticate", "query_alerts"])
+def test_network_errors_only_report_safe_categories(smoke, monkeypatch, capsys, stage):
+    class Client:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def authenticate(self, **kwargs):
+            if stage == "authenticate":
+                raise ValueError("provider-response-placeholder")
+            return {"token": "synthetic-test-token"}
+
+        def query_alerts(self, **kwargs):
+            raise smoke.ssl.SSLCertVerificationError("indexer provider-response-placeholder")
+
+    monkeypatch.setattr(smoke, "WazuhClient", Client)
+    assert smoke.main(["--allow-default-creds"]) == 1
+    output = capsys.readouterr().out
+    assert f"{stage}: fail" in output
+    assert "provider-response-placeholder" not in output
+    assert "synthetic-test-token" not in output
+
+
+def test_invalid_explicit_ca_stops_before_network(smoke, monkeypatch, capsys, tmp_path):
+    def unexpected_network(*args, **kwargs):
+        pytest.fail("invalid trust configuration must stop before connecting")
+
+    monkeypatch.setattr(smoke.socket, "create_connection", unexpected_network)
+    bad_ca = tmp_path / "bad-ca.pem"
+    bad_ca.write_text("not a certificate", encoding="ascii")
+    for ca_file in ("", str(bad_ca), str(tmp_path / "absent.pem")):
+        assert smoke.main(["--allow-default-creds", "--ca-file", ca_file]) == 1
+        assert "tls_trust: fail (could not load CA trust bundle)" in capsys.readouterr().out

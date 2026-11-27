@@ -2,7 +2,7 @@
   "id": "HUB.codex.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "依頼別の文書ハブ。モニターの Google ログインとドメインの許可、案件判断、構成図などの導入手順と技術検収へ案内する。",
+  "summary": "依頼別の文書ハブ。Wazuh の TLS、チェックポイント発行、検証履歴の操作・技術検収や、モニターの設定に案内する。",
   "deps_out": [
     ".agents/skills/security-audit/SKILL.md",
     "AGENTS.md",
@@ -48,6 +48,7 @@
     "docs/acceptance/AC-20261127-03.md",
     "docs/acceptance/AC-20261127-04.md",
     "docs/acceptance/AC-20261127-05.md",
+    "docs/acceptance/AC-20261127-06.md",
     "docs/acceptance/INDEX.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
@@ -88,13 +89,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "32cdb3553c68aae2dd6630a78b3f0c0f239485712ae5157dbee090ef0f041a0c",
-  "generated_at": "00066",
+  "source_sha256": "07e1cc91b93a8e5bac6818312623d0b39bc660381a67fb550cb64f8389fca357",
+  "generated_at": "00068",
   "review": {
-    "reviewed_at": "2026-11-27T09:09:00+00:00",
+    "reviewed_at": "2026-11-27T09:34:31+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "32cdb3553c68aae2dd6630a78b3f0c0f239485712ae5157dbee090ef0f041a0c",
-    "summary_sha256": "3b65ee3112460019f7c2ee54cfb41c0538f810d7119cbf775b27e66fc358d0a6",
-    "scope": "Google ログインのドメイン許可について設定・契約・受入条件を照合。"
+    "source_sha256": "07e1cc91b93a8e5bac6818312623d0b39bc660381a67fb550cb64f8389fca357",
+    "summary_sha256": "c393e4c0fccf62cf59047c85a86c0c269cc04ead38cbe59c4304522c483f6ea8",
+    "scope": "Wazuh の TLS、封印と検証履歴の契約・受入条件の原文と要約を照合。"
   }
 }

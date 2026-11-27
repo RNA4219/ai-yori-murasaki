@@ -36,6 +36,18 @@ py -3 -c "from pathlib import Path; import ai_yori_murasaki; print(Path(ai_yori_
 
 モデル表示は、指定名、登録状況、開発時の呼び出し、製品経由の接続、固定版の確認を分ける。unknownや未測定を成功へ読み替えない。外部adapterの契約試験成功は、そのサービスへの接続成功ではない。
 
+## Wazuh の接続先を証明書で確認する
+
+リポジトリの `scripts/wazuh_live_smoke.py` は、認可された Wazuh manager の認証とアラート取得を確認する。接続先のホスト名とサーバー証明書の信頼チェーンは両方のリクエストで検証される。標準の信頼ストアに CA があれば `--ca-file` は省略できる。組織や検証環境で発行した証明書を使う場合は、その CA 証明書を PEM ファイルで指定する。
+
+次は、`localhost` を証明書のホスト名として使うローカル環境の例。リポジトリ直下で、接続を許可されたアカウントの `WAZUH_USER` と `WAZUH_PASS` を環境変数に設定して使う。ファイル名とポートは環境に合わせる。
+
+```powershell
+py -3 scripts/wazuh_live_smoke.py --host localhost --port 55000 --ca-file ./ca/wazuh-lab.pem
+```
+
+CA ファイルを読めない場合は `tls_trust` が失敗する。証明書の署名やホスト名を検証できない接続では資格情報を送信せず、スクリプトは終了コード1を返す。接続後、サーバーがアラート検索に 404 を返した場合、その機能の確認結果は `skipped` となる。
+
 ## CLI応答と検証
 
 CLIの結果はschema_version、command、status、reason_code、campaign_id、run_id、dataを持つJSONで返る。終了コードは0が正常、1が判定失敗、2が入力不正、3が保留、4がpolicyによる拒否。攻撃のOracleがFAILでも、攻撃不成立と正常回帰の両方を確認できた修復は成功となる。
@@ -48,6 +60,14 @@ aym verify checkpoint --campaign-id <ID> --run-id <ID>
 ```
 
 ハッシュ列だけでは、末尾削除や全列の再計算を独立に検知できない。trusted rootのcheckpointと照合する。checkpointがなければ保留であり、成功扱いにしない。検証結果はsealed runへの追記ではなく、verification journalへ保存する。
+
+### チェックポイントを発行して履歴を見る
+
+`aym checkpoint seal --campaign-id <案件ID> --run-id <実行ID> --operator-id <操作者ID>` は、封印済みの実行台帳の各イベントが指定した案件に属することを確認する。案件が異なる場合は `cross_campaign_ref` を返し、その案件にチェックポイントを発行しない。
+
+`aym verify chain` は実行台帳を、`aym verify checkpoint` は台帳と独立したチェックポイントの対応を検証する。モニターで対象の実行を選び、検証履歴で結果とその理由を読む。operator は検証方法、検証時に確認できた台帳末尾の連番とハッシュ、照合したチェックポイントのダイジェストも確認できる。古い履歴でこれらの値が未記録の場合、現在の台帳から補うことはしない。
+
+履歴は新しい記録から表示する。「以前の記録」「新しい記録」で移動できる。読み取れなかった行があるときは件数を確認できる。[履歴 API の取得方法](requirements/API-CONTRACTS.md#22-endpoints)
 
 ## 実ログを使った Blind Blue と Oracle CLI
 

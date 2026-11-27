@@ -92,7 +92,8 @@ operatorの案件一覧と詳細の `severity_counts` は、同じ案件内の�
 #### `aym checkpoint seal`
 
 - args: `--campaign-id <id>`, `--run-id <id>`。
-- 成功: exit 0、`data={checkpoint_digest}`。
+- `--operator-id <id>` も必須。指定した `campaign_id` を台帳の全イベントと照合し、所属が異なる場合は `cross_campaign_ref` を返してチェックポイントの書込を行わない。
+- 成功: exit 0、`data` に `checkpoint_digest` を含む。
 - `TRUSTED_ROOT` 未設定: exit 2、`reason_code=input_invalid`。
 
 #### `aym oracle evaluate`
@@ -125,13 +126,14 @@ operatorの案件一覧と詳細の `severity_counts` は、同じ案件内の�
 - args: `--campaign-id <id>`, `--run-id <id>`。
 - 成功: exit 0、`data={result: PASS}`。
 - 不一致: exit 1、`reason_code=verdict_fail`。
-- verification journal に記録。
+- 検証履歴に `method=chain` と、その時点で確認できた場合に `target_last_sequence`・`target_last_event_hash` を記録する。
 
 #### `aym verify checkpoint`
 
 - args: `--campaign-id <id>`, `--run-id <id>`。
 - 成功: exit 0、`data={result: PASS}`。
 - 不一致: exit 1、`reason_code=checkpoint_mismatch`。
+- 検証履歴に `method=checkpoint` を記録する。確認できた台帳末尾は `target_last_sequence`・`target_last_event_hash`、特定できた照合対象は `checkpoint_digest` で示す。
 - checkpoint 未提供: exit 3、`reason_code=checkpoint_missing`。
 - chain 不正が確認済み: exit 1、`reason_code=verdict_fail`。読み取り不能は exit 3。
 
@@ -178,12 +180,18 @@ operatorの案件一覧と詳細の `severity_counts` は、同じ案件内の�
 | GET | `/api/campaigns/<campaign_id>` | - | `{campaign: {...}}` | 404 | 256 KiB |
 | GET | `/api/runs/<run_id>` | - | `{run: {...}}` | 404 | 256 KiB |
 | GET | `/api/runs/<run_id>/events` | `?after=<sequence>&limit=<int>` | `{events: [...]}`（public projection） | 404 | 1 MiB |
-| GET | `/api/verification/<run_id>` | - | `{verification: [...]}` | 404 | 256 KiB |
+| GET | `/api/verification/<run_id>` | `limit`、続きは `before` も指定 | `verification` に検証履歴を返す。ページ指定時の順序・件数は下記 | 400 / 404 / 409 | ページ指定は最大100件 |
 | GET | `/api/approvals` | - | `{approvals: [...]}` | 500 | 256 KiB |
 | GET | `/api/health` | - | `{status: "ok"}` | - | 1 KiB |
 
-- `limit` 既定 100、上限 1000。
-- `after` は sequence。
+- イベント取得の `limit` は既定100、上限1000。
+- イベント取得の `after` は sequence。
+
+検証履歴を新しい順に取得する場合は `GET /api/verification/<run_id>?limit=25` を使う。`limit` は1〜100。応答の `next_before` が数値なら、次のリクエストでは `limit` と一緒にその値を `before` に渡す。`null` なら、それより古いページはない。`omitted` はそのページ内で読み取れなかった行数。`journal_status` は履歴ファイルの状態（`present`、`missing`、`empty`）を示す。
+
+引数を省略した取得では、従来と同じ記録順で小さな履歴を返す。ファイルまたは返却データが1 MiBの予算に収まらない場合は 409 と `verification_paging_required` を返すため、`limit` を指定して取得し直す。ページ単位で1行を読み切れない場合は 409 と `verification_record_too_large`、ファイルを読み取れない場合は 409 と `verification_unavailable` を返す。無効な `limit` や `before` は 400 となる。
+
+operator の履歴では `method`、`target_last_sequence`、`target_last_event_hash`、`checkpoint_digest` から検証方法と当時の対象を確認できる。旧記録の値は未記録として扱う。Blue に返す各記録の項目は従来の `verify_id`、`run_id`、`result`、`reason_code`、`checked_at` に限る。
 
 ### 2.3 projection と hidden field 削除
 

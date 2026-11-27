@@ -559,20 +559,13 @@ class Runtime:
             if run["campaign_id"] != campaign_id:
                 raise DataError("run does not belong to campaign",
                                 "policy_denied")
-            if manifest.get("sealed"):
-                events = self.store.read_events(run_id)
-                return {"sealed_at": events[-1]["timestamp"] if events else None,
-                        "last_sequence": len(events),
-                        "last_event_hash": events[-1]["event_hash"] if events else None}
-            if run["status"] not in TERMINAL:
-                raise DataError("cannot seal unfinished run", "hold")
-            self.record_event(run_id, "chain_sealed", "orchestrator")
-            manifest["sealed"] = True
-            self.store.save_manifest(run_id, manifest)
-            events = self.store.read_events(run_id)
-            return {"sealed_at": events[-1]["timestamp"],
-                    "last_sequence": len(events),
-                    "last_event_hash": events[-1]["event_hash"]}
+            if not manifest.get("sealed"):
+                if run["status"] not in TERMINAL:
+                    raise DataError("cannot seal unfinished run", "hold")
+                self.record_event(run_id, "chain_sealed", "orchestrator")
+                manifest["sealed"] = True
+                self.store.save_manifest(run_id, manifest)
+            return self.store.sealed_head(campaign_id, run_id)
 
     # ------------------------------------------------------------------ #
     # events

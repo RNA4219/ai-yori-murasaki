@@ -1,0 +1,29 @@
+{
+  "id": "docs/tasks/TASK.verification-evidence-11-27-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261127-06.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "CHANGELOG.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/acceptance/AC-20261127-06.md",
+    "docs/requirements/API-CONTRACTS.md"
+  ],
+  "summary": "Wazuh の TLS、案件別の封印、検証履歴を修正した Task。製品コミットでの技術検収完了、独立レビューと未検証範囲を記す。",
+  "source_sha256": "68fa6fdda47fd2fce96df9442066368bf9622bdaaf5a054794fa6a4ae9e680da",
+  "generated_at": "00069",
+  "review": {
+    "reviewed_at": "2026-11-27T09:45:38+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "68fa6fdda47fd2fce96df9442066368bf9622bdaaf5a054794fa6a4ae9e680da",
+    "summary_sha256": "3d295f39f60a98588955d5c2b6cd88872700d4c58cc423f006d9aba346c2eb0d",
+    "scope": "Wazuh の TLS、封印、検証履歴の製品コミットと技術検収、未確認事項を照合。"
+  }
+}

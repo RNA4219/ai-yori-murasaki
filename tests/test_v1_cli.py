@@ -49,11 +49,25 @@ def test_lifecycle_checkpoint_and_verify(cli_env):
     assert call('run', 'seal', '--campaign-id', cid, '--run-id', rid)[0] == 0
     rc, result = call('verify', 'checkpoint', '--campaign-id', cid, '--run-id', rid)
     assert rc == 3 and result['status'] == 'hold', result
-    assert call('checkpoint', 'seal', '--campaign-id', cid, '--run-id', rid, '--operator-id', 'tester')[0] == 0
+    rc, wrong = call('checkpoint', 'seal', '--campaign-id', 'other-case', '--run-id', rid, '--operator-id', 'tester')
+    assert rc == 2 and wrong['reason_code'] == 'cross_campaign_ref', wrong
+    assert not (rt.store.trusted_root / 'checkpoints' / 'other-case').exists()
+    rc, issued = call('checkpoint', 'seal', '--campaign-id', cid, '--run-id', rid, '--operator-id', 'tester')
+    assert rc == 0, issued
+    checkpoint = issued['data']
     for kind in ('chain', 'checkpoint'):
         rc, result = call('verify', kind, '--campaign-id', cid, '--run-id', rid)
         assert rc == 0 and result['data']['result'] == 'PASS', result
-    assert (rt.store.workspace / 'verification' / (rid + '.jsonl')).exists()
+    path = rt.store.workspace / 'verification' / (rid + '.jsonl')
+    missing, chain, sealed = [json.loads(line) for line in path.read_bytes().splitlines()]
+    assert missing['method'] == 'checkpoint' and missing['result'] == 'HOLD'
+    assert {'target_last_sequence', 'target_last_event_hash', 'checkpoint_digest'}.isdisjoint(missing)
+    for entry, method in ((chain, 'chain'), (sealed, 'checkpoint')):
+        assert entry['method'] == method and entry['result'] == 'PASS'
+        assert entry['target_last_sequence'] == checkpoint['last_sequence']
+        assert entry['target_last_event_hash'] == checkpoint['last_event_hash']
+    assert 'checkpoint_digest' not in chain
+    assert sealed['checkpoint_digest'] == checkpoint['checkpoint_digest']
 
 
 def test_denied_and_invalid_bind(cli_env):
@@ -62,6 +76,21 @@ def test_denied_and_invalid_bind(cli_env):
     assert rc == 4 and result['status'] == 'denied', result
     rc, result = call('monitor', 'serve', '--bind', '0.0.0.0:8766')
     assert rc == 2 and result['reason_code'] == 'bind_not_loopback', result
+
+
+def test_run_seal_requires_ledger_seal_for_repeat_success(cli_env):
+    rt, cid, call = cli_env
+    rid = rt.start_run(cid, 'verify', 0, 'resume-seal')['run_id']
+    rt.finish_run(rid, 'completed')
+    # 復旧後に manifest と台帳の末尾が食い違う場合を確認する。
+    manifest = rt.store.load_manifest(rid)
+    manifest['sealed'] = True
+    rt.store.save_manifest(rid, manifest)
+    rc, result = call('run', 'seal', '--campaign-id', cid, '--run-id', rid)
+    assert rc == 3 and result['reason_code'] == 'hold'
+    rc, result = call('checkpoint', 'seal', '--campaign-id', cid, '--run-id', rid, '--operator-id', 'tester')
+    assert rc == 3 and result['reason_code'] == 'hold'
+    assert not (rt.store.trusted_root / 'checkpoints' / cid / (rid + '.json')).exists()
 
 
 @pytest.mark.parametrize('expected,code,status', [(0, 0, 'ok'), (1, 1, 'fail')])

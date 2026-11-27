@@ -2,7 +2,7 @@
   "id": "docs/requirements/API-CONTRACTS.md",
   "role": "doc",
   "public_api": [],
-  "summary": "CLI と HTTP の契約。モニターでの Google ログイン、アカウント・メールドメインの許可条件とスコープ、Blue の公開範囲を記す。",
+  "summary": "CLI と HTTP の契約。チェックポイントの所属照合、検証記録の対象、検証履歴のページ取得と Blue の公開項目を記す。",
   "deps_out": [
     "docs/PRODUCT-ACCEPTANCE.md",
     "docs/SOURCES.md",
@@ -16,25 +16,28 @@
     "BLUEPRINT.md",
     "README.md",
     "docs/CONTRACTS.md",
+    "docs/PRODUCT-GUIDE.md",
     "docs/acceptance/AC-20261127-02.md",
     "docs/acceptance/AC-20261127-04.md",
     "docs/acceptance/AC-20261127-05.md",
+    "docs/acceptance/AC-20261127-06.md",
     "docs/requirements/ARCHITECTURE-MAP-SELECTION.md",
     "docs/requirements/COMPACTION-02.md",
     "docs/requirements/GOOGLE-MONITOR-SSO.md",
     "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md",
     "docs/requirements/REQUIREMENTS-DUAL-VIEW.md",
-    "docs/requirements/SPEC-DUAL-VIEW.md"
+    "docs/requirements/SPEC-DUAL-VIEW.md",
+    "docs/tasks/TASK.verification-evidence-11-27-2026.md"
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "5b590669f259d374898ef456e77505a7c7d2490b467d49d57f59b68fe00fe703",
-  "generated_at": "00066",
+  "source_sha256": "53f81ca649e8b62bc5db86390cadda4353a126cc887ccb1920c80e87e61c4a60",
+  "generated_at": "00068",
   "review": {
-    "reviewed_at": "2026-11-27T09:09:00+00:00",
+    "reviewed_at": "2026-11-27T09:34:31+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "5b590669f259d374898ef456e77505a7c7d2490b467d49d57f59b68fe00fe703",
-    "summary_sha256": "8c930874ad76eadbf0e1fac2917e3ee0f7013b6c8daeb3b001f056b872219211",
-    "scope": "Google ログインのドメイン許可について設定・契約・受入条件を照合。"
+    "source_sha256": "53f81ca649e8b62bc5db86390cadda4353a126cc887ccb1920c80e87e61c4a60",
+    "summary_sha256": "77d09d34f042cfc486731e73358545cfb4a422738d5277398b3f0f7d6ffcccaf",
+    "scope": "Wazuh の TLS、封印と検証履歴の契約・受入条件の原文と要約を照合。"
   }
 }

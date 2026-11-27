@@ -1,0 +1,29 @@
+{
+  "id": "docs/acceptance/AC-20261127-06.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.verification-evidence-11-27-2026.md"
+  ],
+  "deps_out": [
+    "docs/PRODUCT-GUIDE.md",
+    "docs/requirements/API-CONTRACTS.md",
+    "docs/tasks/TASK.verification-evidence-11-27-2026.md"
+  ],
+  "summary": "合成証明書・台帳と実ブラウザーによる技術検収。strict の go、Wazuh の TLS、所属案件、検証時の対象、履歴互換性と Blue の確認結果を示す。",
+  "source_sha256": "ea27246476f7cdd259eefbb073fa0e8c344300d20f3ce83e357c3fcdbe89ddc3",
+  "generated_at": "00069",
+  "review": {
+    "reviewed_at": "2026-11-27T09:45:38+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "ea27246476f7cdd259eefbb073fa0e8c344300d20f3ce83e357c3fcdbe89ddc3",
+    "summary_sha256": "9b960d2d07b51937b2a1d987195bc10299d5182ce990af85094b5ab75c525c51",
+    "scope": "Wazuh の TLS、封印、検証履歴の製品コミットと技術検収、未確認事項を照合。"
+  }
+}

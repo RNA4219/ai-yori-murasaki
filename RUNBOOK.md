@@ -58,6 +58,8 @@ manual-bbによる手動ブラックボックス試験は[MANUAL-BB-BATCH-202611
 
 製品の検証は`py -3 -m pytest -q -rs`。wheelは`py -3 -m pip wheel . --no-deps --wheel-dir dist`で作成する。モデル呼び出し、実Docker、ブラウザーによる検証はpytestの件数と分けて[製品検収](docs/acceptance/AC-20261106-06.md)へ記録する。
 
+Wazuh manager の接続先を検証する CA の指定方法、チェックポイントの発行条件、検証履歴の読み方は[製品操作ガイド](docs/PRODUCT-GUIDE.md)にまとめている。
+
 ## Security Audit
 
 脆弱性診断・セキュリティレビューでは [導入手順](docs/SECURITY-AUDIT.md) と [.agents/skills/security-audit/SKILL.md](.agents/skills/security-audit/SKILL.md) を使う。参照資料・スキーマ・検証器・ライセンスは同じフォルダーに同梱している。

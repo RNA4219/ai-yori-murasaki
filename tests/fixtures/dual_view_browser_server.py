@@ -4,10 +4,38 @@ from __future__ import annotations
 import tempfile
 from pathlib import Path
 from ai_yori_murasaki import intake
-from ai_yori_murasaki.jsonio import digest
+from ai_yori_murasaki.cli import main as run_cli
+from ai_yori_murasaki.jsonio import canonical, digest
 from ai_yori_murasaki.runtime import Runtime
 from ai_yori_murasaki.server import create_server
 from ai_yori_murasaki.storage import Store
+
+
+def seed_verification_history(runtime: Runtime, campaign_id: str) -> None:
+    store = runtime.store
+    directory = store.workspace / "verification"
+    directory.mkdir(exist_ok=True)
+    [initial] = runtime.list_runs(campaign_id)
+    (directory / (initial["run_id"] + ".jsonl")).touch()
+
+    run = runtime.start_run(campaign_id, "verify", 1, "journal-browser")
+    run_id = run["run_id"]
+    runtime.finish_run(run_id, "completed")
+    runtime.seal_run(campaign_id, run_id)
+    store.seal_checkpoint(campaign_id, run_id, "browser-test")
+
+    # Model a long-lived installation, with a historical failure on the second page.
+    legacy = {"verify_id": run_id, "run_id": run_id, "campaign_id": campaign_id,
+              "checked_at": "2026-11-16T00:00:00Z", "result": "PASS", "reason_code": "ok"}
+    passed = canonical(legacy) + b"\n"
+    failed = canonical({**legacy, "result": "FAIL", "reason_code": "checkpoint_mismatch"}) + b"\n"
+    with (directory / (run_id + ".jsonl")).open("wb") as stream:
+        stream.write(passed * (1024 * 1024 // len(passed) + 1))
+        stream.write(failed)
+        stream.write(passed * 24)
+    rc = run_cli(["--workspace", str(store.workspace), "--trusted-root", str(store.trusted_root),
+                  "verify", "checkpoint", "--campaign-id", campaign_id, "--run-id", run_id])
+    assert rc == 0
 
 
 def main() -> None:
@@ -26,6 +54,7 @@ def main() -> None:
         receipt = intake.register(runtime.store, "画面試験の受付", "browser-linked")
         intake.register(runtime.store, "画面試験の受付", "browser-unlinked")
         intake.link(runtime.store, receipt["receipt_id"], campaign["campaign_id"])
+        seed_verification_history(runtime, campaign["campaign_id"])
         server = create_server(runtime, "127.0.0.1:8765")
         try:
             print("AYM dual-view browser fixture listening", flush=True)

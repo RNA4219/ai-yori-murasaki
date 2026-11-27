@@ -24,11 +24,13 @@ Exit codes:
 from __future__ import annotations
 
 import argparse
+from http.client import HTTPException, HTTPSConnection
 import os
+from pathlib import Path
+import re
 import socket
 import ssl
 import sys
-import json
 import urllib.parse
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -39,110 +41,56 @@ from ai_yori_murasaki import wazuh_ingest
 
 
 class _DirectBroker(HttpBroker):
-    """Broker for the operator's own authorized localhost probe.
+    """Send only the two smoke requests to the operator-selected HTTPS endpoint."""
 
-    Enforces the same shape as the production broker (IP pin, size cap,
-    TLS verification) but is constructed explicitly for one host:port by
-    the operator running this script. Redirects and oversized bodies are
-    refused like the production path.
-    """
-
-    def __init__(self, host: str, port: int, path_prefix: str) -> None:
-        self._policy = {"broker_allowlist": []}
-        self._allowlist = []
+    def __init__(self, host: str, port: int, context: ssl.SSLContext) -> None:
         self._host = host
         self._port = port
-        self._prefix = path_prefix
+        self._context = context
 
     def request(self, method, url, body=None, headers=None, timeout=10.0,
                 max_bytes=1048576):
         parsed = urllib.parse.urlsplit(url)
-        host = parsed.hostname
-        if host != self._host:
-            raise RuntimeError(f"host not authorized: {host!r}")
-        port = parsed.port or (443 if parsed.scheme == "https" else 80)
-        if port != self._port:
-            raise RuntimeError(f"port not authorized: {port}")
-        if not parsed.path.startswith(self._prefix):
-            raise RuntimeError(f"path outside prefix: {parsed.path!r}")
-        path = parsed.path
-        if parsed.query:
-            path = path + "?" + parsed.query
-        ctx = ssl.create_default_context()
-        ctx.check_hostname = False
-        ctx.verify_mode = ssl.CERT_NONE  # self-signed lab cert
-        raw = socket.create_connection((host, port), timeout=timeout)
-        sock = ctx.wrap_socket(raw, server_hostname=host)
+        if (parsed.scheme != "https" or parsed.hostname != self._host.lower()
+                or (parsed.port or 443) != self._port):
+            raise ValueError("Wazuh smoke request outside the configured HTTPS endpoint")
+        if (method, parsed.path) not in {("POST", "/security/user/authenticate"), ("GET", "/alerts")}:
+            raise ValueError("unexpected Wazuh smoke request")
+        path = parsed.path + ("?" + parsed.query if parsed.query else "")
+        connection = HTTPSConnection(self._host, self._port, timeout=timeout, context=self._context)
         try:
-            req_headers = {
-                "Host": f"{host}:{port}",
-                "Connection": "close",
-                "Accept": "application/json",
-            }
-            if headers:
-                req_headers.update(headers)
-            if body is not None:
-                req_headers["Content-Length"] = str(len(body))
-            lines = [f"{method} {path} HTTP/1.1"]
-            for k, v in req_headers.items():
-                lines.append(f"{k}: {v}")
-            lines.append("")
-            lines.append("")
-            payload = "\r\n".join(lines).encode("latin-1")
-            if body is not None:
-                payload += bytes(body)
-            sock.sendall(payload)
-            return _read(sock, max_bytes)
+            connection.request(method, path, body=body, headers={"Accept": "application/json", **(headers or {})})
+            response = connection.getresponse()
+            data = response.read(max_bytes + 1)
+            if len(data) > max_bytes:
+                raise ValueError("Wazuh response too large")
+            return {"status": response.status, "headers": dict(response.getheaders()), "body": data}
         finally:
-            sock.close()
+            connection.close()
 
 
-def _read(sock, max_bytes: int) -> dict:
-    buf = bytearray()
-    while b"\r\n\r\n" not in buf:
-        chunk = sock.recv(4096)
-        if not chunk:
-            break
-        buf.extend(chunk)
-        if len(buf) > 65536:
-            raise RuntimeError("headers too large")
-    head, _, rest = bytes(buf).partition(b"\r\n\r\n")
-    status_line = head.split(b"\r\n", 1)[0].decode("latin-1")
-    status = int(status_line.split(" ")[1])
-    headers_blob = head.decode("latin-1").lower()
-    rest = bytearray(rest)
-    if "transfer-encoding: chunked" in headers_blob:
-        while True:
-            while b"\r\n" not in rest:
-                chunk = sock.recv(4096)
-                if not chunk:
-                    break
-                rest.extend(chunk)
-            size_hex, _, rest = bytes(rest).partition(b"\r\n")
-            size = int(size_hex.strip(), 16)
-            if size == 0:
-                break
-            while len(rest) < size + 2:
-                chunk = sock.recv(4096)
-                if not chunk:
-                    break
-                rest.extend(chunk)
-            rest = bytearray(bytes(rest)[size + 2:])
-            if len(rest) > max_bytes:
-                raise RuntimeError("response too large")
-    else:
-        while len(rest) < max_bytes:
-            chunk = sock.recv(65536)
-            if not chunk:
-                break
-            rest.extend(chunk)
-    return {"status": status, "headers": {}, "body": bytes(rest[:max_bytes])}
+def _failure_reason(exc: Exception) -> str:
+    # ネットワーク例外には応答行や認証ヘッダーが含まれ得るため、固定の分類だけを返す。
+    if isinstance(exc, ssl.SSLCertVerificationError):
+        return "TLS certificate or hostname verification failed"
+    if isinstance(exc, ssl.SSLError):
+        return "TLS connection failed"
+    if isinstance(exc, TimeoutError):
+        return "connection timed out"
+    if isinstance(exc, (OSError, HTTPException)):
+        return "connection failed"
+    if isinstance(exc, AdapterUnavailable):
+        status = re.fullmatch(r"wazuh (?:auth|alerts query) failed: http ([1-5][0-9]{2})", str(exc))
+        if status:
+            return "HTTP " + status[1]
+    return "request or response could not be processed"
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Wazuh live smoke check")
     parser.add_argument("--host", default="localhost")
     parser.add_argument("--port", type=int, default=55000)
+    parser.add_argument("--ca-file", type=Path, help="PEM trust bundle for the Wazuh server (default: system trust)")
     parser.add_argument("--limit", type=int, default=5)
     parser.add_argument("--alerts-file", default=None,
                         help="optional captured /var/ossec/logs/alerts/alerts.json")
@@ -161,6 +109,11 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     results = []
+    try:
+        context = ssl.create_default_context(cafile=args.ca_file)
+    except (OSError, ValueError):
+        _report([("tls_trust", "fail", "could not load CA trust bundle")])
+        return 1
 
     # 1. TCP reachability
     try:
@@ -168,11 +121,11 @@ def main(argv: list[str] | None = None) -> int:
         s.close()
         results.append(("tcp_reachable", "pass", ""))
     except OSError as exc:
-        results.append(("tcp_reachable", "fail", str(exc)))
+        results.append(("tcp_reachable", "fail", _failure_reason(exc)))
         _report(results)
         return 1
 
-    broker = _DirectBroker(args.host, args.port, "/security")
+    broker = _DirectBroker(args.host, args.port, context)
     client = WazuhClient(broker, base_url=f"https://{args.host}:{args.port}",
                          timeout_ms=15000, retry_cap=0)
 
@@ -180,21 +133,17 @@ def main(argv: list[str] | None = None) -> int:
     try:
         auth = client.authenticate(username=user, password=password)
         token = auth["token"]
-        results.append(("authenticate", "pass", f"token len={len(token)}"))
+        results.append(("authenticate", "pass", ""))
     except Exception as exc:  # noqa: BLE001
-        results.append(("authenticate", "fail", str(exc)))
+        results.append(("authenticate", "fail", _failure_reason(exc)))
         _report(results)
         return 1
 
-    # 3. /alerts via API (needs broker prefix override)
-    broker_alerts = _DirectBroker(args.host, args.port, "/alerts")
-    client_alerts = WazuhClient(broker_alerts,
-                                base_url=f"https://{args.host}:{args.port}",
-                                timeout_ms=15000, retry_cap=0)
+    # 3. /alerts via the same verified HTTPS broker
     alerts_status = "skipped"
     alerts_detail = "not attempted"
     try:
-        out = client_alerts.query_alerts(token=token, limit=args.limit)
+        out = client.query_alerts(token=token, limit=args.limit)
         items = out.get("data", {}).get("affected_items", [])
         failed = out.get("data", {}).get("failed_items")
         if items:
@@ -207,15 +156,16 @@ def main(argv: list[str] | None = None) -> int:
             alerts_status = "pass"
             alerts_detail = "0 items"
     except Exception as exc:  # noqa: BLE001
-        alerts_detail = str(exc)
+        alerts_detail = _failure_reason(exc)
         if (isinstance(exc, AdapterUnavailable)
-                and alerts_detail == "wazuh alerts query failed: http 404"):
+                and str(exc) == "wazuh alerts query failed: http 404"):
             alerts_status = "skipped"
             alerts_detail = "HTTP 404: manager API does not expose /alerts; indexer search not verified"
-        elif "indexer" in alerts_detail.lower():
+        elif isinstance(exc, AdapterUnavailable) and "indexer" in str(exc).lower():
             # 環境側のindexer停止は観測事実として記録し、製品コードの
             # fail-closed（フォールバックなし）をそのまま透過する。
             alerts_status = "skipped"
+            alerts_detail = "indexer unavailable"
         else:
             alerts_status = "fail"
     results.append(("query_alerts", alerts_status, alerts_detail))

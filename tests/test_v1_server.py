@@ -329,6 +329,68 @@ class ServerContractTests(unittest.TestCase):
         records = json.loads(body)["verification"]
         self.assertEqual(len(records), 2)
         self.assertEqual(records[0]["result"], "PASS")
+        self.assertEqual(json.loads(body)["omitted"], 1)
+
+    def test_page_large_verification_history_while_appending(self) -> None:
+        campaign = self._create_campaign("INT-HISTORY", "history")
+        cid = campaign["campaign_id"]
+        self.fx.runtime.transition(cid, "running")
+        rid = self.fx.runtime.start_run(cid, "red", 1, "history-run")["run_id"]
+        route = f"/api/verification/{rid}"
+        directory = self.fx.workspace / "verification"
+        directory.mkdir(exist_ok=True)
+        journal = directory / f"{rid}.jsonl"
+        self.assertEqual(json.loads(self.fx.get(route + "?limit=25")[2])["journal_status"], "missing")
+        journal.touch()
+        self.assertEqual(json.loads(self.fx.get(route + "?limit=25")[2])["journal_status"], "empty")
+        legacy = {"run_id": rid, "verify_id": rid, "result": "PASS", "reason_code": "ok"}
+        current = dict(legacy, method="checkpoint", target_last_sequence=10,
+                       target_last_event_hash="a" * 64, checkpoint_digest="b" * 64)
+        with journal.open("wb") as stream:
+            for number in range(29):
+                record = dict(legacy, verify_id=f"check-{number}", padding="x" * 48_000)
+                if number == 0:
+                    record["result"] = "FAIL"
+                stream.write(json.dumps(record).encode() + b"\n")
+            stream.write(b'{"verify_id":"bad","result":"\\ud800"}\n')
+            stream.write(json.dumps(current).encode() + b"\n")
+        self.assertGreater(journal.stat().st_size, 1024 * 1024)
+        code, _, body = self.fx.get(route)
+        self.assertEqual((code, json.loads(body)["error"]), (409, "verification_paging_required"))
+        status, _, body = self.fx.get(route + "?limit=25")
+        self.assertEqual(status, 200)
+        page = json.loads(body)
+        head = page["verification"][0]
+        self.assertEqual(head["checkpoint_digest"], "b" * 64)
+        self.assertEqual(head["target_last_event_hash"], "a" * 64)
+        self.assertEqual(head["target_last_sequence"], 10)
+        self.assertEqual(page["omitted"], 1)
+        with journal.open("ab") as stream:
+            stream.write(json.dumps(current).encode() + b"\n")
+        rows = list(page["verification"])
+        while page["next_before"] is not None:
+            status, _, body = self.fx.get(route + "?limit=25&before=" + str(page["next_before"]))
+            self.assertEqual(status, 200)
+            page = json.loads(body)
+            rows.extend(page["verification"])
+        self.assertEqual(len(rows), 30)
+        self.assertEqual(rows[-1]["result"], "FAIL")
+        self.assertNotIn("method", rows[-1])
+        self.assertEqual([row["verify_id"] for row in rows[1:]], [f"check-{n}" for n in reversed(range(29))])
+        status, _, body = self.fx.get(route + "?limit=1&view=blue")
+        self.assertEqual(status, 200)
+        self.assertEqual(set(json.loads(body)["verification"][0]),
+                         {"verify_id", "run_id", "checked_at", "result", "reason_code"})
+        for args in ("?limit=0", "?limit=101", "?limit=5&before=1", "?before=5"):
+            self.assertEqual(self.fx.get(route + args)[0], 400)
+        encoded = json.dumps(legacy).encode()
+        journal.write_bytes(encoded + b" " * (1024 * 1024 - len(encoded) - 1) + b"\n")
+        status, _, body = self.fx.get(route + "?limit=25")
+        self.assertEqual(status, 200)
+        self.assertEqual(json.loads(body)["verification"][0]["verify_id"], rid)
+        journal.write_bytes(b" " * (1024 * 1024 + 1) + b"\n")
+        status, _, body = self.fx.get(route + "?limit=25")
+        self.assertEqual((status, json.loads(body)["error"]), (409, "verification_record_too_large"))
 
     def test_response_size_bounded(self) -> None:
         status, headers, body = self.fx.get("/api/campaigns")

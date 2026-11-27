@@ -528,40 +528,6 @@ def _project_agent_rsi(store: Store, campaign_id: str) -> list[dict]:
 
 
 # --------------------------------------------------------------------------- #
-# verification journal
-# --------------------------------------------------------------------------- #
-def _read_verification(store: Store, run_id: str) -> list[dict]:
-    """Read verification journal entries for a run, strictly parsed."""
-    try:
-        path = store.workspace / "verification" / (run_id + ".jsonl")
-        if not path.exists() or path.is_symlink():
-            return []
-        raw = path.read_bytes()
-        if len(raw) > MAX_RESPONSE_BYTES:
-            return []
-    except OSError:
-        return []
-    out: list[dict] = []
-    for line in raw.splitlines():
-        if not line.strip():
-            continue
-        try:
-            value = loads(line)
-        except DataError:
-            continue
-        if not isinstance(value, dict):
-            continue
-        out.append({
-            "verify_id": _safe_str(value.get("verify_id")),
-            "run_id": _safe_str(value.get("run_id")),
-            "result": _safe_str(value.get("result")),
-            "reason_code": _safe_str(value.get("reason_code")),
-            "checked_at": _safe_str(value.get("checked_at")),
-        })
-    return out
-
-
-# --------------------------------------------------------------------------- #
 # request handling
 # --------------------------------------------------------------------------- #
 def _json_response(status: int, payload: dict) -> tuple[int, dict, bytes]:
@@ -1114,12 +1080,26 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
             return _json_response(200, {"events": projected})
 
         if name == "verification":
+            from .monitor_verification import MAX_PAGE, read_verification
             rid = groups[0]
             try:
                 runtime.get_run(rid)
             except DataError:
                 return _error(404, "not_found")
-            return _json_response(200, {"verification": _read_verification(store, rid)})
+            limit, before = query.get("limit"), query.get("before")
+            if limit is not None and (not re.fullmatch(r"[1-9][0-9]{0,2}", limit) or int(limit) > MAX_PAGE):
+                return _error(400, "bad_limit")
+            if before is not None and (limit is None or not re.fullmatch(r"[1-9][0-9]{0,18}", before)):
+                return _error(400, "invalid_before")
+            try:
+                page = read_verification(store, rid, limit=int(limit) if limit else None,
+                                         before=int(before) if before else None, operator=view == "operator")
+            except DataError as exc:
+                if exc.reason_code == "invalid_before":
+                    return _error(400, "invalid_before")
+                code = exc.reason_code if exc.reason_code.startswith("verification_") else "verification_unavailable"
+                return _error(409, code)
+            return _json_response(200, page)
 
         if name == "approvals":
             approvals: list[dict] = []
