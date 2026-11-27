@@ -83,12 +83,12 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "0f1d12336fcac05e89b01955c2ffca3d4ea535d4a04099c6031cefd149799ab3",
-  "generated_at": "00059",
+  "source_sha256": "3aa387b35fe454eb34797b7d2d7f9c75ea7a884dcf944ab15366f6fd9790b585",
+  "generated_at": "00061",
   "review": {
-    "reviewed_at": "2026-11-27T00:30:32+00:00",
+    "reviewed_at": "2026-11-27T00:37:46+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "0f1d12336fcac05e89b01955c2ffca3d4ea535d4a04099c6031cefd149799ab3",
+    "source_sha256": "3aa387b35fe454eb34797b7d2d7f9c75ea7a884dcf944ab15366f6fd9790b585",
     "summary_sha256": "1827590b341fff8f893254891b1839202a8a7acca5abf385aed867804eb4ab7f",
     "scope": "構成図切替の本文・要約・参照を照合。"
   }

@@ -20,12 +20,12 @@
     "docs/tasks/TASK.architecture-switch-11-27-2026.md"
   ],
   "summary": "T58 の構成図一覧と切替、未保存編集、Blue、幅375 px、読取専用に関する技術検収と実測結果を記録する。",
-  "source_sha256": "a3b26dc8cdcfb2741253002f0d38921b98873ee064b318f508ce0a30f9423366",
-  "generated_at": "00059",
+  "source_sha256": "9aeb16c04dd4f99ca6155d313b09a2aa8fe99b4b3d8441a184f44934a2b79d68",
+  "generated_at": "00061",
   "review": {
-    "reviewed_at": "2026-11-27T00:30:32+00:00",
+    "reviewed_at": "2026-11-27T00:37:46+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "a3b26dc8cdcfb2741253002f0d38921b98873ee064b318f508ce0a30f9423366",
+    "source_sha256": "9aeb16c04dd4f99ca6155d313b09a2aa8fe99b4b3d8441a184f44934a2b79d68",
     "summary_sha256": "17ce053a775ad7c50d9f7bd5c89dac50b10590ee9169076c199ac73938d7b81d",
     "scope": "構成図切替の本文・要約・参照を照合。"
   }

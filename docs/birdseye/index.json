@@ -1,5 +1,5 @@
 {
-  "generated_at": "00060",
+  "generated_at": "00061",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -15,8 +15,8 @@
     "CHANGELOG.md": {
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
-      "mtime": "00059",
-      "source_sha256": "1feda56df5ecc5eeb19544f5cce830cf6736c762269c3b286b7b30fe0ae58934"
+      "mtime": "00061",
+      "source_sha256": "d19c3246c8644d0c5b6ef702911fcdd02997b951d5dab77ceb51f7886431593b"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -70,8 +70,8 @@
     "docs/acceptance/INDEX.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
-      "mtime": "00059",
-      "source_sha256": "6a4ee3c3d3e4f53a654b5221e6ca35780527e50380b1b658c9a3678c635c2340"
+      "mtime": "00061",
+      "source_sha256": "e8e916d2a34a4fc01ba1cb4afab0be83efd5aaf01e931609a284713628e58607"
     },
     "docs/acceptance/README.md": {
       "role": "guide",
@@ -113,8 +113,8 @@
     "docs/tasks/README.md": {
       "role": "operations",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
-      "mtime": "00059",
-      "source_sha256": "0f1d12336fcac05e89b01955c2ffca3d4ea535d4a04099c6031cefd149799ab3"
+      "mtime": "00061",
+      "source_sha256": "3aa387b35fe454eb34797b7d2d7f9c75ea7a884dcf944ab15366f6fd9790b585"
     },
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md": {
       "role": "task",
@@ -822,8 +822,8 @@
     "docs/acceptance/AC-20261127-02.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.acceptance.AC-20261127-02.md.json",
-      "mtime": "00059",
-      "source_sha256": "a3b26dc8cdcfb2741253002f0d38921b98873ee064b318f508ce0a30f9423366"
+      "mtime": "00061",
+      "source_sha256": "9aeb16c04dd4f99ca6155d313b09a2aa8fe99b4b3d8441a184f44934a2b79d68"
     },
     "docs/releases/RA-20261127-02.md": {
       "role": "doc",
@@ -840,8 +840,8 @@
     "docs/tasks/TASK.architecture-switch-11-27-2026.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.tasks.TASK.architecture-switch-11-27-2026.md.json",
-      "mtime": "00059",
-      "source_sha256": "d68b51e4a687dd9f8170280eb5d0a7a0e769eb18239e12b7938c3e66f02f6608"
+      "mtime": "00061",
+      "source_sha256": "7fe58e9d36f1a43d6f6aeaa36a45395ee32f0cc9c2ed2435b060c9e5a4508d5f"
     }
   },
   "edges": [

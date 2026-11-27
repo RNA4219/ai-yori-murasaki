@@ -95,12 +95,12 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "1feda56df5ecc5eeb19544f5cce830cf6736c762269c3b286b7b30fe0ae58934",
-  "generated_at": "00059",
+  "source_sha256": "d19c3246c8644d0c5b6ef702911fcdd02997b951d5dab77ceb51f7886431593b",
+  "generated_at": "00061",
   "review": {
-    "reviewed_at": "2026-11-27T00:30:32+00:00",
+    "reviewed_at": "2026-11-27T00:37:46+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "1feda56df5ecc5eeb19544f5cce830cf6736c762269c3b286b7b30fe0ae58934",
+    "source_sha256": "d19c3246c8644d0c5b6ef702911fcdd02997b951d5dab77ceb51f7886431593b",
     "summary_sha256": "cf349189f37b45a44cb77d7c6d953bca3f208be65865335746843d874336f0fa",
     "scope": "構成図切替の本文・要約・参照を照合。"
   }

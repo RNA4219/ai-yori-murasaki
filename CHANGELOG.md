@@ -14,7 +14,7 @@ Keep a Changelog の区分で管理する。記録には既存最大番号 +1 �
 
 ### Changed
 
-- 0047 — 2026-11-27。構成図画面でワークスペースの図を選び、同じ URL から開き直せるようにした。[Task 20261127-02](docs/tasks/TASK.architecture-switch-11-27-2026.md)・[検収](docs/acceptance/AC-20261127-02.md)
+- 0047 — 2026-11-27。構成図画面でワークスペースの図を選び、同じ URL から開き直せるようにした。切替時の編集保護と Blue の公開範囲を含む T58 の技術検収7件に合格した。[Task 20261127-02](docs/tasks/TASK.architecture-switch-11-27-2026.md)・[検収](docs/acceptance/AC-20261127-02.md)
 
 - 0046 — 2026-11-27。再検証の失敗、前回との差、観測の取込待ち、5類型の検証範囲を表示する。受付IDを既存の監査に結び、その結果を受付台帳から開ける。[Task 20261127-01](docs/tasks/TASK.case-decisions-11-27-2026.md)・[検収](docs/acceptance/AC-20261127-01.md)
 
