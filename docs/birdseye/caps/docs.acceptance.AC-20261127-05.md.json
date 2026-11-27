@@ -17,14 +17,14 @@
     "docs/requirements/GOOGLE-MONITOR-SSO.md",
     "docs/tasks/TASK.google-sso-email-domains-11-27-2026.md"
   ],
-  "summary": "Google ログインのメールドメイン許可の T62 技術検収。Google の署名済み情報に基づく Workspace・Gmail の許可と拒否、個別指定との併用を確認する。",
-  "source_sha256": "87dfae50988ec39f0d5caea01cc194fb5cdc4ca1f4f024bb94f24f403ef93d39",
-  "generated_at": "00066",
+  "summary": "T62 の技術検収結果。合成アカウントでの個別・ドメインの許可と拒否、strict の go、関連回帰、独立レビューと未検証範囲を記す。",
+  "source_sha256": "5b17d18572f6d99159516534ac72b49d3925ca60d55a9ad5e7c1f492c6fecc9e",
+  "generated_at": "00067",
   "review": {
-    "reviewed_at": "2026-11-27T09:09:00+00:00",
+    "reviewed_at": "2026-11-27T09:12:58+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "87dfae50988ec39f0d5caea01cc194fb5cdc4ca1f4f024bb94f24f403ef93d39",
-    "summary_sha256": "3bdf1e9f417458cd445e38626c715f5e19462fa400fdf0258a3f7c21d5ef86e0",
-    "scope": "Google ログインのドメイン許可について設定・契約・受入条件を照合。"
+    "source_sha256": "5b17d18572f6d99159516534ac72b49d3925ca60d55a9ad5e7c1f492c6fecc9e",
+    "summary_sha256": "62607a147e930055e51dc758b84c7343bebcc936f2d709a95557f0a0bbd39f96",
+    "scope": "Google ログインのドメイン許可の製品コミット、技術検収結果と未確認事項を照合。"
   }
 }

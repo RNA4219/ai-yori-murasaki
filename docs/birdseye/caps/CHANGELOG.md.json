@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "変更履歴。Google ログインのドメイン指定、個別アカウントとの併用などの変更と、対応する Task・検収を示す。",
+  "summary": "製品の変更履歴。モニターの Google ログインでメールドメインを指定する変更と、合成アカウントによる技術検収の結果を含む。",
   "deps_out": [
     "docs/NOTION-IMPORT.md",
     "docs/SOURCES.md",
@@ -104,13 +104,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "63dfd3c2f3fc9e8f9c0c63a2acf779f2d313323baf303c83b604c567bd30a6e8",
-  "generated_at": "00066",
+  "source_sha256": "2eb8b61e38434af73e615eb36476591c49828b62872ff512c20755f040e0ace2",
+  "generated_at": "00067",
   "review": {
-    "reviewed_at": "2026-11-27T09:09:00+00:00",
+    "reviewed_at": "2026-11-27T09:12:58+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "63dfd3c2f3fc9e8f9c0c63a2acf779f2d313323baf303c83b604c567bd30a6e8",
-    "summary_sha256": "1aedf040d4c86d11a9440096d7eb622982e7420d8b72dc249bbd0e94f202f6f3",
-    "scope": "Google ログインのドメイン許可について設定・契約・受入条件を照合。"
+    "source_sha256": "2eb8b61e38434af73e615eb36476591c49828b62872ff512c20755f040e0ace2",
+    "summary_sha256": "b7e2b66f65ba5fb0edd299f1839d8d92570fec467cd9a8a780e4b974e40d4f38",
+    "scope": "Google ログインのドメイン許可の製品コミット、技術検収結果と未確認事項を照合。"
   }
 }

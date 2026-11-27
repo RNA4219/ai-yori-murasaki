@@ -15,14 +15,14 @@
     "docs/acceptance/AC-20261127-05.md",
     "docs/requirements/GOOGLE-MONITOR-SSO.md"
   ],
-  "summary": "Google ログインでメールドメインを許可する Task。個別の sub との互換性、組織への所属を確認する根拠と T62 の技術検収を示す。",
-  "source_sha256": "fdb816f69359809892072183133277cb65c9715995edb447d9c815b8733e0d60",
-  "generated_at": "00066",
+  "summary": "Google ログインのドメイン許可を導入した Task。対象コミット、T62 の技術検収と独立レビューの完了、実アカウント未検証を記す。",
+  "source_sha256": "e92b309d47cbe6ded0cdaffdad0ef12d7f95c72db5dc9bba6644dcc99855f9b7",
+  "generated_at": "00067",
   "review": {
-    "reviewed_at": "2026-11-27T09:09:00+00:00",
+    "reviewed_at": "2026-11-27T09:12:58+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "fdb816f69359809892072183133277cb65c9715995edb447d9c815b8733e0d60",
-    "summary_sha256": "f58ce1b5a104983906f6e1b67c7e00e38d303759269a1d256ab598f67b9413ac",
-    "scope": "Google ログインのドメイン許可について設定・契約・受入条件を照合。"
+    "source_sha256": "e92b309d47cbe6ded0cdaffdad0ef12d7f95c72db5dc9bba6644dcc99855f9b7",
+    "summary_sha256": "667b4a620fd000edd0d9a07251816df620b6b47a7801bea665ad70d27976dfb3",
+    "scope": "Google ログインのドメイン許可の製品コミット、技術検収結果と未確認事項を照合。"
   }
 }

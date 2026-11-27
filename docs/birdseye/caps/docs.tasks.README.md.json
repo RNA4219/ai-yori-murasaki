@@ -2,7 +2,7 @@
   "id": "docs/tasks/README.md",
   "role": "operations",
   "public_api": [],
-  "summary": "Task の運用と索引。モニターの Google ログインとメールドメイン許可、構成図などの作業と技術検収を引ける。",
+  "summary": "Task の運用と索引。モニターの Google ログインとドメイン許可、構成図などの作業と技術検収を引ける。",
   "deps_out": [
     "CHANGELOG.md",
     "HUB.codex.md",
@@ -89,13 +89,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "fd8c8f63528ba67566860496d26790a59904a963abff4cbdaa910ee6b429289d",
-  "generated_at": "00066",
+  "source_sha256": "e095a3b6da5e4b4275870accd863acb339f0cff778f6b1b4379a60378ddba15b",
+  "generated_at": "00067",
   "review": {
-    "reviewed_at": "2026-11-27T09:09:00+00:00",
+    "reviewed_at": "2026-11-27T09:12:58+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "fd8c8f63528ba67566860496d26790a59904a963abff4cbdaa910ee6b429289d",
-    "summary_sha256": "9ac8d140cd0b584949c28638194ba320010bd89dc0c10f93d5a2b4efe6374846",
-    "scope": "Google ログインのドメイン許可について設定・契約・受入条件を照合。"
+    "source_sha256": "e095a3b6da5e4b4275870accd863acb339f0cff778f6b1b4379a60378ddba15b",
+    "summary_sha256": "8bcaeeae1babc9143c28cdd16ef8ecb8b980ac5f9c2ab305ebdc03e184451a43",
+    "scope": "Google ログインのドメイン許可の製品コミット、技術検収結果と未確認事項を照合。"
   }
 }
