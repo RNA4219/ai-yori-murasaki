@@ -1,4 +1,4 @@
-import { parseFile, importDocuments, validateMap, serializeMap, MAX_BYTES, MAX_MAP_NAME, kindNames, severityNames, inputModes } from './model.mjs';
+import { parseFile, importDocuments, validateMap, serializeMap, MAX_BYTES, kindNames, severityNames, inputModes } from './model.mjs';
 
 const $=id=>document.getElementById(id);
 const ns='http://www.w3.org/2000/svg';
@@ -186,9 +186,8 @@ async function loadChoice(value,{fallback=false,notice=''}={}) {
     if (!response.ok) throw Error('構成図を読み込めませんでした。');
     let original=await response.json();
     if (version!==state.load) return;
-    if (workspace && original && typeof original==='object') {
-      const name=typeof original.name==='string' ? Array.from(original.name.trim()).slice(0,MAX_MAP_NAME).join('') : '';
-      original={...original,name:name || id};
+    if (workspace && original && (typeof original.name!=='string' || !original.name.trim())) {
+      original={...original,name:id};
     }
     const map=validateMap(original);
     const source=workspace ? '作業場所の '+id+'.json' : 'ai-yori-murasaki の実装';
@@ -905,7 +904,11 @@ $('reset-layout').addEventListener('click',()=>{offsets[state.mode].clear();draw
 $('return').addEventListener('click',()=>{const target=diagram.querySelector('[aria-pressed="true"]');target?.focus();frame.scrollIntoView({block:'center'});});
 $('file').addEventListener('change',e=>{const files=[...e.target.files];e.target.value='';if(files.length) openFiles(files);});
 $('reset').addEventListener('click',()=>loadChoice('sample'));
-mapChoice.addEventListener('change',()=>loadChoice(mapChoice.value));
+mapChoice.addEventListener('change',()=>{
+  const requested=mapChoice.value;
+  syncChoice();
+  loadChoice(requested);
+});
 let chartWidth=0;
 new ResizeObserver(([entry])=>{if(entry.contentRect.width!==chartWidth){chartWidth=entry.contentRect.width;draw(true);}else if(chart)updateCamera();}).observe(frame);
 loadChoices();

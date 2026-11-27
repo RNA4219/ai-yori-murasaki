@@ -14,9 +14,11 @@ const directory = join(workspace, 'architecture');
 const sample = '注文管理サービス';
 const product = 'ai-yori-murasaki の構成図';
 const longName = '図'.repeat(200);
+const originalName = longName + '（保管用の原本）';
+const annotations = {revision: 3, owner: '架空の編集担当'};
 
-function mapFile(nodeId, name) {
-  return JSON.stringify({schema: 'aym.architecture/v1', name,
+function mapFile(nodeId, name, extra = {}) {
+  return JSON.stringify({schema: 'aym.architecture/v1', name, ...extra,
     nodes: [{id: nodeId, kind: 'service', name: nodeId}], connections: [], findings: []});
 }
 
@@ -31,6 +33,19 @@ async function snapshot() {
 
 function heading(page, title) {
   return page.getByRole('heading', {name: title, exact: true}).waitFor();
+}
+
+async function downloadMap(page) {
+  const pending = page.waitForEvent('download');
+  await page.getByRole('button', {name: '構成図を保存', exact: true}).click();
+  const stream = await (await pending).createReadStream();
+  const chunks = [];
+  for await (const chunk of stream) chunks.push(chunk);
+  const bytes = Buffer.concat(chunks);
+  const doc = JSON.parse(bytes);
+  assert.equal(doc.name, originalName, '保存時に原本の名称を保つ');
+  assert.deepEqual(doc.annotations, annotations, '製品で扱わない原本の項目も保持する');
+  return bytes;
 }
 
 async function enter(page, url) {
@@ -61,6 +76,16 @@ async function switchMaps(browser, base, width) {
     await page.reload();
     await heading(page, longName);
     assert.equal(await picker.locator('option:checked').textContent(), longName);
+
+    const saved = await downloadMap(page);
+    await picker.selectOption({label: '見本'});
+    await heading(page, sample);
+    await page.getByLabel('構成ファイルを開く').setInputFiles({
+      name: '保存した構成図.json', mimeType: 'application/json', buffer: saved});
+    await heading(page, longName);
+    await page.locator('.node[data-id="second"]').waitFor();
+    assert.equal(new URL(page.url()).search, '');
+    await downloadMap(page);
 
     await picker.selectOption({label: 'alpha'});
     await heading(page, 'alpha');
@@ -148,7 +173,7 @@ try {
   }
 
   await mkdir(directory);
-  await writeFile(join(directory, 'zeta.json'), mapFile('second', longName));
+  await writeFile(join(directory, 'zeta.json'), mapFile('second', originalName, {annotations}));
   await writeFile(join(directory, 'alpha.json'), mapFile('first'));
   const before = await snapshot();
   for (const width of [1440, 375]) await switchMaps(browser, base, width);
