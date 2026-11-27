@@ -89,7 +89,7 @@ def test_competing_processes_on_first_registration(store):
 
     with ThreadPoolExecutor(max_workers=4) as executor:
         replies = list(executor.map(submit, range(4)))
-    assert all(code == 0 for code, _ in replies)
+    assert [(code, reply["reason_code"]) for code, reply in replies] == [(0, "ok")] * 4
     receipt = replies[0][1]["data"]
     assert all(reply["data"] == receipt for _, reply in replies)
     assert intake.search(store, "") == {"receipts": [receipt], "has_more": False}

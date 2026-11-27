@@ -4,17 +4,21 @@ from pathlib import Path
 import re
 
 from .jsonio import DataError
-from .storage import ID_RE, Store, _safe_join, sanitize
+from .storage import ID_RE, Store, _assert_no_ancestor_reparse, _is_reparse, sanitize
 
 PAGE_SIZE = 50
 RECEIPT_ID = re.compile(r"int-[0-9a-f]{32}")
 
 
 def _path(store: Store) -> Path:
+    # 台帳と補助ファイルは固定名の直下の子だけ。初回の並行作成で親の有無が
+    # 変わるため、Windows の非実在パスに対する resolve() の表記には依存しない。
+    _assert_no_ancestor_reparse(store.workspace)
     filename = "case-intake.sqlite3"
-    for suffix in ("-journal", "-wal", "-shm"):
-        _safe_join(store.workspace, filename + suffix)
-    return _safe_join(store.workspace, filename)
+    for suffix in ("", "-journal", "-wal", "-shm"):
+        if _is_reparse(store.workspace / (filename + suffix)):
+            raise DataError("受付台帳のパスにリンクは指定できません")
+    return store.workspace / filename
 
 
 def _valid_text(value: str, limit: int) -> bool:
