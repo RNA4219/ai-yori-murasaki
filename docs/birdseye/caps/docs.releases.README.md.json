@@ -2,7 +2,7 @@
   "id": "docs/releases/README.md",
   "role": "guide",
   "public_api": [],
-  "summary": "公開承認の一覧と運用手順。追加要求5件のソース反映に関する承認記録へ案内する。",
+  "summary": "ソース反映・公開承認の記録への索引。ワークスペースに置いた構成図の切替を含む承認範囲を確認できる。",
   "deps_out": [
     "docs/CONTRACTS.md",
     "docs/acceptance/AC-20261107-03.md",
@@ -16,6 +16,7 @@
     "docs/releases/RA-20261126-01.md",
     "docs/releases/RA-20261126-02.md",
     "docs/releases/RA-20261127-01.md",
+    "docs/releases/RA-20261127-02.md",
     "docs/tasks/TASK.readme-release-11-08-2026.md",
     "docs/tasks/TASK.version-011-11-08-2026.md"
   ],
@@ -29,13 +30,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "b1668e848314964d50ffde9beb669a46059d7540a98714be3b4f8051a783048a",
-  "generated_at": "00058",
+  "source_sha256": "399334effb35431a977d2af11d5ff10f53b102eef8f56f96bad16d34a3ef7acb",
+  "generated_at": "00059",
   "review": {
-    "reviewed_at": "2026-11-26T23:08:12+00:00",
+    "reviewed_at": "2026-11-27T00:30:32+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "b1668e848314964d50ffde9beb669a46059d7540a98714be3b4f8051a783048a",
-    "summary_sha256": "dac164f37b777dfe25b9b0cec116eea8fa110aa4c6bea383c355510b547a659a",
-    "scope": "案件判断・受付連結に関する原文、要約、参照を確認。"
+    "source_sha256": "399334effb35431a977d2af11d5ff10f53b102eef8f56f96bad16d34a3ef7acb",
+    "summary_sha256": "96c5f3229f79a798eb85e426ee8869a787185a8649e921b55a4c9cb18b0c6574",
+    "scope": "構成図切替の本文・要約・参照を照合。"
   }
 }

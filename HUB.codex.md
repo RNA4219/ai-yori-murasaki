@@ -37,6 +37,7 @@ template_version: 1.0.0
 | 案件ごとの重要度別件数から該当する検知を開く | [案件の検知と重要度](docs/tasks/TASK.case-severity-11-23-2026.md) | [集計と明細の検収](docs/acceptance/AC-20261123-08.md) |
 | 案件から判断・構成・受付に移る | [製品4画面の設計](docs/tasks/TASK.frontend-workspace-11-24-2026.md) | [表示と操作の検収](docs/acceptance/AC-20261124-01.md) |
 | 箱を並べ、線から接続の根拠を読む | [構成図の操作](docs/tasks/TASK.architecture-canvas-11-23-2026.md) | [マウスとタッチの検収](docs/acceptance/AC-20261123-09.md) |
+| ワークスペース内の構成図を切り替える | [図の配置と選択](docs/requirements/ARCHITECTURE-MAP-SELECTION.md) | [画面と API の検収](docs/acceptance/AC-20261127-02.md) |
 | 文書索引と過去の検収状態を確認する | [整合性のTask](docs/tasks/TASK.document-consistency-11-23-2026.md) | [形式・鮮度の検収](docs/acceptance/AC-20261123-03.md) |
 | 案件の集計状況・前回比較・改修後の構成 | [改修要件](docs/tasks/TASK.monitor-counts-11-23-2026.md) | [技術検収](docs/acceptance/AC-20261123-02.md) |
 | リポジトリ・AWS構成の関係と指摘をたどる | [構成図と入力仕様](docs/tasks/TASK.architecture-map-11-23-2026.md) | [構成図の検収](docs/acceptance/AC-20261123-01.md) |

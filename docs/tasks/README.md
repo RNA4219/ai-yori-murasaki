@@ -22,6 +22,7 @@ Task、[Acceptance](../acceptance/README.md)、[CHANGELOG](../../CHANGELOG.md)�
 
 | task_id | 作業 | 検収 |
 | --- | --- | --- |
+| 20261127-02 | [ワークスペースの構成図切替](TASK.architecture-switch-11-27-2026.md) | [AC-20261127-02](../acceptance/AC-20261127-02.md)（技術検収合格） |
 | 20261127-01 | [案件の状態、前回比較、受付後の結果確認](TASK.case-decisions-11-27-2026.md) | [AC-20261127-01](../acceptance/AC-20261127-01.md) |
 | 20261126-02 | [課題に適用する検査と資源の観測範囲](TASK.tracker-evidence-11-26-2026.md) | [AC-20261126-02](../acceptance/AC-20261126-02.md)（技術検収合格） |
 | 20261126-01 | [課題一覧と観測の照合](TASK.offline-tracker-drift-11-26-2026.md) | [AC-20261126-01](../acceptance/AC-20261126-01.md) |

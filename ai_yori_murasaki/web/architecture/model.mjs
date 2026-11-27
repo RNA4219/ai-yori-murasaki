@@ -41,7 +41,10 @@ function rows(value,label,limit) {
 }
 export function validateMap(raw) {
   if (!plain(raw) || raw.schema !== SCHEMA) throw Error('構成図の形式を確認してください。');
-  const name = string(raw.name,'構成名',160);
+  // 表示名だけを200文字に収める。書き出しには元の文書を使う。
+  const title = typeof raw.name==='string' ? raw.name.trim() : '';
+  if (!title) throw Error('構成名を指定してください。');
+  const name = title.match(/^.{1,200}/su)[0];
   const ids = new Set();
   const nodes = rows(raw.nodes,'nodes',100).map(n=>{
     const id=string(n.id,'構成要素のID',180);

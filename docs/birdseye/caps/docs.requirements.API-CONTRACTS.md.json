@@ -2,7 +2,7 @@
   "id": "docs/requirements/API-CONTRACTS.md",
   "role": "doc",
   "public_api": [],
-  "summary": "CLIと読み取りAPIの契約。受付登録・既存監査への連結、案件・検知の取得、Blueの公開範囲を記す。",
+  "summary": "CLIと読み取りAPIの契約。受付や案件情報、ワークスペースの構成図の一覧・個別取得、Blueビューの公開範囲を記す。",
   "deps_out": [
     "docs/PRODUCT-ACCEPTANCE.md",
     "docs/SOURCES.md",
@@ -15,6 +15,8 @@
     "BLUEPRINT.md",
     "README.md",
     "docs/CONTRACTS.md",
+    "docs/acceptance/AC-20261127-02.md",
+    "docs/requirements/ARCHITECTURE-MAP-SELECTION.md",
     "docs/requirements/COMPACTION-02.md",
     "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md",
     "docs/requirements/REQUIREMENTS-DUAL-VIEW.md",
@@ -22,13 +24,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "92a71c26c6000bf1928b53bf691335cff7b60d040d471024187810a2e7017352",
-  "generated_at": "00058",
+  "source_sha256": "de4a04f3adc27a26115f75d916dd5ffde454c65c1a754986bbd2a9410f68b252",
+  "generated_at": "00059",
   "review": {
-    "reviewed_at": "2026-11-26T23:08:12+00:00",
+    "reviewed_at": "2026-11-27T00:30:32+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "92a71c26c6000bf1928b53bf691335cff7b60d040d471024187810a2e7017352",
-    "summary_sha256": "bb428263b205b191b75578ab82188904143decbead7b3888e0d2bbf7e3d747cd",
-    "scope": "案件判断・受付連結に関する原文、要約、参照を確認。"
+    "source_sha256": "de4a04f3adc27a26115f75d916dd5ffde454c65c1a754986bbd2a9410f68b252",
+    "summary_sha256": "e6f26fb3f82c88d0c3eed7564464a4ed7e709f906b16fd166e7fcd49db5c7ccf",
+    "scope": "構成図切替の本文・要約・参照を照合。"
   }
 }

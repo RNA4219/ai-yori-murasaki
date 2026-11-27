@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "製品と開発手順の変更履歴。再検証失敗、前回比較、観測の取込待ち、受付連結、類型別検証範囲を扱う変更からTaskと検収へ案内する。",
+  "summary": "製品と開発手順の変更を日付・連番でまとめ、構成図切替を含む変更のTaskと検収へ結び付ける。",
   "deps_out": [
     "docs/NOTION-IMPORT.md",
     "docs/SOURCES.md",
@@ -34,6 +34,7 @@
     "docs/acceptance/AC-20261126-01.md",
     "docs/acceptance/AC-20261126-02.md",
     "docs/acceptance/AC-20261127-01.md",
+    "docs/acceptance/AC-20261127-02.md",
     "docs/evidence/quality-integration-20261109/README.md",
     "docs/evidence/sources-light-ui-20261109/README.md",
     "docs/evidence/wazuh-live-20261108.md",
@@ -41,6 +42,7 @@
     "docs/tasks/TASK.agent-rsi-pin-11-11-2026.md",
     "docs/tasks/TASK.architecture-canvas-11-23-2026.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
+    "docs/tasks/TASK.architecture-switch-11-27-2026.md",
     "docs/tasks/TASK.case-decisions-11-27-2026.md",
     "docs/tasks/TASK.case-intake-11-23-2026.md",
     "docs/tasks/TASK.case-severity-11-23-2026.md",
@@ -80,6 +82,7 @@
     "docs/acceptance/README.md",
     "docs/tasks/README.md",
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
+    "docs/tasks/TASK.architecture-switch-11-27-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
     "docs/tasks/TASK.rsi-naming-11-06-2026.md",
@@ -92,13 +95,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "46bbbae6bfe635d28703d2b794197be5f96439500acab282bbb4c35377f2c76b",
-  "generated_at": "00058",
+  "source_sha256": "d19c3246c8644d0c5b6ef702911fcdd02997b951d5dab77ceb51f7886431593b",
+  "generated_at": "00061",
   "review": {
-    "reviewed_at": "2026-11-26T23:08:12+00:00",
+    "reviewed_at": "2026-11-27T00:37:46+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "46bbbae6bfe635d28703d2b794197be5f96439500acab282bbb4c35377f2c76b",
-    "summary_sha256": "d48782d5973ae7641cb6cc4b38e7bc5a04a315538b6e0c341520a9939b569b69",
-    "scope": "案件判断・受付連結に関する原文、要約、参照を確認。"
+    "source_sha256": "d19c3246c8644d0c5b6ef702911fcdd02997b951d5dab77ceb51f7886431593b",
+    "summary_sha256": "cf349189f37b45a44cb77d7c6d953bca3f208be65865335746843d874336f0fa",
+    "scope": "構成図切替の本文・要約・参照を照合。"
   }
 }

@@ -14,6 +14,7 @@
   "deps_in": [
     "HUB.codex.md",
     "docs/releases/RA-20261127-01.md",
+    "docs/requirements/ARCHITECTURE-MAP-SELECTION.md",
     "docs/requirements/REQUIREMENTS-DUAL-VIEW.md",
     "docs/requirements/SPEC-CASE-DECISIONS.md",
     "docs/tasks/TASK.case-decisions-11-27-2026.md"
@@ -21,12 +22,12 @@
   "risks": [],
   "tests": [],
   "source_sha256": "8f0b08172184e84a16c4a6f6eb3f5a7af3d5910514a46328cbf58fbfef0d9c88",
-  "generated_at": "00058",
+  "generated_at": "00059",
   "review": {
-    "reviewed_at": "2026-11-26T23:08:12+00:00",
+    "reviewed_at": "2026-11-27T00:30:32+00:00",
     "reviewed_by": "Codex",
     "source_sha256": "8f0b08172184e84a16c4a6f6eb3f5a7af3d5910514a46328cbf58fbfef0d9c88",
-    "summary_sha256": "9666359b85ad26e34f4426e2f5a2024db1342d01d9b78cb0492d29ea2d0ba962",
-    "scope": "案件判断・受付連結に関する原文、要約、参照を確認。"
+    "summary_sha256": "c0dca2d36efd82219b58a7c8c7222c1c3cfee52502bfdc58dd451aacaabcab04",
+    "scope": "構成図切替の本文・要約・参照を照合。"
   }
 }

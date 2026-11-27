@@ -2,7 +2,7 @@
   "id": "README.md",
   "role": "overview",
   "public_api": [],
-  "summary": "製品の起動、監視、課題と観測の照合、受付IDを既存監査に結んで結果を読む手順を案内する。",
+  "summary": "製品の起動、監視、課題と観測の照合、受付IDから監査の結果を読む操作、ワークスペースの構成図の切替手順を案内する。",
   "deps_out": [
     "BLUEPRINT.md",
     "CHANGELOG.md",
@@ -28,6 +28,7 @@
     "docs/evidence/wazuh-live-20261108.md",
     "docs/releases/README.md",
     "docs/requirements/API-CONTRACTS.md",
+    "docs/requirements/ARCHITECTURE-MAP-SELECTION.md",
     "docs/requirements/DECISIONS.md",
     "docs/requirements/REQUIREMENTS.md",
     "docs/requirements/SPEC-CASE-DECISIONS.md",
@@ -52,13 +53,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "12a1fdff21c64a4fb468211d27b34cb0921dc49d2824a54a96bc922b597b2873",
-  "generated_at": "00058",
+  "source_sha256": "ec5e210028a5e9ab7f72d5df0faed2427ce13734713c85944bdf941b42cc8e48",
+  "generated_at": "00059",
   "review": {
-    "reviewed_at": "2026-11-26T23:08:12+00:00",
+    "reviewed_at": "2026-11-27T00:30:32+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "12a1fdff21c64a4fb468211d27b34cb0921dc49d2824a54a96bc922b597b2873",
-    "summary_sha256": "91020e601e9db7c1b3c38e7ed649905d5df0b167e4ee3a537f6d6286b6fbe239",
-    "scope": "案件判断・受付連結に関する原文、要約、参照を確認。"
+    "source_sha256": "ec5e210028a5e9ab7f72d5df0faed2427ce13734713c85944bdf941b42cc8e48",
+    "summary_sha256": "3e7bc4ab7d0700436a97935f568a246d37e5223cf4cb7e645fc9d37a82d54674",
+    "scope": "構成図切替の本文・要約・参照を照合。"
   }
 }

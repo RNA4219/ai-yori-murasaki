@@ -3,7 +3,11 @@ import { parseFile, importDocuments, validateMap, serializeMap, MAX_BYTES, kindN
 const $=id=>document.getElementById(id);
 const ns='http://www.w3.org/2000/svg';
 const priorities=[...severityNames.keys()];
-const state={map:null,byId:new Map(),findingsByNode:new Map(),selected:null,mode:'all',packages:new Map(),load:0,note:''};
+const state={map:null,byId:new Map(),findingsByNode:new Map(),selected:null,mode:'all',packages:new Map(),load:0,note:'',choice:'sample'};
+const params=new URLSearchParams(location.search);
+const blueView=params.get('view')==='blue';
+const mapIdPattern=/^[a-z0-9][a-z0-9-]{0,63}$/;
+const mapChoice=$('map-choice');
 const diagram=$('diagram'), frame=$('frame');
 let camera={x:0,y:0,zoom:1}, chart=null, selectedWire=null, wireChoices=[];
 let editingScope=false;
@@ -36,15 +40,15 @@ function initial(nodes) {
 const replaceDialog=$('replace-dialog');
 let pendingMap=null;
 
-function requestMap(result,sample=false) {
+function requestMap(result) {
   // 既存の package.json を書き換えずに追加する場合は、編集中の範囲と経路をそのまま統合できる。
   const appending=result.packages && state.packages.size>0 &&
     [...state.packages].every(([name,manifest])=>result.packages.get(name)===manifest);
   if($('unsaved').hidden || appending) {
-    apply(result,sample);
+    apply(result);
     return;
   }
-  pendingMap={result,sample,version:state.load};
+  pendingMap={result,version:state.load};
   $('replace-note').textContent='切り替えると現在の編集内容が失われます。必要なら先にJSONを保存してください。';
   $('replace-discard').textContent='保存せず切り替える';
   replaceDialog.returnValue='cancel';
@@ -64,10 +68,12 @@ $('replace-save').addEventListener('click',()=>{
 replaceDialog.addEventListener('close',()=>{
   const pending=pendingMap;
   pendingMap=null;
-  if(replaceDialog.returnValue==='replace' && pending?.version===state.load) apply(pending.result,pending.sample);
+  if(replaceDialog.returnValue==='replace' && pending?.version===state.load) apply(pending.result);
+  else syncChoice();
 });
 
-function apply(result,sample=false) {
+function apply(result) {
+  const sample=result.choice==='sample';
   let keptEdits=false;
   if(result.packages && state.packages.size){
     result.map.userScope=result.map.nodes.filter(n=>scopeMembers.has(n.id)).map(n=>n.id);
@@ -80,6 +86,14 @@ function apply(result,sample=false) {
     }
   }
   state.map=result.map;
+  state.choice=result.choice || 'file';
+  syncChoice();
+  const url=new URL(location.href);
+  url.searchParams.delete('map');
+  url.searchParams.delete('system');
+  if (state.choice==='aym') url.searchParams.set('system','aym');
+  if (state.choice.startsWith('map:')) url.searchParams.set('map',state.choice.slice(4));
+  if (url.href!==location.href) history.replaceState(history.state,'',url);
   editingScope=false;scopeMembers.clear();
   for(const id of state.map.userScope) scopeMembers.add(id);
   state.original=result.original;
@@ -99,6 +113,7 @@ function apply(result,sample=false) {
   $('nearby').checked=false;
   $('workspace').hidden=false;
   $('error').hidden=true;
+  if (result.notice) error(result.notice);
   $('reset').hidden=sample;
   $('name').textContent=state.map.name;
   $('source').textContent=sample ? '見本データ' : '読み込み元　'+result.source;
@@ -120,20 +135,74 @@ function setEdited(edited){
   $('save-changes').hidden=!edited || !selectedWire;
   if(!edited) $('scope-save').hidden=true;
 }
-async function loadBundled(product = false) {
-  const version=++state.load;
+function syncChoice() {
+  const temporary=mapChoice.querySelector('[data-current]');
+  if (temporary) temporary.remove();
+  mapChoice.value=state.choice;
+  if (mapChoice.selectedIndex<0 && state.map) {
+    // ローカルファイル、または一覧上限外の図をアドレスから直接開いた場合。
+    const label=state.choice==='file' ? 'ファイルから開いた図' : state.map.name;
+    const option=new Option(label,state.choice);
+    option.disabled=true;
+    option.dataset.current='';
+    mapChoice.add(option);
+    mapChoice.value=state.choice;
+  }
+}
+
+async function loadChoices() {
+  if (blueView) return;
   try {
-    const response=await fetch(product ? '/architecture/product.json' : '/architecture/sample.json',{credentials:'same-origin'});
-    if (!response.ok) throw Error('見本ファイルを取得できませんでした。');
-    const original=await response.json(), map=validateMap(original);
-    if (version===state.load) {
-      if (product) requestMap({map,original,source:'ai-yori-murasaki の実装'});
-      else requestMap({map,original,note:'架空の構成とレビュー記録を使用しています。'},true);
+    const res=await fetch('/api/architecture/maps',{credentials:'same-origin'});
+    if (!res.ok) return;
+    const {maps}=await res.json();
+    if (!Array.isArray(maps) || !maps.length) return;
+    const options=document.createDocumentFragment();
+    for (const entry of maps) {
+      if (!entry || typeof entry.id!=='string' || !mapIdPattern.test(entry.id) || typeof entry.name!=='string') return;
+      options.append(new Option(entry.name,'map:'+entry.id));
     }
-  } catch(e) { if(version===state.load) error(e.message); }
+    mapChoice.append(options);
+    syncChoice();
+    $('map-choice-wrap').hidden=false;
+  } catch {
+    // 一覧が使えなくても、見本・製品の図とローカルファイルは開ける。
+  }
+}
+
+async function loadChoice(value,{fallback=false,notice=''}={}) {
+  const version=++state.load;
+  const workspace=value.startsWith('map:');
+  const id=workspace ? value.slice(4) : '';
+  const product=value==='aym';
+  try {
+    let path=product ? '/architecture/product.json' : '/architecture/sample.json';
+    if (workspace) {
+      if (blueView || !mapIdPattern.test(id)) throw Error('指定した構成図の ID を確認してください。');
+      path='/api/architecture/maps/'+id;
+    }
+    const response=await fetch(path,{credentials:'same-origin'});
+    if (workspace && response.status===404) throw Error('指定した構成図が作業場所にありません。');
+    if (!response.ok) throw Error('構成図を読み込めませんでした。');
+    let original=await response.json();
+    if (version!==state.load) return;
+    if (workspace && original && (typeof original.name!=='string' || !original.name.trim())) {
+      original={...original,name:id};
+    }
+    const map=validateMap(original);
+    const source=workspace ? '作業場所の '+id+'.json' : 'ai-yori-murasaki の実装';
+    const note=value==='sample' ? '架空の構成とレビュー記録を使用しています。' : '';
+    requestMap({map,original,source,note,choice:value,notice});
+  } catch(e) {
+    if(version!==state.load) return;
+    syncChoice();
+    if (fallback) return loadChoice('sample',{notice:e.message+' 見本を開きました。'});
+    error(e.message);
+  }
 }
 async function openFiles(files) {
   const version=++state.load;
+  syncChoice();
   try {
     if (files.length>100 || files.some(file=>file.size>MAX_BYTES) || files.reduce((n,f)=>n+f.size,0)>4*MAX_BYTES) {
       throw Error('1ファイル1 MiB以下、一度に100ファイル・合計4 MiB以下で選んでください。');
@@ -834,7 +903,14 @@ $('save-changes').addEventListener('click',saveMap);
 $('reset-layout').addEventListener('click',()=>{offsets[state.mode].clear();draw();fitMap();});
 $('return').addEventListener('click',()=>{const target=diagram.querySelector('[aria-pressed="true"]');target?.focus();frame.scrollIntoView({block:'center'});});
 $('file').addEventListener('change',e=>{const files=[...e.target.files];e.target.value='';if(files.length) openFiles(files);});
-$('reset').addEventListener('click',()=>loadBundled());
+$('reset').addEventListener('click',()=>loadChoice('sample'));
+mapChoice.addEventListener('change',()=>{
+  const requested=mapChoice.value;
+  syncChoice();
+  loadChoice(requested);
+});
 let chartWidth=0;
 new ResizeObserver(([entry])=>{if(entry.contentRect.width!==chartWidth){chartWidth=entry.contentRect.width;draw(true);}else if(chart)updateCamera();}).observe(frame);
-loadBundled(new URLSearchParams(location.search).get('system') === 'aym');
+loadChoices();
+if (!blueView && params.has('map')) loadChoice('map:'+params.get('map'),{fallback:true});
+else loadChoice(params.get('system')==='aym' ? 'aym' : 'sample');
