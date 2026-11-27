@@ -2,7 +2,7 @@
   "id": "decision_view/README.md",
   "role": "doc",
   "public_api": [],
-  "summary": "判断画面とモニターの使い分け、課題の評価状態と次の行動、今回の記録にない課題を含む前回比較を案内する。",
+  "summary": "HTTPS モニターと同じホストで開く判断の画面の操作説明。案件の選択、関連情報、画面間の移動を示す。",
   "deps_out": [
     "README.md",
     "docs/requirements/REQUIREMENTS-DUAL-VIEW.md",
@@ -11,13 +11,13 @@
   "deps_in": [],
   "risks": [],
   "tests": [],
-  "source_sha256": "b7bc17ffdd01aee8f9c5d6ed26948115bff8ed80a0eb3f77faa99950861aa1a9",
-  "generated_at": "00058",
+  "source_sha256": "ecfbbb41f4b6f2dfc7b6ab2d48f071b855ff753990f9c706ef6a30bcad30e970",
+  "generated_at": "00070",
   "review": {
-    "reviewed_at": "2026-11-26T23:08:12+00:00",
+    "reviewed_at": "2026-11-27T10:24:52+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "b7bc17ffdd01aee8f9c5d6ed26948115bff8ed80a0eb3f77faa99950861aa1a9",
-    "summary_sha256": "fb69db7533155303adc4e4c2e8fa7987cea71bc5f7c9eab24b500600a817e9ed",
-    "scope": "案件判断・受付連結に関する原文、要約、参照を確認。"
+    "source_sha256": "ecfbbb41f4b6f2dfc7b6ab2d48f071b855ff753990f9c706ef6a30bcad30e970",
+    "summary_sha256": "16e79098afe5ba1e68cecebb9ab3cd8ec31414f03c4a5d255e8c254825a25aa0",
+    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
   }
 }

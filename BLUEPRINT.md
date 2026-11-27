@@ -46,7 +46,7 @@ RSIの原則は[9項目の方針](docs/RSI.md)に従う。Experience Memoryに�
 ## 5. Interfaces
 
 - CLI: `aym campaign/run/checkpoint/oracle/verify/monitor/lab/rsi/sources`。
-- モニター: `127.0.0.1:8765`、読み取り専用HTTP。raw CASやprivate ledgerを配信しない。
+- モニター: `https://127.0.0.1:8765`、ループバックの読み取り専用画面・API。raw CASやprivate ledgerを配信しない。
 - Ollama: 製品adapter経由でBlue/レビューにGLM、Red/PurpleにDeepSeekを割り当てる。
 - 操作: [RUNBOOK](RUNBOOK.md)、[製品操作ガイド](docs/PRODUCT-GUIDE.md)。
 

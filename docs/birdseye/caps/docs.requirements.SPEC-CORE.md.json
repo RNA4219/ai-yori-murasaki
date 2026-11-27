@@ -2,9 +2,10 @@
   "id": "docs/requirements/SPEC-CORE.md",
   "role": "doc",
   "public_api": [],
-  "summary": "単一台帳とCAS、8データ契約、policy、checkpoint、状態遷移、worker、CLIとモジュールI/Fの仕様。",
+  "summary": "CLI・データ・権限の中核仕様。モニターをループバックの HTTPS で提供する契約と運用手順を示す。",
   "deps_out": [
-    "docs/PRODUCT-ACCEPTANCE.md"
+    "docs/PRODUCT-ACCEPTANCE.md",
+    "docs/requirements/API-CONTRACTS.md"
   ],
   "deps_in": [
     "BLUEPRINT.md",
@@ -14,13 +15,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "eb16ab1c0715962295f8ec35f348acc53f6531e0d0328a1a2ea513e14fe070d7",
-  "generated_at": "00021",
+  "source_sha256": "3f11824a5dd39a16da22649a56eaf746f41fde6f0bf8a5b2ecc19a11cda646bc",
+  "generated_at": "00070",
   "review": {
-    "reviewed_at": "2026-11-06T19:30:36.760596+00:00",
+    "reviewed_at": "2026-11-27T10:24:52+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "eb16ab1c0715962295f8ec35f348acc53f6531e0d0328a1a2ea513e14fe070d7",
-    "summary_sha256": "c48ea4d933c0c32601e227f11aef7b7ec152ff57c4bbf44825afa33c29360aa2",
-    "scope": "原文と要約・導線を照合。製品の実測範囲と未検証の区別を維持。"
+    "source_sha256": "3f11824a5dd39a16da22649a56eaf746f41fde6f0bf8a5b2ecc19a11cda646bc",
+    "summary_sha256": "af461ae0125880ba4204606161d3e4fbe14d03ca2776b413b03a630a76c4805b",
+    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
   }
 }

@@ -1,0 +1,31 @@
+{
+  "id": "docs/tasks/TASK.monitor-https-11-27-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261127-07.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "CHANGELOG.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/SOURCES.md",
+    "docs/acceptance/AC-20261127-07.md",
+    "docs/requirements/API-CONTRACTS.md",
+    "docs/requirements/GOOGLE-MONITOR-SSO.md"
+  ],
+  "summary": "R-091 の HTTPS モニターと再診断の修正。Windows の同時受付を含む製品候補の検収結果と実機試験の範囲を示す。",
+  "source_sha256": "e2c9c45200036238cefdd0fab94fd9a493c469025e18fd973b89dbb0de7fa39f",
+  "generated_at": "00071",
+  "review": {
+    "reviewed_at": "2026-11-27T10:36:39+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "e2c9c45200036238cefdd0fab94fd9a493c469025e18fd973b89dbb0de7fa39f",
+    "summary_sha256": "d3c7551984bec45b04749a635d0b82f116c305c4c542b201dd081204fa27d690",
+    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
+  }
+}

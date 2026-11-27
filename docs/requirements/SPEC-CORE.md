@@ -427,7 +427,7 @@ semantic validator が以下を検査し、違反は `policy_denied`（exit 4）
 | `aym rsi apply` | `--review-id`, `--expected-baseline`, `--rollback` | - | `aym rsi apply --review-id rev1 --expected-baseline b1 --rollback rb1` | `{applied: true}` | 冪等 |
 | `aym verify chain` | `--campaign-id`, `--run-id` | - | `aym verify chain --campaign-id c1 --run-id r1` | `{result, reason_code}` | 冪等 |
 | `aym verify checkpoint` | `--campaign-id`, `--run-id` | - | `aym verify checkpoint --campaign-id c1 --run-id r1` | `{result, reason_code}` | 冪等 |
-| `aym monitor serve` | `--bind` | `127.0.0.1:8765` | `aym monitor serve --bind 127.0.0.1:8765` | HTTP | - |
+| `aym monitor serve` | `--bind`、`--tls-cert`、`--tls-key` | `127.0.0.1:8765` | `aym monitor serve --tls-cert <cert.pem> --tls-key <key.pem>` | HTTPS | [接続モード](API-CONTRACTS.md#21-基本) |
 
 - `aym monitor serve` の非 loopback bind は入力エラー: exit 2、`reason_code=bind_not_loopback`。policy 実行拒否（exit 4 `policy_denied`）とは分離する。
 

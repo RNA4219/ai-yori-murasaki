@@ -2,7 +2,7 @@
   "id": "docs/acceptance/INDEX.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "技術検収の索引。Wazuh の TLS、所属案件と履歴の確認結果、モニターの各機能の Task と PR を引ける。",
+  "summary": "技術検収の索引。HTTPS とセッション、再診断対象、証跡やモニターの各機能の Task と結果を引ける。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -38,6 +38,7 @@
     "docs/acceptance/AC-20261127-04.md",
     "docs/acceptance/AC-20261127-05.md",
     "docs/acceptance/AC-20261127-06.md",
+    "docs/acceptance/AC-20261127-07.md",
     "docs/releases/RA-20261126-01.md",
     "docs/releases/RA-20261126-02.md",
     "docs/releases/RA-20261127-01.md",
@@ -60,6 +61,7 @@
     "docs/tasks/TASK.indexed-case-detail-11-23-2026.md",
     "docs/tasks/TASK.llm-remote-11-09-2026.md",
     "docs/tasks/TASK.monitor-counts-11-23-2026.md",
+    "docs/tasks/TASK.monitor-https-11-27-2026.md",
     "docs/tasks/TASK.monitor-index-11-23-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
     "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md",
@@ -86,13 +88,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "66f42dad0b1821e4c313d5ab84772b3a3b3d4a8ec45fe3091a17a9037f4e2d74",
-  "generated_at": "00069",
+  "source_sha256": "3b0114f07dc392c28d790c48e351000321e1cfb310fcb73648e56da1d6cc480a",
+  "generated_at": "00071",
   "review": {
-    "reviewed_at": "2026-11-27T09:45:38+00:00",
+    "reviewed_at": "2026-11-27T10:36:39+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "66f42dad0b1821e4c313d5ab84772b3a3b3d4a8ec45fe3091a17a9037f4e2d74",
-    "summary_sha256": "025452628cac250d6a01ebd210d2bcc44ae027db2b255640111de477702592e7",
-    "scope": "Wazuh の TLS、封印、検証履歴の製品コミットと技術検収、未確認事項を照合。"
+    "source_sha256": "3b0114f07dc392c28d790c48e351000321e1cfb310fcb73648e56da1d6cc480a",
+    "summary_sha256": "98ee76ab57451df2f380277e6c04e7c0315fe52c43df616839fc60d1b3ba99e7",
+    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
   }
 }

@@ -2,7 +2,7 @@
   "id": "BLUEPRINT.md",
   "role": "requirements",
   "public_api": [],
-  "summary": "製品の目的と境界。operatorの資料取り込みを追加範囲とし、Finding・Oracle・Blue・RSIへの自動転用を分ける。",
+  "summary": "製品の実装範囲と操作境界。ループバックモニターの HTTPS、読み取り API、台帳と評価・モデルの役割を定める。",
   "deps_out": [
     "RUNBOOK.md",
     "docs/CONTRACTS.md",
@@ -26,13 +26,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "0c8d216b5101fc866580cba0ad523be5c99b1ac35236d49c8d3a06a06eb3ee17",
-  "generated_at": "00030",
+  "source_sha256": "041049cd0271d7507ad9dfdd36c6a5b28fe5f86a0c8ed56942ad8ce5a7135cac",
+  "generated_at": "00070",
   "review": {
-    "reviewed_at": "2026-11-09T05:32:05.047334+00:00",
+    "reviewed_at": "2026-11-27T10:24:52+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "0c8d216b5101fc866580cba0ad523be5c99b1ac35236d49c8d3a06a06eb3ee17",
-    "summary_sha256": "3b4a3ffab35cf5a901a7be542d025e2d311d9f04a4cfe4eb151c995f6c3ae559",
-    "scope": "今回の原文・要約・参照を照合。MCPローカル試験、実サービス未検証、画面実測、参考情報と判定証拠の分離を確認。"
+    "source_sha256": "041049cd0271d7507ad9dfdd36c6a5b28fe5f86a0c8ed56942ad8ce5a7135cac",
+    "summary_sha256": "a524518ba2865d8d972fd7423d551a8acec7d1ec1fd92a1ba5d37096ccf21f1e",
+    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
   }
 }

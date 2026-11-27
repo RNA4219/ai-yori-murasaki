@@ -32,7 +32,23 @@ py -3 -c "from pathlib import Path; import ai_yori_murasaki; print(Path(ai_yori_
 
 `aym lab iterate --staging-root <絶対パス> --max-iterations 2 --max-campaigns 2`は、Campaign単位の上限付きで反復する。成功、環境障害、同じ失敗の反復、残予算なしで停止する。`max-campaigns`をツール呼び出し数と読み替えない。任意の`--routes-file`でロールと登録モデルの対応を指定できる。
 
-`aym monitor serve --bind 127.0.0.1:8765`で画面を配信する。Campaign一覧・詳細、Run、公開可能なイベント、検証、承認、モデル、adapterを表示する。15秒ごとに更新し、タブが非表示なら休止する。操作を伴う承認や反映はCLIで行う。
+### モニターのHTTPS起動
+
+通常の起動には、サーバー証明書と対応する秘密鍵の PEM ファイルが必要になる。ブラウザーが信頼する発行元の証明書を用意し、証明書の Subject Alternative Name（SAN）の IP アドレス欄に `127.0.0.1` があることを確認する。`localhost` でも開きたい場合は DNS 名の SAN に `localhost` も必要になる。Google ログインの戻り先には常に `127.0.0.1` を使う。
+
+作業ディレクトリ（`AYM_WORKSPACE`、`AYM_TRUSTED_ROOT`）を設定した PowerShell で、PEM ファイルのパスを指定する。秘密鍵はモニターの実行ユーザーが読み取れる、リポジトリ外の非公開の場所に置く。証明書の発行と利用端末での信頼設定は、端末を管理する組織の手順に従う。
+
+```powershell
+$env:AYM_MONITOR_TLS_CERT = Read-Host 'サーバー証明書 PEM のパス'
+$env:AYM_MONITOR_TLS_KEY = Read-Host '対応する秘密鍵 PEM のパス'
+aym monitor serve --bind 127.0.0.1:8765
+```
+
+ブラウザーで `https://127.0.0.1:8765/` を開く。コマンドに直接指定する場合は `--tls-cert <証明書PEMのパス> --tls-key <秘密鍵PEMのパス>` を使う。TLS 1.2 以上で接続する。PEM の不足・読取不能や証明書と鍵の不一致は起動エラーとなる。鍵のパスワードを対話入力する処理はない。ブラウザーで証明書エラーが出た場合は、有効期限、信頼チェーン、URL と SAN の一致を確認する。
+
+SSO を使わずローカル HTTP で確認する場合に限り、TLS の環境変数を設定していないターミナルで `aym monitor serve --allow-http-loopback` を実行する。この場合の入口は `http://127.0.0.1:8765/`。このオプションと証明書・秘密鍵の指定、または `--google-sso` を併用すると起動に失敗する。[Google SSO の HTTPS 設定](requirements/GOOGLE-MONITOR-SSO.md)
+
+モニターではCampaign一覧・詳細、Run、公開可能なイベント、検証、承認、モデル、adapterを表示する。15秒ごとに更新し、タブが非表示なら休止する。操作を伴う承認や反映はCLIで行う。
 
 モデル表示は、指定名、登録状況、開発時の呼び出し、製品経由の接続、固定版の確認を分ける。unknownや未測定を成功へ読み替えない。外部adapterの契約試験成功は、そのサービスへの接続成功ではない。
 

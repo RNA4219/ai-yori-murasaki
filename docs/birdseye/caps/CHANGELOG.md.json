@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "製品変更の記録。Wazuh の TLS、案件を照合したチェックポイント、検証対象を残す履歴とその技術検収結果を含む。",
+  "summary": "モニターの HTTPS、Blue 表示・受信上限・依存更新・台帳検証などの修正、および Windows 並行受付を含む技術検収を記録する。",
   "deps_out": [
     "docs/NOTION-IMPORT.md",
     "docs/SOURCES.md",
@@ -39,6 +39,7 @@
     "docs/acceptance/AC-20261127-04.md",
     "docs/acceptance/AC-20261127-05.md",
     "docs/acceptance/AC-20261127-06.md",
+    "docs/acceptance/AC-20261127-07.md",
     "docs/evidence/quality-integration-20261109/README.md",
     "docs/evidence/sources-light-ui-20261109/README.md",
     "docs/evidence/wazuh-live-20261108.md",
@@ -59,6 +60,7 @@
     "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
     "docs/tasks/TASK.indexed-case-detail-11-23-2026.md",
     "docs/tasks/TASK.monitor-counts-11-23-2026.md",
+    "docs/tasks/TASK.monitor-https-11-27-2026.md",
     "docs/tasks/TASK.monitor-index-11-23-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
     "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md",
@@ -95,6 +97,7 @@
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
     "docs/tasks/TASK.google-monitor-sso-11-27-2026.md",
     "docs/tasks/TASK.google-sso-email-domains-11-27-2026.md",
+    "docs/tasks/TASK.monitor-https-11-27-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
     "docs/tasks/TASK.rsi-naming-11-06-2026.md",
     "docs/tasks/TASK.rsi-policy-11-06-2026.md",
@@ -107,13 +110,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "99a12f00eddfae888a9543247fafef5e2b4d29a4b5e32b1f67e65c2f4b1798b1",
-  "generated_at": "00069",
+  "source_sha256": "b05c7183cde08621e6852b1db3d6ac54dc58ca7d68c58b832ca84e628fbca4e4",
+  "generated_at": "00071",
   "review": {
-    "reviewed_at": "2026-11-27T09:45:38+00:00",
+    "reviewed_at": "2026-11-27T10:36:39+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "99a12f00eddfae888a9543247fafef5e2b4d29a4b5e32b1f67e65c2f4b1798b1",
-    "summary_sha256": "3ce4b4859b21e6c0b54862aa66f88722466e039302b1012d0fb2a323869fedf2",
-    "scope": "Wazuh の TLS、封印、検証履歴の製品コミットと技術検収、未確認事項を照合。"
+    "source_sha256": "b05c7183cde08621e6852b1db3d6ac54dc58ca7d68c58b832ca84e628fbca4e4",
+    "summary_sha256": "2c957b189d5ce0637f4fb144e2511555ddadee693011a7121f999cfcea02afa1",
+    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
   }
 }

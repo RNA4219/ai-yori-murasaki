@@ -162,6 +162,9 @@ def _build_parser() -> _Parser:
     index.add_argument("--full", action="store_true", help="すべての台帳を再検証する")
     m = mon.add_parser("serve")
     m.add_argument("--bind", default="127.0.0.1:8765")
+    m.add_argument("--tls-cert", metavar="PEM", help="HTTPSの証明書チェーン（AYM_MONITOR_TLS_CERT）")
+    m.add_argument("--tls-key", metavar="PEM", help="対応する秘密鍵のファイル（AYM_MONITOR_TLS_KEY）")
+    m.add_argument("--allow-http-loopback", action="store_true", help="Google SSOを使わないローカルHTTPを明示的に許可")
     m.add_argument("--google-sso", action="store_true",
                    help="Google ログインを必須にする。許可ドメインは AYM_GOOGLE_ALLOWED_EMAIL_DOMAINS で指定。"
                         "AYM_GOOGLE_ALLOWED_SUBJECTS も指定すると、両方の条件を満たす利用者だけを許可する。")
@@ -364,15 +367,12 @@ def _dispatch(args: argparse.Namespace, rt: Runtime) -> tuple[Any, Any, Any, int
         return None, None, build_index(rt.store, full=args.full), 0
 
     if group == "monitor" and action == "serve":
-        from .server import create_server
-        google_sso = None
-        if args.google_sso:
-            from .google_sso import GoogleSSO
-            google_sso = GoogleSSO.from_env()
-        server = create_server(rt, args.bind, google_sso=google_sso)
+        from .server import configured_server
+        server = configured_server(rt, args.bind, cert=args.tls_cert, key=args.tls_key,
+                                   allow_http_loopback=args.allow_http_loopback, google_sso=args.google_sso)
         try:
             host, port = server.server_address[:2]
-            url = "http://%s:%d" % (host, port)
+            url = f"{server.scheme}://{host}:{port}"
             _emit("monitor serve", "ok", "ok", None, None,
                   {"url": url, "bind": args.bind})
             server.serve_forever()
@@ -477,8 +477,9 @@ def main(argv: list[str] | None = None) -> int:
         reason = _reason_code(exc)
         code = _status_for(reason)
         status = {1: "fail", 2: "fail", 3: "hold", 4: "denied"}[code]
-        _emit(command, status, reason, None, None,
-              {"message": "処理を完了できませんでした"})
+        message = {"monitor_tls_required": "HTTPSの起動には --tls-cert と --tls-key が必要です。",
+                   "monitor_tls_configuration": "HTTPSの証明書・鍵の組と起動オプションを確認してください。"}
+        _emit(command, status, reason, None, None, {"message": message.get(reason, "処理を完了できませんでした")})
         return code
     except (OSError, ValueError):
         _emit(command, "fail", "input_invalid", None, None,

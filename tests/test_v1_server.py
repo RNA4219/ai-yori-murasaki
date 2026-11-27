@@ -288,6 +288,31 @@ class ServerContractTests(unittest.TestCase):
         events2 = json.loads(body)["events"]
         self.assertTrue(all(e["sequence"] > last_seq for e in events2))
 
+    def test_event_history_uses_one_verified_run_snapshot(self) -> None:
+        cid = self._create_campaign("INT-HISTORY", "event-history")["campaign_id"]
+        rid = self.fx.runtime.start_run(cid, "verify", 1, "history-check")["run_id"]
+        path = f"/api/runs/{rid}/events?limit=1"
+        status, _, body = self.fx.get(path)
+        self.assertEqual((status, json.loads(body)), (200, {"events": []}))
+        for _ in range(2):
+            self.fx.runtime.record_event(rid, "state_captured", "orchestrator")
+        status, _, body = self.fx.get(path)
+        self.assertEqual(status, 200)
+        self.assertEqual([event["sequence"] for event in json.loads(body)["events"]], [1])
+        self.fx.runtime.finish_run(rid, "completed")
+        self.fx.runtime.seal_run(cid, rid)
+        ledger = self.fx.store._ledger_path(rid)
+        rows = ledger.read_bytes().splitlines(keepends=True)
+        ledger.write_bytes(b"".join(rows[:-1]))
+        status, _, body = self.fx.get(path)
+        self.assertEqual((status, json.loads(body)), (409, {"error": "evidence_unverified"}))
+        # An incomplete restore left the last row belonging to another run.
+        other = self.fx.runtime.start_run(cid, "verify", 2, "other-history")["run_id"]
+        self.fx.runtime.record_event(other, "state_captured", "orchestrator")
+        ledger.write_bytes(rows[0] + self.fx.store._ledger_path(other).read_bytes() + rows[-1])
+        status, _, body = self.fx.get(path)
+        self.assertEqual((status, json.loads(body)), (409, {"error": "evidence_unverified"}))
+
     def test_blue_view_no_canary(self) -> None:
         campaign = self._create_campaign("INT-3", "idem-3")
         cid = campaign["campaign_id"]

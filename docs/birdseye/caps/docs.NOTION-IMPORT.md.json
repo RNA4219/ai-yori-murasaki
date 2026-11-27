@@ -4,9 +4,9 @@
   "public_api": [],
   "risks": [],
   "tests": [],
-  "summary": "合成した課題と観測の取り込み、判断画面、書き出しの手順。明示する検査・除外語・ID 書式の例と、新旧形式を組み合わせた場合に不在を判定できる条件を示す。",
-  "generated_at": "00057",
-  "source_sha256": "2ca0704aad46210023d889afe4c87f3829d2225078e42451f419f9eb88ae04e7",
+  "summary": "Notion 課題 CSV のローカル取込から HTTPS の判断画面までを案内する。検査の選択や観測範囲、表示と書出しの使い方を記す。",
+  "generated_at": "00070",
+  "source_sha256": "9a809b70024918117591a51841cebf12f71aa7f6d7e0d22f644cb69c6f8c6d07",
   "deps_in": [
     "CHANGELOG.md",
     "HUB.codex.md",
@@ -16,12 +16,14 @@
     "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md",
     "docs/tasks/TASK.tracker-evidence-11-26-2026.md"
   ],
-  "deps_out": [],
+  "deps_out": [
+    "docs/PRODUCT-GUIDE.md"
+  ],
   "review": {
-    "reviewed_at": "2026-11-26T18:00:09+00:00",
+    "reviewed_at": "2026-11-27T10:24:52+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "2ca0704aad46210023d889afe4c87f3829d2225078e42451f419f9eb88ae04e7",
-    "summary_sha256": "00c96019c23078d614b9b45e9865eb1dec585d875689480101fdc4cfdf09686d",
-    "scope": "課題に適用する検査と資源の観測範囲に関する本文、要約、参照を確認。"
+    "source_sha256": "9a809b70024918117591a51841cebf12f71aa7f6d7e0d22f644cb69c6f8c6d07",
+    "summary_sha256": "2870a58927f900a193e9e2cb9e114a36ffe706513594966d50e5d03f4f52188f",
+    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
   }
 }

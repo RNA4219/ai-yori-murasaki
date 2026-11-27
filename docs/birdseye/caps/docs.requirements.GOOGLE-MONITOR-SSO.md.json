@@ -7,26 +7,31 @@
   "deps_in": [
     "HUB.codex.md",
     "README.md",
+    "docs/PRODUCT-GUIDE.md",
     "docs/acceptance/AC-20261127-04.md",
     "docs/acceptance/AC-20261127-05.md",
+    "docs/acceptance/AC-20261127-07.md",
     "docs/requirements/API-CONTRACTS.md",
     "docs/tasks/TASK.google-monitor-sso-11-27-2026.md",
-    "docs/tasks/TASK.google-sso-email-domains-11-27-2026.md"
+    "docs/tasks/TASK.google-sso-email-domains-11-27-2026.md",
+    "docs/tasks/TASK.monitor-https-11-27-2026.md"
   ],
   "deps_out": [
     "README.md",
+    "docs/PRODUCT-GUIDE.md",
     "docs/acceptance/AC-20261127-04.md",
     "docs/acceptance/AC-20261127-05.md",
+    "docs/acceptance/AC-20261127-07.md",
     "docs/requirements/API-CONTRACTS.md"
   ],
-  "summary": "R-089・R-090 の利用手順。Google のクライアント登録、個別 sub・メールドメインの設定例と併用条件、Blue への復帰、セッション期限を説明する。",
-  "source_sha256": "512e0a91ca693d8475d6d7f4168b8190a6e0ef082b263b62b6be27be2637fb03",
-  "generated_at": "00066",
+  "summary": "Google ログインを使う HTTPS モニターの操作。HTTPS コールバック、証明書と鍵、個別・ドメイン別の許可、Cookie と失効を説明する。",
+  "source_sha256": "afc1ebed86fba8260db5891fe7cb141cd1d09796d6f40155b453d46bb8ac6320",
+  "generated_at": "00070",
   "review": {
-    "reviewed_at": "2026-11-27T09:09:00+00:00",
+    "reviewed_at": "2026-11-27T10:24:52+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "512e0a91ca693d8475d6d7f4168b8190a6e0ef082b263b62b6be27be2637fb03",
-    "summary_sha256": "73e40acaeb597141e7f9fd4167baceb4cecdfb947e07434d656edebefeff4e3f",
-    "scope": "Google ログインのドメイン許可について設定・契約・受入条件を照合。"
+    "source_sha256": "afc1ebed86fba8260db5891fe7cb141cd1d09796d6f40155b453d46bb8ac6320",
+    "summary_sha256": "6b85a35491e94f970065cc1c3b482b91851424f51eb3284a40188450e6a1618f",
+    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
   }
 }

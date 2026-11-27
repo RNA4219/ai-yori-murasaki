@@ -13,7 +13,7 @@ from unittest.mock import patch
 from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import (
-    build_opener, HTTPCookieProcessor, HTTPRedirectHandler, ProxyHandler, Request,
+    build_opener, HTTPCookieProcessor, HTTPRedirectHandler, HTTPSHandler, ProxyHandler, Request,
 )
 
 from ai_yori_murasaki import cli
@@ -21,6 +21,13 @@ from ai_yori_murasaki.google_sso import GoogleLoginError
 from ai_yori_murasaki.runtime import Runtime
 from ai_yori_murasaki.server import _handle, create_server
 from ai_yori_murasaki.storage import Store
+
+try:
+    from tests.fixtures.loopback_tls import LoopbackTLS
+except ModuleNotFoundError as exc:
+    if exc.name != "cryptography":
+        raise
+    LoopbackTLS = None
 
 
 class LocalProvider:
@@ -34,7 +41,7 @@ class LocalProvider:
         self.serial += 1
         correlation = f"synthetic-flow-{self.serial}"
         self.pending[correlation] = return_to
-        return f"http://127.0.0.1:{port}/auth/google/callback?state={correlation}", correlation
+        return f"https://127.0.0.1:{port}/auth/google/callback?state={correlation}", correlation
 
     def complete(self, port, query, correlation):
         if not correlation or correlation != query.get("state") or correlation not in self.pending:
@@ -58,8 +65,9 @@ class NoRedirect(HTTPRedirectHandler):
         return None
 
 
-def client():
-    return build_opener(ProxyHandler({}), HTTPCookieProcessor(CookieJar()), NoRedirect())
+def client(tls):
+    return build_opener(ProxyHandler({}), HTTPSHandler(context=tls.client_context()),
+                        HTTPCookieProcessor(CookieJar()), NoRedirect())
 
 
 def request(browser, url, *, data=None, headers=None):
@@ -72,6 +80,7 @@ def request(browser, url, *, data=None, headers=None):
         return response.status, response.headers, response.read()
 
 
+@unittest.skipUnless(LoopbackTLS, "合成証明書の生成には cryptography が必要")
 class MonitorAuthTests(unittest.TestCase):
     def setUp(self):
         directory = tempfile.TemporaryDirectory()
@@ -81,28 +90,35 @@ class MonitorAuthTests(unittest.TestCase):
         trusted.mkdir()
         self.runtime = Runtime(Store(workspace, trusted))
         self.provider = LocalProvider()
-        self.server = create_server(self.runtime, "127.0.0.1:0", google_sso=self.provider)
+        self.tls = LoopbackTLS(Path(directory.name))
+        self.server = create_server(self.runtime, "127.0.0.1:0", google_sso=self.provider,
+                                    tls_context=self.tls.server_context())
         self.addCleanup(self.server.server_close)
         thread = threading.Thread(target=self.server.serve_forever, kwargs={"poll_interval": 0.05})
         thread.start()
         self.addCleanup(thread.join, 5)
         self.addCleanup(self.server.shutdown)
         self.port = self.server.server_port
-        self.origin = f"http://127.0.0.1:{self.port}"
-        self.browser = client()
+        self.origin = f"https://127.0.0.1:{self.port}"
+        self.browser = client(self.tls)
+
+    def assert_secure_cookie(self, headers):
+        attributes = headers["Set-Cookie"].split("; ")
+        for attribute in ("Secure", "HttpOnly", "SameSite=Lax"):
+            self.assertIn(attribute, attributes)
+        self.assertNotIn("Domain=", headers["Set-Cookie"])
 
     def enter(self, target="/"):
         start = "/auth/google/start?" + urlencode({"next": target})
         code, head, _ = request(self.browser, self.origin + start)
         self.assertEqual(code, 303)
-        self.assertIn("HttpOnly", head["Set-Cookie"])
-        self.assertIn("SameSite=Lax", head["Set-Cookie"])
-        self.assertNotIn("Domain=", head["Set-Cookie"])
+        self.assert_secure_cookie(head)
         code, head, _ = request(self.browser, head["Location"])
         self.assertEqual(code, 303)
         self.assertEqual(head["Location"], target)
         self.assertEqual(len(head.get_all("Set-Cookie")), 1)
         self.assertTrue(head["Set-Cookie"].startswith("aym_session_"))
+        self.assert_secure_cookie(head)
 
     def test_anonymous_pages_api_assets_and_independent_browser(self):
         for page in ("/", "/intake", "/decision", "/architecture"):
@@ -119,7 +135,7 @@ class MonitorAuthTests(unittest.TestCase):
             self.assertEqual(json.loads(body), {"error": "authentication_required"})
         self.enter()
         self.assertEqual(request(self.browser, self.origin + "/api/health")[0], 200)
-        self.assertEqual(request(client(), self.origin + "/api/health")[0], 401)
+        self.assertEqual(request(client(self.tls), self.origin + "/api/health")[0], 401)
         self.assertEqual(request(self.browser, self.origin + "/architecture/map.mjs")[0], 200)
         self.provider.sessions.clear()  # サーバー側の期限切れ後に Cookie が残った場合
         self.assertEqual(request(self.browser, self.origin + "/api/health")[0], 401)
@@ -128,7 +144,7 @@ class MonitorAuthTests(unittest.TestCase):
     def test_localhost_preserves_selected_blue_page_on_canonical_host(self):
         target = "/architecture?view=blue&map=sample"
         start = "/auth/google/start?" + urlencode({"next": target})
-        alias = f"http://localhost:{self.port}"
+        alias = f"https://localhost:{self.port}"
         code, _, body = request(self.browser, alias + target)
         self.assertEqual(code, 401)
         self.assertIn(start.encode(), body)
@@ -196,19 +212,19 @@ class MonitorAuthTests(unittest.TestCase):
         self.assertEqual(head["Location"], "/intake?view=blue")
         self.assertEqual(request(self.browser, self.origin + head["Location"])[0], 200)
 
-    def test_default_http_port_can_be_omitted_in_canonical_host_and_origin(self):
+    def test_default_https_port_can_be_omitted_in_canonical_host_and_origin(self):
         auth = self.server.auth
-        for authority in ("127.0.0.1", "127.0.0.1:80"):
+        for authority in ("127.0.0.1", "127.0.0.1:443"):
             status, head, _ = _handle(self.runtime, "GET", "/auth/google/start", {},
-                                      {"Host": authority}, 80, auth)
+                                      {"Host": authority}, 443, auth, scheme="https")
             self.assertEqual(status, 303)
             self.assertIn("/auth/google/callback?", head["Location"])
             self.assertEqual(len(head["Set-Cookie"]), 1)
             self.provider.sessions.add("fixture-session")
-            headers = {"Host": authority, "Origin": "http://" + authority,
-                       "Cookie": "aym_session_80=fixture-session"}
-            status, _, _ = _handle(self.runtime, "POST", "/auth/logout", {}, headers, 80, auth,
-                                   lambda: auth.for_session("fixture-session"))
+            headers = {"Host": authority, "Origin": "https://" + authority,
+                       "Cookie": "aym_session_443=fixture-session"}
+            status, _, _ = _handle(self.runtime, "POST", "/auth/logout", {}, headers, 443, auth,
+                                   lambda: auth.for_session("fixture-session"), scheme="https")
             self.assertEqual(status, 303)
             self.assertFalse(self.provider.authenticated("fixture-session"))
 
@@ -229,6 +245,7 @@ class MonitorAuthTests(unittest.TestCase):
         self.assertEqual(code, 303)
         self.assertEqual(head["Location"], "/")
         self.assertIn("Max-Age=0", head["Set-Cookie"])
+        self.assert_secure_cookie(head)
         self.assertFalse(self.provider.sessions)
         self.assertEqual(request(self.browser, self.origin + "/api/health")[0], 401)
 

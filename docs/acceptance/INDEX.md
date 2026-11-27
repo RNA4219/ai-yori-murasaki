@@ -10,6 +10,7 @@ next_review_due: 2026-12-06
 
 | Acceptance | Task | 対象 | 公開 |
 | --- | --- | --- | --- |
+| [AC-20261127-07](AC-20261127-07.md) | [20261127-07](../tasks/TASK.monitor-https-11-27-2026.md) | T63 の HTTPS・セッション、再診断5項目と Windows の受付台帳の同時登録を含む技術検収13件に合格 | [PR #25](https://github.com/RNA4219/ai-yori-murasaki/pull/25) |
 | [AC-20261127-06](AC-20261127-06.md) | [20261127-06](../tasks/TASK.verification-evidence-11-27-2026.md) | Wazuh の TLS、案件ごとの封印、検証時の台帳末尾と履歴の読取を含む技術検収8件に合格 | [PR #24](https://github.com/RNA4219/ai-yori-murasaki/pull/24) |
 | [AC-20261127-05](AC-20261127-05.md) | [20261127-05](../tasks/TASK.google-sso-email-domains-11-27-2026.md) | T62。Google ログインのドメイン指定、個別指定との併用と互換性を含む技術検収8件に合格 | [PR #23](https://github.com/RNA4219/ai-yori-murasaki/pull/23) |
 | [AC-20261127-04](AC-20261127-04.md) | [20261127-04](../tasks/TASK.google-monitor-sso-11-27-2026.md) | T61。合成アカウントによるモニターのログイン、Blue への復帰、ログアウトを含む技術検収8件に合格 | [PR #22](https://github.com/RNA4219/ai-yori-murasaki/pull/22) |

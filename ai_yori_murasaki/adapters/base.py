@@ -213,21 +213,43 @@ class HttpBroker:
                 pass
 
 
-def _read_response(sock: socket.socket, max_bytes: int) -> dict:
-    buf = bytearray()
-    header_end = -1
-    while header_end < 0:
-        chunk = sock.recv(65536)
+_HTTP_HEADER_LIMIT = 65536
+_HTTP_CHUNK_LINE_LIMIT = 8192
+
+
+def _read_delimited(sock, buf, delimiter, limit, read_size):
+    """Read through a delimiter within a wire-byte limit, retaining read-ahead."""
+    scan_from = 0
+    while True:
+        end = buf.find(delimiter, scan_from, limit)
+        if end >= 0:
+            value = bytes(buf[:end])
+            del buf[:end + len(delimiter)]
+            return value
+        if len(buf) >= limit:
+            raise policy_mod.PolicyDenied("HTTP response metadata exceeds limit")
+        scan_from = max(0, len(buf) - len(delimiter) + 1)
+        chunk = sock.recv(min(read_size, limit - len(buf)))
         if not chunk:
-            raise policy_mod.PolicyDenied("connection closed before headers")
+            return None
         buf.extend(chunk)
-        header_end = buf.find(b"\r\n\r\n")
-        if header_end < 0 and len(buf) > 65536:
-            raise policy_mod.PolicyDenied("response headers too large")
-    if header_end > 65536:
-        raise policy_mod.PolicyDenied("response headers too large")
-    head = bytes(buf[:header_end]).decode("latin-1")
-    rest = bytes(buf[header_end + 4:])
+
+
+def _receive_exactly_to(sock, dest, length):
+    while len(dest) < length:
+        chunk = sock.recv(min(65536, length - len(dest)))
+        if not chunk:
+            raise AdapterUnavailable("connection closed before response complete")
+        dest.extend(chunk)
+
+
+def _read_response(sock: socket.socket, max_bytes: int) -> dict:
+    rest = bytearray()
+    read_size = min(8192, max_bytes + 1)
+    head = _read_delimited(sock, rest, b"\r\n\r\n", _HTTP_HEADER_LIMIT + 4, read_size)
+    if head is None:
+        raise policy_mod.PolicyDenied("connection closed before headers")
+    head = head.decode("latin-1")
     lines = head.split("\r\n")
     status_line = lines[0]
     parts = status_line.split(" ", 2)
@@ -258,7 +280,7 @@ def _read_response(sock: socket.socket, max_bytes: int) -> dict:
         body = _read_chunked(sock, rest, max_bytes)
         return {"status": status, "headers": resp_headers, "body": body}
 
-    body = bytearray(rest)
+    body = rest
     if len(body) > max_bytes:
         raise policy_mod.PolicyDenied("response exceeds max_bytes")
 
@@ -271,45 +293,34 @@ def _read_response(sock: socket.socket, max_bytes: int) -> dict:
             raise policy_mod.PolicyDenied("negative content-length")
         if clen > max_bytes:
             raise policy_mod.PolicyDenied("response exceeds max_bytes")
-        while len(body) < clen:
-            chunk = sock.recv(min(65536, clen - len(body)))
-            if not chunk:
-                raise AdapterUnavailable("connection closed before content-length")
-            body.extend(chunk)
-            if len(body) > max_bytes:
-                raise policy_mod.PolicyDenied("response exceeds max_bytes")
+        _receive_exactly_to(sock, body, clen)
         if len(body) != clen:
             raise AdapterUnavailable("content-length mismatch")
     else:
         while True:
-            chunk = sock.recv(65536)
+            remaining = max_bytes - len(body)
+            chunk = sock.recv(min(65536, remaining + 1))
             if not chunk:
                 break
-            body.extend(chunk)
-            if len(body) > max_bytes:
+            if len(chunk) > remaining:
                 raise policy_mod.PolicyDenied("response exceeds max_bytes")
+            body.extend(chunk)
 
     return {"status": status, "headers": resp_headers, "body": bytes(body)}
 
 
-def _read_chunked(sock: socket.socket, initial: bytes, max_bytes: int) -> bytes:
-    buf = bytearray(initial)
+def _read_chunked(sock: socket.socket, buf: bytearray, max_bytes: int) -> bytes:
     out = bytearray()
-
-    def _fill() -> bool:
-        chunk = sock.recv(65536)
-        if not chunk:
-            return False
-        buf.extend(chunk)
-        return True
-
+    # One size digit and CRLF per one-byte chunk, plus room for extensions.
+    size_line_budget = 3 * max_bytes + _HTTP_HEADER_LIMIT
     while True:
-        while b"\r\n" not in buf:
-            if not _fill():
-                raise AdapterUnavailable("chunked stream truncated")
-        idx = buf.find(b"\r\n")
-        size_line = bytes(buf[:idx])
-        del buf[:idx + 2]
+        remaining = max_bytes - len(out)
+        read_size = min(8192, remaining + 1)
+        size_line = _read_delimited(sock, buf, b"\r\n",
+                                    min(_HTTP_CHUNK_LINE_LIMIT, size_line_budget), read_size)
+        if size_line is None:
+            raise AdapterUnavailable("chunked stream truncated")
+        size_line_budget -= len(size_line) + 2
         try:
             size = int(size_line.split(b";", 1)[0].strip(), 16)
         except ValueError as exc:
@@ -317,20 +328,25 @@ def _read_chunked(sock: socket.socket, initial: bytes, max_bytes: int) -> bytes:
         if size < 0:
             raise policy_mod.PolicyDenied("negative chunk size")
         if size == 0:
-            # consume trailing CRLF (and optional trailers ignored)
-            while b"\r\n" not in buf:
-                if not _fill():
-                    break
-            return bytes(out)
-        while len(buf) < size + 2:
-            if not _fill():
-                raise AdapterUnavailable("chunked stream truncated")
-        out.extend(buf[:size])
-        if len(out) > max_bytes:
+            trailer_budget = _HTTP_HEADER_LIMIT
+            while True:
+                trailer = _read_delimited(sock, buf, b"\r\n", trailer_budget, 8192)
+                if trailer is None:
+                    raise AdapterUnavailable("chunked trailers truncated")
+                if not trailer:
+                    return bytes(out)
+                trailer_budget -= len(trailer) + 2
+        if size > remaining:
             raise policy_mod.PolicyDenied("response exceeds max_bytes")
-        if bytes(buf[size:size + 2]) != b"\r\n":
+        end = len(out) + size
+        buffered = min(len(buf), size)
+        out.extend(buf[:buffered])
+        del buf[:buffered]
+        _receive_exactly_to(sock, out, end)
+        _receive_exactly_to(sock, buf, 2)
+        if buf[:2] != b"\r\n":
             raise policy_mod.PolicyDenied("malformed chunk terminator")
-        del buf[:size + 2]
+        del buf[:2]
 
 
 # ---------------------------------------------------------------------------

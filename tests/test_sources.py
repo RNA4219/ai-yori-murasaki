@@ -76,6 +76,33 @@ def test_empty_oversized_and_corrupt_documents(sources):
         sources.get(first["document_id"])
 
 
+@pytest.mark.parametrize("directory", [".obsidian", ".OBSIDIAN", "nested/.ObSiDiAn"])
+def test_cli_obsidian_settings_are_excluded(sources, tmp_path, capsys, directory):
+    vault = tmp_path / "vault"
+    note = Path(directory, "sample.md")
+    (vault / note.parent).mkdir(parents=True)
+    (vault / note).write_text("Synthetic settings note", encoding="utf-8")
+    prefix = ["--workspace", str(sources.store.workspace), "--trusted-root", str(sources.store.trusted_root)]
+    assert cli.main(prefix + ["sources", "import-obsidian", "--vault", str(vault), "--note", str(note)]) == 2
+    assert json.loads(capsys.readouterr().out)["reason_code"] == "input_invalid"
+    assert cli.main(prefix + ["sources", "list"]) == 0
+    assert json.loads(capsys.readouterr().out)["data"]["sources"] == []
+
+
+def test_cli_obsidian_note_with_similar_folder_name(sources, tmp_path, capsys):
+    vault = tmp_path / "vault"
+    note = Path(".Obsidian-notes", "sample.md")
+    (vault / note.parent).mkdir(parents=True)
+    (vault / note).write_text("Synthetic reference note", encoding="utf-8")
+    prefix = ["--workspace", str(sources.store.workspace), "--trusted-root", str(sources.store.trusted_root)]
+    assert cli.main(prefix + ["sources", "import-obsidian", "--vault", str(vault), "--note", str(note)]) == 0
+    doc_id = json.loads(capsys.readouterr().out)["data"]["document_id"]
+    assert cli.main(prefix + ["sources", "show", "--document-id", doc_id]) == 0
+    doc = json.loads(capsys.readouterr().out)["data"]["source"]
+    assert doc["body"] == "Synthetic reference note"
+    assert doc["source_url"].endswith("file=.Obsidian-notes%2Fsample")
+
+
 def test_http_source_projection_and_blind_boundary(sources):
     first = add(sources, body="<script>window.bad=true</script>")
     runtime = Runtime(sources.store)

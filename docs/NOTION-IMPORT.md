@@ -74,7 +74,7 @@ aym assess drift --campaign $campaign
 
 ## 一致した根拠を開く
 
-同じワークスペースで `aym monitor serve --bind 127.0.0.1:8765` を実行し、ブラウザーで `http://127.0.0.1:8765/decision?campaign=<案件ID>` を開きます。索引の更新を求められたら `aym monitor index` を実行してください。
+同じワークスペースで[モニターの TLS 証明書と鍵](PRODUCT-GUIDE.md#モニターのhttps起動)を設定して `aym monitor serve --bind 127.0.0.1:8765` を実行し、ブラウザーで `https://127.0.0.1:8765/decision?campaign=<案件ID>` を開きます。索引の更新を求められたら `aym monitor index` を実行してください。
 
 「課題の一覧と実物のずれ」で「ずれの候補を見る」を開き、「通知設定の見直し」を選びます。この例では、課題の概要に書かれた `node-27` と資源 ID が一致します。検知 `alert-02` が `active` のため、分類は「一覧は解決、検知が残る」（`closed_active`）です。課題の最終更新より観測が古いことも表示されます。
 

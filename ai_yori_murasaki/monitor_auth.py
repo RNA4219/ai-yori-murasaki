@@ -45,7 +45,7 @@ def login_path(target: str) -> str:
 
 
 def read_cookie(header: str, name: str) -> str | None:
-    # 担当ポートの Cookie 一つだけを読む。他のローカルサービスと共存できる。
+    # Cookie はポート間で共有される。受信した中からこのモニターの名前を一つだけ読む。
     values = []
     for item in header.split(";"):
         key, sep, value = item.strip().partition("=")
@@ -57,8 +57,8 @@ def read_cookie(header: str, name: str) -> str | None:
 
 
 def cookie(name: str, value: str, path: str, max_age: int) -> str:
-    # 固定の HTTP loopback コールバック。Domain を付けず、このホストだけに限定する。
-    return f"{name}={value}; Path={path}; Max-Age={max_age}; HttpOnly; SameSite=Lax"
+    # Google からのトップレベル遷移を許す。Domain を付けず、このホストだけに限定する。
+    return f"{name}={value}; Path={path}; Max-Age={max_age}; Secure; HttpOnly; SameSite=Lax"
 
 
 class MonitorAuth:

@@ -8,6 +8,7 @@ from ai_yori_murasaki.cli import main as run_cli
 from ai_yori_murasaki.jsonio import canonical, digest
 from ai_yori_murasaki.runtime import Runtime
 from ai_yori_murasaki.server import create_server
+from ai_yori_murasaki.sources import Sources
 from ai_yori_murasaki.storage import Store
 
 
@@ -20,6 +21,11 @@ def seed_verification_history(runtime: Runtime, campaign_id: str) -> None:
 
     run = runtime.start_run(campaign_id, "verify", 1, "journal-browser")
     run_id = run["run_id"]
+    reference = Sources(store).add(provider="github", source_url="https://example.test/notes/1",
+                                   title="画面試験の参考資料", body="合成資料の本文", links=[])
+    runtime.record_event(run_id, "state_captured", "orchestrator", evidence_refs=(reference["ref"],),
+                         finding={"finding_id": "browser-note", "severity": "info", "title": "合成イベントの件名"},
+                         extensions={"record_type": "agent_turn", "reason": "合成イベントの理由"})
     runtime.finish_run(run_id, "completed")
     runtime.seal_run(campaign_id, run_id)
     store.seal_checkpoint(campaign_id, run_id, "browser-test")

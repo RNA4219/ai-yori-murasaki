@@ -14,7 +14,7 @@ Obsidianのノート、Notionのページ、GitHub Issueを、操作者用の参
 
 ## Obsidianのノート
 
-通常の起動と同じ `AYM_WORKSPACE` と `AYM_TRUSTED_ROOT` を設定して実行する。取り込みだけならDockerやLLMは不要。
+通常の起動と同じ `AYM_WORKSPACE` と `AYM_TRUSTED_ROOT` を設定する。取り込んだ資料をブラウザーで開くには[モニターの TLS 証明書と鍵](PRODUCT-GUIDE.md#モニターのhttps起動)も設定する。取り込みだけならDockerやLLMは不要。
 
 ```powershell
 aym sources import-obsidian --vault 'C:/Notes' --note '調査/認可.md' --link 'https://example.com/spec#authorization'
@@ -23,7 +23,7 @@ aym sources show --document-id '<listが返したdocument_id>'
 aym monitor serve --bind 127.0.0.1:8765
 ```
 
-`--vault` は絶対パス、`--note` はvault内の相対Markdownパスを指定する。UTF-8の本文を読み、`obsidian://open?vault=...&file=...` を出典にする。同名vaultが複数ある場合は、Obsidian側で目的のvaultが開くかを確認する。vault外参照、`.obsidian`、symlink／reparse pointは拒否する。
+`--vault` は絶対パス、`--note` はvault内の相対Markdownパスを指定する。UTF-8の本文を読み、`obsidian://open?vault=...&file=...` を出典にする。同名vaultが複数ある場合は、Obsidian側で目的のvaultが開くかを確認する。vault 外の参照、symlink／reparse point、設定フォルダー内のノートは拒否する。相対パスの各階層でフォルダー名と `.obsidian` の完全一致を大文字・小文字の区別なく判定する。該当した場合、CLI は終了コード2と `input_invalid` を返す。`.Obsidian-notes` のように名前が異なる通常のノートフォルダーも利用できる。
 
 ## 保存済みのテキスト
 

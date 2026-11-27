@@ -2,8 +2,9 @@
   "id": "docs/SOURCES.md",
   "role": "doc",
   "public_api": [],
-  "summary": "Obsidian、Notion、GitHub Issueの手動ファイル・MCP読取手順。出典と関連リンク、認証設定、許可ツール、保存履歴、参考情報の境界、OAuth画面と実サービス検証の未実施を定める。",
+  "summary": "参考資料の取込手順。Obsidian の設定フォルダーの除外、MCP の認可、HTTPS モニターでの閲覧と Blue の公開範囲を記す。",
   "deps_out": [
+    "docs/PRODUCT-GUIDE.md",
     "docs/acceptance/AC-20261109-02.md",
     "docs/evidence/sources-light-ui-20261109/README.md"
   ],
@@ -15,6 +16,7 @@
     "docs/acceptance/AC-20261109-02.md",
     "docs/evidence/sources-light-ui-20261109/README.md",
     "docs/requirements/API-CONTRACTS.md",
+    "docs/tasks/TASK.monitor-https-11-27-2026.md",
     "docs/tasks/TASK.sources-light-ui-11-09-2026.md"
   ],
   "risks": [
@@ -24,13 +26,13 @@
     "tests/test_sources.py",
     "tests/test_v1_server.py"
   ],
-  "source_sha256": "a97bba92bd95e67d8d4d233a05923d5a8a97691c02fd76c7dad124b55f233e10",
-  "generated_at": "00030",
+  "source_sha256": "907d860116b5bc3da03ab9c960ab37dffd903a55467b85aba3b107233dc37953",
+  "generated_at": "00070",
   "review": {
-    "reviewed_at": "2026-11-09T05:32:05.049340+00:00",
+    "reviewed_at": "2026-11-27T10:24:52+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "a97bba92bd95e67d8d4d233a05923d5a8a97691c02fd76c7dad124b55f233e10",
-    "summary_sha256": "d65eb5d3cb2330b98512485b386e994f82f49dcb31a530fdda156dacd4e8441f",
-    "scope": "今回の原文・要約・参照を照合。MCPローカル試験、実サービス未検証、画面実測、参考情報と判定証拠の分離を確認。"
+    "source_sha256": "907d860116b5bc3da03ab9c960ab37dffd903a55467b85aba3b107233dc37953",
+    "summary_sha256": "a72e490aed204f85f0571bd70c78ae3f67b505aaa89bc862e7c04f89040cbfde",
+    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
   }
 }

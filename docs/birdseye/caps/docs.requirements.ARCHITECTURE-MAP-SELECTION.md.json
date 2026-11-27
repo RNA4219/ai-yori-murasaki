@@ -12,18 +12,19 @@
     "docs/tasks/TASK.architecture-switch-11-27-2026.md"
   ],
   "deps_out": [
+    "docs/PRODUCT-GUIDE.md",
     "docs/acceptance/AC-20261127-02.md",
     "docs/requirements/API-CONTRACTS.md",
     "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md"
   ],
-  "summary": "R-086 と T58 の構成図切替要件。合成した図の配置・選択・再読込、API の照会例、原案番号との対応を記す。",
-  "source_sha256": "7af13c9cbd5aad582af76df7041576c0e21003e1aa21435d93ec8e1e38e85e70",
-  "generated_at": "00062",
+  "summary": "R-086・T58 の構成図切替。ワークスペースの合成図を配置し、HTTPS のモニター・API で選択、再読込する手順を示す。",
+  "source_sha256": "504feeb4aa98c258ac0a4cc1bf3fd0c2ac776ece6dbbf3ebb8dfbe7ab223edef",
+  "generated_at": "00070",
   "review": {
-    "reviewed_at": "2026-11-27T04:34:25+00:00",
+    "reviewed_at": "2026-11-27T10:24:52+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "7af13c9cbd5aad582af76df7041576c0e21003e1aa21435d93ec8e1e38e85e70",
-    "summary_sha256": "47bd3b34b48c808fabd750c754edc3121d585fc388b7d1b423cd1e86e49a6402",
-    "scope": "構成図の等倍表示・要素の検索・種類の編集に関する本文、要約、参照を照合。"
+    "source_sha256": "504feeb4aa98c258ac0a4cc1bf3fd0c2ac776ece6dbbf3ebb8dfbe7ab223edef",
+    "summary_sha256": "8282d0644c5cc2a2080686aecea69beb6430ec69d457bf934be98e9836fb991f",
+    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
   }
 }

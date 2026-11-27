@@ -446,14 +446,18 @@ class Store:
     def read_events(self, run_id: str) -> list[dict]:
         return self._read_events_raw(run_id)
 
-    def read_verified_events(self, run_id: str) -> list[dict]:
+    def read_verified_events(self, run_id: str, *, campaign_id: str | None = None,
+                             allow_missing: bool = False) -> list[dict]:
         """検証に使ったイベント列をそのまま読み取り側に渡す。"""
         from .monitor_validation import validate_monitor_event
 
         events = self.read_events(run_id)
         if not events:
+            # 初回の記録前は台帳ファイル自体がまだ作られていない。
+            if allow_missing and not self._ledger_path(run_id).exists():
+                return []
             raise DataError("empty ledger")
-        self._inspect_chain(run_id, events, validate_event=validate_monitor_event)
+        self._inspect_chain(run_id, events, campaign_id=campaign_id, validate_event=validate_monitor_event)
         return events
 
     def _inspect_chain(self, run_id: str, events: list[dict], *,

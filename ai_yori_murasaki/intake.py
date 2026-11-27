@@ -1,22 +1,24 @@
 """初期監査から独立した案件受付とモニター向けの読み取り。"""
-from contextlib import closing
 from hashlib import sha256
 from pathlib import Path
 import re
-import sqlite3
 
 from .jsonio import DataError
-from .storage import ID_RE, Store, _safe_join, sanitize
+from .storage import ID_RE, Store, _assert_no_ancestor_reparse, _is_reparse, sanitize
 
 PAGE_SIZE = 50
 RECEIPT_ID = re.compile(r"int-[0-9a-f]{32}")
 
 
 def _path(store: Store) -> Path:
+    # 台帳と補助ファイルは固定名の直下の子だけ。初回の並行作成で親の有無が
+    # 変わるため、Windows の非実在パスに対する resolve() の表記には依存しない。
+    _assert_no_ancestor_reparse(store.workspace)
     filename = "case-intake.sqlite3"
-    for suffix in ("-journal", "-wal", "-shm"):
-        _safe_join(store.workspace, filename + suffix)
-    return _safe_join(store.workspace, filename)
+    for suffix in ("", "-journal", "-wal", "-shm"):
+        if _is_reparse(store.workspace / (filename + suffix)):
+            raise DataError("受付台帳のパスにリンクは指定できません")
+    return store.workspace / filename
 
 
 def _valid_text(value: str, limit: int) -> bool:
@@ -76,32 +78,16 @@ def search(store: Store, query: str) -> dict:
     if not path.exists():
         return page
 
-    params = []
-    if RECEIPT_ID.fullmatch(query):
-        clause = "WHERE receipts.receipt_id = ?"
-        params.append(query)
-    elif query:
-        prefix = query.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
-        clause = "WHERE name LIKE ? ESCAPE '\\' ORDER BY name COLLATE NOCASE, receipts.receipt_id"
-        params.append(prefix + "%")
-    else:
-        clause = "ORDER BY receipts.rowid DESC"
-    with closing(sqlite3.connect(path.as_uri() + "?mode=ro", uri=True)) as db:
-        db.execute("PRAGMA trusted_schema = OFF")
-        db.execute("BEGIN")
-        db.row_factory = sqlite3.Row
-        # 初回連結前の台帳を、閲覧だけで移行しない。
-        has_links = db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='receipt_campaigns'").fetchone()
-        sql = "SELECT receipts.receipt_id, name, registered_at"
-        if has_links:
-            sql += ", campaign_id FROM receipts LEFT JOIN receipt_campaigns USING(receipt_id)"
-        else:
-            sql += " FROM receipts"
-        rows = db.execute(f"{sql} {clause} LIMIT ?", (*params, PAGE_SIZE + 1)).fetchall()
-    for row in rows[:PAGE_SIZE]:
-        record = dict(row)
-        if record.get("campaign_id") is None:
-            record.pop("campaign_id", None)
+    from . import _intake_index
+
+    try:
+        rows = _intake_index.search(path, query, bool(RECEIPT_ID.fullmatch(query)), PAGE_SIZE + 1)
+    except OSError as exc:
+        raise DataError("受付台帳を読み取れません", "intake_unavailable") from exc
+    for receipt_id, name, registered_at, campaign_id in rows[:PAGE_SIZE]:
+        record = {"receipt_id": receipt_id, "name": name, "registered_at": registered_at}
+        if campaign_id is not None:
+            record["campaign_id"] = campaign_id
         page["receipts"].append(sanitize(record, store.secrets))
     page["has_more"] = len(rows) > PAGE_SIZE
     return page

@@ -2,32 +2,40 @@
   "id": "docs/PRODUCT-GUIDE.md",
   "role": "doc",
   "public_api": [],
-  "summary": "製品の運用手順。Wazuh 接続確認用 CA の指定、チェックポイントの発行条件、検証履歴で過去の結果と対象を読む方法を記す。",
+  "summary": "製品操作ガイド。ローカルモニターの HTTPS 証明書と鍵、明示的な非 SSO HTTP 起動、Wazuh と証跡、ラボや検証の手順を記す。",
   "deps_out": [
     "README.md",
     "docs/CONTRACTS.md",
     "docs/acceptance/AC-20261106-06.md",
-    "docs/requirements/API-CONTRACTS.md"
+    "docs/requirements/API-CONTRACTS.md",
+    "docs/requirements/GOOGLE-MONITOR-SSO.md"
   ],
   "deps_in": [
     "BLUEPRINT.md",
     "HUB.codex.md",
     "README.md",
     "RUNBOOK.md",
+    "docs/NOTION-IMPORT.md",
     "docs/RSI.md",
+    "docs/SOURCES.md",
     "docs/acceptance/AC-20261123-03.md",
     "docs/acceptance/AC-20261127-06.md",
+    "docs/acceptance/AC-20261127-07.md",
+    "docs/requirements/API-CONTRACTS.md",
+    "docs/requirements/ARCHITECTURE-MAP-SELECTION.md",
+    "docs/requirements/GOOGLE-MONITOR-SSO.md",
+    "docs/tasks/TASK.monitor-https-11-27-2026.md",
     "docs/tasks/TASK.verification-evidence-11-27-2026.md"
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "32b6d1aace05268579a0007c715b57a006af9fb70cf61d0ba77f6992c5a3924d",
-  "generated_at": "00068",
+  "source_sha256": "cf44c9674ba40333912cc73d3af6cd05f7cdda1fe038f783c6399e82e894ad95",
+  "generated_at": "00070",
   "review": {
-    "reviewed_at": "2026-11-27T09:34:31+00:00",
+    "reviewed_at": "2026-11-27T10:24:52+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "32b6d1aace05268579a0007c715b57a006af9fb70cf61d0ba77f6992c5a3924d",
-    "summary_sha256": "67c6da56ccd7f9776d5614c8c213c6b3caadbd8497a46e47cba25f683833da94",
-    "scope": "Wazuh の TLS、封印と検証履歴の契約・受入条件の原文と要約を照合。"
+    "source_sha256": "cf44c9674ba40333912cc73d3af6cd05f7cdda1fe038f783c6399e82e894ad95",
+    "summary_sha256": "eddbb25157bb181962d93ebf9da78c695b3597299380bd6c3ee411e11a78f692",
+    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
   }
 }

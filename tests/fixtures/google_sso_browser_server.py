@@ -21,9 +21,10 @@ from urllib.parse import parse_qsl, urlencode, urlsplit
 
 from ai_yori_murasaki.google_sso import GoogleSSO
 from ai_yori_murasaki.runtime import Runtime
-from ai_yori_murasaki.server import create_server
+from ai_yori_murasaki.server import configured_server
 from ai_yori_murasaki.storage import Store
 from tests.fixtures.google_oidc_fixture import SyntheticGoogleKey
+from tests.fixtures.loopback_tls import LoopbackTLS
 
 
 CLIENT = "browser-fixture"
@@ -143,9 +144,11 @@ def main():
         workspace, trusted = root / "workspace", root / "trusted"
         workspace.mkdir()
         trusted.mkdir()
+        tls = LoopbackTLS(root)
         provider = stack.enter_context(ThreadingHTTPServer(("127.0.0.1", 0), ChoiceHandler))
+        provider.socket = tls.server_context().wrap_socket(provider.socket, server_side=True)
         # localhost と 127.0.0.1 を別のサイトとしてブラウザで往復する。
-        origin = f"http://localhost:{provider.server_port}"
+        origin = f"https://localhost:{provider.server_port}"
         with patch.dict(os.environ, AYM_GOOGLE_CLIENT_ID=CLIENT, AYM_GOOGLE_CLIENT_SECRET=secrets.token_urlsafe()):
             os.environ.pop("AYM_GOOGLE_ALLOWED_SUBJECTS", None)
             os.environ.pop("AYM_GOOGLE_ALLOWED_EMAIL_DOMAINS", None)
@@ -153,14 +156,16 @@ def main():
                 os.environ["AYM_GOOGLE_ALLOWED_SUBJECTS"] = "fixture-member"
             if args.policy in ("domain", "both"):
                 os.environ["AYM_GOOGLE_ALLOWED_EMAIL_DOMAINS"] = DOMAIN
-            provider.google = LocalGoogle.from_env()
+            with patch("ai_yori_murasaki.google_sso.GoogleSSO", LocalGoogle):
+                monitor = stack.enter_context(configured_server(
+                    Runtime(Store(workspace, trusted)), "127.0.0.1:0", cert=tls.cert, key=tls.key, google_sso=True))
+        provider.google = monitor.auth.provider
         provider.google.origin = origin
-        monitor = stack.enter_context(create_server(Runtime(Store(workspace, trusted)), "127.0.0.1:0",
-                                                    google_sso=provider.google))
         for server in (provider, monitor):
             Thread(target=server.serve_forever, daemon=True).start()
             stack.callback(server.shutdown)
-        print(json.dumps({"monitor": f"http://127.0.0.1:{monitor.server_port}", "provider": origin}), flush=True)
+        print(json.dumps({"monitor": f"https://127.0.0.1:{monitor.server_port}", "provider": origin,
+                          "spkiPin": tls.spki_pin, "caFile": str(tls.ca)}), flush=True)
         if args.stop_on_eof:
             sys.stdin.buffer.read()
         else:

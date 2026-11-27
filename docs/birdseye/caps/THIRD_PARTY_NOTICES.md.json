@@ -2,18 +2,18 @@
   "id": "THIRD_PARTY_NOTICES.md",
   "role": "doc",
   "public_api": [],
-  "summary": "配布物と依存ライブラリの帰属。任意の Google 認証の署名検証、構成図の YAML 読込、受付の Rust 拡張と SQLite のライセンスを示す。",
+  "summary": "配布物・依存ライブラリの帰属。受付台帳の Rust 拡張で使用する PyO3・SQLite、Google 認証、構成図ライブラリのライセンスを示す。",
   "deps_out": [],
   "deps_in": [],
   "risks": [],
   "tests": [],
-  "source_sha256": "0ff14f1c5c1abee53f3abf5d3d51489951ee24906732c117799cfa4633dcab7f",
-  "generated_at": "00064",
+  "source_sha256": "48380049a6d48c1ca8b2b451d18e2ea3152d5b1669467b13d0e6f679b1802621",
+  "generated_at": "00070",
   "review": {
-    "reviewed_at": "2026-11-27T08:44:47+00:00",
+    "reviewed_at": "2026-11-27T10:24:52+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "0ff14f1c5c1abee53f3abf5d3d51489951ee24906732c117799cfa4633dcab7f",
-    "summary_sha256": "1987595b34b4957442a28c8825f9ef1ed8b302df252bc3b3e656588d74058e0f",
-    "scope": "モニターの Google ログインに関わる手順・検収・参照先を照合。"
+    "source_sha256": "48380049a6d48c1ca8b2b451d18e2ea3152d5b1669467b13d0e6f679b1802621",
+    "summary_sha256": "7ed45c327c133b591808d1375be921f10248b3bc972fb1106406f5274cd1d580",
+    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
   }
 }

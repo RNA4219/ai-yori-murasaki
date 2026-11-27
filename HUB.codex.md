@@ -40,6 +40,7 @@ template_version: 1.0.0
 | ワークスペース内の構成図を切り替える | [図の配置と選択](docs/requirements/ARCHITECTURE-MAP-SELECTION.md) | [画面と API の検収](docs/acceptance/AC-20261127-02.md) |
 | Google ログインを許可するメールドメインを設定する | [個別・ドメイン・併用の設定例](docs/requirements/GOOGLE-MONITOR-SSO.md) | [許可条件の技術検収](docs/acceptance/AC-20261127-05.md) |
 | Wazuh の CA、チェックポイントの所属、検証時の台帳末尾を確認する | [製品操作ガイド](docs/PRODUCT-GUIDE.md) | [TLS・封印・検証履歴の検収](docs/acceptance/AC-20261127-06.md) |
+| モニターの HTTPS 起動と Google ログインの戻り先を設定する | [証明書と鍵の指定](docs/PRODUCT-GUIDE.md#モニターのhttps起動) | [HTTPS とセッションの検収](docs/acceptance/AC-20261127-07.md) |
 | モニターの4画面で Google ログインを必須にする | [クライアントの設定と利用者の登録](docs/requirements/GOOGLE-MONITOR-SSO.md) | [ログインとセッションの技術検収](docs/acceptance/AC-20261127-04.md) |
 | 大きな構成図から要素を探し、種類を追加する | [表示・検索と独自の種類](docs/requirements/ARCHITECTURE-READABILITY.md) | [選択と保存の検収](docs/acceptance/AC-20261127-03.md) |
 | 文書索引と過去の検収状態を確認する | [整合性のTask](docs/tasks/TASK.document-consistency-11-23-2026.md) | [形式・鮮度の検収](docs/acceptance/AC-20261123-03.md) |

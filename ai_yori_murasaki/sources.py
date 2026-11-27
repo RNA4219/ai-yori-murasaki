@@ -112,9 +112,11 @@ class Sources:
         vault, note = Path(vault), Path(note)
         if not vault.is_absolute() or note.is_absolute() or ".." in note.parts or note.suffix.lower() != ".md":
             raise DataError("specify an absolute vault and a relative Markdown note")
+        if any(part.casefold() == ".obsidian" for part in note.parts):
+            raise DataError("Obsidian settings directories cannot be imported")
         path = vault / note
         _assert_no_ancestor_reparse(path)
-        if not path.resolve().is_relative_to(vault.resolve()) or ".obsidian" in note.parts:
+        if not path.resolve().is_relative_to(vault.resolve()):
             raise DataError("note outside vault")
         body = read_text(path)
         url = "obsidian://open?vault=" + quote(vault.name, safe="") + "&file=" + quote(note.with_suffix("").as_posix(), safe="")

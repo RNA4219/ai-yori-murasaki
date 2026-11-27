@@ -1,0 +1,30 @@
+{
+  "id": "docs/acceptance/AC-20261127-07.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/INDEX.md",
+    "docs/requirements/GOOGLE-MONITOR-SSO.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.monitor-https-11-27-2026.md"
+  ],
+  "deps_out": [
+    "docs/PRODUCT-GUIDE.md",
+    "docs/requirements/GOOGLE-MONITOR-SSO.md",
+    "docs/tasks/TASK.monitor-https-11-27-2026.md"
+  ],
+  "summary": "T63 の HTTPS 起動・セッションと再診断の技術検収。製品候補の13件合格、Windows 4並行の受付台帳と各種回帰の成績を示す。",
+  "source_sha256": "05a9af147b6c047c73433584cc9c0e0c8baec864f18f0aba5fb39c5d34fb50aa",
+  "generated_at": "00071",
+  "review": {
+    "reviewed_at": "2026-11-27T10:36:39+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "05a9af147b6c047c73433584cc9c0e0c8baec864f18f0aba5fb39c5d34fb50aa",
+    "summary_sha256": "08398567975fc9e108d15f9232439459519840008cba8c2c16321a97ecc193cb",
+    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
+  }
+}

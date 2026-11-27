@@ -12,13 +12,13 @@ next_review_due: 2026-12-27
 
 `aym monitor serve --google-sso` で起動すると、モニター、判断の画面、システム構成図、案件受付の4画面と、同じサーバーのデータ API・配信ファイルにログインが必要になる。通常の `aym monitor serve` は引き続き Google の設定なしで使える。
 
-対象は自分の PC の `127.0.0.1` で使うモニターで、同じホスト上で動かす他の HTTP サービスも信頼できることを前提とする。ブラウザーの Cookie はポートだけでは分離されない。
+SSO は自分の PC の `https://127.0.0.1` で利用する。ブラウザーで信頼できるサーバー証明書（IP SAN に `127.0.0.1` を含む）と対応する PEM 秘密鍵を用意する。同じホスト上の他のサービスも信頼できることが前提になる。ブラウザーの Cookie はポートだけでは分離されない。[証明書の指定方法](../PRODUCT-GUIDE.md#モニターのhttps起動)
 
 ### 1. クライアントと戻り先を登録する
 
 1. モニター用の Python 環境に AYM の任意依存 `sso` を追加する。ソースから導入する場合は、リポジトリ直下で `python -m pip install ".[sso]"` を実行する。
 2. Google Cloud の対象プロジェクトで認証対象のユーザーと同意画面を設定し、種類が「ウェブ アプリケーション」の OAuth クライアントを用意する。
-3. 承認済みのリダイレクト URI に `http://127.0.0.1:8765/auth/google/callback` を登録する。別のポートで使う場合は登録値と起動時の `--bind` のポートを合わせる。ホスト名、スキーム、末尾のスラッシュまで照合される。[Google の OpenID Connect 設定手順](https://developers.google.com/identity/openid-connect/openid-connect#settingup)
+3. 承認済みのリダイレクト URI に `https://127.0.0.1:8765/auth/google/callback` を登録する。以前の HTTP の戻り先を登録している場合は、Google Cloud でこの HTTPS URI に更新してから起動する。別のポートで使う場合は登録値と起動時の `--bind` のポートを合わせる。ホスト名、スキーム、末尾のスラッシュまで照合される。[Google の OpenID Connect 設定手順](https://developers.google.com/identity/openid-connect/openid-connect#settingup)・[リダイレクト URI の登録条件](https://developers.google.com/identity/protocols/oauth2/web-server#uri-validation)
 
 ### 2. 最初の利用者の識別子を確認する
 
@@ -70,23 +70,27 @@ Google Workspace では、Google が署名した ID トークンを検証した�
 許可リストと通常のモニターの `AYM_WORKSPACE`、`AYM_TRUSTED_ROOT` を設定した PowerShell で、クライアントの情報を入力して起動する。[作業用ディレクトリの設定](../../README.md#起動)
 
 ```powershell
+$env:AYM_MONITOR_TLS_CERT = Read-Host 'サーバー証明書 PEM のパス'
+$env:AYM_MONITOR_TLS_KEY = Read-Host '対応する秘密鍵 PEM のパス'
 $env:AYM_GOOGLE_CLIENT_ID = Read-Host 'Google クライアント ID'
 $env:AYM_GOOGLE_CLIENT_SECRET = [System.Net.NetworkCredential]::new('', (Read-Host 'クライアント シークレット' -AsSecureString)).Password
 aym monitor serve --bind 127.0.0.1:8765 --google-sso
 ```
 
-ブラウザーで `http://127.0.0.1:8765/` を開いてログインする。たとえば `/decision?view=blue` から開いた場合、認証後は元の Blue 画面に戻り、その画面に適用される表示制限も維持される。許可リストを変更する場合はモニターを停止し、環境変数を更新してから起動し直す。
+ブラウザーで `https://127.0.0.1:8765/` を開いてログインする。たとえば `/decision?view=blue` から開いた場合、認証後は元の Blue 画面に戻り、その画面に適用される表示制限も維持される。許可リストを変更する場合はモニターを停止し、環境変数を更新してから起動し直す。
 
 ### ログアウトと再試行
 
 4画面の「ログアウト」を押すとモニターのセッションが終了する。ブラウザーの Google アカウントには引き続きログインしているため、再度入る際は選択したアカウントを確認する。Google の同意画面でキャンセルした場合や許可対象外のアカウントを選んだ場合は、モニターのログイン画面からやり直せる。
 
-ログインの開始からコールバックまでは5分以内に完了する。モニターのセッションはログインから最長1時間で、Google の ID トークンが先に失効する場合はその有効期限まで。サーバーを停止するとセッションは消える。
+ログインを開始したブラウザーを確認する Cookie と、認証後のセッション Cookie は `Secure`、`HttpOnly`、`SameSite=Lax` 付きで発行する。ログインの開始からコールバックまでは5分以内に完了する。モニターのセッションはログインから最長1時間で、Google の ID トークンが先に失効する場合はその有効期限まで。サーバーを停止するとセッションは消える。
 
 モニターが要求するスコープは、個別の `sub` のみなら `openid profile`、ドメインを指定した場合は `openid email`。認可コードの交換には PKCE（S256）を使う。開始したブラウザーとコールバックを `state` で照合し、ID トークンの署名、発行元、宛先、有効期限、ログイン要求に対応する `nonce` と設定した許可条件を確認してからセッションを発行する。[CLI・HTTP の契約](API-CONTRACTS.md#21-基本)
 
-## T61　検証範囲
+## T61〜T63　検証範囲
 
 合成アカウントを用意し、CLI から起動したローカルモニターで4画面へのログイン、Blue の表示、ログアウトと期限切れ後の再認証を確認する。実際に Google 側で登録したクライアントと実アカウントでの同意は別の確認項目とする。[技術検収 T61](../acceptance/AC-20261127-04.md)
 
 T62 では個別指定、ドメイン指定、両方の指定での許可と拒否を、署名済みの合成 ID トークンとモニターの画面から確認する。[ドメイン許可の技術検収 T62](../acceptance/AC-20261127-05.md)
+
+T63 は HTTPS の起動条件、認証時の戻り先と Cookie、ログアウトや再認証を確認する。[HTTPS とセッションの技術検収 T63](../acceptance/AC-20261127-07.md)
