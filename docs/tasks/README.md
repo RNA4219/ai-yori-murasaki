@@ -22,7 +22,7 @@ Task、[Acceptance](../acceptance/README.md)、[CHANGELOG](../../CHANGELOG.md)�
 
 | task_id | 作業 | 検収 |
 | --- | --- | --- |
-| 20261127-06 | [Wazuh の接続確認と検証証跡](TASK.verification-evidence-11-27-2026.md) | [AC-20261127-06](../acceptance/AC-20261127-06.md)（検収中） |
+| 20261127-06 | [Wazuh の接続確認と検証証跡](TASK.verification-evidence-11-27-2026.md) | [AC-20261127-06](../acceptance/AC-20261127-06.md)（技術検収合格） |
 | 20261127-05 | [モニターの Google ログインをメールドメインで許可する](TASK.google-sso-email-domains-11-27-2026.md) | [AC-20261127-05](../acceptance/AC-20261127-05.md)（技術検収合格） |
 | 20261127-04 | [ローカルモニターの Google ログイン](TASK.google-monitor-sso-11-27-2026.md) | [AC-20261127-04](../acceptance/AC-20261127-04.md)（技術検収合格） |
 | 20261127-03 | [構成図の可読性と独自の種類](TASK.architecture-readability-11-27-2026.md) | [AC-20261127-03](../acceptance/AC-20261127-03.md)（技術検収合格） |

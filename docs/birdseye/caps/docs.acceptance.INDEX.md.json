@@ -2,7 +2,7 @@
   "id": "docs/acceptance/INDEX.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "技術検収の索引。Wazuh の TLS、所属案件と検証履歴の受入条件、モニターの各機能の Task と結果を引ける。",
+  "summary": "技術検収の索引。Wazuh の TLS、所属案件と履歴の確認結果、モニターの各機能の Task と PR を引ける。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -86,13 +86,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "32949d5b80ef4343cc7ae9fe3471f8d86f9bf6f8de580825880e67cbf731482c",
-  "generated_at": "00068",
+  "source_sha256": "66f42dad0b1821e4c313d5ab84772b3a3b3d4a8ec45fe3091a17a9037f4e2d74",
+  "generated_at": "00069",
   "review": {
-    "reviewed_at": "2026-11-27T09:34:31+00:00",
+    "reviewed_at": "2026-11-27T09:45:38+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "32949d5b80ef4343cc7ae9fe3471f8d86f9bf6f8de580825880e67cbf731482c",
-    "summary_sha256": "d5b17427d27747180e1ce9ed9162eb09d059ea99982cae0023ca61784e3bd281",
-    "scope": "Wazuh の TLS、封印と検証履歴の契約・受入条件の原文と要約を照合。"
+    "source_sha256": "66f42dad0b1821e4c313d5ab84772b3a3b3d4a8ec45fe3091a17a9037f4e2d74",
+    "summary_sha256": "025452628cac250d6a01ebd210d2bcc44ae027db2b255640111de477702592e7",
+    "scope": "Wazuh の TLS、封印、検証履歴の製品コミットと技術検収、未確認事項を照合。"
   }
 }

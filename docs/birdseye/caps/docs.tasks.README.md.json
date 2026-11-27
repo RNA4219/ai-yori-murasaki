@@ -2,7 +2,7 @@
   "id": "docs/tasks/README.md",
   "role": "operations",
   "public_api": [],
-  "summary": "Task の運用規約と索引。Wazuh 接続確認・チェックポイント・履歴、Google ログインなどの作業と対応する技術検収を引ける。",
+  "summary": "Task の運用と索引。Wazuh・封印・履歴の技術検収、Google ログインなどの作業を引ける。",
   "deps_out": [
     "CHANGELOG.md",
     "HUB.codex.md",
@@ -91,13 +91,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "a5ac6d47314c12e3ba0ee2c157a4cff2ba0bc8a804e793d6552e7b754bd3fda9",
-  "generated_at": "00068",
+  "source_sha256": "ceb112f72e28a592d4908f3bd97118797103bc7300b3872441dd5af1ad939481",
+  "generated_at": "00069",
   "review": {
-    "reviewed_at": "2026-11-27T09:34:31+00:00",
+    "reviewed_at": "2026-11-27T09:45:38+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "a5ac6d47314c12e3ba0ee2c157a4cff2ba0bc8a804e793d6552e7b754bd3fda9",
-    "summary_sha256": "e83d41b8ffdf1951e0527f70e401c71ee531a1ebff899de863da6419783d9e96",
-    "scope": "Wazuh の TLS、封印と検証履歴の契約・受入条件の原文と要約を照合。"
+    "source_sha256": "ceb112f72e28a592d4908f3bd97118797103bc7300b3872441dd5af1ad939481",
+    "summary_sha256": "967ca2c463b9958c27a9046546fa9663cb9296b750548c52cbdd9facb71260b1",
+    "scope": "Wazuh の TLS、封印、検証履歴の製品コミットと技術検収、未確認事項を照合。"
   }
 }

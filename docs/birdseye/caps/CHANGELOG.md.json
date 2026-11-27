@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "製品と開発手順の変更履歴。Wazuh の TLS 検証、案件を照合したチェックポイント、検証履歴の対象記録とページ取得の変更を含む。",
+  "summary": "製品変更の記録。Wazuh の TLS、案件を照合したチェックポイント、検証対象を残す履歴とその技術検収結果を含む。",
   "deps_out": [
     "docs/NOTION-IMPORT.md",
     "docs/SOURCES.md",
@@ -107,13 +107,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "538c1f723784a8e4e819703bd6b83faa4de108b1593ef1814679d421ac4d9112",
-  "generated_at": "00068",
+  "source_sha256": "99a12f00eddfae888a9543247fafef5e2b4d29a4b5e32b1f67e65c2f4b1798b1",
+  "generated_at": "00069",
   "review": {
-    "reviewed_at": "2026-11-27T09:34:31+00:00",
+    "reviewed_at": "2026-11-27T09:45:38+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "538c1f723784a8e4e819703bd6b83faa4de108b1593ef1814679d421ac4d9112",
-    "summary_sha256": "7758fc7eacaa310fe6fe2f9751de79398f66c85be660a01b9c596f2c9f66b124",
-    "scope": "Wazuh の TLS、封印と検証履歴の契約・受入条件の原文と要約を照合。"
+    "source_sha256": "99a12f00eddfae888a9543247fafef5e2b4d29a4b5e32b1f67e65c2f4b1798b1",
+    "summary_sha256": "3ce4b4859b21e6c0b54862aa66f88722466e039302b1012d0fb2a323869fedf2",
+    "scope": "Wazuh の TLS、封印、検証履歴の製品コミットと技術検収、未確認事項を照合。"
   }
 }
