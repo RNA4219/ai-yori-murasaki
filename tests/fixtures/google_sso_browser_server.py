@@ -1,18 +1,22 @@
 """ブラウザ検収用の AYM と、別サイトの合成 Google ログイン画面を起動する。"""
 from __future__ import annotations
 
+import argparse
 from base64 import urlsafe_b64encode
 from contextlib import ExitStack
+from dataclasses import dataclass
 from hashlib import sha256
 from html import escape
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
+import os
 from pathlib import Path
 import secrets
 import sys
 from tempfile import TemporaryDirectory
 from threading import Event, Thread
 from time import time
+from unittest.mock import patch
 from urllib.parse import parse_qsl, urlencode, urlsplit
 
 from ai_yori_murasaki.google_sso import GoogleSSO
@@ -23,23 +27,41 @@ from tests.fixtures.google_oidc_fixture import SyntheticGoogleKey
 
 
 CLIENT = "browser-fixture"
-CHOICES = {"allow": "許可した利用者", "deny": "未許可の利用者", "cancel": "キャンセル", "unavailable": "一時エラー"}
+DOMAIN = "studio.example"
+
+
+@dataclass(frozen=True)
+class Account:
+    label: str
+    subject: str
+    domain: str
+    verified: bool = True
+
+
+ACCOUNTS = {
+    "allow": Account("許可した利用者", "fixture-member", DOMAIN),
+    "deny": Account("未許可の利用者", "fixture-guest", "other.example"),
+    "domain-only": Account("ドメインのみ一致", "fixture-guest", DOMAIN),
+    "subject-only": Account("利用者IDのみ一致", "fixture-member", "other.example"),
+    "unverified": Account("未確認のメール", "fixture-member", DOMAIN, False),
+}
+CHOICES = {key: account.label for key, account in ACCOUNTS.items()}
+CHOICES.update({"cancel": "キャンセル", "unavailable": "一時エラー"})
 
 
 class LocalGoogle(GoogleSSO):
-    def __init__(self, origin: str):
-        self.origin = origin
+    def __init__(self, client_id, client_secret, allowed_subjects, *, allowed_email_domains=()):
         self.key = SyntheticGoogleKey()
         self.attempts = {}
         self.codes = {}
-        super().__init__(CLIENT, secrets.token_urlsafe(), ["fixture-member"], request_json=self.reply)
+        super().__init__(client_id, client_secret, allowed_subjects, allowed_email_domains=allowed_email_domains,
+                         request_json=self.reply)
 
     def begin(self, port: int, return_to: str = "/") -> tuple[str, str]:
         url, correlation = super().begin(port, return_to)
         query = urlsplit(url).query
         params = dict(parse_qsl(query))
         assert urlsplit(url).hostname == "accounts.google.com"
-        assert set(params["scope"].split()) == {"openid", "profile"}
         self.attempts[params["state"]] = params
         return self.origin + "/choose?" + query, correlation
 
@@ -66,10 +88,14 @@ class LocalGoogle(GoogleSSO):
         assert challenge.decode("ascii") == params["code_challenge"]
         assert token_request["redirect_uri"] == params["redirect_uri"] and token_request["client_id"] == CLIENT
         now = int(time())
-        return {"id_token": self.key.sign({
+        account = ACCOUNTS[choice]
+        claims = {
             "iss": "https://accounts.google.com", "aud": CLIENT, "iat": now, "exp": now + 600,
-            "nonce": params["nonce"], "sub": "fixture-member" if choice == "allow" else "fixture-guest",
-        })}
+            "nonce": params["nonce"], "sub": account.subject,
+        }
+        if "email" in params["scope"].split():
+            claims.update(email="member@" + account.domain, hd=account.domain, email_verified=account.verified)
+        return {"id_token": self.key.sign(claims)}
 
 
 class ChoiceHandler(BaseHTTPRequestHandler):
@@ -108,6 +134,10 @@ class ChoiceHandler(BaseHTTPRequestHandler):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--policy", choices=("subject", "domain", "both"), default="subject")
+    parser.add_argument("--stop-on-eof", action="store_true")
+    args = parser.parse_args()
     with ExitStack() as stack:
         root = Path(stack.enter_context(TemporaryDirectory(prefix="aym-sso-browser-")))
         workspace, trusted = root / "workspace", root / "trusted"
@@ -116,14 +146,22 @@ def main():
         provider = stack.enter_context(ThreadingHTTPServer(("127.0.0.1", 0), ChoiceHandler))
         # localhost と 127.0.0.1 を別のサイトとしてブラウザで往復する。
         origin = f"http://localhost:{provider.server_port}"
-        provider.google = LocalGoogle(origin)
+        with patch.dict(os.environ, AYM_GOOGLE_CLIENT_ID=CLIENT, AYM_GOOGLE_CLIENT_SECRET=secrets.token_urlsafe()):
+            os.environ.pop("AYM_GOOGLE_ALLOWED_SUBJECTS", None)
+            os.environ.pop("AYM_GOOGLE_ALLOWED_EMAIL_DOMAINS", None)
+            if args.policy in ("subject", "both"):
+                os.environ["AYM_GOOGLE_ALLOWED_SUBJECTS"] = "fixture-member"
+            if args.policy in ("domain", "both"):
+                os.environ["AYM_GOOGLE_ALLOWED_EMAIL_DOMAINS"] = DOMAIN
+            provider.google = LocalGoogle.from_env()
+        provider.google.origin = origin
         monitor = stack.enter_context(create_server(Runtime(Store(workspace, trusted)), "127.0.0.1:0",
                                                     google_sso=provider.google))
         for server in (provider, monitor):
             Thread(target=server.serve_forever, daemon=True).start()
             stack.callback(server.shutdown)
         print(json.dumps({"monitor": f"http://127.0.0.1:{monitor.server_port}", "provider": origin}), flush=True)
-        if "--stop-on-eof" in sys.argv:
+        if args.stop_on_eof:
             sys.stdin.buffer.read()
         else:
             try:

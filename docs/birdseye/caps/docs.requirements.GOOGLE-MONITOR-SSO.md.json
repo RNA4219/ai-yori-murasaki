@@ -8,22 +8,25 @@
     "HUB.codex.md",
     "README.md",
     "docs/acceptance/AC-20261127-04.md",
+    "docs/acceptance/AC-20261127-05.md",
     "docs/requirements/API-CONTRACTS.md",
-    "docs/tasks/TASK.google-monitor-sso-11-27-2026.md"
+    "docs/tasks/TASK.google-monitor-sso-11-27-2026.md",
+    "docs/tasks/TASK.google-sso-email-domains-11-27-2026.md"
   ],
   "deps_out": [
     "README.md",
     "docs/acceptance/AC-20261127-04.md",
+    "docs/acceptance/AC-20261127-05.md",
     "docs/requirements/API-CONTRACTS.md"
   ],
-  "summary": "R-089 の利用者向け手順。ループバックの戻り先・許可する Google sub の設定、初回ログイン、Blue への復帰、期限とログアウトを説明する。",
-  "source_sha256": "79a9e5f411454577483707f7b7d63c1b790fc6a94fc146761f02727ac86d5a86",
-  "generated_at": "00064",
+  "summary": "R-089・R-090 の利用手順。Google のクライアント登録、個別 sub・メールドメインの設定例と併用条件、Blue への復帰、セッション期限を説明する。",
+  "source_sha256": "512e0a91ca693d8475d6d7f4168b8190a6e0ef082b263b62b6be27be2637fb03",
+  "generated_at": "00066",
   "review": {
-    "reviewed_at": "2026-11-27T08:44:47+00:00",
+    "reviewed_at": "2026-11-27T09:09:00+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "79a9e5f411454577483707f7b7d63c1b790fc6a94fc146761f02727ac86d5a86",
-    "summary_sha256": "449689e236919e795d2a532cf2dc3719762a4c074e45f6a5b93173bb3702388c",
-    "scope": "モニターの Google ログインに関わる手順・検収・参照先を照合。"
+    "source_sha256": "512e0a91ca693d8475d6d7f4168b8190a6e0ef082b263b62b6be27be2637fb03",
+    "summary_sha256": "73e40acaeb597141e7f9fd4167baceb4cecdfb947e07434d656edebefeff4e3f",
+    "scope": "Google ログインのドメイン許可について設定・契約・受入条件を照合。"
   }
 }

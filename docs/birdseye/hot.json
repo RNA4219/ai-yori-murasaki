@@ -1,5 +1,5 @@
 {
-  "generated_at": "00065",
+  "generated_at": "00066",
   "index_snapshot": "docs/birdseye/index.json",
   "refresh_command": "RUNBOOK.md#execute と docs/BIRDSEYE.md の PowerShell 手順を参照",
   "curation_notes": "ローカル製品、要件、検収、文書運用の入口。生成世代と原文・要約の内容確認を区別する。",
@@ -7,7 +7,7 @@
     {
       "id": "README.md",
       "role": "overview",
-      "reason": "製品の操作入口。Google ログインを使うモニターの起動と利用者登録、課題の照合、構成図の編集などを案内する。",
+      "reason": "製品の操作入口。モニターの Google ログインで個別アカウントやメールドメインを許可する方法、課題の照合や構成図の編集を案内する。",
       "caps": "docs/birdseye/caps/README.md.json",
       "edges": [
         "BLUEPRINT.md",
@@ -46,12 +46,12 @@
         "docs/tasks/TASK.architecture-map-11-23-2026.md",
         "docs/workflow-adoption.md"
       ],
-      "last_verified_at": "2026-11-27T08:44:47+00:00"
+      "last_verified_at": "2026-11-27T09:09:00+00:00"
     },
     {
       "id": "HUB.codex.md",
       "role": "navigation",
-      "reason": "依頼別の文書ハブ。モニターの Google ログイン、案件判断、構成図などの導入手順と技術検収へ案内する。",
+      "reason": "依頼別の文書ハブ。モニターの Google ログインとドメインの許可、案件判断、構成図などの導入手順と技術検収へ案内する。",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
       "edges": [
         ".agents/skills/security-audit/SKILL.md",
@@ -97,6 +97,7 @@
         "docs/acceptance/AC-20261127-02.md",
         "docs/acceptance/AC-20261127-03.md",
         "docs/acceptance/AC-20261127-04.md",
+        "docs/acceptance/AC-20261127-05.md",
         "docs/acceptance/INDEX.md",
         "docs/acceptance/README.md",
         "docs/releases/README.md",
@@ -127,7 +128,7 @@
         "docs/workflow-adoption.md",
         "governance/policy.yaml"
       ],
-      "last_verified_at": "2026-11-27T08:44:47+00:00"
+      "last_verified_at": "2026-11-27T09:09:00+00:00"
     },
     {
       "id": "GUARDRAILS.md",
@@ -222,7 +223,7 @@
     {
       "id": "docs/tasks/README.md",
       "role": "guide",
-      "reason": "Task の運用と索引。モニターの Google ログイン、構成図の編集などの作業と対応する技術検収を引ける。",
+      "reason": "Task の運用と索引。モニターの Google ログインとメールドメイン許可、構成図などの作業と技術検収を引ける。",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
       "edges": [
         "CHANGELOG.md",
@@ -260,6 +261,7 @@
         "docs/acceptance/AC-20261127-02.md",
         "docs/acceptance/AC-20261127-03.md",
         "docs/acceptance/AC-20261127-04.md",
+        "docs/acceptance/AC-20261127-05.md",
         "docs/acceptance/README.md",
         "docs/releases/README.md",
         "docs/tasks/TASK.agent-core-11-08-2026.md",
@@ -275,6 +277,7 @@
         "docs/tasks/TASK.frontend-review-11-22-2026.md",
         "docs/tasks/TASK.frontend-workspace-11-24-2026.md",
         "docs/tasks/TASK.google-monitor-sso-11-27-2026.md",
+        "docs/tasks/TASK.google-sso-email-domains-11-27-2026.md",
         "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
         "docs/tasks/TASK.indexed-case-detail-11-23-2026.md",
         "docs/tasks/TASK.llm-remote-11-09-2026.md",
@@ -298,12 +301,12 @@
         "docs/tasks/TASK.version-011-11-08-2026.md",
         "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
       ],
-      "last_verified_at": "2026-11-27T08:51:47+00:00"
+      "last_verified_at": "2026-11-27T09:09:00+00:00"
     },
     {
       "id": "docs/acceptance/INDEX.md",
       "role": "index",
-      "reason": "技術検収の索引。モニターの Google ログインの T61 合格、構成図の編集など各機能の結果、Task と PR を引ける。",
+      "reason": "技術検収の索引。Google ログインの個別・ドメイン指定、構成図など各機能の対象、Task と結果を引ける。",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
       "edges": [
         "docs/acceptance/AC-20261106-01.md",
@@ -338,6 +341,7 @@
         "docs/acceptance/AC-20261127-02.md",
         "docs/acceptance/AC-20261127-03.md",
         "docs/acceptance/AC-20261127-04.md",
+        "docs/acceptance/AC-20261127-05.md",
         "docs/releases/RA-20261126-01.md",
         "docs/releases/RA-20261126-02.md",
         "docs/releases/RA-20261127-01.md",
@@ -355,6 +359,7 @@
         "docs/tasks/TASK.frontend-review-11-22-2026.md",
         "docs/tasks/TASK.frontend-workspace-11-24-2026.md",
         "docs/tasks/TASK.google-monitor-sso-11-27-2026.md",
+        "docs/tasks/TASK.google-sso-email-domains-11-27-2026.md",
         "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
         "docs/tasks/TASK.indexed-case-detail-11-23-2026.md",
         "docs/tasks/TASK.llm-remote-11-09-2026.md",
@@ -375,7 +380,7 @@
         "docs/tasks/TASK.version-011-11-08-2026.md",
         "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
       ],
-      "last_verified_at": "2026-11-27T08:51:47+00:00"
+      "last_verified_at": "2026-11-27T09:09:00+00:00"
     },
     {
       "id": "docs/RSI.md",

@@ -1,0 +1,28 @@
+{
+  "id": "docs/tasks/TASK.google-sso-email-domains-11-27-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261127-05.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261127-05.md",
+    "docs/requirements/GOOGLE-MONITOR-SSO.md"
+  ],
+  "summary": "Google ログインでメールドメインを許可する Task。個別の sub との互換性、組織への所属を確認する根拠と T62 の技術検収を示す。",
+  "source_sha256": "fdb816f69359809892072183133277cb65c9715995edb447d9c815b8733e0d60",
+  "generated_at": "00066",
+  "review": {
+    "reviewed_at": "2026-11-27T09:09:00+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "fdb816f69359809892072183133277cb65c9715995edb447d9c815b8733e0d60",
+    "summary_sha256": "f58ce1b5a104983906f6e1b67c7e00e38d303759269a1d256ab598f67b9413ac",
+    "scope": "Google ログインのドメイン許可について設定・契約・受入条件を照合。"
+  }
+}

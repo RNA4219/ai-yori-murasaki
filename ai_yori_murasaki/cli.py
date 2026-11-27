@@ -167,7 +167,9 @@ def _build_parser() -> _Parser:
     index.add_argument("--full", action="store_true", help="すべての台帳を再検証する")
     m = mon.add_parser("serve")
     m.add_argument("--bind", default="127.0.0.1:8765")
-    m.add_argument("--google-sso", action="store_true", help="Google ログインを必須にする")
+    m.add_argument("--google-sso", action="store_true",
+                   help="Google ログインを必須にする。許可ドメインは AYM_GOOGLE_ALLOWED_EMAIL_DOMAINS で指定。"
+                        "AYM_GOOGLE_ALLOWED_SUBJECTS も指定すると、両方の条件を満たす利用者だけを許可する。")
 
     lab = sub.add_parser("lab").add_subparsers(dest="action", required=True)
     d = lab.add_parser("demo")

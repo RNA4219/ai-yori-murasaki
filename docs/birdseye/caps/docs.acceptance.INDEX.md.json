@@ -2,7 +2,7 @@
   "id": "docs/acceptance/INDEX.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "技術検収の索引。モニターの Google ログインの T61 合格、構成図の編集など各機能の結果、Task と PR を引ける。",
+  "summary": "技術検収の索引。Google ログインの個別・ドメイン指定、構成図など各機能の対象、Task と結果を引ける。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -36,6 +36,7 @@
     "docs/acceptance/AC-20261127-02.md",
     "docs/acceptance/AC-20261127-03.md",
     "docs/acceptance/AC-20261127-04.md",
+    "docs/acceptance/AC-20261127-05.md",
     "docs/releases/RA-20261126-01.md",
     "docs/releases/RA-20261126-02.md",
     "docs/releases/RA-20261127-01.md",
@@ -53,6 +54,7 @@
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
     "docs/tasks/TASK.frontend-workspace-11-24-2026.md",
     "docs/tasks/TASK.google-monitor-sso-11-27-2026.md",
+    "docs/tasks/TASK.google-sso-email-domains-11-27-2026.md",
     "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
     "docs/tasks/TASK.indexed-case-detail-11-23-2026.md",
     "docs/tasks/TASK.llm-remote-11-09-2026.md",
@@ -82,13 +84,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "4b6f0c64a125a41c943ae0a2b9606d0d37f75041e5ba50623acaea82a35021eb",
-  "generated_at": "00065",
+  "source_sha256": "0c7dcd473cfdad4f9e09ad3154f805bd98797f05c55ee5cc10931ad1ad3b0b95",
+  "generated_at": "00066",
   "review": {
-    "reviewed_at": "2026-11-27T08:51:47+00:00",
+    "reviewed_at": "2026-11-27T09:09:00+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "4b6f0c64a125a41c943ae0a2b9606d0d37f75041e5ba50623acaea82a35021eb",
-    "summary_sha256": "9ad0aa7425a118c2e84b4ed3af65e57d318ea7331dd5b543f288847cb9de28a2",
-    "scope": "Google ログインの製品コミット、技術検収と未実施範囲を照合。"
+    "source_sha256": "0c7dcd473cfdad4f9e09ad3154f805bd98797f05c55ee5cc10931ad1ad3b0b95",
+    "summary_sha256": "de412b6a20eb27f81e74b9e819be57d4d5885c955d39a995825018b9e4c38acd",
+    "scope": "Google ログインのドメイン許可について設定・契約・受入条件を照合。"
   }
 }

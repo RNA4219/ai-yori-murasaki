@@ -34,6 +34,22 @@ class ConfigurationTests(unittest.TestCase):
             with self.subTest(invalid=invalid), self.assertRaises(DataError):
                 sso.GoogleSSO("client", "secret", {invalid})
 
+    def test_invalid_domain_policy_fails_even_with_a_valid_subject(self):
+        env = {"AYM_GOOGLE_CLIENT_ID": "client", "AYM_GOOGLE_CLIENT_SECRET": "secret",
+               "AYM_GOOGLE_ALLOWED_SUBJECTS": "allowed"}
+        invalid = ("", " ", ",", "example.test,", "*.example.test", "@example.test", "https://example.test",
+                   "example.test.", "local", "127.0.0.1", "[::1]", ".example.test", "example..test",
+                   "-mail.example", "mail-.example", "a" * 64 + ".test", ("a" * 63 + ".") * 4 + "test",
+                   "two names.test", "K.example", "例.test")
+        for domains in invalid:
+            with (self.subTest(domains=domains), self.assertRaises(DataError) as err,
+                  patch.dict(os.environ, {**env, "AYM_GOOGLE_ALLOWED_EMAIL_DOMAINS": domains}, clear=True)):
+                sso.GoogleSSO.from_env()
+            self.assertEqual(err.exception.reason_code, "google_sso_configuration")
+        for subjects, domains in ((iter(["only-me"]), ()), ((), iter([])), ((), "example.test")):
+            with self.assertRaises(DataError):
+                sso.GoogleSSO("client", "secret", subjects, allowed_email_domains=domains)
+
     def test_fixed_transport_limits_and_redirect_policy(self):
         opener = MagicMock()
         response = opener.open.return_value.__enter__.return_value
@@ -89,13 +105,13 @@ class FederatedLoginTests(unittest.TestCase):
                   "nonce": self.params["nonce"], "iat": now, "exp": now + 7200, **self.claim_changes}
         return {"id_token": self.key.sign(claims), "access_token": "unused"}
 
-    def begin(self, target="/decision?view=blue"):
+    def begin(self, target="/decision?view=blue", *, email_scope=False):
         url, self.cookie = self.backend.begin(8123, target)
         parts = urlsplit(url)
         self.assertEqual((parts.scheme, parts.netloc, parts.path),
                          ("https", "accounts.google.com", "/o/oauth2/v2/auth"))
         self.params = {k: v[0] for k, v in parse_qs(parts.query).items()}
-        self.assertEqual(self.params["scope"], "openid profile")
+        self.assertEqual(self.params["scope"], "openid email" if email_scope else "openid profile")
         self.assertEqual(self.params["prompt"], "select_account")
         self.assertEqual(self.params["redirect_uri"], "http://127.0.0.1:8123/auth/google/callback")
         self.assertEqual(self.params["code_challenge_method"], "S256")
@@ -118,6 +134,64 @@ class FederatedLoginTests(unittest.TestCase):
         self.assertFalse(self.backend.authenticated(token))
         with self.assertRaises(sso.GoogleLoginError):
             self.complete()
+
+    def test_domain_configuration_and_scope(self):
+        env = {"AYM_GOOGLE_CLIENT_ID": "client", "AYM_GOOGLE_CLIENT_SECRET": "test-secret"}
+        for settings, needs_email in (({"AYM_GOOGLE_ALLOWED_SUBJECTS": "one, two"}, False),
+                                     ({"AYM_GOOGLE_ALLOWED_EMAIL_DOMAINS": " Dept.EXAMPLE, other.test "}, True),
+                                     ({"AYM_GOOGLE_ALLOWED_EMAIL_DOMAINS": "other.test",
+                                       "AYM_GOOGLE_ALLOWED_SUBJECTS": "one"}, True)):
+            with self.subTest(settings=settings), patch.dict(os.environ, {**env, **settings}, clear=True):
+                self.backend = sso.GoogleSSO.from_env()
+                self.begin(email_scope=needs_email)
+        for settings in ({}, {"AYM_GOOGLE_ALLOWED_SUBJECTS": "", "AYM_GOOGLE_ALLOWED_EMAIL_DOMAINS": "org.test"}):
+            with (self.subTest(settings=settings), patch.dict(os.environ, {**env, **settings}, clear=True),
+                  self.assertRaises(DataError)):
+                sso.GoogleSSO.from_env()
+
+    def test_signed_workspace_claims_require_matching_verified_address_and_hd(self):
+        self.backend = sso.GoogleSSO("client", "test-secret", allowed_email_domains=["Dept.Example", "org.test"],
+                                     request_json=self.provider)
+        valid = {"sub": "person-51", "email_verified": True, "email": "member@DEPT.Example", "hd": "dept.EXAMPLE"}
+        self.claim_changes = valid
+        self.begin(email_scope=True)
+        token, target = self.complete()
+        self.assertEqual(target, "/decision?view=blue")
+        self.assertTrue(self.backend.authenticated(token))
+        self.assertNotIn("member@", repr(vars(self.backend)))
+        for change in ({"email_verified": False}, {"email_verified": "true"}, {"email_verified": 1},
+                       {"email": None}, {"email": "missing-at"}, {"email": "@dept.example"},
+                       {"email": "extra@part@dept.example"}, {"email": "a@child.dept.example"},
+                       {"email": "a@dеpt.example"}, {"email": "a@gmail.com", "hd": "gmail.com"},
+                       {"hd": "org.test"}, {"hd": ""}, {"hd": None}, {"sub": ""}, {"sub": None}, {"sub": "a b"}):
+            self.claim_changes = {**valid, **change}
+            with self.subTest(change=change):
+                self.begin(email_scope=True)
+                with self.assertRaises(sso.GoogleLoginError) as err:
+                    self.complete()
+                self.assertEqual(err.exception.state, "denied")
+        for missing in ("email", "email_verified", "hd"):
+            self.claim_changes = {key: value for key, value in valid.items() if key != missing}
+            with self.subTest(missing=missing):
+                self.begin(email_scope=True)
+                with self.assertRaises(sso.GoogleLoginError):
+                    self.complete()
+
+    def test_gmail_and_combined_subject_policy(self):
+        self.backend = sso.GoogleSSO("client", "test-secret", {"allowed"}, allowed_email_domains={"gmail.com"},
+                                     request_json=self.provider)
+        valid = {"email": "fixture@GMAIL.com", "email_verified": True}
+        for hd in ({}, {"hd": "GMAIL.COM"}):
+            self.claim_changes = {**valid, **hd}
+            self.begin(email_scope=True)
+            self.assertTrue(self.backend.authenticated(self.complete()[0]))
+        for change in ({"sub": "different"}, {"hd": None}, {"hd": "other.test"}, {"email": "fixture@googlemail.com"},
+                       {"email": "fixture@child.gmail.com"}, {"email_verified": False}):
+            self.claim_changes = {**valid, **change}
+            with self.subTest(change=change):
+                self.begin(email_scope=True)
+                with self.assertRaises(sso.GoogleLoginError):
+                    self.complete()
 
     def test_issued_session_and_pending_request_expire(self):
         self.begin("//fixture.invalid/")
