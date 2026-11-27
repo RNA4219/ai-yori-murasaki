@@ -1,0 +1,29 @@
+{
+  "id": "docs/tasks/TASK.google-monitor-sso-11-27-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261127-04.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    ".agents/skills/security-audit/SKILL.md",
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261127-04.md",
+    "docs/requirements/GOOGLE-MONITOR-SSO.md"
+  ],
+  "summary": "モニター4画面の Google ログインを導入する Task。今回の担当、設計と静的レビューの対象、T61 の検収を結ぶ。",
+  "source_sha256": "312054da4cf03db98c0ddef95b0533d8cf2ac8f52818e75b828b61c02eac1df8",
+  "generated_at": "00064",
+  "review": {
+    "reviewed_at": "2026-11-27T08:44:47+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "312054da4cf03db98c0ddef95b0533d8cf2ac8f52818e75b828b61c02eac1df8",
+    "summary_sha256": "8bca9717cfbeb786115d8c971d51d6a86b62fa84db8ee6f1e530f374ef067bee",
+    "scope": "モニターの Google ログインに関わる手順・検収・参照先を照合。"
+  }
+}

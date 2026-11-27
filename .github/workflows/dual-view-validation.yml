@@ -27,7 +27,7 @@ jobs:
       - name: Install Python test requirements
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -e . pytest
+          python -m pip install -e '.[sso]' pytest
       - name: Full Python regression
         run: python -m pytest -q tests/ decision_view/tests/test_aym_decision_view.py
       - name: All decision-view JavaScript tests
@@ -54,3 +54,4 @@ jobs:
           node tests/browser/workspace.browser.mjs
           node tests/browser/architecture-switch.browser.mjs
           node tests/browser/architecture-readability.browser.mjs
+          node tests/browser/google-sso.browser.mjs

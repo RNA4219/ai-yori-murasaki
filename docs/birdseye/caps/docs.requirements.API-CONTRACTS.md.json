@@ -2,12 +2,13 @@
   "id": "docs/requirements/API-CONTRACTS.md",
   "role": "doc",
   "public_api": [],
-  "summary": "CLIと読み取りAPIの契約。受付や案件情報、ワークスペースの構成図の一覧・個別取得、Blueビューの公開範囲を記す。",
+  "summary": "CLI と HTTP の契約。ループバック監視の起動、任意の Google ログイン、API と配信ファイルの認証、Blue ビューの公開範囲を記す。",
   "deps_out": [
     "docs/PRODUCT-ACCEPTANCE.md",
     "docs/SOURCES.md",
     "docs/acceptance/AC-20261123-07.md",
     "docs/acceptance/AC-20261123-08.md",
+    "docs/requirements/GOOGLE-MONITOR-SSO.md",
     "docs/requirements/QUALITY-INTEGRATION.md",
     "docs/requirements/SPEC-CASE-DECISIONS.md"
   ],
@@ -16,21 +17,23 @@
     "README.md",
     "docs/CONTRACTS.md",
     "docs/acceptance/AC-20261127-02.md",
+    "docs/acceptance/AC-20261127-04.md",
     "docs/requirements/ARCHITECTURE-MAP-SELECTION.md",
     "docs/requirements/COMPACTION-02.md",
+    "docs/requirements/GOOGLE-MONITOR-SSO.md",
     "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md",
     "docs/requirements/REQUIREMENTS-DUAL-VIEW.md",
     "docs/requirements/SPEC-DUAL-VIEW.md"
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "de4a04f3adc27a26115f75d916dd5ffde454c65c1a754986bbd2a9410f68b252",
-  "generated_at": "00059",
+  "source_sha256": "70beb6f1517ec0375e0a5f2fad9eb0224b40bae8b5bd47450b0af12c4781c431",
+  "generated_at": "00064",
   "review": {
-    "reviewed_at": "2026-11-27T00:30:32+00:00",
+    "reviewed_at": "2026-11-27T08:44:47+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "de4a04f3adc27a26115f75d916dd5ffde454c65c1a754986bbd2a9410f68b252",
-    "summary_sha256": "e6f26fb3f82c88d0c3eed7564464a4ed7e709f906b16fd166e7fcd49db5c7ccf",
-    "scope": "構成図切替の本文・要約・参照を照合。"
+    "source_sha256": "70beb6f1517ec0375e0a5f2fad9eb0224b40bae8b5bd47450b0af12c4781c431",
+    "summary_sha256": "2157fed64662eb1680b82c618bd827d624df55925865db91734615b79236b292",
+    "scope": "モニターの Google ログインに関わる手順・検収・参照先を照合。"
   }
 }

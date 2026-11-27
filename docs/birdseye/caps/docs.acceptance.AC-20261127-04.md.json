@@ -1,0 +1,30 @@
+{
+  "id": "docs/acceptance/AC-20261127-04.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/INDEX.md",
+    "docs/requirements/GOOGLE-MONITOR-SSO.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.google-monitor-sso-11-27-2026.md"
+  ],
+  "deps_out": [
+    "docs/requirements/API-CONTRACTS.md",
+    "docs/requirements/GOOGLE-MONITOR-SSO.md",
+    "docs/tasks/TASK.google-monitor-sso-11-27-2026.md"
+  ],
+  "summary": "モニターの Google ログインの T61 技術検収。CLI の明示指定、匿名アクセス、Blue、再試行とセッション失効を合成データで確認する条件を記す。",
+  "source_sha256": "8ea2dddf94bf4c6a77a4bd8c2e319f887a54ee5b20f9c33141e00bddcfef3ebf",
+  "generated_at": "00064",
+  "review": {
+    "reviewed_at": "2026-11-27T08:44:47+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "8ea2dddf94bf4c6a77a4bd8c2e319f887a54ee5b20f9c33141e00bddcfef3ebf",
+    "summary_sha256": "c4c7d41df5e560272b01e4ac5ae1fbe6e1001526f1235f775c44332589c6ae33",
+    "scope": "モニターの Google ログインに関わる手順・検収・参照先を照合。"
+  }
+}

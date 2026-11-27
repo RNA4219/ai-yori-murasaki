@@ -167,6 +167,7 @@ def _build_parser() -> _Parser:
     index.add_argument("--full", action="store_true", help="すべての台帳を再検証する")
     m = mon.add_parser("serve")
     m.add_argument("--bind", default="127.0.0.1:8765")
+    m.add_argument("--google-sso", action="store_true", help="Google ログインを必須にする")
 
     lab = sub.add_parser("lab").add_subparsers(dest="action", required=True)
     d = lab.add_parser("demo")
@@ -379,7 +380,11 @@ def _dispatch(args: argparse.Namespace, rt: Runtime) -> tuple[Any, Any, Any, int
 
     if group == "monitor" and action == "serve":
         from .server import create_server
-        server = create_server(rt, args.bind)
+        google_sso = None
+        if args.google_sso:
+            from .google_sso import GoogleSSO
+            google_sso = GoogleSSO.from_env()
+        server = create_server(rt, args.bind, google_sso=google_sso)
         try:
             host, port = server.server_address[:2]
             url = "http://%s:%d" % (host, port)
