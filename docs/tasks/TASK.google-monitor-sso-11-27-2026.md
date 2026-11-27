@@ -2,7 +2,7 @@
 task_id: 20261127-04
 intent_id: INT-AYM-PRODUCT-20261106
 owner: RNA4219
-status: reviewing
+status: done
 last_reviewed_at: 2026-11-27
 next_review_due: 2026-12-27
 ---
@@ -22,4 +22,4 @@ next_review_due: 2026-12-27
 
 最初の利用者の `sub` をどう確認するかは、Google の OpenID Connect 文書、Discovery 文書、公式 Playground の操作手順を照合した。設定手順は Yomiyasu の lint・資料照合・verify を実行し、5分と最長1時間の期限を実装と照合した。
 
-[T61 の技術検収](../acceptance/AC-20261127-04.md)・[変更履歴](../../CHANGELOG.md)
+製品コミット `d1684696e99c8a752a40b3f3104b5e429008f230` で T61 の技術検収8件と独立レビューを完了した。実アカウントでのログインは未検証。[技術検収の結果](../acceptance/AC-20261127-04.md)・[変更履歴](../../CHANGELOG.md)・[PR #22](https://github.com/RNA4219/ai-yori-murasaki/pull/22)

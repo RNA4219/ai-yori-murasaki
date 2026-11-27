@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "変更履歴。ローカルモニターの Google SSO、構成図の編集など、製品機能の変更と対応する Task・検収を示す。",
+  "summary": "製品・開発手順の変更履歴。モニターの Google ログインを合成アカウントで検収した結果と Task を参照できる。",
   "deps_out": [
     "docs/NOTION-IMPORT.md",
     "docs/SOURCES.md",
@@ -101,13 +101,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "5667b180f24d1291ad62be3b5881b46063da953d6de25a1aec16d30322395850",
-  "generated_at": "00064",
+  "source_sha256": "357b0bcac28838bf78ca3ac265944a40b3403ff17047b4736a348694f7540b8d",
+  "generated_at": "00065",
   "review": {
-    "reviewed_at": "2026-11-27T08:44:47+00:00",
+    "reviewed_at": "2026-11-27T08:51:47+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "5667b180f24d1291ad62be3b5881b46063da953d6de25a1aec16d30322395850",
-    "summary_sha256": "a6e5b8c2763e6e97c6be843df51e25396aaa88c710ffc3047f48bede57ea4b73",
-    "scope": "モニターの Google ログインに関わる手順・検収・参照先を照合。"
+    "source_sha256": "357b0bcac28838bf78ca3ac265944a40b3403ff17047b4736a348694f7540b8d",
+    "summary_sha256": "9a023204a965cddae3c37c86321473644eac2576c174fd19c1e59879686d55b9",
+    "scope": "Google ログインの製品コミット、技術検収と未実施範囲を照合。"
   }
 }

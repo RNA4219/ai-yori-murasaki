@@ -1,5 +1,5 @@
 {
-  "generated_at": "00064",
+  "generated_at": "00065",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -15,8 +15,8 @@
     "CHANGELOG.md": {
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
-      "mtime": "00064",
-      "source_sha256": "5667b180f24d1291ad62be3b5881b46063da953d6de25a1aec16d30322395850"
+      "mtime": "00065",
+      "source_sha256": "357b0bcac28838bf78ca3ac265944a40b3403ff17047b4736a348694f7540b8d"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -70,8 +70,8 @@
     "docs/acceptance/INDEX.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
-      "mtime": "00064",
-      "source_sha256": "f971acea357653425092c5a1e214d1b10879c51c753c29e9ebb097a903c1f724"
+      "mtime": "00065",
+      "source_sha256": "4b6f0c64a125a41c943ae0a2b9606d0d37f75041e5ba50623acaea82a35021eb"
     },
     "docs/acceptance/README.md": {
       "role": "guide",
@@ -113,8 +113,8 @@
     "docs/tasks/README.md": {
       "role": "operations",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
-      "mtime": "00064",
-      "source_sha256": "af2a916bb85ce033858a724984126e185a60423257050a154f79003dbc772156"
+      "mtime": "00065",
+      "source_sha256": "5482f8c18593e0a6b1cae2c1b798b9cd8efba3add5fa4303b00dde955c6b6cb9"
     },
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md": {
       "role": "task",
@@ -865,8 +865,8 @@
     "docs/acceptance/AC-20261127-04.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.acceptance.AC-20261127-04.md.json",
-      "mtime": "00064",
-      "source_sha256": "8ea2dddf94bf4c6a77a4bd8c2e319f887a54ee5b20f9c33141e00bddcfef3ebf"
+      "mtime": "00065",
+      "source_sha256": "e90dcf531239cc8e6c026188c78bd7f8975f9411239f9756af9e8ba3b3daac13"
     },
     "docs/requirements/GOOGLE-MONITOR-SSO.md": {
       "role": "doc",
@@ -877,8 +877,8 @@
     "docs/tasks/TASK.google-monitor-sso-11-27-2026.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.tasks.TASK.google-monitor-sso-11-27-2026.md.json",
-      "mtime": "00064",
-      "source_sha256": "312054da4cf03db98c0ddef95b0533d8cf2ac8f52818e75b828b61c02eac1df8"
+      "mtime": "00065",
+      "source_sha256": "b16f28659ccbc25c70d2009ad18685d7aae7a7dc1330fe14c2a99ff5bc2f7766"
     }
   },
   "edges": [

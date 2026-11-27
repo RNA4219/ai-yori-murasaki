@@ -2,7 +2,7 @@
   "id": "docs/tasks/README.md",
   "role": "operations",
   "public_api": [],
-  "summary": "Task の運用と索引。モニターの Google ログイン、構成図の編集などの作業と検収を引ける。",
+  "summary": "Task の運用と索引。モニターの Google ログイン、構成図の編集などの作業と対応する技術検収を引ける。",
   "deps_out": [
     "CHANGELOG.md",
     "HUB.codex.md",
@@ -87,13 +87,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "af2a916bb85ce033858a724984126e185a60423257050a154f79003dbc772156",
-  "generated_at": "00064",
+  "source_sha256": "5482f8c18593e0a6b1cae2c1b798b9cd8efba3add5fa4303b00dde955c6b6cb9",
+  "generated_at": "00065",
   "review": {
-    "reviewed_at": "2026-11-27T08:44:47+00:00",
+    "reviewed_at": "2026-11-27T08:51:47+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "af2a916bb85ce033858a724984126e185a60423257050a154f79003dbc772156",
-    "summary_sha256": "ba35cf1c2fea60d85701d1a07db4582a63adfc17430a6e01f2f92f97560e3195",
-    "scope": "モニターの Google ログインに関わる手順・検収・参照先を照合。"
+    "source_sha256": "5482f8c18593e0a6b1cae2c1b798b9cd8efba3add5fa4303b00dde955c6b6cb9",
+    "summary_sha256": "5cd6469660c16f193d7b927dee441109a7c5dbac4cf8be60b28b11b0502750dc",
+    "scope": "Google ログインの製品コミット、技術検収と未実施範囲を照合。"
   }
 }

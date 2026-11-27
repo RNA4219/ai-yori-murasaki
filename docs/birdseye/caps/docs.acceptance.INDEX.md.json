@@ -2,7 +2,7 @@
   "id": "docs/acceptance/INDEX.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "技術検収の索引。Google ログインを使うモニターの受入条件と確認状況をはじめ、各機能の Task と結果を引ける。",
+  "summary": "技術検収の索引。モニターの Google ログインの T61 合格、構成図の編集など各機能の結果、Task と PR を引ける。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -82,13 +82,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "f971acea357653425092c5a1e214d1b10879c51c753c29e9ebb097a903c1f724",
-  "generated_at": "00064",
+  "source_sha256": "4b6f0c64a125a41c943ae0a2b9606d0d37f75041e5ba50623acaea82a35021eb",
+  "generated_at": "00065",
   "review": {
-    "reviewed_at": "2026-11-27T08:44:47+00:00",
+    "reviewed_at": "2026-11-27T08:51:47+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "f971acea357653425092c5a1e214d1b10879c51c753c29e9ebb097a903c1f724",
-    "summary_sha256": "ac4dd151017bf9b8bbc27cc3d242650bf9ee6266370b2328d4dfab90fa94b54f",
-    "scope": "モニターの Google ログインに関わる手順・検収・参照先を照合。"
+    "source_sha256": "4b6f0c64a125a41c943ae0a2b9606d0d37f75041e5ba50623acaea82a35021eb",
+    "summary_sha256": "9ad0aa7425a118c2e84b4ed3af65e57d318ea7331dd5b543f288847cb9de28a2",
+    "scope": "Google ログインの製品コミット、技術検収と未実施範囲を照合。"
   }
 }

@@ -10,7 +10,7 @@ next_review_due: 2026-12-06
 
 | Acceptance | Task | 対象 | 公開 |
 | --- | --- | --- | --- |
-| [AC-20261127-04](AC-20261127-04.md) | [20261127-04](../tasks/TASK.google-monitor-sso-11-27-2026.md) | T61。モニターの Google ログイン、Blue への復帰とログアウトを検収中 | — |
+| [AC-20261127-04](AC-20261127-04.md) | [20261127-04](../tasks/TASK.google-monitor-sso-11-27-2026.md) | T61。合成アカウントによるモニターのログイン、Blue への復帰、ログアウトを含む技術検収8件に合格 | [PR #22](https://github.com/RNA4219/ai-yori-murasaki/pull/22) |
 | [AC-20261127-03](AC-20261127-03.md) | [20261127-03](../tasks/TASK.architecture-readability-11-27-2026.md) | 図の等倍表示、詳細への移動、検索と種類の割り当て・保存。T59・T60 技術検収合格 | [PR #21](https://github.com/RNA4219/ai-yori-murasaki/pull/21) |
 | [AC-20261127-02](AC-20261127-02.md) | [20261127-02](../tasks/TASK.architecture-switch-11-27-2026.md) | 構成図切替の T58 技術検収7件に合格 | [ソース反映](../releases/RA-20261127-02.md) |
 | [AC-20261127-01](AC-20261127-01.md) | [20261127-01](../tasks/TASK.case-decisions-11-27-2026.md) | 判断画面とモニターの状態、前回比較、照合待ち、受付の連結、製品の検証範囲 | [ソース反映](../releases/RA-20261127-01.md) |

@@ -14,7 +14,7 @@ Keep a Changelog の区分で管理する。記録には既存最大番号 +1 �
 
 ### Changed
 
-- 0049 — 2026-11-27。ローカルモニターを `--google-sso` で起動すると、4画面とその配信データの閲覧に、登録済みの Google アカウントでのログインが必要になる。[Task 20261127-04](docs/tasks/TASK.google-monitor-sso-11-27-2026.md)・[検収](docs/acceptance/AC-20261127-04.md)
+- 0049 — 2026-11-27。ローカルモニターを `--google-sso` で起動すると、4画面とその配信データの閲覧に、登録済みの Google アカウントでのログインが必要になる。合成アカウントでの技術検収8件に合格した。[Task 20261127-04](docs/tasks/TASK.google-monitor-sso-11-27-2026.md)・[検収](docs/acceptance/AC-20261127-04.md)
 
 - 0048 — 2026-11-27。構成図を等倍で開き、表示中の要素を検索して図の下の詳細を読めるようにした。図ごとに種類を定義し、割り当てを含む JSON を保存できる。幅375 px・1440 pxの表示と保存を含む技術検収7件に合格した。[Task 20261127-03](docs/tasks/TASK.architecture-readability-11-27-2026.md)・[検収](docs/acceptance/AC-20261127-03.md)
 
