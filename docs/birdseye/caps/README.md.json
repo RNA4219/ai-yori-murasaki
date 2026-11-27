@@ -2,7 +2,7 @@
   "id": "README.md",
   "role": "overview",
   "public_api": [],
-  "summary": "製品の操作入口。モニターの Google ログインで個別アカウントやメールドメインを許可する方法、課題の照合や構成図の編集を案内する。",
+  "summary": "製品の操作入口。証明書・秘密鍵を指定して HTTPS モニターを起動する手順、判断の画面、資料の取込や構成図を案内する。",
   "deps_out": [
     "BLUEPRINT.md",
     "CHANGELOG.md",
@@ -56,13 +56,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "89934be83771f6d4e426847e83e04daf2bbeb84b8ecc5a0e74734a6478d997d2",
-  "generated_at": "00066",
+  "source_sha256": "8bb1780d1ae16c6307f7b3e15fa77d57367ec7e6a824ffc8a2909e896c1a6b57",
+  "generated_at": "00070",
   "review": {
-    "reviewed_at": "2026-11-27T09:09:00+00:00",
+    "reviewed_at": "2026-11-27T10:24:52+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "89934be83771f6d4e426847e83e04daf2bbeb84b8ecc5a0e74734a6478d997d2",
-    "summary_sha256": "0483c53f82fd9b8ce67815f0dbccbf30e86906f65ab789d6f4e8eec64f719bbc",
-    "scope": "Google ログインのドメイン許可について設定・契約・受入条件を照合。"
+    "source_sha256": "8bb1780d1ae16c6307f7b3e15fa77d57367ec7e6a824ffc8a2909e896c1a6b57",
+    "summary_sha256": "9eb96017d54b2636965ed5141cb89e4d618317f45f6f48abf5547a0b1e764190",
+    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
   }
 }

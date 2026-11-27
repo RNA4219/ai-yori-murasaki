@@ -1,5 +1,5 @@
 {
-  "generated_at": "00069",
+  "generated_at": "00070",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -9,14 +9,14 @@
     "BLUEPRINT.md": {
       "role": "requirements",
       "caps": "docs/birdseye/caps/BLUEPRINT.md.json",
-      "mtime": "00002",
-      "source_sha256": "0c8d216b5101fc866580cba0ad523be5c99b1ac35236d49c8d3a06a06eb3ee17"
+      "mtime": "00070",
+      "source_sha256": "041049cd0271d7507ad9dfdd36c6a5b28fe5f86a0c8ed56942ad8ce5a7135cac"
     },
     "CHANGELOG.md": {
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
-      "mtime": "00069",
-      "source_sha256": "99a12f00eddfae888a9543247fafef5e2b4d29a4b5e32b1f67e65c2f4b1798b1"
+      "mtime": "00070",
+      "source_sha256": "b909f2b1d370bfeecc173b8683dc7a5426bc24d48e33c1bf8c4022a642f5d6aa"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -36,14 +36,14 @@
     "HUB.codex.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
-      "mtime": "00068",
-      "source_sha256": "07e1cc91b93a8e5bac6818312623d0b39bc660381a67fb550cb64f8389fca357"
+      "mtime": "00070",
+      "source_sha256": "26f7b6e19892bc0be8331ea4ba805456dc5c3b49b934456c65e37893489e85b5"
     },
     "README.md": {
       "role": "overview",
       "caps": "docs/birdseye/caps/README.md.json",
-      "mtime": "00066",
-      "source_sha256": "89934be83771f6d4e426847e83e04daf2bbeb84b8ecc5a0e74734a6478d997d2"
+      "mtime": "00070",
+      "source_sha256": "8bb1780d1ae16c6307f7b3e15fa77d57367ec7e6a824ffc8a2909e896c1a6b57"
     },
     "RUNBOOK.md": {
       "role": "operations",
@@ -70,8 +70,8 @@
     "docs/acceptance/INDEX.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
-      "mtime": "00069",
-      "source_sha256": "66f42dad0b1821e4c313d5ab84772b3a3b3d4a8ec45fe3091a17a9037f4e2d74"
+      "mtime": "00070",
+      "source_sha256": "122aa34b8eea617620e6e83283ab243227fb6da1eface24e3332c11da4b862a7"
     },
     "docs/acceptance/README.md": {
       "role": "guide",
@@ -113,8 +113,8 @@
     "docs/tasks/README.md": {
       "role": "operations",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
-      "mtime": "00069",
-      "source_sha256": "ceb112f72e28a592d4908f3bd97118797103bc7300b3872441dd5af1ad939481"
+      "mtime": "00070",
+      "source_sha256": "faaf69721bcf32b34ae533e9a2d1c2e87a1af449526b86c6dd6d48d9a547dccc"
     },
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md": {
       "role": "task",
@@ -282,8 +282,8 @@
     "docs/PRODUCT-GUIDE.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.PRODUCT-GUIDE.md.json",
-      "mtime": "00068",
-      "source_sha256": "32b6d1aace05268579a0007c715b57a006af9fb70cf61d0ba77f6992c5a3924d"
+      "mtime": "00070",
+      "source_sha256": "cf44c9674ba40333912cc73d3af6cd05f7cdda1fe038f783c6399e82e894ad95"
     },
     "docs/requirements/ACCEPTANCE-PLAN.md": {
       "role": "doc",
@@ -293,8 +293,8 @@
     "docs/requirements/API-CONTRACTS.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.requirements.API-CONTRACTS.md.json",
-      "mtime": "00068",
-      "source_sha256": "53f81ca649e8b62bc5db86390cadda4353a126cc887ccb1920c80e87e61c4a60"
+      "mtime": "00070",
+      "source_sha256": "b8ebffcf87324e45d17d37043e3555cc4248052a98a57472298700f259b9f119"
     },
     "docs/requirements/COMPACTION-01.md": {
       "role": "doc",
@@ -339,7 +339,8 @@
     "docs/requirements/SPEC-CORE.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.requirements.SPEC-CORE.md.json",
-      "mtime": "00062"
+      "mtime": "00070",
+      "source_sha256": "3f11824a5dd39a16da22649a56eaf746f41fde6f0bf8a5b2ecc19a11cda646bc"
     },
     "docs/requirements/SPEC-EVALUATION.md": {
       "role": "doc",
@@ -435,8 +436,8 @@
     "THIRD_PARTY_NOTICES.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/THIRD_PARTY_NOTICES.md.json",
-      "mtime": "00064",
-      "source_sha256": "0ff14f1c5c1abee53f3abf5d3d51489951ee24906732c117799cfa4633dcab7f"
+      "mtime": "00070",
+      "source_sha256": "48380049a6d48c1ca8b2b451d18e2ea3152d5b1669467b13d0e6f679b1802621"
     },
     "docs/acceptance/AC-20261108-02.md": {
       "role": "doc",
@@ -547,8 +548,8 @@
     "docs/SOURCES.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.SOURCES.md.json",
-      "mtime": "00103",
-      "source_sha256": "a97bba92bd95e67d8d4d233a05923d5a8a97691c02fd76c7dad124b55f233e10"
+      "mtime": "00070",
+      "source_sha256": "907d860116b5bc3da03ab9c960ab37dffd903a55467b85aba3b107233dc37953"
     },
     "docs/tasks/TASK.sources-light-ui-11-09-2026.md": {
       "role": "task",
@@ -727,8 +728,8 @@
     "docs/NOTION-IMPORT.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.NOTION-IMPORT.md.json",
-      "mtime": "00057",
-      "source_sha256": "2ca0704aad46210023d889afe4c87f3829d2225078e42451f419f9eb88ae04e7"
+      "mtime": "00070",
+      "source_sha256": "9a809b70024918117591a51841cebf12f71aa7f6d7e0d22f644cb69c6f8c6d07"
     },
     "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md": {
       "role": "doc",
@@ -811,14 +812,14 @@
     "decision_view/README.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/decision_view.README.md.json",
-      "mtime": "00113",
-      "source_sha256": "b7bc17ffdd01aee8f9c5d6ed26948115bff8ed80a0eb3f77faa99950861aa1a9"
+      "mtime": "00070",
+      "source_sha256": "ecfbbb41f4b6f2dfc7b6ab2d48f071b855ff753990f9c706ef6a30bcad30e970"
     },
     ".github/workflows/dual-view-validation.yml": {
       "role": "doc",
       "caps": "docs/birdseye/caps/.github.workflows.dual-view-validation.yml.json",
-      "mtime": "00068",
-      "source_sha256": "36c35db8df3985c1c95613a0eace8a86bb0d2d16cc1b7a19e779a5eea69497e3"
+      "mtime": "00070",
+      "source_sha256": "a02b0ee4ff425a8d8f74130b65fd73198b84cb13da804e84d1f1c6d8b9f78520"
     },
     "docs/acceptance/AC-20261127-02.md": {
       "role": "doc",
@@ -835,8 +836,8 @@
     "docs/requirements/ARCHITECTURE-MAP-SELECTION.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.requirements.ARCHITECTURE-MAP-SELECTION.md.json",
-      "mtime": "00062",
-      "source_sha256": "7af13c9cbd5aad582af76df7041576c0e21003e1aa21435d93ec8e1e38e85e70"
+      "mtime": "00070",
+      "source_sha256": "504feeb4aa98c258ac0a4cc1bf3fd0c2ac776ece6dbbf3ebb8dfbe7ab223edef"
     },
     "docs/tasks/TASK.architecture-switch-11-27-2026.md": {
       "role": "doc",
@@ -871,8 +872,8 @@
     "docs/requirements/GOOGLE-MONITOR-SSO.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.requirements.GOOGLE-MONITOR-SSO.md.json",
-      "mtime": "00066",
-      "source_sha256": "512e0a91ca693d8475d6d7f4168b8190a6e0ef082b263b62b6be27be2637fb03"
+      "mtime": "00070",
+      "source_sha256": "afc1ebed86fba8260db5891fe7cb141cd1d09796d6f40155b453d46bb8ac6320"
     },
     "docs/tasks/TASK.google-monitor-sso-11-27-2026.md": {
       "role": "doc",
@@ -903,6 +904,18 @@
       "caps": "docs/birdseye/caps/docs.tasks.TASK.verification-evidence-11-27-2026.md.json",
       "mtime": "00069",
       "source_sha256": "68fa6fdda47fd2fce96df9442066368bf9622bdaaf5a054794fa6a4ae9e680da"
+    },
+    "docs/acceptance/AC-20261127-07.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261127-07.md.json",
+      "mtime": "00070",
+      "source_sha256": "a29563c08b089253debaef2d7702436f4e8ba09c4b58e4646f47807bc978dbb9"
+    },
+    "docs/tasks/TASK.monitor-https-11-27-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.monitor-https-11-27-2026.md.json",
+      "mtime": "00070",
+      "source_sha256": "0aa8f14434e23294b3dd15cd67f0fcdf9a732585e2495755ef73220ddf825bfb"
     }
   },
   "edges": [
@@ -3469,6 +3482,102 @@
     [
       "docs/tasks/TASK.verification-evidence-11-27-2026.md",
       "docs/requirements/API-CONTRACTS.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/acceptance/AC-20261127-07.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.monitor-https-11-27-2026.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/acceptance/AC-20261127-07.md"
+    ],
+    [
+      "docs/NOTION-IMPORT.md",
+      "docs/PRODUCT-GUIDE.md"
+    ],
+    [
+      "docs/PRODUCT-GUIDE.md",
+      "docs/requirements/GOOGLE-MONITOR-SSO.md"
+    ],
+    [
+      "docs/SOURCES.md",
+      "docs/PRODUCT-GUIDE.md"
+    ],
+    [
+      "docs/acceptance/AC-20261127-07.md",
+      "docs/PRODUCT-GUIDE.md"
+    ],
+    [
+      "docs/acceptance/AC-20261127-07.md",
+      "docs/requirements/GOOGLE-MONITOR-SSO.md"
+    ],
+    [
+      "docs/acceptance/AC-20261127-07.md",
+      "docs/tasks/TASK.monitor-https-11-27-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261127-07.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.monitor-https-11-27-2026.md"
+    ],
+    [
+      "docs/requirements/API-CONTRACTS.md",
+      "docs/PRODUCT-GUIDE.md"
+    ],
+    [
+      "docs/requirements/ARCHITECTURE-MAP-SELECTION.md",
+      "docs/PRODUCT-GUIDE.md"
+    ],
+    [
+      "docs/requirements/GOOGLE-MONITOR-SSO.md",
+      "docs/PRODUCT-GUIDE.md"
+    ],
+    [
+      "docs/requirements/GOOGLE-MONITOR-SSO.md",
+      "docs/acceptance/AC-20261127-07.md"
+    ],
+    [
+      "docs/requirements/SPEC-CORE.md",
+      "docs/requirements/API-CONTRACTS.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261127-07.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.monitor-https-11-27-2026.md"
+    ],
+    [
+      "docs/tasks/TASK.monitor-https-11-27-2026.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "docs/tasks/TASK.monitor-https-11-27-2026.md",
+      "docs/PRODUCT-GUIDE.md"
+    ],
+    [
+      "docs/tasks/TASK.monitor-https-11-27-2026.md",
+      "docs/SOURCES.md"
+    ],
+    [
+      "docs/tasks/TASK.monitor-https-11-27-2026.md",
+      "docs/acceptance/AC-20261127-07.md"
+    ],
+    [
+      "docs/tasks/TASK.monitor-https-11-27-2026.md",
+      "docs/requirements/API-CONTRACTS.md"
+    ],
+    [
+      "docs/tasks/TASK.monitor-https-11-27-2026.md",
+      "docs/requirements/GOOGLE-MONITOR-SSO.md"
     ]
   ]
 }

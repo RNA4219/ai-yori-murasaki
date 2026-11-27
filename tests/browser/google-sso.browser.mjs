@@ -18,22 +18,30 @@ async function exercise(browser, {monitor, provider}, width, policy) {
   const login = page.getByRole('link', {name:'Google でログイン', exact:true});
   const logout = page.getByRole('button', {name:'ログアウト', exact:true});
   const heading = name => page.getByRole('heading', {level:1, name, exact:true}).waitFor();
-  const health = () => page.request.get(monitor + '/api/health');
+  const health = () => page.evaluate(async () => (await fetch('/api/health')).status);
+  async function secureCookie(prefix, path) {
+    const name = prefix + new URL(monitor).port;
+    const cookie = (await page.context().cookies(monitor + path)).find(entry => entry.name === name);
+    assert.ok(cookie && cookie.secure && cookie.httpOnly && cookie.sameSite === 'Lax', name);
+  }
   async function choose(name) {
     await login.focus();
     await page.keyboard.press('Enter');
     await heading('テスト用アカウント選択');
     const authorize = new URL(page.url());
     assert.equal(authorize.origin, provider);
+    assert.equal(authorize.searchParams.get('redirect_uri'), monitor + '/auth/google/callback');
+    await secureCookie('aym_login_', '/auth/google/callback');
     const scope = authorize.searchParams.get('scope').split(/\s+/).sort();
     assert.deepEqual(scope, policy === 'subject' ? ['openid','profile'] : ['email','openid']);
     await page.getByRole('link', {name, exact:true}).click();
   }
   try {
-    await page.goto(deepLink);
+    const entry = await page.goto(deepLink);
+    assert.match((await entry.securityDetails()).protocol, /^TLS 1\.[23]$/);
     await heading('モニターにログイン');
     assert.equal(await page.getByRole('navigation').count(), 0);
-    assert.equal((await health()).status(), 401);
+    assert.equal(await health(), 401);
     const forbidden = 'このアカウントでは利用できません';
     const retries = [
       ['キャンセル', 'ログインをキャンセルしました'],
@@ -46,13 +54,14 @@ async function exercise(browser, {monitor, provider}, width, policy) {
       await choose(choice);
       await heading(message);
       assert.equal(new URL(page.url()).origin, monitor);
-      assert.equal((await health()).status(), 401);
+      assert.equal(await health(), 401);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
     }
     const allowed = policy === 'domain' ? 'ドメインのみ一致' : '許可した利用者';
     await choose(allowed);
     await page.waitForURL(deepLink);
-    assert.equal((await health()).status(), 200);
+    assert.equal(await health(), 200);
+    await secureCookie('aym_session_', '/');
     const nav = page.getByRole('navigation', {name:'画面を切り替える'});
     for (const label of ['モニター','案件受付台帳','判断の画面','システム構成図']) {
       await nav.getByRole('link', {name:label, exact:true}).click();
@@ -71,12 +80,12 @@ async function exercise(browser, {monitor, provider}, width, policy) {
       assert.equal(response.status(), 303, label+'からのログアウト');
       assert.equal(await response.request().headerValue('origin'), monitor);
       await heading('モニターにログイン');
-      assert.equal((await health()).status(), 401);
+      assert.equal(await health(), 401);
       await page.goto(protectedPage);
       await heading('モニターにログイン');
       await choose(allowed);
       await page.waitForURL(protectedPage);
-      assert.equal((await health()).status(), 200);
+      assert.equal(await health(), 200);
     }
     assert.deepEqual(errors, []);
     assert.deepEqual(unexpected, []);
@@ -86,7 +95,7 @@ async function exercise(browser, {monitor, provider}, width, policy) {
   }
 }
 
-async function checkPolicy(browser, policy, widths) {
+async function checkPolicy(policy, widths) {
   const fixture = spawn(process.env.PYTHON || 'python',
     ['-u','-m','tests.fixtures.google_sso_browser_server','--policy',policy,'--stop-on-eof'],
     {stdio:['pipe','pipe','inherit']});
@@ -100,7 +109,26 @@ async function checkPolicy(browser, policy, widths) {
     const urls = JSON.parse(line);
     assert.equal(new URL(urls.monitor).hostname, '127.0.0.1');
     assert.equal(new URL(urls.provider).hostname, 'localhost');
-    for (const width of widths) await exercise(browser, urls, width, policy);
+    assert.equal(new URL(urls.monitor).protocol, 'https:');
+    assert.equal(new URL(urls.provider).protocol, 'https:');
+    assert.match(urls.spkiPin, /^[A-Za-z0-9+/]{43}=$/);
+    const channel = process.env.AYM_BROWSER_CHANNEL || undefined;
+    if (policy === 'subject') {
+      const untrusted = await chromium.launch({channel});
+      try {
+        const page = await untrusted.newPage();
+        await assert.rejects(page.goto(urls.monitor), /ERR_CERT_AUTHORITY_INVALID/);
+      } finally {
+        await untrusted.close();
+      }
+    }
+    const browser = await chromium.launch({channel,
+      args:['--ignore-certificate-errors-spki-list=' + urls.spkiPin]});
+    try {
+      for (const width of widths) await exercise(browser, urls, width, policy);
+    } finally {
+      await browser.close();
+    }
   } finally {
     lines.close();
     fixture.stdin.end();
@@ -108,11 +136,6 @@ async function checkPolicy(browser, policy, widths) {
   }
 }
 
-const browser = await chromium.launch({channel:process.env.AYM_BROWSER_CHANNEL || undefined});
-try {
-  await checkPolicy(browser, 'subject', [1440, 375, 320]);
-  await checkPolicy(browser, 'domain', [1440, 375]);
-  await checkPolicy(browser, 'both', [1440, 375]);
-} finally {
-  await browser.close();
-}
+await checkPolicy('subject', [1440, 375, 320]);
+await checkPolicy('domain', [1440, 375]);
+await checkPolicy('both', [1440, 375]);

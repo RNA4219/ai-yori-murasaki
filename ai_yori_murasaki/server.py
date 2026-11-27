@@ -10,9 +10,11 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import ssl
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from importlib import resources
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable
 from urllib.parse import parse_qsl, urlencode, urlsplit
 
@@ -580,29 +582,9 @@ def _match_route(path: str) -> tuple[str, tuple[str, ...]] | None:
     return None
 
 
-def _check_host(host_header: str | None, port: int) -> bool:
-    if not isinstance(host_header, str):
-        return False
-    host, _, port_str = host_header.partition(":")
-    if host not in ALLOWED_HOSTS:
-        return False
-    if port_str:
-        try:
-            if int(port_str) != port:
-                return False
-        except ValueError:
-            return False
-    return True
-
-
-def _matches_http_port(value: str | None, base: str, port: int) -> bool:
-    return value == f"{base}:{port}" or (port == 80 and value == base)
-
-
-def _check_origin(origin: str | None, port: int) -> bool:
-    if origin is None:
-        return True
-    return any(_matches_http_port(origin, "http://" + host, port) for host in ALLOWED_HOSTS)
+def _matches_authority(value: str | None, base: str, port: int, scheme: str) -> bool:
+    default_port = 443 if scheme == "https" else 80
+    return value == f"{base}:{port}" or (port == default_port and value == base)
 
 
 def _load_page(filename: str, *, blue: bool = False) -> bytes:
@@ -713,8 +695,8 @@ def _auth_gate(auth: monitor_auth.MonitorAuth, method: str, path: str, query: di
     from .monitor_auth_ui import render_auth_page
 
     canonical_host = f"127.0.0.1:{port}"
-    origin = "http://" + canonical_host
-    canonical_request = _matches_http_port(headers["Host"], "127.0.0.1", port)
+    origin = "https://" + canonical_host
+    canonical_request = _matches_authority(headers["Host"], "127.0.0.1", port, "https")
     session_name = f"aym_session_{port}"
     pending_name = f"aym_login_{port}"
     jar = headers.get("Cookie", "") if canonical_request else ""
@@ -757,7 +739,7 @@ def _auth_gate(auth: monitor_auth.MonitorAuth, method: str, path: str, query: di
     if path == "/auth/logout":
         if method != "POST":
             return _error(405, "method_not_allowed")
-        if not canonical_request or not _matches_http_port(headers.get("Origin"), "http://127.0.0.1", port):
+        if not canonical_request or not _matches_authority(headers.get("Origin"), "https://127.0.0.1", port, "https"):
             return _error(403, "bad_origin")
         if not session or not auth.provider.authenticated(session):
             return _error(401, "authentication_required")
@@ -775,12 +757,14 @@ def _auth_gate(auth: monitor_auth.MonitorAuth, method: str, path: str, query: di
 
 def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
             headers: dict, port: int, auth: monitor_auth.MonitorAuth | None = None,
-            read_csrf: Callable[[], str | None] | None = None) -> tuple[int, dict, bytes]:
+            read_csrf: Callable[[], str | None] | None = None, *, scheme: str = "http") -> tuple[int, dict, bytes]:
     if method not in ("GET", "HEAD") and not (auth and method == "POST" and path == "/auth/logout"):
         return _error(405, "method_not_allowed")
-    if not _check_host(headers.get("Host"), port):
+    host = next((name for name in ALLOWED_HOSTS if _matches_authority(headers.get("Host"), name, port, scheme)), None)
+    if host is None:
         return _error(400, "bad_host")
-    if not _check_origin(headers.get("Origin"), port):
+    origin = headers.get("Origin")
+    if origin is not None and not _matches_authority(origin, f"{scheme}://{host}", port, scheme):
         return _error(403, "bad_origin")
     if "?" in path or "#" in path:
         return _error(400, "bad_path")
@@ -789,6 +773,8 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
     if ".." in path:
         return _error(400, "bad_path")
     if auth is not None:
+        if scheme != "https":
+            return _error(403, "monitor_tls_required")
         access = _auth_gate(auth, method, path, query, headers, port, read_csrf)
         if isinstance(access, tuple):
             return access
@@ -1067,13 +1053,21 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
             if limit < 1 or limit > MAX_LIMIT:
                 return _error(400, "bad_limit")
             try:
-                runtime.get_run(rid)
-            except DataError:
+                manifest = store.load_manifest(rid)
+            except (DataError, OSError):
+                return _error(409, "evidence_unverified")
+            if manifest is None:
                 return _error(404, "not_found")
+            run = manifest.get("run")
+            cid = run.get("campaign_id") if isinstance(run, dict) else None
+            if not isinstance(cid, str) or not ID_RE.fullmatch(cid) or run.get("run_id") != rid:
+                return _error(409, "evidence_unverified")
             try:
-                events = store.read_events(rid)
-            except DataError:
-                return _error(500, "ledger_unreadable")
+                events = store.read_verified_events(rid, campaign_id=cid, allow_missing=run.get("status") == "running")
+            except (DataError, OSError):
+                return _error(409, "evidence_unverified")
+            if manifest.get("sealed") and (not events or events[-1]["event_type"] != "chain_sealed"):
+                return _error(409, "evidence_unverified")
             selected = [e for e in events if isinstance(e.get("sequence"), int) and e["sequence"] > after]
             selected = selected[:limit]
             projected = [project_event(e, view) for e in selected]
@@ -1198,7 +1192,8 @@ class _Handler(BaseHTTPRequestHandler):
                 "Cookie": "; ".join(self.headers.get_all("Cookie", [])),
             }
             status, headers, body = _handle(runtime, method, path, query,
-                                            req_headers, port, self.server.auth, self._read_logout_csrf)
+                                            req_headers, port, self.server.auth, self._read_logout_csrf,
+                                            scheme=self.server.scheme)
         # Merge security headers with route headers so each header is
         # emitted exactly once.  Route-specific headers (e.g. the HTML CSP
         # with inline hashes) take precedence over the default CSP.
@@ -1241,10 +1236,36 @@ class _Server(ThreadingHTTPServer):
     daemon_threads = True
     allow_reuse_address = True
 
-    def __init__(self, addr: tuple[str, int], runtime: Runtime, google_sso: GoogleSSO | None) -> None:
+    def __init__(self, addr: tuple[str, int], runtime: Runtime, google_sso: GoogleSSO | None,
+                 tls_context: ssl.SSLContext | None) -> None:
+        if google_sso is not None and tls_context is None:
+            raise DataError("Google SSOにはHTTPSが必要です", "monitor_tls_required")
+        if tls_context is not None and (tls_context.protocol != ssl.PROTOCOL_TLS_SERVER
+                                        or tls_context.minimum_version < ssl.TLSVersion.TLSv1_2):
+            raise DataError("TLS 1.2以上のサーバー設定が必要です", "monitor_tls_configuration")
+        self.tls_context = tls_context
+        self.scheme = "https" if tls_context is not None else "http"
         self.runtime = runtime
         self.auth = monitor_auth.MonitorAuth(google_sso) if google_sso is not None else None
         super().__init__(addr, _Handler)
+
+    def get_request(self):
+        connection, address = super().get_request()
+        if self.tls_context is not None:
+            # accept スレッドではネットワークとのハンドシェイクを開始しない。
+            connection = self.tls_context.wrap_socket(connection, server_side=True, do_handshake_on_connect=False)
+        return connection, address
+
+    def finish_request(self, request, client_address) -> None:
+        if self.tls_context is not None:
+            request.settimeout(5)
+            try:
+                request.do_handshake()
+            except OSError:
+                return
+            request.settimeout(30)
+        # 応答後の送信終了と close は HTTPServer が同じ接続に対して行う。
+        super().finish_request(request, client_address)
 
 
 def _parse_bind(bind: str) -> tuple[str, int]:
@@ -1265,15 +1286,34 @@ def _parse_bind(bind: str) -> tuple[str, int]:
 
 
 def create_server(runtime: Runtime, bind: str = "127.0.0.1:8765", *,
-                  google_sso: GoogleSSO | None = None) -> ThreadingHTTPServer:
+                  google_sso: GoogleSSO | None = None,
+                  tls_context: ssl.SSLContext | None = None) -> _Server:
+    """ローカル組み込み用。非SSOの既存fixtureはHTTPを利用できる。"""
     host, port = _parse_bind(bind)
-    return _Server((host, port), runtime, google_sso)
+    return _Server((host, port), runtime, google_sso, tls_context)
 
 
-def serve(bind: str = "127.0.0.1:8765", runtime: Runtime | None = None) -> None:
+def configured_server(runtime: Runtime, bind: str, *, cert: str | Path | None = None,
+                      key: str | Path | None = None, allow_http_loopback: bool = False,
+                      google_sso: bool = False) -> _Server:
+    from .monitor_tls import server_context
+
+    address = _parse_bind(bind)
+    if google_sso and allow_http_loopback:
+        raise DataError("Google SSOにはHTTPSが必要です", "monitor_tls_required")
+    provider = None
+    if google_sso:
+        from .google_sso import GoogleSSO
+        provider = GoogleSSO.from_env()
+    return _Server(address, runtime, provider, server_context(cert, key, allow_http_loopback=allow_http_loopback))
+
+
+def serve(bind: str = "127.0.0.1:8765", runtime: Runtime | None = None, *,
+          tls_cert: str | Path | None = None, tls_key: str | Path | None = None,
+          allow_http_loopback: bool = False) -> None:
     if runtime is None:
         runtime = Runtime(Store.from_env())
-    server = create_server(runtime, bind)
+    server = configured_server(runtime, bind, cert=tls_cert, key=tls_key, allow_http_loopback=allow_http_loopback)
     try:
         server.serve_forever()
     finally:

@@ -2,9 +2,10 @@
   "id": "docs/requirements/API-CONTRACTS.md",
   "role": "doc",
   "public_api": [],
-  "summary": "CLI と HTTP の契約。チェックポイントの所属照合、検証記録の対象、検証履歴のページ取得と Blue の公開項目を記す。",
+  "summary": "CLI と HTTP の契約。モニターの TLS 設定、SSO の HTTPS 戻り先と Cookie、Blue ビューと実行台帳の整合性を含む読取 API を記す。",
   "deps_out": [
     "docs/PRODUCT-ACCEPTANCE.md",
+    "docs/PRODUCT-GUIDE.md",
     "docs/SOURCES.md",
     "docs/acceptance/AC-20261123-07.md",
     "docs/acceptance/AC-20261123-08.md",
@@ -26,18 +27,20 @@
     "docs/requirements/GOOGLE-MONITOR-SSO.md",
     "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md",
     "docs/requirements/REQUIREMENTS-DUAL-VIEW.md",
+    "docs/requirements/SPEC-CORE.md",
     "docs/requirements/SPEC-DUAL-VIEW.md",
+    "docs/tasks/TASK.monitor-https-11-27-2026.md",
     "docs/tasks/TASK.verification-evidence-11-27-2026.md"
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "53f81ca649e8b62bc5db86390cadda4353a126cc887ccb1920c80e87e61c4a60",
-  "generated_at": "00068",
+  "source_sha256": "b8ebffcf87324e45d17d37043e3555cc4248052a98a57472298700f259b9f119",
+  "generated_at": "00070",
   "review": {
-    "reviewed_at": "2026-11-27T09:34:31+00:00",
+    "reviewed_at": "2026-11-27T10:24:52+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "53f81ca649e8b62bc5db86390cadda4353a126cc887ccb1920c80e87e61c4a60",
-    "summary_sha256": "77d09d34f042cfc486731e73358545cfb4a422738d5277398b3f0f7d6ffcccaf",
-    "scope": "Wazuh の TLS、封印と検証履歴の契約・受入条件の原文と要約を照合。"
+    "source_sha256": "b8ebffcf87324e45d17d37043e3555cc4248052a98a57472298700f259b9f119",
+    "summary_sha256": "28dd5d977a1a650b5c55e031c15cecf4d2c46db5dc04728ba0d967831e09cc84",
+    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
   }
 }

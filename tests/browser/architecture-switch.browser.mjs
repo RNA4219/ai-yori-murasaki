@@ -151,7 +151,7 @@ try {
   // CLI と同じ入口を使い、検証用の場所と空きポートは実行ごとに分ける。
   server = spawn(process.env.PYTHON || 'python', ['-u', '-m', 'ai_yori_murasaki',
     '--workspace', workspace, '--trusted-root', join(root, 'trusted'),
-    'monitor', 'serve', '--bind', '127.0.0.1:0'], {stdio: ['ignore', 'pipe', 'inherit']});
+    'monitor', 'serve', '--allow-http-loopback', '--bind', '127.0.0.1:0'], {stdio: ['ignore', 'pipe', 'inherit']});
   const output = createInterface({input: server.stdout});
   const [line] = await Promise.race([
     once(output, 'line', {signal: AbortSignal.timeout(30000)}),

@@ -28,7 +28,7 @@ next_review_due: 2026-12-27
    }
    ```
 
-3. 同じワークスペースで `aym monitor serve --bind 127.0.0.1:8765` を起動する。モニターで「システム構成図」を開き、「図」で「配送受付」を選ぶ。アドレスが `/architecture?map=dispatch` になり、再読み込みしても「配送受付」が開く。
+3. 同じワークスペースで[モニターの TLS 証明書と鍵](../PRODUCT-GUIDE.md#モニターのhttps起動)を設定し、`aym monitor serve --bind 127.0.0.1:8765` を起動する。モニターで「システム構成図」を開き、「図」で「配送受付」を選ぶ。アドレスが `/architecture?map=dispatch` になり、再読み込みしても「配送受付」が開く。
 4. 「図」で「製品自身の図」を選ぶと `?system=aym`、見本に戻ると `/architecture` になる。未保存の編集があるときは切替前に確認でき、キャンセルすると表示・選択・編集・アドレスを保つ。「構成ファイルを開く」で手元のファイルを開くと、ワークスペースの図を指定するパラメーターは外れる。
 
 一覧の対象は `architecture/` 直下にある `<ID>.json` という名前の通常ファイルで、1枚の上限は1 MiB。ID の先頭には英小文字か数字を使い、2文字目以降はハイフンも使用できる。最大64文字。リンク、読み取れない JSON、`nodes` 配列を欠く文書は一覧から除く。条件に合う先頭100枚をファイル名順に表示し、表示名には `name` の先頭200文字を使う。JSON に書き出すときは元の有効な `name` を全文保存する。名前を省くと ID が表示される。
@@ -40,9 +40,9 @@ next_review_due: 2026-12-27
 上記2枚を用意した場合、次の操作で一覧・原本・Blue の応答を確認できる。
 
 ```powershell
-Invoke-RestMethod 'http://127.0.0.1:8765/api/architecture/maps' | ConvertTo-Json -Depth 3
-Invoke-RestMethod 'http://127.0.0.1:8765/api/architecture/maps/dispatch' | ConvertTo-Json -Depth 4
-Invoke-RestMethod 'http://127.0.0.1:8765/api/architecture/maps?view=blue'
+Invoke-RestMethod 'https://127.0.0.1:8765/api/architecture/maps' | ConvertTo-Json -Depth 3
+Invoke-RestMethod 'https://127.0.0.1:8765/api/architecture/maps/dispatch' | ConvertTo-Json -Depth 4
+Invoke-RestMethod 'https://127.0.0.1:8765/api/architecture/maps?view=blue'
 ```
 
 一覧には `dispatch`、`inventory` の順で ID と表示名が返る。個別取得は保存した構成図の JSON を返し、Blue の両 API は `{"status":"withheld"}` を返す。HTTP ステータスは [API 契約](API-CONTRACTS.md#22-endpoints) に記す。

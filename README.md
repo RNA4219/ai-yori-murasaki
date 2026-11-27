@@ -58,7 +58,7 @@ Notion の課題一覧を CSV で取り込むと、判断画面で資源・検�
 
 Google ログインを必須にする場合は、クライアントと許可するアカウントまたはメールドメイン（併用可）を設定し、`aym monitor serve --google-sso` で起動します。モニター、判断の画面、システム構成図、案件受付の4画面と、それぞれが読むデータや配信ファイルが対象です。[Google SSO の設定と個人・ドメイン別の許可例](docs/requirements/GOOGLE-MONITOR-SSO.md)
 
-`aym monitor serve --bind 127.0.0.1:8765` の同じサーバーから、次の2画面を開けます。
+モニターの起動には PEM 形式のサーバー証明書と秘密鍵が必要です。同じ HTTPS サーバーで次の2画面を開けます。[証明書の指定と起動方法](docs/PRODUCT-GUIDE.md#モニターのhttps起動)
 
 案件が多い場合は、同じワークスペースと信頼済みルートを指定して `aym monitor index` を実行します。初回はすべての台帳を検証します。モニターと判断画面の一覧に確認時刻が付き、50案件ずつ読めます。[案件一覧の仕様と検収](docs/acceptance/AC-20261123-04.md)
 
@@ -68,8 +68,8 @@ Google ログインを必須にする場合は、クライアントと許可す�
 
 次回からは同じコマンドで差分更新できます。全実行のファイル属性を照合し、台帳・実行情報・参照先の検知ファイルに変更があった実行だけを再検証します。更新に失敗したら、モニターには直前の一覧と確認時刻が残ります。バックアップの復元後など、ファイル属性によらず本文を再検証したいときは `aym monitor index --full` を使ってください。更新中はストアへの書き込みが待たされます。[差分更新の検収](docs/acceptance/AC-20261123-06.md)
 
-- **モニター（`http://127.0.0.1:8765/`）** — QA/セキュリティ担当者がCampaign、Run、検知の証拠や評価を細かく確認する画面。
-- **判断の画面（`http://127.0.0.1:8765/decision`）** — Campaignを選び、いま判断すべきこと・未完了件数・KEV/EPSS・未検査の範囲を読み取る画面。対象を指定するには `/decision?campaign=<campaign_id>`。
+- **モニター（`https://127.0.0.1:8765/`）** — QA/セキュリティ担当者がCampaign、Run、検知の証拠や評価を細かく確認する画面。
+- **判断の画面（`https://127.0.0.1:8765/decision`）** — Campaignを選び、いま判断すべきこと・未完了件数・KEV/EPSS・未検査の範囲を読み取る画面。対象を指定するには `/decision?campaign=<campaign_id>`。
 
 両画面の先頭の「判断の画面」「モニター」で対象Campaignを保って行き来できます。判断の画面に更新・承認・実行機能はなく、`GET /api/campaigns/<campaign_id>/decision-view` を読むだけです。`view=blue` は非公開情報を返しません。評価がない場合は「未評価」、古い評価や未検査の範囲は注意を表示します。**進捗率は表示しません。**
 
@@ -127,10 +127,12 @@ $env:AYM_WORKSPACE = Join-Path $RuntimeRoot 'workspace'
 $env:AYM_TRUSTED_ROOT = Join-Path $RuntimeRoot 'trusted'
 New-Item -ItemType Directory -Force -Path $env:AYM_WORKSPACE,$env:AYM_TRUSTED_ROOT,(Join-Path $RuntimeRoot 'staging') | Out-Null
 aym lab demo --staging-root (Join-Path $RuntimeRoot 'staging')
+$env:AYM_MONITOR_TLS_CERT = Read-Host 'サーバー証明書 PEM のパス'
+$env:AYM_MONITOR_TLS_KEY = Read-Host '対応する秘密鍵 PEM のパス'
 aym monitor serve --bind 127.0.0.1:8765
 ```
 
-モニターは http://127.0.0.1:8765 で開きます。作業用ディレクトリの考え方など、詳しい手順は次の「起動」と[RUNBOOK](RUNBOOK.md)にあります。
+モニターは https://127.0.0.1:8765 で開きます。作業用ディレクトリの考え方など、詳しい手順は次の「起動」と[RUNBOOK](RUNBOOK.md)にあります。
 
 ## 起動
 
@@ -151,17 +153,19 @@ $env:AYM_TRUSTED_ROOT = Join-Path $RuntimeRoot 'trusted'
 $StagingRoot = Join-Path $RuntimeRoot 'staging'
 New-Item -ItemType Directory -Force -Path $env:AYM_WORKSPACE,$env:AYM_TRUSTED_ROOT,$StagingRoot | Out-Null
 aym lab demo --staging-root $StagingRoot
+$env:AYM_MONITOR_TLS_CERT = Read-Host 'サーバー証明書 PEM のパス'
+$env:AYM_MONITOR_TLS_KEY = Read-Host '対応する秘密鍵 PEM のパス'
 aym monitor serve --bind 127.0.0.1:8765
 ```
 
-[製品実行モニター](http://127.0.0.1:8765)を開きます。
+[製品実行モニター](https://127.0.0.1:8765)を開きます。
 モニターは読み取り専用です。ラボを再実行する場合は、同じ環境変数を設定した別の端末を使います。
 
 詳細は[RUNBOOK](RUNBOOK.md)と[製品操作ガイド](docs/PRODUCT-GUIDE.md)を参照してください。
 
 ## モニター
 
-実行の様子は、ブラウザーのHTMLモニター（http://127.0.0.1:8765、読み取り専用）で確認できます。
+実行の様子は、ブラウザーのHTMLモニター（https://127.0.0.1:8765、読み取り専用）で確認できます。
 
 - 主要な指標と詳細を分けて表示し、実行の進み具合、見つけた問題（深刻度やCVSSなど）、修復と再検証の結果を追えます
 - agentごとの活動と、失敗がどの候補・手順に属するか（帰属）も表示されます

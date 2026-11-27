@@ -319,6 +319,105 @@ class HttpBrokerTests(unittest.TestCase):
             broker.request("GET", "http://example.com/api/tags")
 
 
+class _ResponseStream:
+    """A socket double that preserves segment boundaries and records reads."""
+
+    def __init__(self, *segments):
+        self.pending = list(segments)
+        self.read_sizes = []
+        self.socket = mock.Mock(spec=socket.socket)
+        self.socket.recv.side_effect = self.recv
+
+    def recv(self, size):
+        self.read_sizes.append(size)
+        if not self.pending:
+            return b""
+        segment = self.pending[0]
+        if len(segment) <= size:
+            return self.pending.pop(0)
+        self.pending[0] = segment[size:]
+        return segment[:size]
+
+
+class HttpBrokerBudgetTests(unittest.TestCase):
+    status = b"HTTP/1.1 200 OK\r\n"
+    chunked = status + b"Transfer-Encoding: chunked\r\n\r\n"
+
+    def request(self, stream, limit=3):
+        broker = adapter_base.HttpBroker({"broker_allowlist": _allowlist_for(8123)})
+        with mock.patch.object(policy, "_resolve_ips", return_value=["127.0.0.1"]), \
+                mock.patch.object(policy, "pinned_connect", return_value=stream.socket):
+            try:
+                return broker.request("GET", "http://localhost:8123/", max_bytes=limit)
+            finally:
+                stream.socket.close.assert_called_once()
+
+    def test_exact_body_limit_all_framings(self):
+        for segments in (
+            (self.status + b"Content-Length: 3\r\n\r\n", b"abc"),
+            (self.status + b"\r\n", b"abc"),
+            (self.chunked, b"1;x=y\r\na\r\n", b"2\r\nbc\r\n0\r\nX-End: ok\r\n\r\n"),
+        ):
+            with self.subTest(headers=segments[0]):
+                self.assertEqual(self.request(_ResponseStream(*segments))["body"], b"abc")
+
+    def test_declared_lengths_stop_before_body_read(self):
+        for segments in (
+            (self.status + b"Content-Length: 4\r\n\r\n", b"abcd"),
+            (self.chunked, b"1\r\na\r\n", b"3\r\n", b"bcd"),
+        ):
+            with self.subTest(headers=segments[0]):
+                stream = _ResponseStream(*segments)
+                with self.assertRaisesRegex(policy.PolicyDenied, "max_bytes"):
+                    self.request(stream)
+                self.assertEqual(stream.pending, [segments[-1]])
+
+    def test_eof_framing_reads_one_extra_byte_at_limit(self):
+        stream = _ResponseStream(self.status + b"\r\n", b"abc", b"de")
+        with self.assertRaisesRegex(policy.PolicyDenied, "max_bytes"):
+            self.request(stream)
+        self.assertEqual(stream.read_sizes[-1], 1)
+        self.assertEqual(stream.pending, [b"e"])
+
+    def test_initial_header_limit(self):
+        head = self.status + b"X-Name: ok"
+        with mock.patch.object(adapter_base, "_HTTP_HEADER_LIMIT", len(head)):
+            self.assertEqual(self.request(_ResponseStream(head, b"\r\n\r\n", b"a"))["body"], b"a")
+            stream = _ResponseStream(head + b"x", b"\r\n\r\n", b"a")
+            with self.assertRaisesRegex(policy.PolicyDenied, "metadata"):
+                self.request(stream)
+            self.assertEqual(stream.pending[-1], b"a")
+
+    def test_chunk_size_line_limit(self):
+        line = b"1;x=y\r\n"
+        with mock.patch.object(adapter_base, "_HTTP_CHUNK_LINE_LIMIT", len(line)):
+            self.assertEqual(
+                self.request(_ResponseStream(self.chunked, line, b"a\r\n0\r\n\r\n"))["body"], b"a")
+            stream = _ResponseStream(self.chunked, b"1;x=yz\r\n", b"a")
+            with self.assertRaisesRegex(policy.PolicyDenied, "metadata"):
+                self.request(stream)
+            self.assertEqual(stream.pending[-1], b"a")
+
+    def test_chunk_size_lines_share_budget(self):
+        line = b"1;label=example\r\n"
+        frames = (line + b"a\r\n") * 3 + b"0\r\n\r\n"
+        # Three one-byte frames plus the terminator consume this many header bytes.
+        exact = 3 * len(line) + len(b"0\r\n") - 3 * 3
+        with mock.patch.object(adapter_base, "_HTTP_HEADER_LIMIT", exact):
+            self.assertEqual(self.request(_ResponseStream(self.chunked, frames))["body"], b"aaa")
+            with self.assertRaisesRegex(policy.PolicyDenied, "metadata"):
+                self.request(_ResponseStream(self.chunked, frames.replace(b"label", b"labels", 1)))
+
+    def test_trailers_share_limit_and_require_final_empty_line(self):
+        trailers = b"X-First: completed example\r\nX-Second: completed example\r\n\r\n"
+        with mock.patch.object(adapter_base, "_HTTP_HEADER_LIMIT", len(trailers)):
+            self.assertEqual(self.request(_ResponseStream(self.chunked, b"0\r\n", trailers))["body"], b"")
+            with self.assertRaisesRegex(policy.PolicyDenied, "metadata"):
+                self.request(_ResponseStream(self.chunked, b"0\r\n", trailers.replace(b"First", b"Firsts")))
+            with self.assertRaisesRegex(adapter_base.AdapterUnavailable, "truncated"):
+                self.request(_ResponseStream(self.chunked, b"0\r\n", trailers[:-2]))
+
+
 class ContractTests(unittest.TestCase):
     def test_load_contract_missing(self):
         with tempfile.TemporaryDirectory() as directory:

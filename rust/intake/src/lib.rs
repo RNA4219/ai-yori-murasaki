@@ -62,7 +62,72 @@ fn register(
 fn _intake_index(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(register, module)?)?;
     module.add_function(wrap_pyfunction!(link, module)?)?;
+    module.add_function(wrap_pyfunction!(search, module)?)?;
     Ok(())
+}
+
+type SearchRow = (String, String, String, Option<String>);
+
+#[pyfunction]
+fn search(
+    py: Python<'_>,
+    path: PathBuf,
+    query: String,
+    exact_id: bool,
+    limit: u16,
+) -> PyResult<Vec<SearchRow>> {
+    py.detach(move || search_records(path, query, exact_id, limit))
+        .map_err(|_| PyOSError::new_err("受付台帳を読み取れません"))
+}
+
+fn search_records(
+    path: PathBuf,
+    query: String,
+    exact_id: bool,
+    limit: u16,
+) -> rusqlite::Result<Vec<SearchRow>> {
+    use rusqlite::types::Value;
+    let mut db = Connection::open_with_flags(
+        path,
+        OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+    )?;
+    db.busy_timeout(Duration::from_secs(5))?;
+    db.pragma_update(None, "trusted_schema", false)?;
+    let tx = db.transaction()?;
+    // 初回連結前の台帳でも、同じスナップショットを移行せずに読む。
+    let has_links: bool = tx.query_row(
+        "SELECT EXISTS(SELECT 1 FROM sqlite_master WHERE type='table' AND name='receipt_campaigns')",
+        [],
+        |row| row.get(0),
+    )?;
+    let mut sql = String::from("SELECT receipts.receipt_id, name, registered_at, ");
+    sql.push_str(if has_links {
+        "campaign_id FROM receipts LEFT JOIN receipt_campaigns USING(receipt_id) "
+    } else {
+        "NULL FROM receipts "
+    });
+    let mut args = vec![Value::Integer(i64::from(limit))];
+    if exact_id {
+        sql.push_str("WHERE receipts.receipt_id = ?2 ");
+        args.push(Value::Text(query));
+    } else if query.is_empty() {
+        sql.push_str("ORDER BY receipts.rowid DESC ");
+    } else {
+        sql.push_str(
+            r"WHERE name LIKE ?2 ESCAPE '\' ORDER BY name COLLATE NOCASE, receipts.receipt_id ",
+        );
+        let prefix = query
+            .replace('\\', "\\\\")
+            .replace('%', "\\%")
+            .replace('_', "\\_");
+        args.push(Value::Text(prefix + "%"));
+    }
+    sql.push_str("LIMIT ?1");
+    let mut statement = tx.prepare(&sql)?;
+    let rows = statement.query_map(rusqlite::params_from_iter(args), |row| {
+        Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?))
+    })?;
+    rows.collect()
 }
 
 #[pyfunction]

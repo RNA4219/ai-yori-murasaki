@@ -1,5 +1,5 @@
 {
-  "generated_at": "00069",
+  "generated_at": "00070",
   "index_snapshot": "docs/birdseye/index.json",
   "refresh_command": "RUNBOOK.md#execute と docs/BIRDSEYE.md の PowerShell 手順を参照",
   "curation_notes": "ローカル製品、要件、検収、文書運用の入口。生成世代と原文・要約の内容確認を区別する。",
@@ -7,7 +7,7 @@
     {
       "id": "README.md",
       "role": "overview",
-      "reason": "製品の操作入口。モニターの Google ログインで個別アカウントやメールドメインを許可する方法、課題の照合や構成図の編集を案内する。",
+      "reason": "製品の操作入口。証明書・秘密鍵を指定して HTTPS モニターを起動する手順、判断の画面、資料の取込や構成図を案内する。",
       "caps": "docs/birdseye/caps/README.md.json",
       "edges": [
         "BLUEPRINT.md",
@@ -46,12 +46,12 @@
         "docs/tasks/TASK.architecture-map-11-23-2026.md",
         "docs/workflow-adoption.md"
       ],
-      "last_verified_at": "2026-11-27T09:09:00+00:00"
+      "last_verified_at": "2026-11-27T10:24:52+00:00"
     },
     {
       "id": "HUB.codex.md",
       "role": "navigation",
-      "reason": "依頼別の文書ハブ。Wazuh の TLS、チェックポイント発行、検証履歴の操作・技術検収や、モニターの設定に案内する。",
+      "reason": "依頼別の文書ハブ。HTTPS モニターの起動、Google ログイン、証跡の確認などの利用手順と検収へ案内する。",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
       "edges": [
         ".agents/skills/security-audit/SKILL.md",
@@ -99,6 +99,7 @@
         "docs/acceptance/AC-20261127-04.md",
         "docs/acceptance/AC-20261127-05.md",
         "docs/acceptance/AC-20261127-06.md",
+        "docs/acceptance/AC-20261127-07.md",
         "docs/acceptance/INDEX.md",
         "docs/acceptance/README.md",
         "docs/releases/README.md",
@@ -129,7 +130,7 @@
         "docs/workflow-adoption.md",
         "governance/policy.yaml"
       ],
-      "last_verified_at": "2026-11-27T09:34:31+00:00"
+      "last_verified_at": "2026-11-27T10:24:52+00:00"
     },
     {
       "id": "GUARDRAILS.md",
@@ -152,7 +153,7 @@
     {
       "id": "BLUEPRINT.md",
       "role": "requirements",
-      "reason": "隔離ラボ、証跡、独立Oracle、RSI、P2、HTMLの実装範囲と入出力、外部接続・公開の除外を定める。",
+      "reason": "製品の実装範囲と操作境界。ループバックモニターの HTTPS、読み取り API、台帳と評価・モデルの役割を定める。",
       "caps": "docs/birdseye/caps/BLUEPRINT.md.json",
       "edges": [
         "RUNBOOK.md",
@@ -167,7 +168,7 @@
         "docs/requirements/SPEC-CORE.md",
         "docs/requirements/SPEC-EVALUATION.md"
       ],
-      "last_verified_at": "2026-11-06T19:30:36.760596+00:00"
+      "last_verified_at": "2026-11-27T10:24:52+00:00"
     },
     {
       "id": "RUNBOOK.md",
@@ -224,7 +225,7 @@
     {
       "id": "docs/tasks/README.md",
       "role": "guide",
-      "reason": "Task の運用と索引。Wazuh・封印・履歴の技術検収、Google ログインなどの作業を引ける。",
+      "reason": "Task の運用と索引。HTTPS モニターのセッションと再診断、検証履歴、Google ログインなどの作業と技術検収を引ける。",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
       "edges": [
         "CHANGELOG.md",
@@ -264,6 +265,7 @@
         "docs/acceptance/AC-20261127-04.md",
         "docs/acceptance/AC-20261127-05.md",
         "docs/acceptance/AC-20261127-06.md",
+        "docs/acceptance/AC-20261127-07.md",
         "docs/acceptance/README.md",
         "docs/releases/README.md",
         "docs/tasks/TASK.agent-core-11-08-2026.md",
@@ -284,6 +286,7 @@
         "docs/tasks/TASK.indexed-case-detail-11-23-2026.md",
         "docs/tasks/TASK.llm-remote-11-09-2026.md",
         "docs/tasks/TASK.monitor-counts-11-23-2026.md",
+        "docs/tasks/TASK.monitor-https-11-27-2026.md",
         "docs/tasks/TASK.monitor-index-11-23-2026.md",
         "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
         "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md",
@@ -304,12 +307,12 @@
         "docs/tasks/TASK.version-011-11-08-2026.md",
         "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
       ],
-      "last_verified_at": "2026-11-27T09:45:38+00:00"
+      "last_verified_at": "2026-11-27T10:24:52+00:00"
     },
     {
       "id": "docs/acceptance/INDEX.md",
       "role": "index",
-      "reason": "技術検収の索引。Wazuh の TLS、所属案件と履歴の確認結果、モニターの各機能の Task と PR を引ける。",
+      "reason": "技術検収の索引。HTTPS とセッション、再診断対象、証跡やモニターの各機能の Task と結果を引ける。",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
       "edges": [
         "docs/acceptance/AC-20261106-01.md",
@@ -346,6 +349,7 @@
         "docs/acceptance/AC-20261127-04.md",
         "docs/acceptance/AC-20261127-05.md",
         "docs/acceptance/AC-20261127-06.md",
+        "docs/acceptance/AC-20261127-07.md",
         "docs/releases/RA-20261126-01.md",
         "docs/releases/RA-20261126-02.md",
         "docs/releases/RA-20261127-01.md",
@@ -368,6 +372,7 @@
         "docs/tasks/TASK.indexed-case-detail-11-23-2026.md",
         "docs/tasks/TASK.llm-remote-11-09-2026.md",
         "docs/tasks/TASK.monitor-counts-11-23-2026.md",
+        "docs/tasks/TASK.monitor-https-11-27-2026.md",
         "docs/tasks/TASK.monitor-index-11-23-2026.md",
         "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
         "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md",
@@ -385,7 +390,7 @@
         "docs/tasks/TASK.version-011-11-08-2026.md",
         "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
       ],
-      "last_verified_at": "2026-11-27T09:45:38+00:00"
+      "last_verified_at": "2026-11-27T10:24:52+00:00"
     },
     {
       "id": "docs/RSI.md",
@@ -410,15 +415,16 @@
     {
       "id": "docs/PRODUCT-GUIDE.md",
       "role": "doc",
-      "reason": "製品の運用手順。Wazuh 接続確認用 CA の指定、チェックポイントの発行条件、検証履歴で過去の結果と対象を読む方法を記す。",
+      "reason": "製品操作ガイド。ローカルモニターの HTTPS 証明書と鍵、明示的な非 SSO HTTP 起動、Wazuh と証跡、ラボや検証の手順を記す。",
       "caps": "docs/birdseye/caps/docs.PRODUCT-GUIDE.md.json",
       "edges": [
         "README.md",
         "docs/CONTRACTS.md",
         "docs/acceptance/AC-20261106-06.md",
-        "docs/requirements/API-CONTRACTS.md"
+        "docs/requirements/API-CONTRACTS.md",
+        "docs/requirements/GOOGLE-MONITOR-SSO.md"
       ],
-      "last_verified_at": "2026-11-27T09:34:31+00:00"
+      "last_verified_at": "2026-11-27T10:24:52+00:00"
     },
     {
       "id": "docs/PRODUCT-ACCEPTANCE.md",

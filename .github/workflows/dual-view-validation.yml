@@ -7,6 +7,7 @@ on:
     paths:
       - "ai_yori_murasaki/**"
       - "decision_view/**"
+      - "rust/intake/**"
       - "tests/**"
       - "scripts/wazuh_live_smoke.py"
       - "pyproject.toml"

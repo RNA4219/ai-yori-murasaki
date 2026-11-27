@@ -66,7 +66,7 @@ def _return_path(path: str) -> str:
 
 
 def _callback(port: int) -> str:
-    return f"http://127.0.0.1:{port}/auth/google/callback"
+    return f"https://127.0.0.1:{port}/auth/google/callback"
 
 
 def _domain(value: object) -> str | None:

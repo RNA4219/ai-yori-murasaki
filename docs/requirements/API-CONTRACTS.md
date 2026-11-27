@@ -139,7 +139,9 @@ operatorの案件一覧と詳細の `severity_counts` は、同じ案件内の�
 
 #### `aym monitor serve`
 
-- `--bind <host:port>` の既定値は `127.0.0.1:8765`。
+- R-091。`--bind <host:port>` の既定値は `127.0.0.1:8765`。通常は TLS 1.2 以上の HTTPS で待ち受ける。
+- サーバー証明書 PEM は `--tls-cert` または `AYM_MONITOR_TLS_CERT`、対応する秘密鍵 PEM は `--tls-key` または `AYM_MONITOR_TLS_KEY` で指定する。各パスはコマンド指定が優先する。両方未指定は `monitor_tls_required`、片方だけ、読み込み失敗、鍵の不一致は `monitor_tls_configuration` で起動を中止する。
+- `--allow-http-loopback` は非 SSO のローカル確認用。TLS 設定や `--google-sso` と併用できない。[TLS の起動手順](../PRODUCT-GUIDE.md#モニターのhttps起動)
 - `--google-sso` には任意依存 `sso`、`AYM_GOOGLE_CLIENT_ID`、`AYM_GOOGLE_CLIENT_SECRET`、および次の許可リストが必要になる。
 - `AYM_GOOGLE_ALLOWED_SUBJECTS` は Google `sub`、`AYM_GOOGLE_ALLOWED_EMAIL_DOMAINS` はメールドメインのカンマ区切り。片方を指定すればその条件を、両方を指定すれば両条件を適用する。両方とも未設定、またはいずれかに空値・空項目・不正な値がある場合は `google_sso_configuration` で起動を中止する。[設定手順](GOOGLE-MONITOR-SSO.md)
 - `127.0.0.1` 以外: exit 2、`reason_code=bind_not_loopback`。
@@ -150,11 +152,14 @@ operatorの案件一覧と詳細の `severity_counts` は、同じ案件内の�
 
 - 待受アドレスは `127.0.0.1` に限定する。ポートは起動時に指定できる。
 - read-only。HTML/assets と明示的 snapshot API のみ。raw objects / private events は非公開。
-- Host は `127.0.0.1` または `localhost` に限定し、ポートの指定があれば待受ポートと照合する。不一致は 400。Google SSO のコールバックは登録した `127.0.0.1:<port>` で受ける。
+- Host は `127.0.0.1` または `localhost` に限定し、ポートの指定があれば待受ポートと照合する。不一致は 400。Google SSO のコールバックは登録した `https://127.0.0.1:<port>/auth/google/callback` で受ける。
 - Origin ヘッダ検証: 同一 origin のみ許可。他は 403。
 - projection リスト: `campaigns`, `runs`, `events_public`, `verification`, `approvals`。
+- モニターを `view=blue` で開いた場合、画面から資料や実行履歴などの API を読むリクエストにも同じビューを引き継ぐ。資料は Blue 用の `withheld`、検証履歴は Blue に公開する項目だけを返す。
 
-#### Google SSO を有効にした場合（R-089・R-090）
+#### Google SSO を有効にした場合（R-089〜R-091）
+
+- Google に送る `redirect_uri` は認証開始と認可コード交換で同一の HTTPS URL。認証開始時とログイン後の Cookie には `Secure`、`HttpOnly`、`SameSite=Lax` を付与し、ログアウトは HTTPS の同一オリジンとフォームの確認トークンを照合する。
 
 - 個別の `sub` だけを使うときのスコープは `openid profile`。ドメインを指定したときは `openid email` を要求する。署名検証済みの ID トークンで `email_verified` が真であり、`email` のドメインが許可名と完全一致することを確認する。Workspace の `hd` はメールドメインと同じ許可名でなければならない。個人用 Gmail は `gmail.com` の明示指定で対象にでき、`hd` が存在する場合は同様に一致を求める。
 
@@ -179,13 +184,13 @@ operatorの案件一覧と詳細の `severity_counts` は、同じ案件内の�
 | GET | `/api/campaigns/<campaign_id>/decision-view` | `?previous=<id>` | 複数候補の中で選んだIDを照合して比較。未選択・候補外は比較を保留する。今回の集計が不完全ならhold、前回が不完全なら今回分だけを返す。Blueには比較を公開しない | 404 | 1 MiB |
 | GET | `/api/campaigns/<campaign_id>` | - | `{campaign: {...}}` | 404 | 256 KiB |
 | GET | `/api/runs/<run_id>` | - | `{run: {...}}` | 404 | 256 KiB |
-| GET | `/api/runs/<run_id>/events` | `?after=<sequence>&limit=<int>` | `{events: [...]}`（public projection） | 404 | 1 MiB |
+| GET | `/api/runs/<run_id>/events` | `?after=<sequence>&limit=<int>` | `{events: [...]}`。整合性を確認した台帳を従来の順序と各ビューの公開項目で返す。初回記録前の実行中の Run は 200 と空配列 | 400 / 404 / 409 | 1 MiB |
 | GET | `/api/verification/<run_id>` | `limit`、続きは `before` も指定 | `verification` に検証履歴を返す。ページ指定時の順序・件数は下記 | 400 / 404 / 409 | ページ指定は最大100件 |
 | GET | `/api/approvals` | - | `{approvals: [...]}` | 500 | 256 KiB |
 | GET | `/api/health` | - | `{status: "ok"}` | - | 1 KiB |
 
 - イベント取得の `limit` は既定100、上限1000。
-- イベント取得の `after` は sequence。
+- イベント取得の `after` は sequence。JSON が正しくても台帳の整合性が崩れている場合、読取不能な場合、完了した Run の台帳が欠落している場合は 409 と `{"error":"evidence_unverified"}` を返し、記録を配信しない。未知の Run は 404 と `{"error":"not_found"}`。有効な従来の台帳にも同じ検証を適用し、指定したページに該当する行がない場合は 200 と `{"events":[]}` を返す。
 
 検証履歴を新しい順に取得する場合は `GET /api/verification/<run_id>?limit=25` を使う。`limit` は1〜100。応答の `next_before` が数値なら、次のリクエストでは `limit` と一緒にその値を `before` に渡す。`null` なら、それより古いページはない。`omitted` はそのページ内で読み取れなかった行数。`journal_status` は履歴ファイルの状態（`present`、`missing`、`empty`）を示す。
 

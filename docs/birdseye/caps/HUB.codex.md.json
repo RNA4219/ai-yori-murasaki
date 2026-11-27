@@ -2,7 +2,7 @@
   "id": "HUB.codex.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "依頼別の文書ハブ。Wazuh の TLS、チェックポイント発行、検証履歴の操作・技術検収や、モニターの設定に案内する。",
+  "summary": "依頼別の文書ハブ。HTTPS モニターの起動、Google ログイン、証跡の確認などの利用手順と検収へ案内する。",
   "deps_out": [
     ".agents/skills/security-audit/SKILL.md",
     "AGENTS.md",
@@ -49,6 +49,7 @@
     "docs/acceptance/AC-20261127-04.md",
     "docs/acceptance/AC-20261127-05.md",
     "docs/acceptance/AC-20261127-06.md",
+    "docs/acceptance/AC-20261127-07.md",
     "docs/acceptance/INDEX.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
@@ -89,13 +90,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "07e1cc91b93a8e5bac6818312623d0b39bc660381a67fb550cb64f8389fca357",
-  "generated_at": "00068",
+  "source_sha256": "26f7b6e19892bc0be8331ea4ba805456dc5c3b49b934456c65e37893489e85b5",
+  "generated_at": "00070",
   "review": {
-    "reviewed_at": "2026-11-27T09:34:31+00:00",
+    "reviewed_at": "2026-11-27T10:24:52+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "07e1cc91b93a8e5bac6818312623d0b39bc660381a67fb550cb64f8389fca357",
-    "summary_sha256": "c393e4c0fccf62cf59047c85a86c0c269cc04ead38cbe59c4304522c483f6ea8",
-    "scope": "Wazuh の TLS、封印と検証履歴の契約・受入条件の原文と要約を照合。"
+    "source_sha256": "26f7b6e19892bc0be8331ea4ba805456dc5c3b49b934456c65e37893489e85b5",
+    "summary_sha256": "62c5a0e8f3f4d110ed4e20a169d44d85c6a61fc83360b98aa3e31573940ca5a3",
+    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
   }
 }

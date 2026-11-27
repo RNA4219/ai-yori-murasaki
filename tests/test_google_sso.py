@@ -113,7 +113,7 @@ class FederatedLoginTests(unittest.TestCase):
         self.params = {k: v[0] for k, v in parse_qs(parts.query).items()}
         self.assertEqual(self.params["scope"], "openid email" if email_scope else "openid profile")
         self.assertEqual(self.params["prompt"], "select_account")
-        self.assertEqual(self.params["redirect_uri"], "http://127.0.0.1:8123/auth/google/callback")
+        self.assertEqual(self.params["redirect_uri"], "https://127.0.0.1:8123/auth/google/callback")
         self.assertEqual(self.params["code_challenge_method"], "S256")
         self.assertNotIn(self.cookie, url)
         self.assertNotIn("test-secret", url)

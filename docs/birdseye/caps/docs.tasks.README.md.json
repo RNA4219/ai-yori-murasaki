@@ -2,7 +2,7 @@
   "id": "docs/tasks/README.md",
   "role": "operations",
   "public_api": [],
-  "summary": "Task の運用と索引。Wazuh・封印・履歴の技術検収、Google ログインなどの作業を引ける。",
+  "summary": "Task の運用と索引。HTTPS モニターのセッションと再診断、検証履歴、Google ログインなどの作業と技術検収を引ける。",
   "deps_out": [
     "CHANGELOG.md",
     "HUB.codex.md",
@@ -41,6 +41,7 @@
     "docs/acceptance/AC-20261127-04.md",
     "docs/acceptance/AC-20261127-05.md",
     "docs/acceptance/AC-20261127-06.md",
+    "docs/acceptance/AC-20261127-07.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
@@ -61,6 +62,7 @@
     "docs/tasks/TASK.indexed-case-detail-11-23-2026.md",
     "docs/tasks/TASK.llm-remote-11-09-2026.md",
     "docs/tasks/TASK.monitor-counts-11-23-2026.md",
+    "docs/tasks/TASK.monitor-https-11-27-2026.md",
     "docs/tasks/TASK.monitor-index-11-23-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
     "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md",
@@ -91,13 +93,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "ceb112f72e28a592d4908f3bd97118797103bc7300b3872441dd5af1ad939481",
-  "generated_at": "00069",
+  "source_sha256": "faaf69721bcf32b34ae533e9a2d1c2e87a1af449526b86c6dd6d48d9a547dccc",
+  "generated_at": "00070",
   "review": {
-    "reviewed_at": "2026-11-27T09:45:38+00:00",
+    "reviewed_at": "2026-11-27T10:24:52+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "ceb112f72e28a592d4908f3bd97118797103bc7300b3872441dd5af1ad939481",
-    "summary_sha256": "967ca2c463b9958c27a9046546fa9663cb9296b750548c52cbdd9facb71260b1",
-    "scope": "Wazuh の TLS、封印、検証履歴の製品コミットと技術検収、未確認事項を照合。"
+    "source_sha256": "faaf69721bcf32b34ae533e9a2d1c2e87a1af449526b86c6dd6d48d9a547dccc",
+    "summary_sha256": "dd4437682c6fce9bc25bba1b5e116959e5eb74123a65fba5d4cbd0865de70baa",
+    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
   }
 }
