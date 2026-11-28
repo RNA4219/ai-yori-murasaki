@@ -3,11 +3,28 @@ import csv
 import json
 
 from ai_yori_murasaki.cli import main
+from ai_yori_murasaki.drift_report import read_drift
 from ai_yori_murasaki.runtime import Runtime
 from ai_yori_murasaki.server import handle_request
 from ai_yori_murasaki.storage import Store
 from tests.test_tracker_drift_cli import ACCOUNT
 from tests.test_tracker_drift_e2e import prepare_csv_fixture, run_cli
+
+
+def test_registered_note_name_hides_only_the_reference(tmp_path):
+    ids = prepare_csv_fixture(tmp_path)
+    vault = tmp_path / "Vault"
+    vault.mkdir()
+    marker = "架空ノート"
+    note = vault / (marker + ".md")
+    note.write_text("- [ ] 通知を確認", encoding="utf-8")
+    run_cli(tmp_path, "assess", "import", "--format", "obsidian", "--vault", vault,
+            "--note", note.name, "--campaign", ids["campaign_id"], "--run", ids["run_id"],
+            "--context", tmp_path / "input" / "context.json")
+    current = Runtime(Store(tmp_path / "workspace", tmp_path / "trusted", secrets=(marker,)))
+    item, = read_drift(current, ids["campaign_id"])["items"]
+    assert item["title"] == "通知を確認"
+    assert item["source"] == "obsidian" and item["source_uri"] == ""
 
 
 def test_mixed_campaign_with_custom_notion_mapping(tmp_path):

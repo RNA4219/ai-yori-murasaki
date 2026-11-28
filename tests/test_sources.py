@@ -4,6 +4,7 @@ import sys
 import socket
 import subprocess
 import time
+from urllib.parse import quote
 
 import pytest
 
@@ -64,6 +65,35 @@ def test_obsidian_unicode_note_and_vault_boundary(sources, tmp_path):
     assert "%E8" in document["source_url"]
     with pytest.raises(DataError):
         sources.obsidian(vault, Path("../secret.md"))
+
+
+def test_reference_projection_respects_current_secret_settings(sources):
+    marker = "架空資料"
+    uri = "obsidian://open?vault=Notes&file=" + quote(marker)
+    public_link = "https://example.com/guide"
+    doc = add(sources, provider="obsidian", source_url=uri, title=marker, body=marker,
+              links=[uri, public_link])
+    current = Sources(Store(sources.store.workspace, sources.store.trusted_root, secrets=(marker,)))
+    projected = current.get(doc["document_id"])
+    assert projected["source_url"] is None
+    assert projected["links"] == [public_link]
+    assert projected["title"] == projected["body"] == "[REDACTED]"
+    assert current.list()[0]["source_url"] is None
+    assert current.store.get_object(doc["ref"])["source_url"] == uri
+    with pytest.raises(DataError):
+        add(current, provider="obsidian", source_url=uri)
+
+
+def test_only_vault_relative_note_locations_and_safe_https_links_are_accepted(sources):
+    folder = quote("チーム/週次", safe="")
+    uri = "obsidian://open?vault=Notes&file=" + folder
+    assert safe_url(uri) == uri
+    for location in ("obsidian://open?vault=Notes&file=.obsidian%2Fsettings",
+                     "obsidian://open?vault=Notes&file=Tasks&path=",
+                     "https://example.com/guide#access_token=fixture"):
+        with pytest.raises(DataError):
+            add(sources, source_url=location)
+    assert sources.list() == []
 
 
 def test_empty_oversized_and_corrupt_documents(sources):

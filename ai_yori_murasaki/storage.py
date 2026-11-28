@@ -12,6 +12,7 @@ import contextlib
 import hashlib
 import os
 import re
+import stat
 import tempfile
 import threading
 import time
@@ -146,8 +147,7 @@ def _safe_join(root: Path, *parts: str) -> Path:
             raise DataError("unsafe path component")
     candidate = root.joinpath(*parts)
     # raw-path safety before resolve
-    if _is_reparse(candidate):
-        raise DataError("path must not be a symlink or reparse point")
+    _assert_no_ancestor_reparse(candidate)
     resolved = candidate.resolve()
     try:
         resolved.relative_to(root)
@@ -180,14 +180,34 @@ def _assert_outside_repo(path: Path) -> None:
 
 def _assert_no_ancestor_reparse(path: Path) -> None:
     """Reject any ancestor of path (up to filesystem root) that is a reparse point."""
-    current = path
-    while True:
+    path = path.absolute()
+    for current in (*reversed(path.parents), path):
         if _is_reparse(current):
             raise DataError("storage root has a symlink/reparse ancestor")
-        parent = current.parent
-        if parent == current:
-            return
-        current = parent
+
+
+def read_regular_bytes(path: Path, limit: int) -> bytes:
+    """リンクを辿らず、確認した通常ファイルから最大 limit バイトを取得する。"""
+    if limit < 0:
+        raise ValueError("negative read limit")
+    _assert_no_ancestor_reparse(path)
+    entry = path.lstat()
+    if not stat.S_ISREG(entry.st_mode) or entry.st_size > limit:
+        raise DataError("input is not a regular file within the size limit")
+    flags = (os.O_RDONLY | getattr(os, "O_BINARY", 0) | getattr(os, "O_NOFOLLOW", 0)
+             | getattr(os, "O_NONBLOCK", 0))
+    with os.fdopen(os.open(path, flags), "rb") as stream:
+        _assert_no_ancestor_reparse(path)
+        opened = os.fstat(stream.fileno())
+        if not stat.S_ISREG(opened.st_mode) or not os.path.samestat(entry, opened):
+            raise DataError("input file changed before reading")
+        raw = stream.read(limit + 1)
+        _assert_no_ancestor_reparse(path)
+        if not os.path.samestat(opened, path.lstat()):
+            raise DataError("input file changed while reading")
+    if len(raw) > limit:
+        raise DataError("input exceeds size limit")
+    return raw
 
 
 # Process-wide reentrant lock keyed by lockfile path.  Nested Store instances
@@ -407,17 +427,13 @@ class Store:
                 stream.flush()
                 os.fsync(stream.fileno())
         except FileExistsError:
-            if path.read_bytes() != raw:
+            if read_regular_bytes(path, len(raw)) != raw:
                 raise DataError("object digest collision or corruption")
         return sha
 
     def get_object_bytes(self, sha: str) -> bytes:
         path = self._object_path(sha)
-        if _is_reparse(path):
-            raise DataError("object must not be a symlink")
-        if path.stat().st_size > MAX_JSON_BYTES:
-            raise DataError("object exceeds size limit")
-        raw = path.read_bytes()
+        raw = read_regular_bytes(path, MAX_JSON_BYTES)
         if hashlib.sha256(raw).hexdigest() != sha:
             raise DataError("object hash mismatch")
         return raw

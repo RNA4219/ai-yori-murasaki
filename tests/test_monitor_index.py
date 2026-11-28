@@ -105,6 +105,23 @@ def test_large_store_requires_index_and_legacy_api_is_unchanged(store):
         assert api(store, "/c1" + suffix)[0] == 409
 
 
+def test_excerpt_and_detail_apply_current_registered_secrets_before_truncation(store):
+    label = "fixture-label"
+    prefix = "a" * 250
+    ref = store.put_object({"campaign_id": "case", "finding_id": "sample", "source": "wazuh",
+                            "title": prefix + label, "severity": "info"})
+    ledger(store, "r1", "case", record_kind="finding", record_ref=ref)
+    build_index(store)
+    reader = Store(store.workspace, store.trusted_root, secrets=(label,))
+    status, page = api(reader, "?page=1")
+    assert status == 200
+    status, detail = api(reader, "/case")
+    assert status == 200
+    masked = (prefix + "[REDACTED]")[:256]
+    assert page["campaigns"][0]["finding_excerpt"][0]["title"] == masked
+    assert detail["findings"][0]["title"] == masked
+
+
 def test_case_severity_counts_and_v2_migration(store):
     def add(rid, fid, severity):
         ref = store.put_object({"campaign_id": "case", "finding_id": fid, "severity": severity})

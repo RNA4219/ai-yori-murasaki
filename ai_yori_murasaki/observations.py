@@ -9,7 +9,7 @@ from pathlib import Path
 
 from . import assessment
 from .jsonio import MAX_JSON_BYTES, DataError, loads
-from .storage import _is_reparse
+from .storage import _is_reparse, read_regular_bytes
 
 
 def local_path(value: str | Path) -> Path:
@@ -38,12 +38,7 @@ def local_path(value: str | Path) -> Path:
 def _read_local_json(value: str | Path):
     path = local_path(value)
     try:
-        if not path.is_file():
-            raise DataError("input must be a regular file")
-        with path.open("rb") as stream:
-            raw = stream.read(MAX_JSON_BYTES + 1)
-        if len(raw) > MAX_JSON_BYTES:
-            raise DataError("input exceeds 16 MiB")
+        raw = read_regular_bytes(path, MAX_JSON_BYTES)
         return loads(raw.decode("utf-8"))
     except (OSError, UnicodeError) as exc:
         raise DataError("cannot read local UTF-8 JSON") from exc

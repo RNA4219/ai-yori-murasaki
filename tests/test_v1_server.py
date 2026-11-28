@@ -9,6 +9,7 @@ import unittest
 import urllib.error
 import urllib.request
 from pathlib import Path
+from unittest.mock import patch
 
 from ai_yori_murasaki.runtime import Runtime
 from ai_yori_murasaki.server import create_server, handle_request, project_event
@@ -120,6 +121,24 @@ class ServerContractTests(unittest.TestCase):
         status, _, body = self.fx.get("/api/models")
         self.assertEqual(status, 200)
         self.assertEqual(json.loads(body), {"models": []})
+
+    def test_workspace_json_boundary_and_unavailable_inputs(self) -> None:
+        path = self.fx.workspace / "model-status.json"
+        row = b'{"models":[{"role":"preview"}]}'
+        limit = 1024
+        with patch("ai_yori_murasaki.server.MAX_RESPONSE_BYTES", limit):
+            path.write_bytes(row.ljust(limit))
+            status, _, body = self.fx.get("/api/models")
+            self.assertEqual(status, 200)
+            self.assertEqual(json.loads(body)["models"][0]["role"], "preview")
+            for data in (row.ljust(limit + 1), b"null", b"unfinished"):
+                path.write_bytes(data)
+                status, _, body = self.fx.get("/api/models")
+                self.assertEqual((status, json.loads(body)), (200, {"models": []}))
+            path.unlink()
+            path.mkdir()
+            status, _, body = self.fx.get("/api/models")
+            self.assertEqual((status, json.loads(body)), (200, {"models": []}))
 
     def test_adapters_absent_returns_empty(self) -> None:
         status, _, body = self.fx.get("/api/adapters")

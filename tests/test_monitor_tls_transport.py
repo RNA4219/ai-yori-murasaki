@@ -1,6 +1,7 @@
 """実際のループバック接続で、通常の起動入口と TLS の契約を確認する。"""
 from contextlib import redirect_stdout
 from http.client import HTTPSConnection
+from http.server import ThreadingHTTPServer
 import io
 import json
 import os
@@ -13,7 +14,7 @@ import sys
 import tempfile
 from threading import Thread
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 from urllib.parse import urlsplit
 
 from ai_yori_murasaki import cli
@@ -91,6 +92,31 @@ class MonitorTLSTransportTests(unittest.TestCase):
                         conn.close()
             finally:
                 server.shutdown()
+
+    def test_listener_owns_port_and_worker_slots_are_returned(self):
+        # 合成の1枠を扱い、通常完了とスレッド起動失敗の両方で再利用できることを確認する。
+        with patch("ai_yori_murasaki.server.MAX_MONITOR_CONNECTIONS", 1), \
+                configured_server(self.runtime, "127.0.0.1:0", cert=self.tls.cert, key=self.tls.key) as server:
+            if hasattr(socket, "SO_EXCLUSIVEADDRUSE"):
+                self.assertTrue(server.socket.getsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE))
+            if hasattr(socket, "SO_REUSEPORT"):
+                self.assertFalse(server.socket.getsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT))
+            request = Mock()
+            address = ("127.0.0.1", 12345)
+            with patch.object(ThreadingHTTPServer, "process_request", side_effect=RuntimeError("fixture")):
+                with self.assertRaises(RuntimeError):
+                    server.process_request(request, address)
+            with patch.object(ThreadingHTTPServer, "process_request") as dispatch, \
+                    patch.object(server, "shutdown_request") as close:
+                server.process_request(request, address)
+                dispatch.assert_called_once_with(request, address)
+                waiting = Mock()
+                server.process_request(waiting, address)
+                close.assert_called_once_with(waiting)
+                with patch.object(ThreadingHTTPServer, "process_request_thread"):
+                    server.process_request_thread(request, address)
+                server.process_request(waiting, address)
+                self.assertEqual(dispatch.call_count, 2)
 
     def test_missing_unusable_and_conflicting_settings_stop_before_listening(self):
         other = self.root / "other"

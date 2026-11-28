@@ -6,7 +6,7 @@ import json
 import sqlite3
 
 from .jsonio import DataError
-from .monitor_index import _index_path, needs_index, run_file_stamps
+from .monitor_index import _PROJECTION_VERSION, _index_path, needs_index, run_file_stamps
 from .monitor_inputs import file_stamp
 from .monitor_summary import CampaignSummary, summarize_run
 from .storage import Store, _safe_join
@@ -93,7 +93,7 @@ def read_selection(store, cid, *, compare=False, selected=None, check_membership
         return None
     with closing(sqlite3.connect(path.as_uri() + "?mode=ro", uri=True)) as db:
         db.execute("BEGIN")
-        if db.execute("PRAGMA user_version").fetchone()[0] not in (2, 3, 4):
+        if db.execute("PRAGMA user_version").fetchone()[0] not in range(2, _PROJECTION_VERSION + 1):
             raise IndexUpdateRequired("案件索引の更新が必要です")
         if check_membership:
             indexed_stamp = db.execute("SELECT stamp FROM catalog_meta").fetchone()
