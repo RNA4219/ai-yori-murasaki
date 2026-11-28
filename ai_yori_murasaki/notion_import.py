@@ -93,8 +93,8 @@ def batch_findings(store, event, tracked_refs=None):
         raise DataError("invalid issue batch")
     origin = {}
     if provider == "obsidian":
-        uri = safe_url(batch.get("source_uri"))
-        if not uri.startswith("obsidian://open?"):
+        uri = batch.get("source_uri")
+        if not isinstance(uri, str) or not uri.startswith("obsidian://open?"):
             raise DataError("invalid Obsidian source")
         origin["source_uri"] = visible_url(uri, store.secrets) or ""
     result = {}

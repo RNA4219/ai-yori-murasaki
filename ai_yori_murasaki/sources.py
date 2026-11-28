@@ -43,8 +43,10 @@ def safe_url(value, secrets=()):
         if not url.path and not url.fragment and set(args) == {"vault", "file"} and all(len(v) == 1 for v in args.values()):
             vault, file = args["vault"][0], args["file"][0]
             parts = [vault, *file.split("/")]
-            if ("/" not in vault and all(part and part.casefold() not in (".", "..", ".obsidian")
-                    and not re.search(r"[\\:\x00-\x1f\x7f]", part) for part in parts)):
+            # file の末尾は拡張子を外したノート名。設定フォルダーと同名のノートもある。
+            if ("/" not in vault and all(part.casefold() != ".obsidian" for part in parts[:-1])
+                    and all(part and part not in (".", "..") and not re.search(r"[\\:\x00-\x1f\x7f]", part)
+                            for part in parts)):
                 return value
     raise DataError("source links must be HTTPS or Obsidian note links")
 

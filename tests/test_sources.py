@@ -96,6 +96,15 @@ def test_only_vault_relative_note_locations_and_safe_https_links_are_accepted(so
     assert sources.list() == []
 
 
+def test_settings_named_markdown_note_keeps_its_original_link(sources, tmp_path):
+    vault = tmp_path / "Notes"
+    folder = vault / "Weekly"
+    folder.mkdir(parents=True)
+    (folder / ".obsidian.md").write_text("架空の週報", encoding="utf-8")
+    doc = sources.obsidian(vault, "Weekly/.obsidian.md")
+    assert sources.get(doc["document_id"])["source_url"] == "obsidian://open?vault=Notes&file=Weekly%2F.obsidian"
+
+
 def test_empty_oversized_and_corrupt_documents(sources):
     for body in ("", " " * 5, "x" * (MAX_TEXT + 1)):
         with pytest.raises(DataError):

@@ -27,6 +27,20 @@ def test_registered_note_name_hides_only_the_reference(tmp_path):
     assert item["source"] == "obsidian" and item["source_uri"] == ""
 
 
+def test_historical_vault_name_outside_current_link_contract_keeps_issue_readable(tmp_path):
+    ids = prepare_csv_fixture(tmp_path)
+    runtime = Runtime(Store(tmp_path / "workspace", tmp_path / "trusted"))
+    row = runtime.store.put_object({"record": {"title": "過去の点検", "status": "done"}})
+    batch = runtime.store.put_object({**ids, "kind": "obsidian_md/1",
+            "source_uri": "obsidian://open?vault=Workshop%3A2025&file=Tasks",
+            "items": [{"finding_id": "obsidian-" + "a" * 48, "title": "過去の点検", "source_record_ref": row}]})
+    runtime.record_event(ids["run_id"], "state_captured", "orchestrator", evidence_refs=(batch,),
+                         extensions={"obsidian_md_ref": batch})
+    item, = read_drift(runtime, ids["campaign_id"])["items"]
+    assert item["title"] == "過去の点検" and item["closed"]
+    assert item["source_uri"] == ""
+
+
 def test_mixed_campaign_with_custom_notion_mapping(tmp_path):
     ids = prepare_csv_fixture(tmp_path)
     inputs = tmp_path / "input"
