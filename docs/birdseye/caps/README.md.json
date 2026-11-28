@@ -2,7 +2,7 @@
   "id": "README.md",
   "role": "overview",
   "public_api": [],
-  "summary": "製品の操作入口。証明書・秘密鍵を指定して HTTPS モニターを起動する手順、判断の画面、資料の取込や構成図を案内する。",
+  "summary": "製品の起動と操作の入口。Notion CSV と Obsidian ノートの課題、参照資料、HTTPS のモニターや構成図の手順を案内する。",
   "deps_out": [
     "BLUEPRINT.md",
     "CHANGELOG.md",
@@ -56,13 +56,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "8bb1780d1ae16c6307f7b3e15fa77d57367ec7e6a824ffc8a2909e896c1a6b57",
-  "generated_at": "00070",
+  "source_sha256": "8af4adf98bf0240706f68ad0b8ec6b8f8544437b905431f6ec040cd9984e115e",
+  "generated_at": "00072",
   "review": {
-    "reviewed_at": "2026-11-27T10:24:52+00:00",
+    "reviewed_at": "2026-11-28T06:43:32+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "8bb1780d1ae16c6307f7b3e15fa77d57367ec7e6a824ffc8a2909e896c1a6b57",
-    "summary_sha256": "9eb96017d54b2636965ed5141cb89e4d618317f45f6f48abf5547a0b1e764190",
-    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
+    "source_sha256": "8af4adf98bf0240706f68ad0b8ec6b8f8544437b905431f6ec040cd9984e115e",
+    "summary_sha256": "251b82ba898ba11c3d3b8e46ebea5c8d86db808e2c45f9d24c96fae7127a0ea0",
+    "scope": "Obsidian 課題取り込みの操作・契約・検収の原文、要約、関連リンクを照合。"
   }
 }

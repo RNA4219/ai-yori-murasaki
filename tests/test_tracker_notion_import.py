@@ -73,6 +73,14 @@ class OfflineNotionCsvTests(unittest.TestCase):
         self.write([("B", "two", "未対応", ""), original])
         self.assertEqual(self.ingest(), {"imported_count": 1, "existing_count": 1})
 
+    def test_sensitive_title_column_remains_masked_in_batch_and_export(self):
+        self.write([("synthetic-private-value", "one")], ("password", "棚卸キー"))
+        self.assertEqual(self.ingest()["imported_count"], 1)
+        self.assertEqual(self.ingest()["existing_count"], 1)
+        issue, = campaign_issues(self.store, self.cid).values()
+        self.assertEqual(issue["title"], "[REDACTED]")
+        self.assertEqual(read_drift(self.runtime, self.cid)["items"][0]["title"], "[REDACTED]")
+
     def test_interrupted_batch_remains_invisible_and_can_be_retried(self):
         self.write([("A", "1", "", ""), ("B", "2", "", "")])
         with patch.object(self.runtime, "record_event", side_effect=OSError("synthetic interruption")):

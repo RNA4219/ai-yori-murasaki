@@ -2,13 +2,14 @@
   "id": "docs/requirements/API-CONTRACTS.md",
   "role": "doc",
   "public_api": [],
-  "summary": "CLI と HTTP の契約。モニターの TLS 設定、SSO の HTTPS 戻り先と Cookie、Blue ビューと実行台帳の整合性を含む読取 API を記す。",
+  "summary": "CLI と HTTP の契約。Obsidian の課題と参照資料の取り込み、モニターの TLS、SSO の戻り先、Blue の公開範囲を記す。",
   "deps_out": [
     "docs/PRODUCT-ACCEPTANCE.md",
     "docs/PRODUCT-GUIDE.md",
     "docs/SOURCES.md",
     "docs/acceptance/AC-20261123-07.md",
     "docs/acceptance/AC-20261123-08.md",
+    "docs/acceptance/AC-20261128-01.md",
     "docs/requirements/GOOGLE-MONITOR-SSO.md",
     "docs/requirements/QUALITY-INTEGRATION.md",
     "docs/requirements/SPEC-CASE-DECISIONS.md"
@@ -22,6 +23,7 @@
     "docs/acceptance/AC-20261127-04.md",
     "docs/acceptance/AC-20261127-05.md",
     "docs/acceptance/AC-20261127-06.md",
+    "docs/acceptance/AC-20261128-01.md",
     "docs/requirements/ARCHITECTURE-MAP-SELECTION.md",
     "docs/requirements/COMPACTION-02.md",
     "docs/requirements/GOOGLE-MONITOR-SSO.md",
@@ -30,17 +32,18 @@
     "docs/requirements/SPEC-CORE.md",
     "docs/requirements/SPEC-DUAL-VIEW.md",
     "docs/tasks/TASK.monitor-https-11-27-2026.md",
+    "docs/tasks/TASK.obsidian-issues-11-28-2026.md",
     "docs/tasks/TASK.verification-evidence-11-27-2026.md"
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "b8ebffcf87324e45d17d37043e3555cc4248052a98a57472298700f259b9f119",
-  "generated_at": "00070",
+  "source_sha256": "6ae0e7c21b882ff2536c6aefd16550960d4d6fd8dbf2d8867ff02df5e425f4b8",
+  "generated_at": "00072",
   "review": {
-    "reviewed_at": "2026-11-27T10:24:52+00:00",
+    "reviewed_at": "2026-11-28T06:43:32+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "b8ebffcf87324e45d17d37043e3555cc4248052a98a57472298700f259b9f119",
-    "summary_sha256": "28dd5d977a1a650b5c55e031c15cecf4d2c46db5dc04728ba0d967831e09cc84",
-    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
+    "source_sha256": "6ae0e7c21b882ff2536c6aefd16550960d4d6fd8dbf2d8867ff02df5e425f4b8",
+    "summary_sha256": "54c02e09cdcb53b79bcf5c1a3d335901a5a049ce9f2d0b47f3f8bccea84cb1d5",
+    "scope": "Obsidian 課題取り込みの操作・契約・検収の原文、要約、関連リンクを照合。"
   }
 }

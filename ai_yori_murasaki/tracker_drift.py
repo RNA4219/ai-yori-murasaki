@@ -8,6 +8,7 @@ import unicodedata
 
 from .drift_policy import applicable_rules, excluded_resource
 from .observations import id_pattern
+from .tracker_source import tracker_mapping, tracker_source
 
 
 CLASSIFICATIONS = ("open_absent", "open_resolved", "closed_active", "aligned", "uncomparable")
@@ -259,7 +260,7 @@ def _match_method(text, aliases, resource, names, ids, tokens):
     return None
 
 
-def _compare(finding, props, notion, mapping, catalog, observations, known_terms):
+def _compare(finding, props, source, metadata, mapping, catalog, observations, known_terms):
     fields = mapping["fields"]
     source_status = props.get(fields.get("status", ""))
     if not isinstance(source_status, str):
@@ -272,7 +273,7 @@ def _compare(finding, props, notion, mapping, catalog, observations, known_terms
     scope_text = _text(props.get(fields.get("scope", "原典の環境")))
     provider = props.get(fields["provider"]) if "provider" in fields else None
     region = props.get(fields["region"]) if "region" in fields else None
-    scoped = [g for g in catalog if _word(scope_text, g.account)
+    scoped = [g for g in catalog if (scope_text == g.account if source == "obsidian" else _word(scope_text, g.account))
               and (not provider or provider == g.provider) and (not region or region in g.regions)]
     coverage_scope = (scoped[0] if len(scoped) == 1 and "scope" in fields and scope_text == scoped[0].account
                       and provider == scoped[0].provider and region in scoped[0].regions else None)
@@ -316,11 +317,12 @@ def _compare(finding, props, notion, mapping, catalog, observations, known_terms
                               else ("uncomparable", "out_of_scope"))
     collected = sorted({observations[i]["collected_at"] for i in refs}, key=_time)
     times = (props.get(fields.get("updated_at", "最終更新日時")),
-             props.get("last_edited_time"), notion.get("last_edited_time"),
-             props.get("updated_at"), notion.get("updated_at"))
+             props.get("last_edited_time"), metadata.get("last_edited_time"),
+             props.get("updated_at"), metadata.get("updated_at"))
     edited = next((t for value in times if (t := _time(value)) is not None), None)
     return {
         "finding_id": finding["finding_id"], "title": title, "source_status": source_status,
+        "source": source, **({"source_uri": metadata["source_uri"]} if source == "obsidian" else {}),
         "closed": closed, "classification": classification, "reason": reason,
         "stale": edited is not None and any(_time(t) < edited for t in collected),
         "matches": matches, "collected_at": collected,
@@ -337,14 +339,13 @@ def build_drift(campaign_id, findings, records, mapping, observations):
     seen = set()
     for finding in findings:
         fid = finding.get("finding_id")
-        notion = (finding.get("extensions") or {}).get("notion")
-        if not fid or fid in seen or (not isinstance(notion, dict) and fid not in records):
+        source, metadata = tracker_source(finding)
+        if not fid or fid in seen or (not source and fid not in records):
             continue
         seen.add(fid)
-        notion = notion or {}
-        props = records.get(fid, notion.get("properties", {}))
-        items.append(_compare(finding, props if isinstance(props, dict) else {}, notion,
-                              mapping, catalog, observations, known_terms))
+        props = records.get(fid, metadata.get("properties", {}))
+        items.append(_compare(finding, props if isinstance(props, dict) else {}, source, metadata,
+                              tracker_mapping(source, mapping), catalog, observations, known_terms))
     counts = dict.fromkeys(CLASSIFICATIONS, 0)
     reasons = dict.fromkeys(REASONS, 0)
     for item in items:

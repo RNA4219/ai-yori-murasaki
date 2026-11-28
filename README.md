@@ -52,7 +52,7 @@ AIへの指示や作業の予算を過去の失敗から自動で調整し、改
 
 Obsidianのノート、Notionのページ、GitHub Issueを、出典・関連リンク付きの参考資料として手動で取り込めます。ファイルとMCPの読取に対応し、モニターの「資料と出典」で本文を確認できます。[設定と使い方](docs/SOURCES.md)を参照してください。
 
-Notion の課題一覧を CSV で取り込むと、判断画面で資源・検知の観測と照合できます。修正済みの課題に残る検知などを根拠付きで確認し、結果を Markdown や CSV に書き出せます。[課題2件で試す手順](docs/NOTION-IMPORT.md)
+Notion の CSV や Obsidian ノートのチェックボックスを案件の課題として取り込めます。判断画面では資源や検知の観測と照合し、完了した課題に検知が残っているかを確認できます。照合結果は Markdown や CSV に書き出せます。[Notion CSV の取り込み](docs/NOTION-IMPORT.md)・[Obsidian の課題を取り込む](docs/SOURCES.md#obsidian-tasks)
 
 ## 判断の画面とモニター（2画面）
 

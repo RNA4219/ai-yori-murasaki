@@ -30,6 +30,7 @@ template_version: 1.0.0
 | 再検証の失敗・前回との差・受付後の監査を確認する | [案件判断の要求・要件](docs/requirements/REQUIREMENTS-CASE-DECISIONS.md) | [仕様と検収例](docs/requirements/SPEC-CASE-DECISIONS.md) |
 | 課題に関係する検査を選ぶ・資源の不在の根拠を確かめる | [列と収集範囲の設定例](docs/NOTION-IMPORT.md#利用する検査と観測範囲を指定する) | [検査名・種類・在否の検収](docs/acceptance/AC-20261126-02.md) |
 | 課題一覧と観測のずれを確かめる | [Notion CSV と観測の取り込み](docs/NOTION-IMPORT.md) | [分類・出力・画面の検収](docs/acceptance/AC-20261126-01.md) |
+| Obsidian のチェックボックスを案件の課題として扱う | [ノートの書き方と取り込み](docs/SOURCES.md#obsidian-tasks) | [課題と出典の検収](docs/acceptance/AC-20261128-01.md) |
 | 案件を先に受け付ける・再送する | [案件受付と登録索引](docs/tasks/TASK.case-intake-11-23-2026.md) | [10万件からの登録と再送](docs/acceptance/AC-20261123-05.md) |
 | 大規模な案件一覧を構築・更新する | [台帳の検証と一覧の索引](docs/tasks/TASK.monitor-index-11-23-2026.md) | [10万案件の検収](docs/acceptance/AC-20261123-04.md) |
 | 案件一覧を差分更新する | [変更の検出と再集計](docs/tasks/TASK.incremental-monitor-11-23-2026.md) | [再構築との照合・更新失敗時の一覧](docs/acceptance/AC-20261123-06.md) |

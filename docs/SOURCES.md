@@ -14,6 +14,8 @@ Obsidianのノート、Notionのページ、GitHub Issueを、操作者用の参
 
 ## Obsidianのノート
 
+ノートを丸ごと参考資料として読むときは、次の `sources import-obsidian` を使う。チェックボックスを案件の課題に登録するときは、[Obsidian の課題を案件へ取り込む](#obsidian-tasks)の手順を使う。
+
 通常の起動と同じ `AYM_WORKSPACE` と `AYM_TRUSTED_ROOT` を設定する。取り込んだ資料をブラウザーで開くには[モニターの TLS 証明書と鍵](PRODUCT-GUIDE.md#モニターのhttps起動)も設定する。取り込みだけならDockerやLLMは不要。
 
 ```powershell
@@ -24,6 +26,40 @@ aym monitor serve --bind 127.0.0.1:8765
 ```
 
 `--vault` は絶対パス、`--note` はvault内の相対Markdownパスを指定する。UTF-8の本文を読み、`obsidian://open?vault=...&file=...` を出典にする。同名vaultが複数ある場合は、Obsidian側で目的のvaultが開くかを確認する。vault 外の参照、symlink／reparse point、設定フォルダー内のノートは拒否する。相対パスの各階層でフォルダー名と `.obsidian` の完全一致を大文字・小文字の区別なく判定する。該当した場合、CLI は終了コード2と `input_invalid` を返す。`.Obsidian-notes` のように名前が異なる通常のノートフォルダーも利用できる。
+
+<a id="obsidian-tasks"></a>
+
+## Obsidian の課題を案件へ取り込む
+
+指定したノートのチェックボックスを1行ずつ案件の課題として登録する。未チェックの `[ ]` は `open`、チェック済みの `[x]` と `[X]` は `done` になる。取り込み後も元のノートはそのまま編集できる。
+
+たとえば、架空の vault `DemoVault` に `運用/点検.md` を作り、次の内容を保存する。
+
+```markdown
+# 通知設定の点検
+
+- [ ] node-27 の通知先を確認する ^notice-owner
+- [x] node-27 の手順書を更新する ^notice-guide
+```
+
+同じ案件の `AYM_WORKSPACE` と `AYM_TRUSTED_ROOT` を設定した PowerShell で実行する。`$campaign` と `$run` には案件 ID と、その案件で実行中の Run の ID を指定する。`context.json` には案件に登録した対象と版を記入する（例 `{"target":"demo-target","target_version":"v1"}`）。
+
+```powershell
+$vault = (Resolve-Path '.\DemoVault').Path
+aym assess import --format obsidian --vault $vault --note '運用/点検.md' --context context.json --campaign $campaign --run $run --scope demo-east
+aym assess drift --campaign $campaign
+```
+
+初回の結果は `data.imported_count` が 2、`data.existing_count` が 0 になる。同じノートで再実行すると追加は 0 件、登録済みは 2 件になる。`--scope` には照合する観測のアカウント名を指定する。省略したときは照合範囲を不明とする。[観測ファイルを作って取り込む手順](NOTION-IMPORT.md#入力ファイルを準備する)
+
+モニターで対象案件の「この案件の判断を見る」を開く。課題を選ぶと、原本へのリンクから Obsidian でノートを開ける。照合結果は `aym assess drift` の JSON で読める。ワークスペースと信頼済みルートの外に保存するときは `--format csv --output drift.csv` または `--format md --output drift.md` を付ける。
+
+### ノートの書き方と再取り込み
+
+- 通常の箇条書き（`-`、`*`、`+`）のチェックボックスと、同じ行にある題名を使う。引用やコード例のチェックボックスは課題に数えない。
+- ノートは vault 内の UTF-8 の `.md` ファイルを1つ指定する。上限は 256 KiB、1ノートに課題10,000件、題名は1〜512文字。BOM 付きにも対応する。
+- 同じ案件では vault 名、ノートの相対パス、行末のブロック ID（例 `^notice-owner`）で課題を識別する。ブロック ID を省くと題名が識別に使われる。同名の課題を区別したいときは、それぞれに異なるブロック ID を付ける。
+- 取り込みはその時点の課題を記録する。識別子が重複するノートや、登録済みの課題と同じ識別子で題名・状態などが変わったノートは全体を拒否する。変更後の一覧を記録したい場合は別の案件に取り込む。元のノートへの変更は手動で行う。
 
 ## 保存済みのテキスト
 

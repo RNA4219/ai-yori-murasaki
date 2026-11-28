@@ -514,9 +514,21 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     return u.href;
   }
 
+  function obsidianNoteLink(item) {
+    if (item.source !== 'obsidian' || typeof item.source_uri !== 'string') return null;
+    var u;
+    try { u = new URL(item.source_uri); } catch (e) { return null; }
+    if (u.protocol !== 'obsidian:' || u.host !== 'open' || u.username || u.password || u.pathname || u.hash) return null;
+    var keys = Array.from(u.searchParams.keys());
+    var vault = u.searchParams.get('vault'), file = u.searchParams.get('file');
+    if (keys.length !== 2 || !vault || !file || /[\\/:\u0000-\u001f\u007f]/.test(vault) || /[\\:\u0000-\u001f\u007f]/.test(file)) return null;
+    if (file.split('/').some(function (part) { return !part || part === '.' || part === '..' || part.toLowerCase() === '.obsidian'; })) return null;
+    return u.href;
+  }
+
   root.AYMDecision = { SCHEMA: SCHEMA, DEFAULT_RULES: DEFAULT_RULES, SEVERITIES: SEVERITIES, SEV_LABEL: SEV_LABEL,
     STATES: STATES, STATE_LABEL: STATE_LABEL, isActive: isActive, dayNumber: dayNumber, shortDate: shortDate, validate: validate,
-    assess: assess, summarize: summarize, stateLabel: stateLabel, originalStateLabel: originalStateLabel, nextActionFor: nextActionFor, safeLink: safeLink, rulesOf: rulesOf };
+    assess: assess, summarize: summarize, stateLabel: stateLabel, originalStateLabel: originalStateLabel, nextActionFor: nextActionFor, safeLink: safeLink, obsidianNoteLink: obsidianNoteLink, rulesOf: rulesOf };
 })(typeof globalThis !== 'undefined' ? globalThis : this);
 </script>
 
@@ -560,6 +572,16 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
 
   function fact(dl, label, node) { dl.appendChild(el('dt', null, label)); var dd = el('dd'); if (typeof node === 'string') dd.textContent = node; else dd.appendChild(node); dl.appendChild(dd); }
 
+  function sourceFact(dl, item) {
+    if (item.source === 'notion') { fact(dl, '取り込み元', 'Notion'); return; }
+    if (item.source !== 'obsidian') return;
+    var href = state.liveCampaign && D.obsidianNoteLink(item);
+    if (!href) { fact(dl, '取り込み元', 'Obsidian'); return; }
+    var link = el('a', null, 'Obsidian で元のノートを開く');
+    link.href = href;
+    fact(dl, '取り込み元', link);
+  }
+
   function actionForItem(it) {
     if (it.assessment_status != null) return D.nextActionFor(it.assessment_status);
     if (it.state === 'waiting') return '案件の記録で、誰が何を判断する必要があるか確認してください。';
@@ -576,6 +598,7 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     main.appendChild(el('span', 'item-title', it.title || '（名前なし）'));
     var meta = [];
     meta.push(D.stateLabel(it));
+    if (it.source === 'obsidian') meta.push('Obsidian · ' + D.originalStateLabel(it));
     if (it.due) meta.push('期限 ' + D.shortDate(it.due));
     main.appendChild(el('span', 'item-meta', meta.join(' ・ ')));
     var chips = el('span', 'chips');
@@ -606,6 +629,7 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
       if (!showAction) fact(dl,'次の行動',actionForItem(it));
       if(it.assessment_status==='retested')fact(dl,'注意','運用への反映は、別に確かめてください。');
       fact(dl,'元のデータでの状態',D.originalStateLabel(it));
+      sourceFact(dl, it);
       fact(dl,'期限',it.due||'決まっていません');
       more.appendChild(dl);
       if(state.isAYM&&state.campaign){
@@ -814,7 +838,9 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     var evidence = el('div', 'item-more');
     var source = el('dl', 'facts');
     fact(source, '課題 ID', item.finding_id);
-    fact(source, '一覧の状態', item.source_status || '未記録');
+    sourceFact(source, item);
+    var status = item.source === 'obsidian' ? {open:'未完了', done:'完了'}[item.source_status] : item.source_status;
+    fact(source, '一覧の状態', status || '未記録');
     fact(source, '観測の取得日時', item.collected_at.join('、') || '該当する観測なし');
     if (Array.isArray(item.rules_used)) {
       fact(source, 'ルールの絞り込み', item.rules_unfiltered ? '絞り込みなし' : '指定したルールのみ');
@@ -893,11 +919,11 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     section.hidden = false;
   }
 
-  function show(view) {
+  function show(view, liveCampaign) {
     clear($('notes'));
     try {
       D.validate(view);
-      state.sum = D.summarize(view, todayLocal()); state.view = view;
+      state.sum = D.summarize(view, todayLocal()); state.view = view; state.liveCampaign = liveCampaign === true;
       state.nowAll = false; state.soonAll = false; state.allLimit = 30;
     } catch (e) {
       if (state.isAYM) unavailable('err','記録の形式を読み取れませんでした。');
@@ -964,6 +990,10 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
 
   var params=new URLSearchParams(location.search),src=params.get('data'),campaign=params.get('campaign');
   var locationView = params.get('view') === 'blue' ? '?view=blue' : '';
+  if (locationView) {
+    $('view-switch').querySelectorAll('a').forEach(function (link) { link.search = locationView; });
+    $('back-picker').search = locationView;
+  }
   var campaignOK=campaign&&/^[a-z0-9][a-z0-9-]{0,63}$/.test(campaign);
   if(src&&(src.indexOf('//')>=0||/^[a-z]+:/i.test(src))){note('err','data には、同じ配信元のパスだけを指定できます。');src=null;}
   function unavailable(kind, message) {
@@ -978,13 +1008,13 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
       $('notes').appendChild(back);
     }
   }
-  function showResponse(d){
+  function showResponse(d, liveCampaign){
     if(d&&d.decision_view===null&&d.status==='hold'){
       unavailable('warn',d.reason||'記録を確認できません。');
       var evidence=el('a','btn','モニターで集計状況を見る');evidence.href='/'+locationView+'#/campaign/'+encodeURIComponent(campaign);$('notes').appendChild(evidence);return;
     }
     if(d&&d.decision_view&&d.decision_view.status==='withheld'){unavailable('warn','評価情報はBlueに非公開です。');return;}
-    show(d&&d.decision_view?d.decision_view:d);
+    show(d&&d.decision_view?d.decision_view:d, liveCampaign);
   }
   function chooseCampaigns(page){
     page = page || 1;
@@ -1041,7 +1071,7 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     try {prev=localStorage.getItem('aym.previous.'+campaign);} catch (_) {}
     var campaignPath = '/api/campaigns/' + encodeURIComponent(campaign);
     return fetchView(campaignPath + '/decision-view' + (prev?'?previous='+encodeURIComponent(prev):'')).then(function (response) {
-      showResponse(response);
+      showResponse(response, true);
       if (!state.view || locationView) return;
       $('sec-drift').hidden = true;
       return fetchView(campaignPath + '/drift').then(function (report) {
@@ -1060,6 +1090,7 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
   }
   $('refresh-view').addEventListener('click',function(){if(state.isAYM&&state.campaign)loadCampaign();});
   function outsideAYM(){
+    if (locationView) { unavailable('warn','評価情報はBlueに非公開です。'); return; }
     $('loader').hidden = false;
     if(campaign){note('err','この開き方では Campaign を読めません。JSON のファイルを選んでください。');return;}
     if(src){fetchView(src).then(showResponse).catch(function(){note('err','データを取得できませんでした。');});return;}
@@ -1072,6 +1103,7 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
       if(!health||health.status!=='ok')throw Error('not AYM');
       state.isAYM=true;$('view-switch').hidden=false;
       if(campaign){if(!campaignOK){note('err','Campaign の指定を確認できません。');return chooseCampaigns();}return loadCampaign();}
+      if(src && locationView){unavailable('warn','評価情報はBlueに非公開です。');return;}
       if(src)return fetchView(src).then(showResponse).catch(function(){unavailable('err','データを取得できませんでした。');});
       return chooseCampaigns();
     }).catch(outsideAYM).finally(function(){clearTimeout(deadline);$('initial-status').hidden=true;});

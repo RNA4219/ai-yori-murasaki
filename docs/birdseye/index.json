@@ -1,5 +1,5 @@
 {
-  "generated_at": "00071",
+  "generated_at": "00073",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -15,8 +15,8 @@
     "CHANGELOG.md": {
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
-      "mtime": "00071",
-      "source_sha256": "b05c7183cde08621e6852b1db3d6ac54dc58ca7d68c58b832ca84e628fbca4e4"
+      "mtime": "00073",
+      "source_sha256": "edb342ad1c6e4eaa1d983c3fb527c30444c4308d3044b4903df6453aae4a2813"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -36,14 +36,14 @@
     "HUB.codex.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
-      "mtime": "00070",
-      "source_sha256": "26f7b6e19892bc0be8331ea4ba805456dc5c3b49b934456c65e37893489e85b5"
+      "mtime": "00072",
+      "source_sha256": "b3a6e56e8f0ee0b1183f319c8407d50fb201025f9b8b848c170e4d47e5631bd4"
     },
     "README.md": {
       "role": "overview",
       "caps": "docs/birdseye/caps/README.md.json",
-      "mtime": "00070",
-      "source_sha256": "8bb1780d1ae16c6307f7b3e15fa77d57367ec7e6a824ffc8a2909e896c1a6b57"
+      "mtime": "00072",
+      "source_sha256": "8af4adf98bf0240706f68ad0b8ec6b8f8544437b905431f6ec040cd9984e115e"
     },
     "RUNBOOK.md": {
       "role": "operations",
@@ -70,8 +70,8 @@
     "docs/acceptance/INDEX.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
-      "mtime": "00071",
-      "source_sha256": "3b0114f07dc392c28d790c48e351000321e1cfb310fcb73648e56da1d6cc480a"
+      "mtime": "00073",
+      "source_sha256": "4555541aff6b274630a09d6eff7574ab25fd9d7f3eb2fd923de7b607b5cefb62"
     },
     "docs/acceptance/README.md": {
       "role": "guide",
@@ -113,8 +113,8 @@
     "docs/tasks/README.md": {
       "role": "operations",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
-      "mtime": "00071",
-      "source_sha256": "bafb7ced311e9339351f3b0f1476bea98a1240b4c5f2c9628593d1217f2873ba"
+      "mtime": "00073",
+      "source_sha256": "364e1af5d6bf2afc255e1582f4baca43318a1685182b30a8226529b5d243f96b"
     },
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md": {
       "role": "task",
@@ -293,8 +293,8 @@
     "docs/requirements/API-CONTRACTS.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.requirements.API-CONTRACTS.md.json",
-      "mtime": "00070",
-      "source_sha256": "b8ebffcf87324e45d17d37043e3555cc4248052a98a57472298700f259b9f119"
+      "mtime": "00072",
+      "source_sha256": "6ae0e7c21b882ff2536c6aefd16550960d4d6fd8dbf2d8867ff02df5e425f4b8"
     },
     "docs/requirements/COMPACTION-01.md": {
       "role": "doc",
@@ -548,8 +548,8 @@
     "docs/SOURCES.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.SOURCES.md.json",
-      "mtime": "00070",
-      "source_sha256": "907d860116b5bc3da03ab9c960ab37dffd903a55467b85aba3b107233dc37953"
+      "mtime": "00072",
+      "source_sha256": "c637d8583581fd2654d3b7e05c4ab6ada025538cd8393f4bcb77d200b7b830ff"
     },
     "docs/tasks/TASK.sources-light-ui-11-09-2026.md": {
       "role": "task",
@@ -728,7 +728,7 @@
     "docs/NOTION-IMPORT.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.NOTION-IMPORT.md.json",
-      "mtime": "00070",
+      "mtime": "00072",
       "source_sha256": "9a809b70024918117591a51841cebf12f71aa7f6d7e0d22f644cb69c6f8c6d07"
     },
     "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md": {
@@ -916,6 +916,18 @@
       "caps": "docs/birdseye/caps/docs.tasks.TASK.monitor-https-11-27-2026.md.json",
       "mtime": "00071",
       "source_sha256": "e2c9c45200036238cefdd0fab94fd9a493c469025e18fd973b89dbb0de7fa39f"
+    },
+    "docs/acceptance/AC-20261128-01.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261128-01.md.json",
+      "mtime": "00073",
+      "source_sha256": "8f7738a63e5622b145215b17f76e3469e369d9977d2192de4ebe3dde861597b2"
+    },
+    "docs/tasks/TASK.obsidian-issues-11-28-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.obsidian-issues-11-28-2026.md.json",
+      "mtime": "00073",
+      "source_sha256": "1fc1c085f8330f9a3b24107b13bcdc6552083f43a1a427dc7f502dd06f6ab27c"
     }
   },
   "edges": [
@@ -3578,6 +3590,70 @@
     [
       "docs/tasks/TASK.monitor-https-11-27-2026.md",
       "docs/requirements/GOOGLE-MONITOR-SSO.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/acceptance/AC-20261128-01.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.obsidian-issues-11-28-2026.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/acceptance/AC-20261128-01.md"
+    ],
+    [
+      "docs/SOURCES.md",
+      "docs/NOTION-IMPORT.md"
+    ],
+    [
+      "docs/acceptance/AC-20261128-01.md",
+      "docs/SOURCES.md"
+    ],
+    [
+      "docs/acceptance/AC-20261128-01.md",
+      "docs/requirements/API-CONTRACTS.md"
+    ],
+    [
+      "docs/acceptance/AC-20261128-01.md",
+      "docs/tasks/TASK.obsidian-issues-11-28-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261128-01.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.obsidian-issues-11-28-2026.md"
+    ],
+    [
+      "docs/requirements/API-CONTRACTS.md",
+      "docs/acceptance/AC-20261128-01.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261128-01.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.obsidian-issues-11-28-2026.md"
+    ],
+    [
+      "docs/tasks/TASK.obsidian-issues-11-28-2026.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "docs/tasks/TASK.obsidian-issues-11-28-2026.md",
+      "docs/SOURCES.md"
+    ],
+    [
+      "docs/tasks/TASK.obsidian-issues-11-28-2026.md",
+      "docs/acceptance/AC-20261128-01.md"
+    ],
+    [
+      "docs/tasks/TASK.obsidian-issues-11-28-2026.md",
+      "docs/requirements/API-CONTRACTS.md"
     ]
   ]
 }

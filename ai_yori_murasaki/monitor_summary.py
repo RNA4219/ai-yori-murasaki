@@ -35,7 +35,7 @@ class CampaignSummary:
         # 索引には同じ案件の担当者用とBlue用の集計を残す。CSVだけの欠損はBlueの実行数にも含めない。
         excluded = set(self.csv_only_failures)
         return replace(self, findings={fid: item for fid, item in self.findings.items()
-                                       if item.get("source") != "notion"},
+                                       if item.get("source") not in ("notion", "obsidian")},
                        verified_runs=self.verified_runs + len(excluded),
                        pending_runs=[rid for rid in self.pending_runs if rid not in excluded],
                        csv_only_failures=[])
@@ -112,7 +112,7 @@ def summarize_run(store: Store, rid: str, hint: str | None,
             started_at = run["started_at"]
         if ext.get("record_kind") == "remediation" and isinstance(ext.get("record_ref"), str):
             summary.remediation_refs.append(ext["record_ref"])
-        if include_csv and "notion_csv_ref" in ext:
+        if include_csv and ("notion_csv_ref" in ext or "obsidian_md_ref" in ext):
             from .notion_import import batch_findings
             try:
                 for fid, issue in batch_findings(store, event, finding_refs).items():

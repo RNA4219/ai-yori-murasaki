@@ -24,6 +24,7 @@ from importlib import resources
 from .drift_policy import validate_drift_policy
 from .jsonio import DataError
 from .storage import sanitize
+from .tracker_source import tracker_mapping, tracker_source
 from urllib.parse import urlsplit
 from typing import Any
 
@@ -100,7 +101,8 @@ def _freshness(findings: list[dict], now: datetime) -> dict:
 
 
 def _item(finding: dict, record: dict | None, mapping: dict) -> dict:
-    ext = (finding.get("extensions") or {}).get("notion") or {}
+    source, ext = tracker_source(finding)
+    mapping = tracker_mapping(source, mapping)
     props = record if isinstance(record, dict) else (ext.get("properties") or {})
     fields = mapping.get("fields") or {}
     label = props.get(fields.get("status", ""))
@@ -119,6 +121,11 @@ def _item(finding: dict, record: dict | None, mapping: dict) -> dict:
         "due": _date_only(props.get(fields.get("due", ""))) if fields.get("due") else None,
         "link": _http_link(*(finding.get("references") or []), ext.get("url")),
     }
+    if source:
+        item["source"] = source
+    if source == "obsidian":
+        item["source_uri"] = ext["source_uri"]
+        item["state_label"] = {"open": "未完了", "done": "完了"}.get(state)
     item.update(_enrichment(finding))
     return item
 
@@ -218,7 +225,8 @@ def load_mapping(store) -> dict:
         if path.parent.is_symlink() or path.is_symlink():
             raise ValueError("mapping symlink")
         if path.exists():
-            raw = path.read_bytes()
+            with path.open("rb") as stream:
+                raw = stream.read(1024 * 1024 + 1)
         else:
             raw = resources.files("ai_yori_murasaki").joinpath("decision_mapping.json").read_bytes()
         if len(raw) > 1024 * 1024:
@@ -278,6 +286,9 @@ def read_decision_view(runtime, campaign_id: str, selected_previous: str | None 
 def _source_rows(findings: list[dict], items: list[dict]) -> tuple[dict, dict]:
     by_ref, by_url = defaultdict(list), defaultdict(list)
     for index, (finding, item) in enumerate(zip(findings, items)):
+        # ブロック ID はノート内だけで一意。案件間の比較にはノートを含む finding_id を使う。
+        if item.get("source") == "obsidian":
+            continue
         notion = (finding.get("extensions") or {}).get("notion") or {}
         ref = item["ref"]
         if isinstance(ref, str) and ref.strip():
@@ -382,11 +393,11 @@ def _load(runtime, store, campaign_id: str, summaries=None) -> tuple[dict, list[
 def read_source_records(store, findings: list[dict]) -> dict[str, dict]:
     records: dict[str, dict] = {}
     for f in findings:
-        notion = (f.get("extensions") or {}).get("notion") or {}
-        ref = notion.get("source_record_ref")
-        if notion.get("source_kind") == "notion_csv/1":
-            from .notion_import import load_csv_row
-            records[f["finding_id"]] = load_csv_row(store, ref)
+        source, ext = tracker_source(f)
+        ref = ext.get("source_record_ref")
+        if source == "obsidian" or ext.get("source_kind") == "notion_csv/1":
+            from .notion_import import load_issue_row
+            records[f["finding_id"]] = load_issue_row(store, ref)
             continue
         if not ref:
             continue

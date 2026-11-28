@@ -1,0 +1,30 @@
+{
+  "id": "docs/acceptance/AC-20261128-01.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/INDEX.md",
+    "docs/requirements/API-CONTRACTS.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.obsidian-issues-11-28-2026.md"
+  ],
+  "deps_out": [
+    "docs/SOURCES.md",
+    "docs/requirements/API-CONTRACTS.md",
+    "docs/tasks/TASK.obsidian-issues-11-28-2026.md"
+  ],
+  "summary": "T64 の技術検収。出典と照合、Blue の公開範囲を含む7件の結果と独立レビュー、Obsidian アプリの起動の未検証範囲を記す。",
+  "source_sha256": "8f7738a63e5622b145215b17f76e3469e369d9977d2192de4ebe3dde861597b2",
+  "generated_at": "00073",
+  "review": {
+    "reviewed_at": "2026-11-28T06:49:07+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "8f7738a63e5622b145215b17f76e3469e369d9977d2192de4ebe3dde861597b2",
+    "summary_sha256": "cefaedde28213606e357a5e0afac354dda5a476ba41271679a5edf969233bbef",
+    "scope": "Obsidian 課題取り込みの操作・契約・検収の原文、要約、関連リンクを照合。"
+  }
+}

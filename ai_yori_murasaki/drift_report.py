@@ -17,6 +17,7 @@ from .monitor_summary import campaign_summaries
 from .observations import load_observations, local_path
 from .storage import sanitize
 from .tracker_drift import build_drift
+from .tracker_source import tracker_source
 
 
 def read_drift(runtime, campaign_id: str, *, use_index: bool = True) -> dict:
@@ -42,7 +43,7 @@ def read_drift(runtime, campaign_id: str, *, use_index: bool = True) -> dict:
     if summary.status != "complete" or not summary.campaign:
         raise DataError("campaign evidence incomplete", "hold")
     findings = [finding for finding in summary.findings.values()
-                if isinstance((finding.get("extensions") or {}).get("notion"), dict)]
+                if tracker_source(finding)[0]]
     records = read_source_records(store, findings)
     observations = load_observations(runtime, campaign_id, verified_events=events)
     local_path(store.workspace / "decision-view" / "mapping.json")
@@ -56,7 +57,8 @@ def read_drift(runtime, campaign_id: str, *, use_index: bool = True) -> dict:
 
 _COLUMNS = ("finding_id", "title", "source_status", "classification", "reason", "stale",
             "resource_id", "match_method", "detection_id", "collected_at", "rules_used",
-            "rules_unfiltered", "excluded_resource_count", "resource_type", "in_inventory")
+            "rules_unfiltered", "excluded_resource_count", "resource_type", "in_inventory",
+            "source", "source_uri")
 _PRESENCE = {True: "true", False: "false", None: "unknown"}
 
 
@@ -70,7 +72,8 @@ def _rows(report):
                ", ".join(item["collected_at"]), ", ".join(item["rules_used"]),
                str(item["rules_unfiltered"]).lower(), str(item["excluded_resource_count"]),
                ", ".join(m["type"] or "" for m in matches),
-               ", ".join(_PRESENCE[m["in_inventory"]] for m in matches))
+               ", ".join(_PRESENCE[m["in_inventory"]] for m in matches),
+               item["source"] or "", item.get("source_uri", ""))
 
 
 def _csv_cell(value: str) -> str:

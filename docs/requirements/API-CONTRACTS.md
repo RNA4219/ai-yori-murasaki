@@ -224,6 +224,7 @@ operator の履歴では `method`、`target_last_sequence`、`target_last_event_
 | R-050 | 2（GLM 設計入力、DeepSeek 実装） |
 | R-019 | 2.2（verification 表示） |
 | R-024 | 2.2（adapter_status 表示） |
+| R-092 | 7（Obsidian の課題取り込み） |
 
 
 ## 5. 製品画面の追加読取投影
@@ -259,3 +260,9 @@ CLIは `aym sources list/show/import-obsidian/import-file/import-mcp`。各引�
 | GET | `/api/sources/<document_id>` | `{source: {一覧項目, body, content_sha256, previous_ref, ref}}` |
 
 欠落・破損は409 `source_unavailable`。Blue viewでは、存在するIDでも存在しないIDでも内容・件数を含まない同じ `withheld` 応答にする。任意path、raw CAS、資格情報・接続設定は公開しない。既存のHost／Origin検証、GET／HEAD限定、Blueのネットワーク隔離を維持する。資料の出典リンクは操作者指定の所在であり、正しさの認定ではない。
+
+## 7. Obsidian の課題取り込み（R-092）
+
+`aym assess import --format obsidian --vault <絶対パス> --note <相対.md> --context <JSON> --campaign <案件ID> --run <実行ID> [--scope <アカウント名>]` は、選んだノートの課題を案件に保存する。成功応答の `data.imported_count` は追加した件数、`data.existing_count` は同じ内容で登録済みの件数。各課題の状態はチェックボックスから決まり、出典は `obsidian`。同じ案件に取り込んだ Notion の課題も併せて読める。[入力形式と再取り込みの条件](../SOURCES.md#obsidian-tasks)
+
+操作者は判断画面と `GET /api/campaigns/<id>/drift` で課題を読める。照合 API の Blue 表示は `{"status":"withheld"}` を返す。[T64 の検収条件](../acceptance/AC-20261128-01.md)

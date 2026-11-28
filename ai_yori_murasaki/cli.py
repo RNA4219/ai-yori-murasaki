@@ -433,7 +433,7 @@ def main(argv: list[str] | None = None) -> int:
             _emit(command, "ok", "ok", receipt.get("campaign_id"), None, receipt)
             return 0
         if args.group == "assess" and (args.action == "drift" or
-                                       (args.action == "import" and args.format in ("observation", "notion"))):
+                                        (args.action == "import" and args.format in ("observation", "notion", "obsidian"))):
             from .observations import local_path
             for name in ("workspace", "trusted_root", "policy"):
                 value = getattr(args, name)
