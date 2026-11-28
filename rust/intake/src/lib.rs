@@ -3,6 +3,7 @@ use std::time::Duration;
 
 use pyo3::exceptions::PyOSError;
 use pyo3::prelude::*;
+use rusqlite::functions::FunctionFlags;
 use rusqlite::{params, Connection, OpenFlags, OptionalExtension, Row, TransactionBehavior};
 
 type Receipt = (String, String, String);
@@ -69,15 +70,24 @@ fn _intake_index(module: &Bound<'_, PyModule>) -> PyResult<()> {
 type SearchRow = (String, String, String, Option<String>);
 
 #[pyfunction]
+#[pyo3(signature = (path, query, exact_id, limit, secrets = Vec::new()))]
 fn search(
     py: Python<'_>,
     path: PathBuf,
     query: String,
     exact_id: bool,
     limit: u16,
+    secrets: Vec<String>,
 ) -> PyResult<Vec<SearchRow>> {
-    py.detach(move || search_records(path, query, exact_id, limit))
+    py.detach(move || search_records(path, query, exact_id, limit, secrets))
         .map_err(|_| PyOSError::new_err("受付台帳を読み取れません"))
+}
+
+fn prefix_pattern(text: &str) -> String {
+    text.replace('\\', "\\\\")
+        .replace('%', "\\%")
+        .replace('_', "\\_")
+        + "%"
 }
 
 fn search_records(
@@ -85,6 +95,7 @@ fn search_records(
     query: String,
     exact_id: bool,
     limit: u16,
+    secrets: Vec<String>,
 ) -> rusqlite::Result<Vec<SearchRow>> {
     use rusqlite::types::Value;
     let mut db = Connection::open_with_flags(
@@ -93,6 +104,19 @@ fn search_records(
     )?;
     db.busy_timeout(Duration::from_secs(5))?;
     db.pragma_update(None, "trusted_schema", false)?;
+    let masked = !secrets.is_empty();
+    if masked {
+        let flags = FunctionFlags::SQLITE_UTF8
+            | FunctionFlags::SQLITE_DETERMINISTIC
+            | FunctionFlags::SQLITE_DIRECTONLY;
+        db.create_scalar_function("display_text", 1, flags, move |ctx| {
+            let mut text: String = ctx.get(0)?;
+            for secret in &secrets {
+                text = text.replace(secret.as_str(), "[REDACTED]");
+            }
+            Ok(text)
+        })?;
+    }
     let tx = db.transaction()?;
     // 初回連結前の台帳でも、同じスナップショットを移行せずに読む。
     let has_links: bool = tx.query_row(
@@ -109,18 +133,27 @@ fn search_records(
     let mut args = vec![Value::Integer(i64::from(limit))];
     if exact_id {
         sql.push_str("WHERE receipts.receipt_id = ?2 ");
+        if masked {
+            sql.push_str("AND display_text(receipts.receipt_id) = ?2 ");
+        }
         args.push(Value::Text(query));
     } else if query.is_empty() {
         sql.push_str("ORDER BY receipts.rowid DESC ");
+    } else if masked {
+        sql.push_str(r"WHERE display_text(name) LIKE ?2 ESCAPE '\' ");
+        args.push(Value::Text(prefix_pattern(&query)));
+        // マスクは '[' から始まる。この前までの接頭辞は元の索引でも絞り込める。
+        let unchanged_prefix = query.split('[').next().unwrap_or("");
+        if !unchanged_prefix.is_empty() {
+            sql.push_str(r"AND name LIKE ?3 ESCAPE '\' ");
+            args.push(Value::Text(prefix_pattern(unchanged_prefix)));
+        }
+        sql.push_str("ORDER BY display_text(name) COLLATE NOCASE, display_text(receipts.receipt_id), receipts.rowid ");
     } else {
         sql.push_str(
             r"WHERE name LIKE ?2 ESCAPE '\' ORDER BY name COLLATE NOCASE, receipts.receipt_id ",
         );
-        let prefix = query
-            .replace('\\', "\\\\")
-            .replace('%', "\\%")
-            .replace('_', "\\_");
-        args.push(Value::Text(prefix + "%"));
+        args.push(Value::Text(prefix_pattern(&query)));
     }
     sql.push_str("LIMIT ?1");
     let mut statement = tx.prepare(&sql)?;

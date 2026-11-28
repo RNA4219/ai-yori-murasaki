@@ -4,7 +4,7 @@ from pathlib import Path
 import re
 
 from .jsonio import DataError
-from .storage import ID_RE, Store, _assert_no_ancestor_reparse, _is_reparse, sanitize
+from .storage import ID_RE, Store, _assert_no_ancestor_reparse, _is_reparse, redaction_order, sanitize
 
 PAGE_SIZE = 50
 RECEIPT_ID = re.compile(r"int-[0-9a-f]{32}")
@@ -81,13 +81,14 @@ def search(store: Store, query: str) -> dict:
     from . import _intake_index
 
     try:
-        rows = _intake_index.search(path, query, bool(RECEIPT_ID.fullmatch(query)), PAGE_SIZE + 1)
+        rows = _intake_index.search(path, query, bool(RECEIPT_ID.fullmatch(query)), PAGE_SIZE + 1,
+                                    redaction_order(store.secrets))
     except OSError as exc:
         raise DataError("受付台帳を読み取れません", "intake_unavailable") from exc
     for receipt_id, name, registered_at, campaign_id in rows[:PAGE_SIZE]:
         record = {"receipt_id": receipt_id, "name": name, "registered_at": registered_at}
         if campaign_id is not None:
             record["campaign_id"] = campaign_id
-        page["receipts"].append(sanitize(record, store.secrets))
+        page["receipts"].append({key: sanitize(value, store.secrets) for key, value in record.items()})
     page["has_more"] = len(rows) > PAGE_SIZE
     return page

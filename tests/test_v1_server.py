@@ -410,6 +410,25 @@ class ServerContractTests(unittest.TestCase):
         status, _, body = self.fx.get(path)
         self.assertEqual((status, json.loads(body)), (409, {"error": "evidence_unverified"}))
 
+    def test_run_detail_uses_one_ledger_snapshot_for_all_head_fields(self):
+        cid = self._create_campaign("INT-SEALED", "sealed-detail")["campaign_id"]
+        rid = self.fx.runtime.list_runs(cid)[0]["run_id"]
+        last = self.fx.store.read_verified_events(rid, campaign_id=cid)[-1]
+        with patch.object(self.fx.store, "_read_events_raw", wraps=self.fx.store._read_events_raw) as reads:
+            status, _, body = self.fx.get(f"/api/runs/{rid}")
+            reads.assert_called_once_with(rid)
+        self.assertEqual(status, 200)
+        run = json.loads(body)["run"]
+        self.assertEqual((run["last_sequence"], run["last_event_hash"], run["sealed_at"]),
+                         (last["sequence"], last["event_hash"], last["timestamp"]))
+        rid = self.fx.runtime.start_run(cid, "verify", 1, "open-detail")["run_id"]
+        status, _, body = self.fx.get(f"/api/runs/{rid}")
+        self.assertEqual(status, 200)
+        run = json.loads(body)["run"]
+        self.assertIsNone(run["last_sequence"])
+        self.assertIsNone(run["last_event_hash"])
+        self.assertIsNone(run["sealed_at"])
+
     def test_blue_view_no_canary(self) -> None:
         campaign = self._create_campaign("INT-3", "idem-3")
         cid = campaign["campaign_id"]

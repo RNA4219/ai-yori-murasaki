@@ -662,11 +662,12 @@ def import_artifact(runtime: Any, campaign_id: str, run_id: str,
 
 def _iter_assessment_events(runtime: Any, campaign_id: str):
     for run in runtime.list_runs(campaign_id):
-        chain = runtime.store.verify_chain(run["run_id"])
-        if chain.get("result") != "PASS":
+        try:
+            events = runtime.store.read_verified_events(run["run_id"], campaign_id=campaign_id)
+        except (jsonio.DataError, OSError) as exc:
             raise jsonio.DataError(
-                f"ledger verification failed for run {run['run_id']}", "hold")
-        for event in runtime.store.read_events(run["run_id"]):
+                f"ledger verification failed for run {run['run_id']}", "hold") from exc
+        for event in events:
             ext = event.get("extensions") or {}
             if not isinstance(ext, dict):
                 continue

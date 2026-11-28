@@ -257,7 +257,11 @@ class EnrichmentIntegrationTest(unittest.TestCase):
         result = self._run_cli_import(raw, self.ctx, kev_meta, epss_meta)
         self.assertIn("enrichment_ref", result)
 
-        loaded = assessment.load_report(self.rt, self.cid, view="operator")
+        with patch.object(self.store, "_read_events_raw", wraps=self.store._read_events_raw) as reads, \
+             patch.object(self.store, "read_verified_events", wraps=self.store.read_verified_events) as verified:
+            loaded = assessment.load_report(self.rt, self.cid, view="operator")
+            verified.assert_any_call(self.rid, campaign_id=self.cid)
+            self.assertEqual(reads.call_count, verified.call_count)
         self.assertIsNotNone(loaded)
         self.assertIn("enrichment", loaded)
         enrichment = loaded["enrichment"]

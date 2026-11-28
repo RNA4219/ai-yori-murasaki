@@ -172,22 +172,16 @@ def _project_run(run: dict, store=None, *, verified_events=None) -> dict:
     last_sequence = _safe_int(run.get("last_sequence"))
     last_event_hash = display(run.get("last_event_hash"))
     sealed_at = display(run.get("sealed_at"))
+    if verified_events is None and store is not None:
+        try:
+            verified_events = store.read_verified_events(run["run_id"], campaign_id=run["campaign_id"])
+        except (DataError, OSError):
+            verified_events = []
     if verified_events is not None:
         last = verified_events[-1] if verified_events else {}
         last_sequence = _safe_int(last.get("sequence"))
         last_event_hash = display(last.get("event_hash"))
         sealed_at = display(last.get("timestamp")) if last.get("event_type") == "chain_sealed" else None
-    elif store is not None:
-        run_id = run.get("run_id")
-        chain = store.verify_chain(run_id)
-        if chain.get("result") == "PASS":
-            last_sequence = _safe_int(chain.get("last_sequence"))
-            last_event_hash = display(chain.get("last_event_hash"))
-        events = store.read_events(run_id) if chain.get("result") == "PASS" else []
-        if events and events[-1].get("event_type") == "chain_sealed":
-            sealed_at = display(events[-1].get("timestamp"))
-        else:
-            sealed_at = None
     return {
         "run_id": display(run.get("run_id")),
         "campaign_id": display(run.get("campaign_id")),
@@ -233,34 +227,23 @@ def _project_lab_metrics(runtime, cid: str, *, verified_events=None) -> dict | N
     Scans every actual run of the campaign, reads its events, and selects
     the latest ``lab_measurement`` state_capture event by event timestamp
     across runs.  A run is only eligible when both chain and checkpoint
-    verification PASS.  The referenced measurement object is then handed
-    to ``lab_metrics.measure`` which independently re-verifies all runs
-    and CAS integrity.  Only the aggregate dict is returned; source refs,
+    verification PASS. Measurement selection, completion and audit counts
+    use the same verified events, bound to their sealed checkpoints.
+    Only the aggregate dict is returned; source refs,
     raw objects and expected manifests are never exposed.
     """
     store = runtime.store
     if verified_events is None:
         try:
-            run_ids = [run.get("run_id") for run in runtime.list_runs(cid)]
+            run_ids = lab_metrics._campaign_run_ids(runtime, cid)
         except DataError:
             return None
-    else:
-        run_ids = verified_events.keys()
+        try:
+            verified_events = {rid: store.read_verified_events(rid, campaign_id=cid) for rid in run_ids}
+        except (DataError, OSError):
+            return {"status": "HOLD", "reason_code": "evidence_unverified", "metrics": None, "limitations": []}
     latest: tuple[str, dict] | None = None
-    for rid in run_ids:
-        if not isinstance(rid, str):
-            continue
-        if verified_events is not None:
-            events = verified_events[rid]
-        else:
-            try:
-                chain = store.verify_chain(rid)
-                if chain.get("result") != "PASS":
-                    raise DataError("unverified")
-                events = store.read_events(rid)
-            except DataError:
-                return {"status": "HOLD", "reason_code": "evidence_unverified",
-                        "metrics": None, "limitations": []}
+    for events in verified_events.values():
         for event in events:
             if not isinstance(event, dict):
                 continue
@@ -271,9 +254,6 @@ def _project_lab_metrics(runtime, cid: str, *, verified_events=None) -> dict | N
                 continue
             if extensions.get("record_type") != "lab_measurement":
                 continue
-            if store.verify_checkpoint(cid, rid).get("result") != "PASS":
-                return {"status": "HOLD", "reason_code": "evidence_unverified",
-                        "metrics": None, "limitations": []}
             ts = event.get("timestamp")
             if not isinstance(ts, str):
                 continue
@@ -281,8 +261,6 @@ def _project_lab_metrics(runtime, cid: str, *, verified_events=None) -> dict | N
                 latest = (ts, event)
     if latest is None:
         return None
-    if verified_events is not None and {r["run_id"] for r in runtime.list_runs(cid)} != set(verified_events):
-        return {"status": "HOLD", "reason_code": "evidence_unverified", "metrics": None, "limitations": []}
     event = latest[1]
     refs = event.get("evidence_refs")
     if not isinstance(refs, list) or not refs or not isinstance(refs[0], str):
@@ -297,7 +275,7 @@ def _project_lab_metrics(runtime, cid: str, *, verified_events=None) -> dict | N
         return {"status": "HOLD", "reason_code": "evidence_unverified",
                 "metrics": None, "limitations": []}
     try:
-        result = lab_metrics.measure(runtime, cid, measurement)
+        result = lab_metrics._measure(runtime, cid, measurement, verified_events=verified_events)
     except DataError:
         return {"status": "HOLD", "reason_code": "evidence_unverified",
                 "metrics": None, "limitations": []}
@@ -982,7 +960,17 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
                         "reason": "評価情報はBlueに非公開",
                     },
                 })
-            summary = indexed.current.summary if indexed else campaign_summaries(store).get(cid)
+            if indexed:
+                summary = indexed.current.summary
+                case_events = indexed.current.events
+            else:
+                case_events = {}
+
+                def remember_run(rid, owner, events):
+                    if owner == cid:
+                        case_events[rid] = events
+
+                summary = campaign_summaries(store, on_verified=remember_run).get(cid)
             if summary is None:
                 return _error(404, "not_found")
             findings = [_project_finding(obj, store.secrets) for obj in summary.findings.values()]
@@ -998,10 +986,8 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
                 })
             if summary.pending_runs:
                 metrics = {"status": "HOLD", "reason_code": "evidence_unverified", "metrics": None, "limitations": []}
-            elif indexed:
-                metrics = _project_lab_metrics(indexed.current, cid, verified_events=indexed.current.events)
             else:
-                metrics = _project_lab_metrics(runtime, cid)
+                metrics = _project_lab_metrics(indexed.current if indexed else runtime, cid, verified_events=case_events)
             return _json_response(200, {
                 "campaign": _project_campaign(cid, summary, secrets=store.secrets),
                 "findings": findings,

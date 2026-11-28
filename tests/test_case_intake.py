@@ -111,6 +111,39 @@ def test_search_and_visibility(store):
     assert second["receipt_id"] != literal["receipt_id"]
 
 
+def test_existing_receipts_are_searched_and_ordered_by_display_name(store):
+    code, result = cli(store, "Queue/Zulu%_desk", "display-first")
+    assert code == 0
+    first = result["data"]
+    second = intake.register(store, "Queue/Alpha%_desk", "display-second")
+    other = intake.register(store, "Queue/West desk", "display-other")
+    store.secrets = ("Alpha", "Zulu")
+    same_name = sorted(({**record, "name": "Queue/[REDACTED]%_desk"} for record in (first, second)),
+                       key=lambda record: record["receipt_id"])
+    assert api(store, q="queue/") == (200, {"receipts": [*same_name, other], "has_more": False})
+    assert api(store, q="queue/[redacted]%_") == (200, {"receipts": same_name, "has_more": False})
+    assert api(store, q="Queue/Zulu") == (200, {"receipts": [], "has_more": False})
+    assert api(store, q=first["receipt_id"])[1]["receipts"] == [
+        {**first, "name": "Queue/[REDACTED]%_desk"}]
+    assert api(store)[1]["receipts"][0] == other
+    store.secrets += (first["receipt_id"],)
+    assert api(store, q=first["receipt_id"]) == (200, {"receipts": [], "has_more": False})
+
+
+def test_display_name_prefix_controls_page_limit_and_has_more(store):
+    ids = []
+    for i in range(intake.PAGE_SIZE + 1):
+        prefix = "East" if i % 2 else "West"
+        receipt = intake.register(store, prefix + " desk", "display-page-" + str(i))
+        ids.append(receipt["receipt_id"])
+    store.secrets = ("East", "West")
+    status, page = api(store, q="[REDACTED] desk")
+    assert status == 200 and page["has_more"] is True
+    assert [row["receipt_id"] for row in page["receipts"]] == sorted(ids)[:intake.PAGE_SIZE]
+    assert {row["name"] for row in page["receipts"]} == {"[REDACTED] desk"}
+    assert api(store, q="East") == (200, {"receipts": [], "has_more": False})
+
+
 @pytest.mark.parametrize(("name", "key"), [("", "ok"), ("a" * 161, "ok"), ("秘密の値", "ok"),
                                            ("案件", "  "), ("案件", "a" * 257)])
 def test_invalid_request_leaves_no_database(tmp_path, name, key):
