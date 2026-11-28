@@ -97,6 +97,33 @@ def test_import_show_roundtrip_through_cli(cli_env, tmp_path):
     assert "not_executed" in statuses
 
 
+def test_import_size_boundary_preserves_last_report(cli_env, tmp_path):
+    from ai_yori_murasaki.cli_assessment import _MAX_IMPORT_BYTES
+
+    rt, cid, call = cli_env
+    rid = _run_id(_start_run(rt, cid))
+    candidate = tmp_path / "trivy.json"
+    candidate.write_bytes(json.dumps(_trivy_candidate()).encode().ljust(_MAX_IMPORT_BYTES, b" "))
+    context = tmp_path / "context.json"
+    context.write_text(json.dumps(_import_context()), encoding="utf-8-sig")
+    args = ("assess", "import", "--campaign", cid, "--run", rid, "--format", "trivy",
+            "--context", str(context), "--input")
+
+    rc, result = call(*args, str(candidate))
+    assert rc == 0
+    before = call("assess", "show", "--campaign", cid)
+    assert before[0] == 0
+    assert result["data"]["report_ref"]
+
+    with candidate.open("ab") as stream:
+        stream.write(b" ")
+    for invalid_input in (candidate, tmp_path):
+        rc, error = call(*args, str(invalid_input))
+        assert rc == 2
+        assert error["reason_code"] == "input_invalid"
+    assert call("assess", "show", "--campaign", cid) == before
+
+
 def test_http_assessment_returns_ready_report(cli_env, tmp_path):
     rt, cid, call = cli_env
     rid = _run_id(_start_run(rt, cid))

@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import tempfile
 import unittest
+from unittest.mock import patch
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
@@ -170,6 +171,37 @@ class AssessmentEnrichmentTest(unittest.TestCase):
         self.assertIsNone(f3kev["epss"])
         self.assertIsNone(f3kev["percentile"])
         self.assertTrue(f3kev["reason"])
+
+    def test_provenance_fields_must_match_one_snapshot(self) -> None:
+        meta = self._import_epss()
+        for key, value in (("source_url", "https://example.test/other.csv"), ("source_version", "v2"),
+                           ("fetched_at", "2001-01-01"), ("as_of", "2001-01-02"), ("kind", "kev"),
+                           ("cas_ref", "f" * 64), ("ttl_seconds", meta["ttl_seconds"] + 1)):
+            with self.subTest(field=key):
+                ref = {**meta, key: value}
+                result = query_snapshot(self.store, ref, cve="CVE-2024-35195")
+                self.assertEqual(result["status"], "corrupt")
+                self.assertIsNone(result["score"])
+                records = ae.build_enrichment_records(self.store, FINDINGS, epss_ref=ref)
+                rec = _by_key(records, "f1", "epss")
+                self.assertEqual(rec["status"], "corrupt")
+                for field in ("source_url", "source_version", "fetched_at", "as_of", "epss", "percentile"):
+                    self.assertIsNone(rec[field])
+        wrong_slot = ae.build_enrichment_records(self.store, FINDINGS, kev_ref=meta)
+        self.assertEqual(_by_key(wrong_slot, "f1", "kev")["status"], "corrupt")
+
+    def test_reads_one_index_and_each_snapshot_once_per_report(self) -> None:
+        from ai_yori_murasaki import enrichment
+        kev, epss = self._import_kev(), self._import_epss()
+        findings = [{**FINDINGS[0], "finding_id": f"fixture-{i}"} for i in range(30)]
+        with patch.object(enrichment, "_load_index", wraps=enrichment._load_index) as index, \
+             patch.object(self.store, "get_object", wraps=self.store.get_object) as objects:
+            records = ae.build_enrichment_records(self.store, findings, kev, epss)
+            self.assertEqual((index.call_count, objects.call_count, len(records)), (1, 4, 60))
+        with patch.object(enrichment, "_load_index", wraps=enrichment._load_index) as index, \
+             patch.object(self.store, "get_object", wraps=self.store.get_object) as objects:
+            self.assertEqual(ae.confirmed_records(self.store, records), records)
+            self.assertEqual((index.call_count, objects.call_count), (1, 2))
 
     def test_expired(self) -> None:
         kev_meta = self._import_kev(ttl_seconds=1)
@@ -371,6 +403,16 @@ class AssessmentEnrichmentTest(unittest.TestCase):
             as_of=AS_OF,
         )
         self.assertEqual(ok["source_url"], "https://example.test/kev.json")
+
+    def test_signed_reference_is_not_stored_or_projected(self) -> None:
+        for param in ("X-Amz-Signature", "X-Goog-Signature", "sig"):
+            uri = "https://example.test/archive?" + param + "=fixture"
+            with self.assertRaises(EnrichmentImportError) as error:
+                import_snapshot(self.store, "kev", KEV_JSON, uri, FETCHED_AT, "v1", AS_OF)
+            self.assertNotIn(uri, str(error.exception))
+            record, = ae.project_enrichment([{"source_url": uri, "status": "listed"}])
+            self.assertIsNone(record["source_url"])
+            self.assertEqual(record["status"], "listed")
 
 
 if __name__ == "__main__":

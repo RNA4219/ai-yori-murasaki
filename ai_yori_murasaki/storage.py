@@ -76,12 +76,9 @@ def _sanitize_authorization(value: Any, secrets: tuple[str, ...]) -> Any:
         return "[REDACTED]"
     if not _is_sha(value["scope_digest"]):
         return "[REDACTED]"
-    return {
-        "operator_id": value["operator_id"],
-        "granted_at": value["granted_at"],
-        "expires_at": value["expires_at"],
-        "scope_digest": value["scope_digest"],
-    }
+    if any(secret in field for field in (*value.keys(), *value.values()) for secret in secrets):
+        return "[REDACTED]"
+    return dict(value)
 
 
 def sanitize(value: Any, secrets: tuple[str, ...] = ()) -> Any:

@@ -47,7 +47,7 @@ def read_drift(runtime, campaign_id: str, *, use_index: bool = True) -> dict:
     records = read_source_records(store, findings)
     observations = load_observations(runtime, campaign_id, verified_events=events)
     local_path(store.workspace / "decision-view" / "mapping.json")
-    result = build_drift(campaign_id, findings, records, load_mapping(store), observations)
+    result = build_drift(campaign_id, findings, records, load_mapping(store), observations, secrets=store.secrets)
     if store.secrets:
         # CLI のレポート全体には、個別の CAS オブジェクトに対するサイズ制限を適用しない。
         result = {key: [sanitize(row, store.secrets) for row in value] if isinstance(value, list)
@@ -108,8 +108,13 @@ def export_drift(runtime, campaign_id: str, fmt: str, output: Path | None) -> No
     if output is None:
         sys.stdout.write(text)
         return
+    write_local_export(runtime.store, output, text)
+
+
+def write_local_export(store, output: Path, text: str) -> None:
+    """共有用の書き出しは案件・信頼済みストアの外に作成し、完成後に置換する。"""
     target = local_path(output)
-    if any(target.is_relative_to(root) for root in (runtime.store.workspace, runtime.store.trusted_root)):
+    if any(target.is_relative_to(root) for root in (store.workspace, store.trusted_root)):
         raise DataError("export destination overlaps campaign storage")
     temporary = None
     try:

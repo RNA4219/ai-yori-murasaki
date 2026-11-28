@@ -106,3 +106,18 @@ class ArchitectureMapsTests(unittest.TestCase):
                 self.assertEqual(self.request(path, method)[0], 405)
         self.assertEqual(snapshot(), initial)
         self.assertEqual((self.directory / "example.json").read_bytes(), data)
+
+    def test_only_publishable_originals_are_listed_and_served(self):
+        register = "fixture-private-label"
+        self.runtime.store.secrets = (register,)
+        public = self.write("public.json", {"nodes": [], "label": "token", "token": "[REDACTED]"})
+        self.write("notes.json", {"nodes": [{"note": "draft " + register}]})
+        self.write("config.json", {"nodes": [], "extra": {"api-key": "fixture-only"}})
+        self.write(register + ".json", {"nodes": []})
+        status, _, listing = self.request()
+        self.assertEqual((status, json.loads(listing)), (200, {"maps": [{"id": "public", "name": "public"}]}))
+        self.assertEqual(self.request("/public")[2], public)
+        for map_id in ("notes", "config", register):
+            with self.subTest(map_id=map_id):
+                status, _, body = self.request("/" + map_id)
+                self.assertEqual((status, json.loads(body)), (409, {"error": "map_unavailable"}))

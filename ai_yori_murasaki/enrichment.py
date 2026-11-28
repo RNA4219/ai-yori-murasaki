@@ -42,6 +42,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+from .jsonio import MAX_JSON_BYTES, DataError, loads
+from .storage import _safe_join, read_regular_bytes
+
 MAX_INPUT_BYTES = 12 * 1024 * 1024
 DEFAULT_TTL = {"attack": 30 * 86400, "kev": 86400, "epss": 86400}
 
@@ -295,18 +298,17 @@ def _coerce_score(v: Any) -> Optional[float]:
 # ---------- metadata index ----------
 
 def _index_path(store: Any) -> Path:
-    return Path(store.workspace) / "enrichment" / "index.json"
+    return _safe_join(Path(store.workspace), "enrichment", "index.json")
 
 
 def _load_index(store: Any) -> Dict[str, Any]:
-    path = _index_path(store)
-    if not path.exists():
-        return {"schema_version": "1.0.0", "entries": {}}
     try:
-        value = json.loads(path.read_bytes().decode("utf-8"))
-    except Exception as e:
-        raise EnrichmentError(f"enrichment index unreadable: {e}") from e
-    if not isinstance(value, dict):
+        value = loads(read_regular_bytes(_index_path(store), MAX_JSON_BYTES))
+    except FileNotFoundError:
+        return {"schema_version": "1.0.0", "entries": {}}
+    except (OSError, DataError) as exc:
+        raise EnrichmentError("enrichment index unreadable") from exc
+    if not isinstance(value, dict) or not isinstance(value.get("entries", {}), dict):
         raise EnrichmentError("enrichment index must be object")
     value.setdefault("schema_version", "1.0.0")
     value.setdefault("entries", {})
@@ -329,8 +331,7 @@ def _persist_meta(store: Any, meta: Dict[str, Any]) -> str:
     return meta_digest
 
 
-def _load_meta(store: Any, raw_sha256: str) -> Optional[Dict[str, Any]]:
-    index = _load_index(store)
+def _load_meta(store: Any, index: dict, raw_sha256: str) -> Optional[Dict[str, Any]]:
     entry = index.get("entries", {}).get(raw_sha256)
     if not isinstance(entry, dict):
         return None
@@ -347,6 +348,46 @@ def _load_meta(store: Any, raw_sha256: str) -> Optional[Dict[str, Any]]:
     if not isinstance(meta, dict):
         return None
     return meta
+
+
+PROVENANCE_FIELDS = ("kind", "raw_sha256", "content_digest", "source_url", "source_version",
+                     "fetched_at", "as_of", "expires_at", "ttl_seconds", "cas_ref")
+
+
+class SnapshotReader:
+    """一回の報告処理で、同じ索引・CAS オブジェクトを繰り返し開かない。"""
+
+    def __init__(self, store):
+        self.store = store
+        self.index = None
+        self.metas = {}
+        self.contents = {}
+
+    def metadata(self, raw_sha256):
+        if not isinstance(raw_sha256, str):
+            return None
+        if raw_sha256 not in self.metas:
+            if self.index is None:
+                self.index = _load_index(self.store)
+            self.metas[raw_sha256] = _load_meta(self.store, self.index, raw_sha256)
+        return self.metas[raw_sha256]
+
+    def parsed(self, kind, raw_sha256, content_digest):
+        key = (kind, raw_sha256, content_digest)
+        if key not in self.contents:
+            wrapper = _cas_get_wrapper(self.store, content_digest)
+            if wrapper is None:
+                self.contents[key] = ("missing", "cas_missing", None)
+            else:
+                try:
+                    raw = _unwrap_raw_text(wrapper)
+                    if _raw_sha256(raw) != raw_sha256:
+                        raise EnrichmentError("raw_sha256_mismatch")
+                    parser = {"attack": _parse_attack, "kev": _parse_kev, "epss": _parse_epss}[kind]
+                    self.contents[key] = ("ok", "", parser(raw))
+                except EnrichmentError:
+                    self.contents[key] = ("corrupt", "snapshot_invalid", None)
+        return self.contents[key]
 
 
 # ---------- public API ----------
@@ -368,10 +409,9 @@ def import_snapshot(store: Any, kind: str, raw: bytes, source_url: str,
         raise EnrichmentError("source_version required")
     if not source_url:
         raise EnrichmentError("source_url required")
-    if not isinstance(source_url, str) or not (
-            source_url.startswith("http://") or source_url.startswith("https://")):
-        raise EnrichmentError(
-            f"source_url must start with http:// or https://: {source_url!r}")
+    from .sources import visible_http_url
+    if visible_http_url(source_url, store.secrets) is None:
+        raise EnrichmentError("source_url must be a shareable HTTP(S) URL")
 
     now = datetime.now(timezone.utc)
     fetched_dt = _parse_date(fetched_at)
@@ -441,6 +481,11 @@ def query_snapshot(store: Any, ref: Dict[str, Any], cve: Optional[str] = None,
                    technique_id: Optional[str] = None,
                    now: Optional[datetime] = None) -> Dict[str, Any]:
     """Query a previously imported snapshot. Returns score=null if expired/missing."""
+    return query_verified_snapshot(SnapshotReader(store), ref, cve, technique_id, now)
+
+
+def query_verified_snapshot(reader: SnapshotReader, ref: dict, cve=None, technique_id=None,
+                            now=None, *, expected_kind=None) -> dict:
     if now is None:
         now = datetime.now(timezone.utc)
     elif now.tzinfo is None:
@@ -453,50 +498,31 @@ def query_snapshot(store: Any, ref: Dict[str, Any], cve: Optional[str] = None,
         raise EnrichmentError("ref missing raw_sha256/content_digest")
 
     # Verify metadata via index (meta_digest) and raw_sha256 consistency.
-    meta = _load_meta(store, raw_sha)
+    meta = reader.metadata(raw_sha)
     if meta is None:
         return {"status": "missing", "score": None, "kind": kind,
                 "reason": "meta_missing"}
-    if meta.get("raw_sha256") != raw_sha:
+    if kind not in ("attack", "kev", "epss") or (expected_kind is not None and kind != expected_kind):
         return {"status": "corrupt", "score": None, "kind": kind,
-                "reason": "meta_raw_sha256_mismatch",
+                "reason": "meta_kind_mismatch",
                 "expires_at": meta.get("expires_at")}
-    if meta.get("content_digest") != content_digest:
-        return {"status": "corrupt", "score": None, "kind": kind,
-                "reason": "meta_content_digest_mismatch",
-                "expires_at": meta.get("expires_at")}
-
-    # TTL contract: the stored meta is the single source of truth for
-    # expires_at. A caller-supplied ref.expires_at must never extend it.
     meta_expires_at = meta.get("expires_at")
-    if "expires_at" in ref:
-        ref_expires_at = ref.get("expires_at")
-        if ref_expires_at != meta_expires_at:
+    for field in PROVENANCE_FIELDS:
+        if field in ref and ref[field] != meta.get(field):
             return {"status": "corrupt", "score": None, "kind": kind,
-                    "reason": "meta_expires_at_mismatch",
+                    "reason": f"meta_{field}_mismatch",
                     "expires_at": meta_expires_at}
 
     if meta_expires_at is not None and now.timestamp() > float(meta_expires_at):
         return {"status": "expired", "score": None, "kind": kind,
                 "reason": "ttl_expired", "expires_at": meta_expires_at}
 
-    wrapper = _cas_get_wrapper(store, content_digest)
-    if wrapper is None:
-        return {"status": "missing", "score": None, "kind": kind,
-                "reason": "cas_missing", "expires_at": meta_expires_at}
-    try:
-        raw = _unwrap_raw_text(wrapper)
-    except EnrichmentError as e:
-        return {"status": "corrupt", "score": None, "kind": kind,
-                "reason": f"wrapper_invalid: {e}",
-                "expires_at": meta_expires_at}
-    if _raw_sha256(raw) != raw_sha:
-        return {"status": "corrupt", "score": None, "kind": kind,
-                "reason": "raw_sha256_mismatch",
-                "expires_at": meta_expires_at}
+    status, reason, parsed = reader.parsed(kind, raw_sha, content_digest)
+    if status != "ok":
+        return {"status": status, "score": None, "kind": kind,
+                "reason": reason, "expires_at": meta_expires_at}
 
     if kind == "attack":
-        parsed = _parse_attack(raw)
         if technique_id is None:
             return {"status": "ok", "kind": kind,
                     "techniques": sorted(parsed["techniques"]),
@@ -507,7 +533,6 @@ def query_snapshot(store: Any, ref: Dict[str, Any], cve: Optional[str] = None,
                 "expires_at": meta_expires_at}
 
     if kind == "kev":
-        parsed = _parse_kev(raw)
         if cve is None:
             return {"status": "ok", "kind": kind,
                     "count": parsed["count"],
@@ -519,7 +544,6 @@ def query_snapshot(store: Any, ref: Dict[str, Any], cve: Optional[str] = None,
                 "expires_at": meta_expires_at}
 
     if kind == "epss":
-        parsed = _parse_epss(raw)
         if cve is None:
             return {"status": "ok", "kind": kind,
                     "score_count": len(parsed["scores"]),

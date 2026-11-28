@@ -42,6 +42,26 @@ def test_falls_back_to_finding_properties_and_unknown_status():
     assert v["items"][2]["state_label"] is None
 
 
+def test_first_shareable_reference_preserves_public_http_source():
+    private = "https://example.test/fixture%20archive"
+    public = "http://example.test/notes/1"
+    item, = mod.build_view({"campaign_id": "c1"}, [f("a", refs=[private, public])], {},
+                           mapping=MAPPING, now=NOW, secrets=("fixture archive",))["items"]
+    assert item["link"] == public
+
+
+def test_mapped_source_urls_follow_visibility_in_current_and_removed_identifiers():
+    mapping = {"fields": {"key": "source"}, "status_values": {}}
+    private = "https://example.test/fixture%20archive"
+    public = "http://example.test/shared"
+    previous = {"campaign": {}, "findings": [f("old")], "records": {"old": {"source": private}}}
+    view = mod.build_view({}, [f("current")], {"current": {"source": public}}, mapping=mapping, now=NOW,
+                          previous=previous, secrets=("fixture archive",))
+    assert view["items"][0]["ref"] == public
+    assert view["removed"][0]["ref"] is None
+    assert private not in json.dumps(view)
+
+
 def test_enrichment_kev_epss_and_freshness():
     exp_future = NOW.timestamp() + 3600
     recs = [

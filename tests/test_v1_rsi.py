@@ -398,6 +398,11 @@ def test_real_comparison_projection_is_campaign_scoped(tmp_path: Path) -> None:
     assert rows[0]["status"] == "promotion-ready"
     assert rows[0]["applied"] is False
     assert _project_rsi(rsi._store, "other-campaign") == []
+    rsi._store.secrets = (candidate["freeze_id"], candidate["candidate_id"], rows[0]["content_digest"], "promotion")
+    masked = _project_rsi(rsi._store, "campaign-1")[0]
+    assert masked["freeze_id"] == masked["candidate_id"] == masked["content_digest"] == "[REDACTED]"
+    assert masked["status"] == "[REDACTED]-ready"
+    assert masked["comparison"]["gain"] == 1.0
 
 
 def test_comparison_recomputes_reported_success(tmp_path: Path) -> None:

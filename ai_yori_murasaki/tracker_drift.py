@@ -8,6 +8,7 @@ import unicodedata
 
 from .drift_policy import applicable_rules, excluded_resource
 from .observations import id_pattern
+from .sources import visible_obsidian_uri
 from .tracker_source import tracker_mapping, tracker_source
 
 
@@ -322,7 +323,7 @@ def _compare(finding, props, source, metadata, mapping, catalog, observations, k
     edited = next((t for value in times if (t := _time(value)) is not None), None)
     return {
         "finding_id": finding["finding_id"], "title": title, "source_status": source_status,
-        "source": source, **({"source_uri": metadata["source_uri"]} if source == "obsidian" else {}),
+        "source": source,
         "closed": closed, "classification": classification, "reason": reason,
         "stale": edited is not None and any(_time(t) < edited for t in collected),
         "matches": matches, "collected_at": collected,
@@ -331,7 +332,7 @@ def _compare(finding, props, source, metadata, mapping, catalog, observations, k
     }
 
 
-def build_drift(campaign_id, findings, records, mapping, observations):
+def build_drift(campaign_id, findings, records, mapping, observations, *, secrets=()):
     """検証済みの観測と、判断画面と同じ形式の課題・原典の行だけを使う。"""
     catalog = _catalog(observations)
     known_terms = {term for g in catalog for aliases, _, row in g.resources for term in (row["id"], *aliases)}
@@ -344,8 +345,11 @@ def build_drift(campaign_id, findings, records, mapping, observations):
             continue
         seen.add(fid)
         props = records.get(fid, metadata.get("properties", {}))
-        items.append(_compare(finding, props if isinstance(props, dict) else {}, source, metadata,
-                              tracker_mapping(source, mapping), catalog, observations, known_terms))
+        item = _compare(finding, props if isinstance(props, dict) else {}, source, metadata,
+                        tracker_mapping(source, mapping), catalog, observations, known_terms)
+        if source == "obsidian":
+            item["source_uri"] = visible_obsidian_uri(metadata.get("source_uri"), secrets)
+        items.append(item)
     counts = dict.fromkeys(CLASSIFICATIONS, 0)
     reasons = dict.fromkeys(REASONS, 0)
     for item in items:

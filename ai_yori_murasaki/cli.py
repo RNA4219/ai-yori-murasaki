@@ -61,24 +61,20 @@ def _emit(command: str, status: str, reason_code: str, campaign_id: Any,
         "schema_version": SCHEMA_VERSION,
         "command": command,
         "status": status,
-        "reason_code": reason_code,
-        "campaign_id": campaign_id,
-        "run_id": run_id,
-        "data": data,
+        "reason_code": "input_invalid",
+        "campaign_id": None,
+        "run_id": None,
+        "data": None,
     }
+    secrets = _registered_secrets()
     try:
-        safe = sanitize(envelope)
-    except Exception:
-        safe = {
-            "schema_version": SCHEMA_VERSION,
-            "command": command,
-            "status": status,
-            "reason_code": reason_code,
-            "campaign_id": None,
-            "run_id": None,
-            "data": None,
-        }
-    sys.stdout.write(json.dumps(safe, ensure_ascii=False, sort_keys=True) + "\n")
+        envelope["reason_code"] = sanitize(reason_code, secrets)
+        envelope.update(campaign_id=sanitize(campaign_id, secrets), run_id=sanitize(run_id, secrets),
+                        data=sanitize(data, secrets))
+    except DataError:
+        # 出力項目がマスクで衝突する場合も、加工前のデータを返さない。
+        pass
+    sys.stdout.write(json.dumps(envelope, ensure_ascii=False, sort_keys=True) + "\n")
     sys.stdout.flush()
 
 
@@ -234,11 +230,7 @@ def _resolve_scenario(scenario: Any) -> str:
     return scenario
 
 
-def _make_store(args: argparse.Namespace) -> Store:
-    if args.workspace is None:
-        raise DataError("workspace が指定されていません", "usage_error")
-    if not args.trusted_root:
-        raise DataError("trusted-root が指定されていません", "usage_error")
+def _registered_secrets() -> tuple[str, ...]:
     secrets: list[str] = []
     raw_secrets = os.environ.get("AYM_SECRETS", "")
     if raw_secrets:
@@ -259,7 +251,15 @@ def _make_store(args: argparse.Namespace) -> Store:
         if s and s not in seen:
             seen.add(s)
             unique_secrets.append(s)
-    return Store(str(args.workspace), str(args.trusted_root), tuple(unique_secrets))
+    return tuple(unique_secrets)
+
+
+def _make_store(args: argparse.Namespace) -> Store:
+    if args.workspace is None:
+        raise DataError("workspace が指定されていません", "usage_error")
+    if not args.trusted_root:
+        raise DataError("trusted-root が指定されていません", "usage_error")
+    return Store(str(args.workspace), str(args.trusted_root), _registered_secrets())
 
 
 def _make_runtime(args: argparse.Namespace) -> Runtime:

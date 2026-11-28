@@ -5,12 +5,14 @@ import json
 import tempfile
 import threading
 import unittest
+from unittest.mock import patch
 from contextlib import redirect_stdout
 from http.client import HTTPConnection
 from pathlib import Path
 
 from ai_yori_murasaki.cli import main
-from ai_yori_murasaki.jsonio import digest
+from ai_yori_murasaki.decision_view import main as export_decision_view
+from ai_yori_murasaki.jsonio import DataError, digest
 from ai_yori_murasaki.runtime import Runtime
 from ai_yori_murasaki.server import create_server
 from ai_yori_murasaki.storage import Store
@@ -77,6 +79,38 @@ def prepare_csv_fixture(root: Path) -> dict:
 
 
 class TrackerCsvEndToEndTests(unittest.TestCase):
+    def test_legacy_export_uses_current_settings_and_protects_store(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            ids = prepare_csv_fixture(root)
+            workspace, trusted = root / "workspace", root / "trusted"
+            run_cli(root, "assess", "import", "--format", "notion", "--input", root / "input/notion.csv",
+                    "--context", root / "input/context.json", "--campaign", ids["campaign_id"],
+                    "--run", ids["run_id"])
+            out = root / "published.json"
+            marker, key = "Issue case-active", "fixture-export-key"
+            args = ["--workspace", str(workspace), "--trusted", str(trusted), "--campaign", ids["campaign_id"],
+                    "--previous", "none", "--name", key]
+            mapping = str(workspace / "decision-view/mapping.json")
+            with patch.dict("os.environ", {"AYM_SECRETS": marker, "AYM_LLM_API_KEY": "Bearer " + key}):
+                with redirect_stdout(io.StringIO()):
+                    self.assertEqual(export_decision_view([*args, "--map", mapping, "--out", str(out)]), 0)
+                published = json.loads(out.read_text(encoding="utf-8"))
+                self.assertEqual(published["campaign"]["name"], "[REDACTED]")
+                self.assertIn("[REDACTED]", [item["title"] for item in published["items"]])
+                self.assertNotIn(marker, out.read_text(encoding="utf-8"))
+                before = out.read_bytes()
+                invalid_mapping = root / "empty-mapping.json"
+                invalid_mapping.write_text("{}", encoding="utf-8")
+                with self.assertRaises(DataError):
+                    export_decision_view([*args, "--map", str(invalid_mapping), "--out", str(out)])
+                self.assertEqual(out.read_bytes(), before)
+                for protected in (workspace, trusted):
+                    destination = protected / "example-export.json"
+                    with self.assertRaises(DataError):
+                        export_decision_view([*args, "--map", mapping, "--out", str(destination)])
+                    self.assertFalse(destination.exists())
+
     def test_exported_csv_to_drift_cli_and_monitor(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

@@ -13,11 +13,11 @@ from .storage import SECRET_KEYS, _assert_no_ancestor_reparse, read_regular_byte
 PROVIDERS = ("obsidian", "notion", "github")
 MAX_TEXT = 256 * 1024
 MAX_DOCUMENTS = 1000
-_CREDENTIAL_PARAMS = SECRET_KEYS | {"auth", "key", "access_token", "client_secret",
-                                    "refresh_token", "id_token"}
+_CREDENTIAL_PARAMS = SECRET_KEYS | {"auth", "key", "access_token", "client_secret", "refresh_token",
+                                    "id_token", "sig", "signature", "x_amz_signature", "x_goog_signature"}
 
 
-def safe_url(value, secrets=()):
+def safe_url(value, secrets=(), *, allow_http=False):
     if not isinstance(value, str) or not 1 <= len(value) <= 4096:
         raise DataError("invalid source URL")
     if any(ord(c) <= 32 or ord(c) == 127 for c in value) or "\\" in value:
@@ -33,7 +33,7 @@ def safe_url(value, secrets=()):
             raise DataError("registered secret in source URL")
     if url.username or url.password:
         raise DataError("source URL credentials forbidden")
-    if url.scheme == "https" and url.hostname:
+    if (url.scheme == "https" or (allow_http and url.scheme == "http")) and url.hostname:
         if any(k.casefold().replace("-", "_") in _CREDENTIAL_PARAMS
                for part in (url.query, url.fragment) for k in parse_qs(part)):
             raise DataError("credentials in source URL forbidden")
@@ -51,12 +51,24 @@ def safe_url(value, secrets=()):
     raise DataError("source links must be HTTPS or Obsidian note links")
 
 
-def visible_url(value, secrets):
+def visible_url(value, secrets, *, allow_http=False):
     # 読み取りでは、現行の条件を満たさない過去のリンクだけを伏せる。
     try:
-        return safe_url(value, secrets)
+        return safe_url(value, secrets, allow_http=allow_http)
     except DataError:
         return None
+
+
+def visible_http_url(value, secrets=()):
+    if isinstance(value, str) and value.lower().startswith(("http://", "https://")):
+        return visible_url(value, secrets, allow_http=True)
+    return None
+
+
+def visible_obsidian_uri(value, secrets=()):
+    if isinstance(value, str) and value.startswith("obsidian://open?"):
+        return visible_url(value, secrets) or ""
+    return ""
 
 
 class Sources:

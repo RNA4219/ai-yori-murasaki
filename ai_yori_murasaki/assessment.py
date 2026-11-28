@@ -344,7 +344,7 @@ def build_report(runtime: Any, campaign_id: str, run_id: str,
         except assessment_enrichment.EnrichmentError as exc:
             raise jsonio.DataError(
                 f"enrichment invalid: {exc}", "input_invalid") from exc
-        report["enrichment"] = list(ctx_enrichment)
+        report["enrichment"] = assessment_enrichment.confirmed_records(runtime.store, ctx_enrichment)
 
     with runtime.store.lock():
         validate_assessment("assessment_report", report)
@@ -719,10 +719,12 @@ def _read_report(store, campaign_id, view, assessment_events):
     if latest is None:
         return None
     report = latest[2]
+    if isinstance(report.get("enrichment"), list):
+        report = {**report, "enrichment": assessment_enrichment.confirmed_records(store, report["enrichment"])}
     if current_version and report.get("target_version") != current_version:
         report = dict(report)
         report["_historical"] = True
-    return project_report(sanitize(report, store.secrets), view, "operator")
+    return project_report(report, view, "operator", secrets=store.secrets)
 
 
 # ---------------------------------------------------------------------------
@@ -807,12 +809,20 @@ def _project_finding(f: dict) -> dict:
     }
 
 
-def project_report(report: dict, view: str, phase: str) -> dict:
+def project_report(report: dict, view: str, phase: str, *, secrets=()) -> dict:
     """Pure projection of an assessment report for a view/phase."""
     if view == "blue":
         return {"status": "withheld", "reason": "評価情報はBlueに非公開"}
     if not isinstance(report, dict):
         return {"status": "none"}
+
+    enrichment = report.get("enrichment")
+    if isinstance(enrichment, list):
+        try:
+            report = {**report, "enrichment": assessment_enrichment.project_enrichment(enrichment, secrets)}
+        except assessment_enrichment.EnrichmentError as exc:
+            raise jsonio.DataError(f"enrichment projection failed: {exc}", "hold") from exc
+    report = sanitize(report, secrets)
 
     findings = [_project_finding(f) for f in (report.get("findings") or [])
                 if isinstance(f, dict)]
@@ -874,13 +884,8 @@ def project_report(report: dict, view: str, phase: str) -> dict:
         "cvss": cvss,
         "business_impact": business,
     }
-    enrichment = report.get("enrichment")
-    if isinstance(enrichment, list):
-        try:
-            out["enrichment"] = assessment_enrichment.project_enrichment(enrichment)
-        except assessment_enrichment.EnrichmentError as exc:
-            raise jsonio.DataError(
-                f"enrichment projection failed: {exc}", "hold") from exc
+    if isinstance(report.get("enrichment"), list):
+        out["enrichment"] = report["enrichment"]
     if phase == "blind":
         # Red/Oracle-derived info is withheld during blind phase.
         for f in out["findings"]:

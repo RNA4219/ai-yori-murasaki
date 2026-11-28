@@ -1,3 +1,4 @@
+import asyncio
 import json
 from pathlib import Path
 import sys
@@ -8,7 +9,7 @@ from urllib.parse import quote
 
 import pytest
 
-from ai_yori_murasaki import cli
+from ai_yori_murasaki import cli, source_mcp
 from ai_yori_murasaki.jsonio import DataError, canonical
 from ai_yori_murasaki.runtime import Runtime
 from ai_yori_murasaki.server import handle_request
@@ -179,6 +180,43 @@ def test_mcp_write_tools_are_denied(provider, tool, args):
         validate_request(provider, tool, args)
 
 
+def test_mcp_cli_reads_local_files_and_protects_connection_credentials(sources, tmp_path, monkeypatch, capsys):
+    credential = "synthetic-reference-label"
+    monkeypatch.setenv("AYM_FIXTURE_TOKEN", credential)
+    config, arguments = tmp_path / "connection.json", tmp_path / "arguments.json"
+    config.write_text(json.dumps({"transport": "stdio", "command": "fixture",
+                                  "env": {"READER_KEY": "AYM_FIXTURE_TOKEN"}}), encoding="utf-8")
+    arguments.write_text('{"path":"weekly.md"}', encoding="utf-8")
+    files_read = []
+    read_regular = source_mcp.read_regular_bytes
+
+    def observe_read(path, limit):
+        files_read.append(path)
+        return read_regular(path, limit)
+
+    calls = []
+
+    async def fixture_reader(config, env, tool, arguments):
+        calls.append((tool, arguments))
+        return "Weekly report " + credential
+
+    monkeypatch.setattr(source_mcp, "read_regular_bytes", observe_read)
+    monkeypatch.setattr(source_mcp, "_read", fixture_reader)
+    command = ["--workspace", str(sources.store.workspace), "--trusted-root", str(sources.store.trusted_root),
+               "sources", "import-mcp", "--provider", "obsidian", "--tool", "read_note",
+               "--arguments-file", str(arguments), "--config-file", str(config),
+               "--source-url", "obsidian://open?vault=Example&file=Weekly", "--title", "Weekly " + credential]
+    assert cli.main(command) == 0
+    receipt = json.loads(capsys.readouterr().out)["data"]
+    stored = sources.store.get_object(receipt["ref"])
+    assert stored["title"] == "Weekly [REDACTED]"
+    assert stored["body"] == "Weekly report [REDACTED]"
+    assert files_read == [arguments, config]
+    assert calls == [("read_note", {"path": "weekly.md"})]
+    assert cli.main(command + ["--link", "https://example.com/" + credential]) == 2
+    assert len(calls) == 1
+
+
 @pytest.mark.parametrize("provider,tool,args,url", [
     ("github", "issue_read", {"method": "get", "owner": "example", "repo": "repo", "issue_number": 7},
      "https://github.com/example/repo/issues/7"),
@@ -200,31 +238,92 @@ def test_real_stdio_mcp_reader(sources, tmp_path, monkeypatch, provider, tool, a
     assert "fixture-credential-must-not-persist" not in document["body"]
 
 
+def test_mcp_limits_http_body_before_sdk_decoding(monkeypatch):
+    httpx2 = pytest.importorskip("httpx2")
+    from ai_yori_murasaki import source_mcp_http
+
+    class NoteStream(httpx2.AsyncByteStream):
+        closed = False
+
+        async def __aiter__(self):
+            yield b"ab"
+            yield b"cd"
+
+        async def aclose(self):
+            self.closed = True
+
+    async def read_note(headers):
+        stream = NoteStream()
+        transport = httpx2.MockTransport(lambda request: httpx2.Response(200, headers=headers, stream=stream))
+        async with httpx2.AsyncClient(transport=transport, trust_env=False,
+                                      event_hooks={"response": [source_mcp_http._limit_response]}) as client:
+            try:
+                return (await client.get("https://example.test/note")).content
+            finally:
+                assert stream.closed
+
+    monkeypatch.setattr(source_mcp_http, "MAX_HTTP_BYTES", 4)
+    assert asyncio.run(read_note({})) == b"abcd"
+    monkeypatch.setattr(source_mcp_http, "MAX_HTTP_BYTES", 3)
+    with pytest.raises(DataError, match="size limit"):
+        asyncio.run(read_note({}))
+    with pytest.raises(DataError, match="uncompressed"):
+        asyncio.run(read_note({"Content-Encoding": "gzip"}))
+
+
 def test_real_http_mcp_reader_with_bearer(sources, tmp_path, monkeypatch):
     pytest.importorskip("mcp")
+    import httpx2
+    from ai_yori_murasaki import source_mcp_http
+
+    direct_identity_clients = []
+    media_types = []
+    limit_response = source_mcp_http._limit_response
+
+    async def observe_response(response):
+        await limit_response(response)
+        if response.request.headers.get("mcp-method") == "tools/call":
+            media_types.append(response.headers.get("content-type", "").partition(";")[0])
+
+    class ObservedClient(httpx2.AsyncClient):
+        def __init__(self, **kwargs):
+            direct_identity_clients.append(kwargs.get("trust_env") is False
+                                           and isinstance(kwargs.get("transport"), httpx2.AsyncHTTPTransport)
+                                           and kwargs["headers"].get("Accept-Encoding") == "identity")
+            super().__init__(**kwargs)
+
+    monkeypatch.setattr(httpx2, "AsyncClient", ObservedClient)
+    monkeypatch.setattr(source_mcp_http, "_limit_response", observe_response)
     with socket.socket() as reservation:
         reservation.bind(("127.0.0.1", 0))
         port = reservation.getsockname()[1]
     process = subprocess.Popen([sys.executable, str(Path(__file__).parent / "fixtures/source_mcp_server.py"),
                                 "--http", str(port)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:
-        deadline = time.monotonic() + 12
+        deadline = time.monotonic() + 30
         while True:
             try:
                 with socket.create_connection(("127.0.0.1", port), timeout=.2):
                     break
             except OSError:
-                if process.poll() is not None or time.monotonic() > deadline:
-                    pytest.fail("local MCP HTTP fixture did not start")
+                if process.poll() is not None:
+                    pytest.fail(f"local MCP HTTP fixture exited with status {process.returncode} before startup")
+                if time.monotonic() > deadline:
+                    pytest.fail("local MCP HTTP fixture did not start within 30 seconds")
                 time.sleep(.05)
         monkeypatch.setenv("AYM_HTTP_FIXTURE_TOKEN", "fixture-http-credential")
         config = tmp_path / "http.json"
         config.write_bytes(canonical({"transport": "http", "url": f"http://127.0.0.1:{port}/mcp",
                                      "bearer_env": "AYM_HTTP_FIXTURE_TOKEN"}))
-        result = import_mcp(sources, provider="notion", tool="fetch", arguments={"url": "https://example.com/note"},
-            config_file=config, source_url="https://example.com/note", title="HTTP source")
-        assert "Notion example" in sources.get(result["document_id"])["body"]
-        assert "fixture-http-credential" not in sources.store.get_object(result["ref"])["body"]
+        for notify, expected_type in ((False, "application/json"), (True, "text/event-stream")):
+            media_types.clear()
+            result = import_mcp(sources, provider="notion", tool="fetch",
+                arguments={"url": "https://example.com/note", "notify": notify},
+                config_file=config, source_url="https://example.com/note", title="HTTP source")
+            assert "Notion example" in sources.get(result["document_id"])["body"]
+            assert "fixture-http-credential" not in sources.store.get_object(result["ref"])["body"]
+            assert media_types == [expected_type]
+        assert any(direct_identity_clients)
     finally:
         process.terminate()
         process.wait(timeout=5)

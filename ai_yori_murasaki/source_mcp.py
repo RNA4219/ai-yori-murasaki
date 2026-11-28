@@ -4,11 +4,12 @@ import os
 from contextlib import AsyncExitStack
 from urllib.parse import urlsplit
 
-from .jsonio import DataError, canonical, read_json
+from .jsonio import MAX_JSON_BYTES, DataError, canonical, loads
+from .observations import local_path
 from .sources import MAX_TEXT, safe_url
-from .storage import _assert_no_ancestor_reparse
-from .storage import sanitize
+from .storage import read_regular_bytes, sanitize
 
+_LOCAL_HTTP_HOSTS = ("127.0.0.1", "localhost")
 READ_TOOLS = {
     "github": {"issue_read", "get_issue", "get_issue_comments"},
     "notion": {"fetch", "notion-fetch", "API-retrieve-a-page", "API-get-block-children"},
@@ -25,11 +26,14 @@ def validate_request(provider, tool, arguments):
         raise DataError("MCP arguments too large")
 
 
+def read_mcp_json(path):
+    """接続設定と引数は、操作者が指定したローカルの通常ファイルだけから読む。"""
+    return loads(read_regular_bytes(local_path(path), MAX_JSON_BYTES))
+
+
 def import_mcp(sources, *, provider, tool, arguments, config_file, source_url, title, links=()):
     validate_request(provider, tool, arguments)
-    safe_url(source_url)
-    _assert_no_ancestor_reparse(config_file)
-    config = read_json(config_file)
+    config = read_mcp_json(config_file)
     if not isinstance(config, dict) or set(config) - {"transport", "command", "args", "env", "url", "bearer_env"}:
         raise DataError("invalid MCP connection config")
     transport = config.get("transport")
@@ -51,7 +55,7 @@ def import_mcp(sources, *, provider, tool, arguments, config_file, source_url, t
         url = urlsplit(config.get("url", ""))
         if (url.username or url.password or url.query or url.fragment
                 or not url.hostname or (url.scheme != "https" and not (
-                    url.scheme == "http" and url.hostname in ("127.0.0.1", "localhost")))):
+                    url.scheme == "http" and url.hostname in _LOCAL_HTTP_HOSTS))):
             raise DataError("MCP requires HTTPS or an explicit localhost endpoint")
         env = {}
         if config.get("bearer_env"):
@@ -61,6 +65,15 @@ def import_mcp(sources, *, provider, tool, arguments, config_file, source_url, t
             env["Authorization"] = "Bearer " + os.environ[key]
     else:
         raise DataError("MCP transport must be stdio or http")
+    credentials = tuple(value for value in env.values() if value)
+    credentials += tuple(value[7:] for value in credentials if value.startswith("Bearer ") and len(value) > 7)
+    secrets = (*sources.store.secrets, *credentials)
+    safe_url(source_url, secrets)
+    if not isinstance(links, (list, tuple)) or len(links) > 32:
+        raise DataError("too many source links")
+    for link in links:
+        safe_url(link, secrets)
+    title = sanitize(title, credentials)
     try:
         body = asyncio.run(_read(config, env, tool, arguments))
     except DataError:
@@ -68,9 +81,7 @@ def import_mcp(sources, *, provider, tool, arguments, config_file, source_url, t
     except Exception as exc:
         # Never persist server/config/error text that could contain credentials.
         raise DataError("MCP read failed; check connection and authorization", "adapter_unavailable") from None
-    secrets = tuple(value for value in env.values() if value)
-    secrets += tuple(value[7:] for value in secrets if value.startswith("Bearer "))
-    body = sanitize(body, secrets)
+    body = sanitize(body, credentials)
     return sources.add(provider=provider, source_url=source_url, title=title,
                        body=body, links=links, transport="mcp")
 
@@ -80,7 +91,7 @@ async def _read(config, env, tool, arguments):
         from mcp import Client, StdioServerParameters
         from mcp.client.streamable_http import streamable_http_client
         from mcp.client.stdio import stdio_client
-        import httpx2
+        from .source_mcp_http import http_client
     except ImportError:
         raise DataError("install ai-yori-murasaki[mcp] to use MCP", "adapter_unavailable") from None
     async with asyncio.timeout(30), AsyncExitStack() as stack:
@@ -89,7 +100,8 @@ async def _read(config, env, tool, arguments):
             errlog = stack.enter_context(open(os.devnull, "w"))
             target = stdio_client(params, errlog=errlog)
         else:
-            http = await stack.enter_async_context(httpx2.AsyncClient(headers=env, timeout=20, follow_redirects=False))
+            local = urlsplit(config["url"]).hostname in _LOCAL_HTTP_HOSTS
+            http = await stack.enter_async_context(http_client(env, local=local))
             target = streamable_http_client(config["url"], http_client=http, max_sse_event_size=MAX_TEXT)
         async with Client(target, read_timeout_seconds=20) as client:
             result = await client.call_tool(tool, arguments)

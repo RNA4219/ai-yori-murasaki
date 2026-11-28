@@ -13,6 +13,7 @@ import re
 import socket
 import ssl
 import threading
+from functools import partial
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from importlib import resources
 from pathlib import Path
@@ -23,7 +24,7 @@ from .jsonio import DataError, canonical, loads
 from .runtime import Runtime
 from .monitor_summary import CampaignSummary, campaign_summaries
 from .monitor_detail import IndexUpdateRequired, read_selection
-from .storage import Store, read_regular_bytes
+from .storage import Store, read_regular_bytes, sanitize
 from . import lab_metrics
 from . import monitor_auth
 
@@ -83,12 +84,12 @@ _SAFE_EVENT_FIELDS = ("event_id", "sequence", "timestamp", "phase", "role",
                       "event_type", "source", "finding", "title", "severity")
 
 
-def _safe_str(value: Any, limit: int = 256) -> str | None:
+def _safe_str(value: Any, limit: int = 256, *, secrets: tuple[str, ...] = ()) -> str | None:
     if not isinstance(value, str):
         return None
-    if len(value) > limit:
-        return value[:limit]
-    return value
+    if secrets:
+        value = sanitize(value, secrets)
+    return value[:limit]
 
 
 def _safe_int(value: Any) -> int | None:
@@ -97,7 +98,7 @@ def _safe_int(value: Any) -> int | None:
     return value
 
 
-def project_event(event: dict, view: str = "operator") -> dict:
+def project_event(event: dict, view: str = "operator", *, secrets: tuple[str, ...] = ()) -> dict:
     """Return an allowlisted projection of a single ledger event.
 
     Only the fields in ``_SAFE_EVENT_FIELDS`` plus ``evidence_count`` are
@@ -117,13 +118,13 @@ def project_event(event: dict, view: str = "operator") -> dict:
             if iv is not None:
                 out[key] = iv
         else:
-            sv = _safe_str(value)
+            sv = _safe_str(value, secrets=secrets)
             if sv is not None:
                 out[key] = sv
     finding = event.get("finding")
     if isinstance(finding, dict):
-        title = _safe_str(finding.get("title"))
-        severity = _safe_str(finding.get("severity"))
+        title = _safe_str(finding.get("title"), secrets=secrets)
+        severity = _safe_str(finding.get("severity"), secrets=secrets)
         if view == "blue":
             out["title"] = "[redacted]"
             if severity is not None:
@@ -147,7 +148,7 @@ def project_event(event: dict, view: str = "operator") -> dict:
             agent: dict[str, Any] = {}
             for key in ("record_type", "model", "tool", "llm_status",
                         "generated_by"):
-                sv = _safe_str(extensions.get(key), 128)
+                sv = _safe_str(extensions.get(key), 128, secrets=secrets)
                 if sv is not None:
                     agent[key] = sv
             turn = _safe_int(extensions.get("turn"))
@@ -159,7 +160,7 @@ def project_event(event: dict, view: str = "operator") -> dict:
                     agent[key] = value
             if view != "blue":
                 for key in ("reason", "category", "path", "role"):
-                    sv = _safe_str(extensions.get(key), 128)
+                    sv = _safe_str(extensions.get(key), 128, secrets=secrets)
                     if sv is not None:
                         agent[key] = sv
             out["agent"] = agent
@@ -167,66 +168,63 @@ def project_event(event: dict, view: str = "operator") -> dict:
 
 
 def _project_run(run: dict, store=None, *, verified_events=None) -> dict:
+    display = partial(_safe_str, secrets=store.secrets if store is not None else ())
     last_sequence = _safe_int(run.get("last_sequence"))
-    last_event_hash = _safe_str(run.get("last_event_hash"))
-    sealed_at = _safe_str(run.get("sealed_at"))
+    last_event_hash = display(run.get("last_event_hash"))
+    sealed_at = display(run.get("sealed_at"))
     if verified_events is not None:
         last = verified_events[-1] if verified_events else {}
         last_sequence = _safe_int(last.get("sequence"))
-        last_event_hash = _safe_str(last.get("event_hash"))
-        sealed_at = _safe_str(last.get("timestamp")) if last.get("event_type") == "chain_sealed" else None
+        last_event_hash = display(last.get("event_hash"))
+        sealed_at = display(last.get("timestamp")) if last.get("event_type") == "chain_sealed" else None
     elif store is not None:
         run_id = run.get("run_id")
         chain = store.verify_chain(run_id)
         if chain.get("result") == "PASS":
             last_sequence = _safe_int(chain.get("last_sequence"))
-            last_event_hash = _safe_str(chain.get("last_event_hash"))
+            last_event_hash = display(chain.get("last_event_hash"))
         events = store.read_events(run_id) if chain.get("result") == "PASS" else []
         if events and events[-1].get("event_type") == "chain_sealed":
-            sealed_at = _safe_str(events[-1].get("timestamp"))
+            sealed_at = display(events[-1].get("timestamp"))
         else:
             sealed_at = None
     return {
-        "run_id": _safe_str(run.get("run_id")),
-        "campaign_id": _safe_str(run.get("campaign_id")),
-        "phase": _safe_str(run.get("phase")),
-        "status": _safe_str(run.get("status")),
-        "completion": _safe_str(run.get("completion")),
-        "cause": _safe_str(run.get("cause")),
-        "started_at": _safe_str(run.get("started_at")),
-        "ended_at": _safe_str(run.get("ended_at")),
+        "run_id": display(run.get("run_id")),
+        "campaign_id": display(run.get("campaign_id")),
+        "phase": display(run.get("phase")),
+        "status": display(run.get("status")),
+        "completion": display(run.get("completion")),
+        "cause": display(run.get("cause")),
+        "started_at": display(run.get("started_at")),
+        "ended_at": display(run.get("ended_at")),
         "sealed_at": sealed_at,
         "last_sequence": last_sequence,
         "last_event_hash": last_event_hash,
     }
 
 
-def _project_campaign(cid: str, summary: CampaignSummary, view: str = "operator") -> dict:
+def _project_campaign(cid: str, summary: CampaignSummary, view: str = "operator", *,
+                      secrets: tuple[str, ...] = ()) -> dict:
     campaign = summary.campaign
+    display = partial(_safe_str, secrets=secrets)
     return {
-        "campaign_id": cid,
-        "intent_id": _safe_str(campaign.get("intent_id")),
-        "status": _safe_str(campaign.get("status")),
-        "created_at": _safe_str(campaign.get("created_at")),
-        "last_run_at": _safe_str(summary.last_run_at) or None,
+        "campaign_id": display(cid),
+        "intent_id": display(campaign.get("intent_id")),
+        "status": display(campaign.get("status")),
+        "created_at": display(campaign.get("created_at")),
+        "last_run_at": display(summary.last_run_at) or None,
         "finding_count": len(summary.findings) if summary.status != "unavailable" else None,
         "finding_count_status": summary.status,
         "verified_run_count": summary.verified_runs,
         "unverified_run_count": len(summary.pending_runs),
-        **({"unverified_run_ids": summary.pending_runs, "severity_counts": summary.severity_counts()}
+        **({"unverified_run_ids": [display(rid) for rid in summary.pending_runs], "severity_counts": summary.severity_counts()}
            if view == "operator" else {}),
     }
 
 
 def _project_finding(obj: dict, secrets: tuple[str, ...] = (), *, limit: int = 256) -> dict:
-    from .storage import sanitize
-    projection = {}
-    for key in ("finding_id", "severity", "title", "source"):
-        value = obj.get(key)
-        if secrets and isinstance(value, str):
-            value = sanitize(value, secrets)
-        projection[key] = _safe_str(value, limit)
-    return projection
+    return {key: _safe_str(obj.get(key), limit, secrets=secrets)
+            for key in ("finding_id", "severity", "title", "source")}
 
 
 def _project_lab_metrics(runtime, cid: str, *, verified_events=None) -> dict | None:
@@ -308,7 +306,7 @@ def _project_lab_metrics(runtime, cid: str, *, verified_events=None) -> dict | N
                 "metrics": None, "limitations": []}
     status = result.get("status")
     if status == "HOLD":
-        reason = _safe_str(result.get("reason_code")) or "evidence_unverified"
+        reason = _safe_str(result.get("reason_code"), secrets=store.secrets) or "evidence_unverified"
         return {"status": "HOLD", "reason_code": reason,
                 "metrics": None, "limitations": []}
     metrics = result.get("metrics")
@@ -318,14 +316,15 @@ def _project_lab_metrics(runtime, cid: str, *, verified_events=None) -> dict | N
     return {"status": status, "metrics": metrics, "limitations": limitations}
 
 
-def _project_approval(approval: dict) -> dict:
+def _project_approval(approval: dict, secrets: tuple[str, ...] = ()) -> dict:
     applied = approval.get("applied")
+    display = partial(_safe_str, secrets=secrets)
     return {
-        "approval_id": _safe_str(approval.get("approval_id")),
-        "remediation_id": _safe_str(approval.get("remediation_id")),
-        "decision": _safe_str(approval.get("decision")),
-        "decided_at": _safe_str(approval.get("decided_at")),
-        "expires_at": _safe_str(approval.get("expires_at")),
+        "approval_id": display(approval.get("approval_id")),
+        "remediation_id": display(approval.get("remediation_id")),
+        "decision": display(approval.get("decision")),
+        "decided_at": display(approval.get("decided_at")),
+        "expires_at": display(approval.get("expires_at")),
         "applied": applied if isinstance(applied, bool) else None,
     }
 
@@ -353,6 +352,7 @@ def _project_models(store: Store) -> list[dict]:
     models = data.get("models")
     if not isinstance(models, list):
         return []
+    display = partial(_safe_str, secrets=store.secrets)
     out: list[dict] = []
     for item in models:
         if not isinstance(item, dict):
@@ -361,26 +361,28 @@ def _project_models(store: Store) -> list[dict]:
         dev = item.get("development_call") if isinstance(item.get("development_call"), dict) else {}
         prod = item.get("product_connection") if isinstance(item.get("product_connection"), dict) else {}
         pin = item.get("pin") if isinstance(item.get("pin"), dict) else {}
+        refs = dev.get("evidence_refs")
+        refs = [ref for ref in refs if isinstance(ref, str)][:16] if isinstance(refs, list) else []
         out.append({
-            "role": _safe_str(item.get("role")),
-            "requested_role_model": _safe_str(item.get("requested_role_model")),
+            "role": display(item.get("role")),
+            "requested_role_model": display(item.get("requested_role_model")),
             "registration": {
-                "status": _safe_str(reg.get("status")) or "unknown",
-                "checked_at": _safe_str(reg.get("checked_at")),
-                "evidence_ref": _safe_str(reg.get("evidence_ref")),
+                "status": display(reg.get("status")) or "unknown",
+                "checked_at": display(reg.get("checked_at")),
+                "evidence_ref": display(reg.get("evidence_ref")),
             },
             "development_call": {
-                "status": _safe_str(dev.get("status")) or "unknown",
-                "evidence_refs": [r for r in (dev.get("evidence_refs") or []) if isinstance(r, str)][:16],
+                "status": display(dev.get("status")) or "unknown",
+                "evidence_refs": sanitize(refs, store.secrets) if store.secrets else refs,
             },
             "product_connection": {
-                "status": _safe_str(prod.get("status")) or "unknown",
-                "checked_at": _safe_str(prod.get("checked_at")),
-                "evidence_ref": _safe_str(prod.get("evidence_ref")),
+                "status": display(prod.get("status")) or "unknown",
+                "checked_at": display(prod.get("checked_at")),
+                "evidence_ref": display(prod.get("evidence_ref")),
             },
             "pin": {
-                "status": _safe_str(pin.get("status")) or "unknown",
-                "version": _safe_str(pin.get("version")),
+                "status": display(pin.get("status")) or "unknown",
+                "version": display(pin.get("version")),
             },
         })
     return out
@@ -393,19 +395,20 @@ def _project_adapters(store: Store) -> list[dict]:
     adapters = data.get("adapters")
     if not isinstance(adapters, list):
         return []
+    display = partial(_safe_str, secrets=store.secrets)
     out: list[dict] = []
     for item in adapters:
         if not isinstance(item, dict):
             continue
-        status = _safe_str(item.get("status")) or "not_tested"
+        status = display(item.get("status")) or "not_tested"
         # Contract tests never promote an adapter to live.
         if status == "live":
             status = "not_tested"
         out.append({
-            "name": _safe_str(item.get("name")),
+            "name": display(item.get("name")),
             "status": status,
-            "mode": _safe_str(item.get("mode")),
-            "checked_at": _safe_str(item.get("checked_at")),
+            "mode": display(item.get("mode")),
+            "checked_at": display(item.get("checked_at")),
         })
     return out
 
@@ -420,14 +423,15 @@ def _project_rsi(store: Store, campaign_id: str) -> list[dict]:
     candidates = data.get("candidates")
     if not isinstance(candidates, dict):
         return []
+    display = partial(_safe_str, secrets=store.secrets)
     out: list[dict] = []
     for item in candidates.values():
         if not isinstance(item, dict):
             continue
         if item.get("campaign_id") != campaign_id:
             continue
-        freeze_id = _safe_str(item.get("freeze_id"))
-        if freeze_id is None:
+        freeze_id = item.get("freeze_id")
+        if not isinstance(freeze_id, str):
             continue
         try:
             freeze = RSI(store).load_freeze(freeze_id)
@@ -435,7 +439,7 @@ def _project_rsi(store: Store, campaign_id: str) -> list[dict]:
             continue
         if not isinstance(freeze, dict):
             continue
-        status = _safe_str(item.get("status"))
+        status = item.get("status")
         if status in ("ready", "current"):
             continue
         comparison = None
@@ -449,8 +453,8 @@ def _project_rsi(store: Store, campaign_id: str) -> list[dict]:
                     comparison = {
                         "pairs": _safe_int(evaluated.get("pairs")),
                         "gain": float(evaluated["gain"]) if isinstance(evaluated.get("gain"), (int, float)) and not isinstance(evaluated.get("gain"), bool) else None,
-                        "baseline": _safe_str(freeze.get("baseline_ref")),
-                        "candidate": _safe_str(freeze.get("candidate_ref")),
+                        "baseline": display(freeze.get("baseline_ref")),
+                        "candidate": display(freeze.get("candidate_ref")),
                     }
             except (DataError, Exception):
                 comparison = None
@@ -465,10 +469,10 @@ def _project_rsi(store: Store, campaign_id: str) -> list[dict]:
                     current = registry.get("current")
                     applied = isinstance(current, str) and current == freeze.get("candidate_ref")
         out.append({
-            "candidate_id": _safe_str(item.get("candidate_id")),
-            "freeze_id": freeze_id,
-            "content_digest": _safe_str(item.get("content_digest")),
-            "status": status,
+            "candidate_id": display(item.get("candidate_id")),
+            "freeze_id": display(freeze_id),
+            "content_digest": display(item.get("content_digest")),
+            "status": display(status),
             "applied": applied,
             "comparison": comparison,
         })
@@ -487,6 +491,7 @@ def _project_agent_rsi(store: Store, campaign_id: str) -> list[dict]:
     candidates = data.get("candidates")
     if not isinstance(candidates, dict):
         return []
+    display = partial(_safe_str, secrets=store.secrets)
     out: list[dict] = []
     for item in candidates.values():
         if not isinstance(item, dict):
@@ -520,12 +525,12 @@ def _project_agent_rsi(store: Store, campaign_id: str) -> list[dict]:
         rules = item.get("rules_applied")
         rules_out = None
         if isinstance(rules, list):
-            rules_out = [_safe_str(r, 64) for r in rules[:16]]
+            rules_out = [display(r, 64) for r in rules[:16]]
         out.append({
-            "candidate_id": _safe_str(item.get("candidate_id")),
-            "freeze_id": _safe_str(item.get("freeze_id")),
-            "bundle_digest": _safe_str(item.get("bundle_digest")),
-            "baseline_digest": _safe_str(item.get("baseline_digest")),
+            "candidate_id": display(item.get("candidate_id")),
+            "freeze_id": display(item.get("freeze_id")),
+            "bundle_digest": display(item.get("bundle_digest")),
+            "baseline_digest": display(item.get("baseline_digest")),
             "rules_applied": rules_out,
             "compared": item.get("compared") is True,
             "applied": item.get("applied") is True,
@@ -818,9 +823,9 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
                 return _json_response(200, {"status": "withheld"})
             from .architecture_maps import MapUnavailable, list_maps, read_map
             if name == "architecture_maps":
-                return _json_response(200, {"maps": list_maps(store.workspace)})
+                return _json_response(200, {"maps": list_maps(store.workspace, secrets=store.secrets)})
             try:
-                data = read_map(store.workspace, groups[0])
+                data = read_map(store.workspace, groups[0], secrets=store.secrets)
             except (MapUnavailable, OSError):
                 return _error(409, "map_unavailable")
             if data is None:
@@ -868,7 +873,7 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
                     return _json_response(200, result)
                 if needs_index(store):
                     return _error(409, "monitor_index_required")
-            campaigns = [_project_campaign(cid, summary, view)
+            campaigns = [_project_campaign(cid, summary, view, secrets=store.secrets)
                           for cid, summary in campaign_summaries(store, include_csv=view == "operator").items()]
             campaigns.sort(key=lambda c: not c["created_at"])
             if "page" in query:
@@ -883,14 +888,14 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
             if view == "blue":
                 return _json_response(200, {"status": "withheld"})
             from .decision_view import previous_candidates
-            from .storage import sanitize
             campaigns = runtime.list_campaigns()
             previous = previous_candidates(campaigns)
-            rows = [{"campaign_id": c["campaign_id"], "intent_id": _safe_str(c.get("intent_id")),
-                     "created_at": _safe_str(c.get("created_at")), "previous_id": ids[0] if len(ids) == 1 else None,
-                     "previous_candidates": list(ids) if len(ids) > 1 else []}
+            display = partial(_safe_str, secrets=store.secrets)
+            rows = [{"campaign_id": display(c["campaign_id"]), "intent_id": display(c.get("intent_id")),
+                     "created_at": display(c.get("created_at")), "previous_id": display(ids[0]) if len(ids) == 1 else None,
+                     "previous_candidates": [display(cid) for cid in ids] if len(ids) > 1 else []}
                     for c in campaigns for ids in [previous.get(c["campaign_id"], ())]]
-            return _json_response(200, {"campaigns": sanitize(rows, store.secrets)})
+            return _json_response(200, {"campaigns": rows})
 
         if name == "campaign_drift":
             if view == "blue":
@@ -988,8 +993,8 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
                 except (DataError, FileNotFoundError):
                     continue
                 remediations.append({
-                    "remediation_id": _safe_str(obj.get("remediation_id")),
-                    "status": _safe_str(obj.get("status")),
+                    "remediation_id": _safe_str(obj.get("remediation_id"), secrets=store.secrets),
+                    "status": _safe_str(obj.get("status"), secrets=store.secrets),
                 })
             if summary.pending_runs:
                 metrics = {"status": "HOLD", "reason_code": "evidence_unverified", "metrics": None, "limitations": []}
@@ -998,7 +1003,7 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
             else:
                 metrics = _project_lab_metrics(runtime, cid)
             return _json_response(200, {
-                "campaign": _project_campaign(cid, summary),
+                "campaign": _project_campaign(cid, summary, secrets=store.secrets),
                 "findings": findings,
                 "remediations": remediations,
                 "metrics": metrics,
@@ -1011,7 +1016,7 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
                 if not case.summary.campaign:
                     return _error(404, "not_found")
                 return _json_response(200, {"runs": [
-                    _project_run(run, verified_events=case.events.get(run["run_id"], []))
+                    _project_run(run, store, verified_events=case.events.get(run["run_id"], []))
                     for run in case.list_runs(cid)]})
             try:
                 runtime.get_campaign(cid)
@@ -1075,7 +1080,7 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
                 return _error(409, "evidence_unverified")
             selected = [e for e in events if isinstance(e.get("sequence"), int) and e["sequence"] > after]
             selected = selected[:limit]
-            projected = [project_event(e, view) for e in selected]
+            projected = [project_event(e, view, secrets=store.secrets) for e in selected]
             return _json_response(200, {"events": projected})
 
         if name == "verification":
@@ -1111,7 +1116,7 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
                         obj = store.get_object(ref)
                     except (DataError, FileNotFoundError):
                         continue
-                    approvals.append(_project_approval(obj))
+                    approvals.append(_project_approval(obj, store.secrets))
             return _json_response(200, {"approvals": approvals})
 
         if name == "models":

@@ -198,6 +198,17 @@ def test_cas_secret_redacted(store: Store) -> None:
     assert "s3cr3t-value" not in obj["note"]
 
 
+@pytest.mark.parametrize("field", ("operator_id", "granted_at", "expires_at", "scope_digest"))
+def test_registered_grant_metadata_is_withheld_as_a_unit(store: Store, field: str) -> None:
+    grant = {"operator_id": "fixture-operator", "granted_at": "2026-01-01T00:00:00Z",
+             "expires_at": "2099-01-01T00:00:00Z", "scope_digest": digest({"fixture": True})}
+    record = {"authorization": grant, "note": "公開用の記録"}
+    assert store.get_object(store.put_object(record)) == record
+    restricted = Store(store.workspace, store.trusted_root, secrets=(grant[field],))
+    assert restricted.get_object(restricted.put_object(record)) == {
+        "authorization": "[REDACTED]", "note": "公開用の記録"}
+
+
 def test_cas_immutable(store: Store) -> None:
     sha = store.put_object({"a": 1})
     assert store.put_object({"a": 1}) == sha

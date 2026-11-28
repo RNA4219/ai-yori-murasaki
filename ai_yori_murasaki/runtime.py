@@ -22,7 +22,7 @@ from .contracts import (
     validate,
 )
 from .jsonio import DataError, canonical, digest
-from .storage import Store
+from .storage import Store, sanitize
 
 PHASES = ("red", "blue_blind", "purple", "remediation", "reevaluation", "verify")
 PHASE_ROLE = {
@@ -246,6 +246,11 @@ class Runtime:
     # ------------------------------------------------------------------ #
     # run
     # ------------------------------------------------------------------ #
+    def _check_grant_storage(self, campaign: dict) -> None:
+        grant = {"scope": campaign["scope"], "authorization": campaign["authorization"]}
+        if not isinstance(grant["authorization"], dict) or sanitize(grant, self.store.secrets) != grant:
+            raise DataError("scope or authorization cannot be stored without redaction")
+
     def _bootstrap_run(self, campaign_id: str, phase: str, seed: int,
                        idempotency_key: str, campaign: dict,
                        evaluation_context: dict | None = None,
@@ -299,6 +304,7 @@ class Runtime:
         prior = self._check_idem("run", idempotency_key, payload)
         if prior is not None:
             return prior
+        self._check_grant_storage(campaign)
         catalog = self.store.load_catalog()
         for entry in catalog.get("runs", {}).values():
             if (entry.get("campaign_id") == campaign_id
@@ -880,11 +886,13 @@ class Runtime:
                 raise DataError("cannot resume sealed run", "policy_denied")
             # Record crash/finish on the original incomplete run; the original
             # run's prior events remain preserved.
+            campaign = self.get_campaign(run["campaign_id"])
+            self._check_grant_storage(campaign)
             self.finish_run(run_id, "incomplete", "crash")
             new_run = self._bootstrap_run(
                 run["campaign_id"], run["phase"], run["seed"],
                 idem_key,
-                self.get_campaign(run["campaign_id"]),
+                campaign,
                 evaluation_context=inherited_ctx,
                 imported_source_ref=inherited_imported_source_ref)
             return new_run
