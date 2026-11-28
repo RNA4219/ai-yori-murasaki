@@ -38,13 +38,22 @@ async function exercise(browser, {monitor, provider}, width, policy) {
     assert.ok(card.width <= 441 && card.x >= 12, 'カード幅と左右の余白');
     assert.ok(Math.abs(card.x + card.width/2 - viewport.width/2) <= 1, 'カードの水平中央配置');
     assert.ok(Math.abs(card.y + card.height/2 - viewport.height/2) <= 1, 'カードの垂直中央配置');
-    const textBlocks = main.locator('h1, p');
-    const readable = await textBlocks.evaluateAll(elements => elements.every(element => {
-      const range = document.createRange();
-      range.selectNodeContents(element);
-      return [...range.getClientRects()].every(rect => rect.left >= 0 && rect.right <= innerWidth + 1)
-        && element.scrollHeight <= element.clientHeight + 1;
-    }));
+    const readable = await main.evaluate(card => {
+      const panel = card.getBoundingClientRect();
+      let previousBottom = panel.top;
+      return [...card.querySelectorAll('p, h1, a')].every(element => {
+        const range = document.createRange();
+        range.selectNodeContents(element);
+        const text = range.getBoundingClientRect();
+        const box = element.getBoundingClientRect(), style = getComputedStyle(element);
+        const withinCard = text.left >= panel.left && text.right <= panel.right
+          && text.top >= previousBottom && text.bottom <= panel.bottom;
+        const visibleX = style.overflowX === 'visible' || (text.left >= box.left && text.right <= box.right);
+        const visibleY = style.overflowY === 'visible' || (text.top >= box.top && text.bottom <= box.bottom);
+        previousBottom = text.bottom;
+        return text.width > 0 && text.height > 0 && withinCard && visibleX && visibleY;
+      });
+    });
     assert.ok(readable, message+'の折り返し ('+width+'px)');
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
     const box = await login.boundingBox();
