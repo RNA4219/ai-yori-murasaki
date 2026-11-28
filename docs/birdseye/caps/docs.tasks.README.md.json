@@ -95,12 +95,12 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "2e313124f6cbd8661bd781bc512324e5f92195614f947b6b929f4bee5e0504c7",
-  "generated_at": "00072",
+  "source_sha256": "364e1af5d6bf2afc255e1582f4baca43318a1685182b30a8226529b5d243f96b",
+  "generated_at": "00073",
   "review": {
-    "reviewed_at": "2026-11-28T06:43:32+00:00",
+    "reviewed_at": "2026-11-28T06:49:07+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "2e313124f6cbd8661bd781bc512324e5f92195614f947b6b929f4bee5e0504c7",
+    "source_sha256": "364e1af5d6bf2afc255e1582f4baca43318a1685182b30a8226529b5d243f96b",
     "summary_sha256": "13532d72b916c345bde67ba24b0e14ae7926d9f53051986537b4c557463a405d",
     "scope": "Obsidian 課題取り込みの操作・契約・検収の原文、要約、関連リンクを照合。"
   }

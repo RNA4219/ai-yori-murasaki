@@ -16,14 +16,14 @@
     "docs/acceptance/AC-20261128-01.md",
     "docs/requirements/API-CONTRACTS.md"
   ],
-  "summary": "R-092 の Obsidian 課題取り込みの Task。指定したノートから案件と実行へ課題を登録し、判断画面と照合レポートで読むための条件を記す。",
-  "source_sha256": "01f8b3100afff36c6013b8a8c28036ed23352bae209feffef0b0b40412eb5f1e",
-  "generated_at": "00072",
+  "summary": "R-092 の Obsidian 課題取り込みの Task。案件への登録、判断画面と照合レポートの要件と、製品候補で通った技術検収7件の結果を記す。",
+  "source_sha256": "1fc1c085f8330f9a3b24107b13bcdc6552083f43a1a427dc7f502dd06f6ab27c",
+  "generated_at": "00073",
   "review": {
-    "reviewed_at": "2026-11-28T06:43:32+00:00",
+    "reviewed_at": "2026-11-28T06:49:07+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "01f8b3100afff36c6013b8a8c28036ed23352bae209feffef0b0b40412eb5f1e",
-    "summary_sha256": "a0ac91bc80646aeac512948b84b3c9a30666b2b102188fa6d4d6897d81048983",
+    "source_sha256": "1fc1c085f8330f9a3b24107b13bcdc6552083f43a1a427dc7f502dd06f6ab27c",
+    "summary_sha256": "f5e55503a124b757ef0aee6fd05245c3243a5f735a3c127a438576a1c9996030",
     "scope": "Obsidian 課題取り込みの操作・契約・検収の原文、要約、関連リンクを照合。"
   }
 }

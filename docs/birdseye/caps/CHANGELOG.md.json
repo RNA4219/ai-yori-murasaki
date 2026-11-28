@@ -113,12 +113,12 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "551da65ea2812e2f2e35518d960f6fdd36a2f514a2f79027d7dc1b52c0977db9",
-  "generated_at": "00072",
+  "source_sha256": "edb342ad1c6e4eaa1d983c3fb527c30444c4308d3044b4903df6453aae4a2813",
+  "generated_at": "00073",
   "review": {
-    "reviewed_at": "2026-11-28T06:43:32+00:00",
+    "reviewed_at": "2026-11-28T06:49:07+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "551da65ea2812e2f2e35518d960f6fdd36a2f514a2f79027d7dc1b52c0977db9",
+    "source_sha256": "edb342ad1c6e4eaa1d983c3fb527c30444c4308d3044b4903df6453aae4a2813",
     "summary_sha256": "57e928d09605c6b53f087d6c08d66a2a8a9217e04cb3486b1cdafbb784407e29",
     "scope": "Obsidian 課題取り込みの操作・契約・検収の原文、要約、関連リンクを照合。"
   }

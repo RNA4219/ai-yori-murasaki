@@ -17,14 +17,14 @@
     "docs/requirements/API-CONTRACTS.md",
     "docs/tasks/TASK.obsidian-issues-11-28-2026.md"
   ],
-  "summary": "T64 の技術検収。Obsidian のチェックボックス、再送・衝突、出典の表示、照合、Blue と Notion・参考資料との併用の条件を記す。",
-  "source_sha256": "d766443db60e540aadab3ac12027744c60baba1bc5ade534fea36c71b8861228",
-  "generated_at": "00072",
+  "summary": "T64 の技術検収。出典と照合、Blue の公開範囲を含む7件の結果と独立レビュー、Obsidian アプリの起動の未検証範囲を記す。",
+  "source_sha256": "8f7738a63e5622b145215b17f76e3469e369d9977d2192de4ebe3dde861597b2",
+  "generated_at": "00073",
   "review": {
-    "reviewed_at": "2026-11-28T06:43:32+00:00",
+    "reviewed_at": "2026-11-28T06:49:07+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "d766443db60e540aadab3ac12027744c60baba1bc5ade534fea36c71b8861228",
-    "summary_sha256": "45b7f25022d952098e655dcbf75a52ae2e203059d49c355081c3385a9a0b9f70",
+    "source_sha256": "8f7738a63e5622b145215b17f76e3469e369d9977d2192de4ebe3dde861597b2",
+    "summary_sha256": "cefaedde28213606e357a5e0afac354dda5a476ba41271679a5edf969233bbef",
     "scope": "Obsidian 課題取り込みの操作・契約・検収の原文、要約、関連リンクを照合。"
   }
 }
