@@ -41,6 +41,7 @@ template_version: 1.0.0
 | 箱を並べ、線から接続の根拠を読む | [構成図の操作](docs/tasks/TASK.architecture-canvas-11-23-2026.md) | [マウスとタッチの検収](docs/acceptance/AC-20261123-09.md) |
 | ワークスペース内の構成図を切り替える | [図の配置と選択](docs/requirements/ARCHITECTURE-MAP-SELECTION.md) | [画面と API の検収](docs/acceptance/AC-20261127-02.md) |
 | Google ログインを許可するメールドメインを設定する | [個別・ドメイン・併用の設定例](docs/requirements/GOOGLE-MONITOR-SSO.md) | [許可条件の技術検収](docs/acceptance/AC-20261127-05.md) |
+| モニターの Google ログイン画面から再試行する | [ログインと再試行の手順](docs/requirements/GOOGLE-MONITOR-SSO.md#ログアウトと再試行) | [画面とキーボード操作の検収](docs/acceptance/AC-20261128-04.md) |
 | Wazuh の CA、チェックポイントの所属、検証時の台帳末尾を確認する | [製品操作ガイド](docs/PRODUCT-GUIDE.md) | [TLS・封印・検証履歴の検収](docs/acceptance/AC-20261127-06.md) |
 | モニターの HTTPS 起動と Google ログインの戻り先を設定する | [証明書と鍵の指定](docs/PRODUCT-GUIDE.md#モニターのhttps起動) | [HTTPS とセッションの検収](docs/acceptance/AC-20261127-07.md) |
 | モニターの4画面で Google ログインを必須にする | [クライアントの設定と利用者の登録](docs/requirements/GOOGLE-MONITOR-SSO.md) | [ログインとセッションの技術検収](docs/acceptance/AC-20261127-04.md) |

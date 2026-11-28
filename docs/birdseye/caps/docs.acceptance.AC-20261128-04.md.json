@@ -1,0 +1,28 @@
+{
+  "id": "docs/acceptance/AC-20261128-04.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.monitor-login-screen-11-28-2026.md"
+  ],
+  "deps_out": [
+    "docs/requirements/GOOGLE-MONITOR-SSO.md",
+    "docs/tasks/TASK.monitor-login-screen-11-28-2026.md"
+  ],
+  "summary": "モニターの Google ログイン画面について、合成アカウントの4つの表示状態、画面幅、キーボード操作、Blue への復帰を確かめる。",
+  "source_sha256": "13cc34c4bf9ba38bc90a12b5c03bb41d50734a45cdf8e1f00421f59a798238f5",
+  "generated_at": "00076",
+  "review": {
+    "reviewed_at": "2026-11-28T15:08:00+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "13cc34c4bf9ba38bc90a12b5c03bb41d50734a45cdf8e1f00421f59a798238f5",
+    "summary_sha256": "bd3098189b2bafdff45f946c743e6832f6f3afe4a8bd918c012d9f27de919854",
+    "scope": "ログイン画面の操作と再試行に関する原文、要約、検収条件、リンクの照合。"
+  }
+}
