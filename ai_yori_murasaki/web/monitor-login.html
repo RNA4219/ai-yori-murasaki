@@ -64,17 +64,16 @@
   }
   h1 {
     margin: 0;
-    font-size: clamp(1.55rem, 1.1rem + 1.65vw, 2.65rem);
+    font-size: clamp(1.55rem, 1.1rem + 1.65vw, 2.375rem);
     line-height: 1.35;
-    text-wrap: balance;
   }
   .message {
     margin: 10px 0 24px;
     color: var(--muted);
     font-size: clamp(.875rem, .8125rem + .25vw, 1rem);
     line-height: 1.8;
-    text-wrap: balance;
   }
+  h1, .message { word-break: auto-phrase; text-wrap: balance; }
   .google-login {
     display: flex;
     align-items: center;
