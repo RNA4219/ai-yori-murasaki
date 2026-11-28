@@ -145,6 +145,29 @@ class ServerContractTests(unittest.TestCase):
         self.assertEqual(status, 200)
         self.assertEqual(json.loads(body), {"adapters": []})
 
+    def test_status_projections_use_current_redactions_before_truncating(self) -> None:
+        marker = "fixture-private-label"
+        prefix = "r" * 248
+        (self.fx.workspace / "model-status.json").write_text(json.dumps({"models": [{
+            "role": "planner", "registration": {"evidence_ref": prefix + marker},
+            "development_call": {"evidence_refs": ["sample/" + marker, "public-ref"]},
+        }]}), encoding="utf-8")
+        (self.fx.workspace / "adapter-status.json").write_text(json.dumps({"adapters": [{
+            "name": "sample/" + marker, "status": "not_tested",
+        }]}), encoding="utf-8")
+        self.fx.store.secrets = (marker,)
+        for view in ("blue", "operator"):
+            with self.subTest(view=view):
+                status, _, body = self.fx.get("/api/models?view=" + view)
+                self.assertEqual(status, 200)
+                model = json.loads(body)["models"][0]
+                self.assertEqual(model["role"], "planner")
+                self.assertEqual(model["registration"]["evidence_ref"], (prefix + "[REDACTED]")[:256])
+                self.assertEqual(model["development_call"]["evidence_refs"], ["sample/[REDACTED]", "public-ref"])
+                status, _, body = self.fx.get("/api/adapters?view=" + view)
+                self.assertEqual(status, 200)
+                self.assertEqual(json.loads(body)["adapters"][0]["name"], "sample/[REDACTED]")
+
     def test_adapters_never_live(self) -> None:
         (self.fx.workspace / "adapter-status.json").write_text(
             json.dumps({"adapters": [{"name": "x", "status": "live"}]}),
@@ -289,6 +312,61 @@ class ServerContractTests(unittest.TestCase):
         self.assertIn("remediations", detail)
         self.assertIsNone(detail["metrics"])
 
+    def test_existing_monitor_records_use_current_redactions_in_both_views(self) -> None:
+        from ai_yori_murasaki.monitor_index import build_index
+
+        marker = "FIXTURE-PRIVATE"
+        cid = self._create_campaign("INT-" + marker, "display-case")["campaign_id"]
+        self.fx.runtime.transition(cid, "running")
+        rid = self.fx.runtime.start_run(cid, "red", 1, "display-run")["run_id"]
+        prefix = "x" * 125
+        self.fx.runtime.record_event(
+            rid, "state_captured", "llm",
+            extensions={"record_type": "agent_stopped", "model": "sample/" + marker,
+                        "reason": prefix + marker})
+        self.fx.store.append_verification({"verify_id": rid, "run_id": rid, "result": "HOLD",
+                                           "reason_code": "sample/" + marker})
+        state = self.fx.workspace / "agent_rsi"
+        state.mkdir()
+        (state / "state.json").write_text(json.dumps({"candidates": {"example": {
+            "candidate_id": "example-" + marker, "campaign_id": cid, "freeze_id": "snapshot-" + marker,
+            "bundle_digest": "digest-" + marker, "baseline_digest": 0, "rules_applied": ["sample/" + marker],
+        }}}), encoding="utf-8")
+        self.fx.store.secrets = (marker,)
+        for view in ("blue", "operator"):
+            with self.subTest(view=view):
+                query = "?view=" + view
+                status, _, body = self.fx.get(f"/api/runs/{rid}/events" + query)
+                self.assertEqual(status, 200)
+                agent = next(e["agent"] for e in json.loads(body)["events"] if "agent" in e)
+                self.assertEqual(agent["model"], "sample/[REDACTED]")
+                if view == "blue":
+                    self.assertNotIn("reason", agent)
+                else:
+                    self.assertEqual(agent["reason"], (prefix + "[REDACTED]")[:128])
+                status, _, body = self.fx.get(f"/api/campaigns/{cid}/rsi" + query)
+                self.assertEqual(status, 200)
+                row = json.loads(body)["agent_rsi"][0]
+                self.assertEqual(row["rules_applied"], ["sample/[REDACTED]"])
+                self.assertEqual(row["candidate_id"], "example-[REDACTED]")
+                self.assertEqual(row["freeze_id"], "snapshot-[REDACTED]")
+                self.assertEqual(row["bundle_digest"], "digest-[REDACTED]")
+                self.assertIsNone(row["baseline_digest"])
+                for suffix in ("", "&limit=2"):
+                    status, _, body = self.fx.get(f"/api/verification/{rid}" + query + suffix)
+                    self.assertEqual(status, 200)
+                    self.assertEqual(json.loads(body)["verification"][0]["reason_code"], "sample/[REDACTED]")
+                status, _, body = self.fx.get("/api/campaigns" + query)
+                self.assertEqual(status, 200)
+                self.assertEqual(json.loads(body)["campaigns"][0]["intent_id"], "INT-[REDACTED]")
+        self.fx.store.secrets = ()
+        build_index(self.fx.store)
+        self.fx.store.secrets = (marker,)
+        for view in ("blue", "operator"):
+            status, _, body = self.fx.get("/api/campaigns?page=1&view=" + view)
+            self.assertEqual(status, 200)
+            self.assertEqual(json.loads(body)["campaigns"][0]["intent_id"], "INT-[REDACTED]")
+
     def test_events_pagination(self) -> None:
         campaign = self._create_campaign("INT-2", "idem-2")
         cid = campaign["campaign_id"]
@@ -331,6 +409,25 @@ class ServerContractTests(unittest.TestCase):
         ledger.write_bytes(rows[0] + self.fx.store._ledger_path(other).read_bytes() + rows[-1])
         status, _, body = self.fx.get(path)
         self.assertEqual((status, json.loads(body)), (409, {"error": "evidence_unverified"}))
+
+    def test_run_detail_uses_one_ledger_snapshot_for_all_head_fields(self):
+        cid = self._create_campaign("INT-SEALED", "sealed-detail")["campaign_id"]
+        rid = self.fx.runtime.list_runs(cid)[0]["run_id"]
+        last = self.fx.store.read_verified_events(rid, campaign_id=cid)[-1]
+        with patch.object(self.fx.store, "_read_events_raw", wraps=self.fx.store._read_events_raw) as reads:
+            status, _, body = self.fx.get(f"/api/runs/{rid}")
+            reads.assert_called_once_with(rid)
+        self.assertEqual(status, 200)
+        run = json.loads(body)["run"]
+        self.assertEqual((run["last_sequence"], run["last_event_hash"], run["sealed_at"]),
+                         (last["sequence"], last["event_hash"], last["timestamp"]))
+        rid = self.fx.runtime.start_run(cid, "verify", 1, "open-detail")["run_id"]
+        status, _, body = self.fx.get(f"/api/runs/{rid}")
+        self.assertEqual(status, 200)
+        run = json.loads(body)["run"]
+        self.assertIsNone(run["last_sequence"])
+        self.assertIsNone(run["last_event_hash"])
+        self.assertIsNone(run["sealed_at"])
 
     def test_blue_view_no_canary(self) -> None:
         campaign = self._create_campaign("INT-3", "idem-3")

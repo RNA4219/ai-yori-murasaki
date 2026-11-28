@@ -17,14 +17,14 @@
     "docs/requirements/API-CONTRACTS.md",
     "docs/requirements/REQUIREMENTS-CASE-DECISIONS.md"
   ],
-  "summary": "R-086・T58 の構成図切替。ワークスペースの合成図を配置し、HTTPS のモニター・API で選択、再読込する手順を示す。",
-  "source_sha256": "504feeb4aa98c258ac0a4cc1bf3fd0c2ac776ece6dbbf3ebb8dfbe7ab223edef",
-  "generated_at": "00070",
+  "summary": "構成図の配置、HTTPS モニターでの切替と再読込、原本を返せる条件、Blue での扱いを示す。",
+  "source_sha256": "3aeea78a0f8ff286fe45c6a46df7d7f4185c5b086eef4e3ef0f049a97d33b386",
+  "generated_at": "00075",
   "review": {
-    "reviewed_at": "2026-11-27T10:24:52+00:00",
+    "reviewed_at": "2026-11-28T11:10:28+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "504feeb4aa98c258ac0a4cc1bf3fd0c2ac776ece6dbbf3ebb8dfbe7ab223edef",
-    "summary_sha256": "8282d0644c5cc2a2080686aecea69beb6430ec69d457bf934be98e9836fb991f",
-    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
+    "source_sha256": "3aeea78a0f8ff286fe45c6a46df7d7f4185c5b086eef4e3ef0f049a97d33b386",
+    "summary_sha256": "3544030ebe8b4f8ba57fe1414507ee4ec732cc937565ac7db483acbbef6a4e8b",
+    "scope": "資料の取り込み、再表示、書き出しに関する原文・要約・検収条件・リンクの照合。"
   }
 }

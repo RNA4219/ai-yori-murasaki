@@ -23,9 +23,10 @@ from pathlib import Path
 from importlib import resources
 from .drift_policy import validate_drift_policy
 from .jsonio import DataError
+from .observations import local_path
+from .sources import visible_http_url, visible_obsidian_uri
 from .storage import _assert_no_ancestor_reparse, read_regular_bytes, sanitize
 from .tracker_source import tracker_mapping, tracker_source
-from urllib.parse import urlsplit
 from typing import Any
 
 SCHEMA = "aym.decision-view/1"
@@ -35,17 +36,21 @@ _DATE = re.compile(r"^\d{4}-\d{2}-\d{2}")
 _INTENT_DATE = re.compile(r"-\d{8}[A-Z]?$")
 
 
-def _http_link(*candidates: Any) -> str | None:
+def _http_link(*candidates: Any, secrets=()) -> str | None:
     for c in candidates:
-        if not isinstance(c, str):
-            continue
-        try:
-            parsed = urlsplit(c)
-            if parsed.scheme in ("https", "http") and parsed.hostname and not parsed.username and not parsed.password:
-                return c
-        except ValueError:
-            continue
+        link = visible_http_url(c, secrets)
+        if link:
+            return link
     return None
+
+
+def _visible_reference(value, secrets):
+    if isinstance(value, str):
+        if value.lower().startswith(("http://", "https://")):
+            return visible_http_url(value, secrets)
+        if value.lower().startswith("obsidian://"):
+            return visible_obsidian_uri(value, secrets) or None
+    return value
 
 
 def _date_only(value: Any) -> str | None:
@@ -100,7 +105,7 @@ def _freshness(findings: list[dict], now: datetime) -> dict:
     return out
 
 
-def _item(finding: dict, record: dict | None, mapping: dict) -> dict:
+def _item(finding: dict, record: dict | None, mapping: dict, secrets=()) -> dict:
     source, ext = tracker_source(finding)
     mapping = tracker_mapping(source, mapping)
     props = record if isinstance(record, dict) else (ext.get("properties") or {})
@@ -119,12 +124,12 @@ def _item(finding: dict, record: dict | None, mapping: dict) -> dict:
         "state": state,
         "state_label": label if isinstance(label, str) else None,
         "due": _date_only(props.get(fields.get("due", ""))) if fields.get("due") else None,
-        "link": _http_link(*(finding.get("references") or []), ext.get("url")),
+        "link": _http_link(*(finding.get("references") or []), ext.get("url"), secrets=secrets),
     }
     if source:
         item["source"] = source
     if source == "obsidian":
-        item["source_uri"] = ext["source_uri"]
+        item["source_uri"] = visible_obsidian_uri(ext.get("source_uri"), secrets)
         item["state_label"] = {"open": "未完了", "done": "完了"}.get(state)
     item.update(_enrichment(finding))
     return item
@@ -218,12 +223,13 @@ def _strict_pairs(pairs: list[tuple[str, Any]]) -> dict:
     return result
 
 
-def load_mapping(store) -> dict:
+def load_mapping(store, explicit_path: Path | None = None) -> dict:
     """Workspaceの明示設定が壊れていれば既定にフォールバックしない。"""
-    path = store.workspace / "decision-view" / "mapping.json"
     try:
+        path = (local_path(explicit_path) if explicit_path is not None
+                else store.workspace / "decision-view" / "mapping.json")
         _assert_no_ancestor_reparse(path)
-        if path.exists():
+        if explicit_path is not None or path.exists():
             raw = read_regular_bytes(path, 1024 * 1024)
         else:
             raw = resources.files("ai_yori_murasaki").joinpath("decision_mapping.json").read_bytes()
@@ -272,7 +278,8 @@ def read_decision_view(runtime, campaign_id: str, selected_previous: str | None 
         previous = {"campaign": pc, "findings": pf, "records": pr}
     result = build_view(campaign, findings, records,
                         mapping=load_mapping(runtime.store), now=datetime.now(timezone.utc),
-                        previous=previous, assessment=report if report is not None else {})
+                        previous=previous, assessment=report if report is not None else {},
+                        secrets=runtime.store.secrets)
     if incomplete:
         result["comparison_status"] = "incomplete"
     elif len(options) > 1 and not prev_id:
@@ -334,7 +341,7 @@ def _compare_items(findings: list[dict], items: list[dict], previous: dict, mapp
 
 def build_view(campaign: dict, findings: list[dict], records: dict[str, dict] | None = None, *,
                mapping: dict, now: datetime, previous: dict | None = None,
-               name: str | None = None, assessment: dict | None = None) -> dict:
+               name: str | None = None, assessment: dict | None = None, secrets=()) -> dict:
     """campaign・findings（と元の行 records: finding_id → 行）から判断用ビューを作る。
 
     previous は {"campaign": {...}, "findings": [...], "records": {...}} か None。
@@ -342,7 +349,7 @@ def build_view(campaign: dict, findings: list[dict], records: dict[str, dict] | 
     records = records or {}
     findings = _unique_findings(findings)
     effective = [_effective_enrichment(f, assessment) for f in findings]
-    items = [_item(f, records.get(f.get("finding_id")), mapping) for f in effective]
+    items = [_item(f, records.get(f.get("finding_id")), mapping, secrets) for f in effective]
     if assessment is not None:
         by_id = {f.get("finding_id"): f for f in (assessment.get("findings") or []) if isinstance(f, dict)}
         for f, it in zip(findings, items):
@@ -354,6 +361,11 @@ def build_view(campaign: dict, findings: list[dict], records: dict[str, dict] | 
         removed = _compare_items(findings, items, previous, mapping)
         pc = previous.get("campaign") or {}
         prev_info = {"id": pc.get("campaign_id"), "created_at": pc.get("created_at")}
+    # 比較は元の識別子で行い、マッピングした識別子がURLなら表示直前に再確認する。
+    for rows in (items, removed):
+        for row in rows:
+            row["ref"] = _visible_reference(row["ref"], secrets)
+            row["key"] = _visible_reference(row["key"], secrets)
     result = {
         "schema": SCHEMA,
         "generated_at": now.astimezone(timezone.utc).isoformat(),
@@ -479,15 +491,20 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--name", help="画面に出す名前（既定は intent_id）")
     ap.add_argument("--out", required=True)
     ap.add_argument("--workspace", default=os.environ.get("AYM_WORKSPACE"))
-    ap.add_argument("--trusted", default=os.environ.get("AYM_TRUSTED_ROOT"))
+    ap.add_argument("--trusted", dest="trusted_root", default=os.environ.get("AYM_TRUSTED_ROOT"))
     args = ap.parse_args(argv)
-    if not args.workspace or not args.trusted:
+    if not args.workspace or not args.trusted_root:
         ap.error("--workspace と --trusted（または AYM_WORKSPACE・AYM_TRUSTED_ROOT）が要る")
-    from ai_yori_murasaki.runtime import Runtime
-    from ai_yori_murasaki.storage import Store
-    store = Store(Path(args.workspace), Path(args.trusted))
+    from .cli import _make_store
+    from .drift_report import write_local_export
+    from .runtime import Runtime
+    if not all(Path(value).is_absolute() for value in (args.workspace, args.trusted_root)):
+        ap.error("保存先と信頼済みルートには絶対パスを指定してください")
+    args.workspace = local_path(args.workspace)
+    args.trusted_root = local_path(args.trusted_root)
+    store = _make_store(args)
     runtime = Runtime(store)
-    mapping = json.loads(Path(args.map).read_text(encoding="utf-8"))
+    mapping = load_mapping(store, Path(args.map))
     campaign, findings, records = _load(runtime, store, args.campaign)
     prev_id = None
     if args.previous == "auto":
@@ -502,11 +519,11 @@ def main(argv: list[str] | None = None) -> int:
     report = load_report(runtime, args.campaign)
     view = sanitize(build_view(campaign, findings, records, mapping=mapping,
                                now=datetime.now(timezone.utc), previous=previous, name=args.name,
-                               assessment=report if report is not None else {}), store.secrets)
+                               assessment=report if report is not None else {}, secrets=store.secrets), store.secrets)
     out = Path(args.out)
-    out.write_text(json.dumps(view, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-    print(json.dumps({"out": str(out), "items": len(view["items"]), "previous": prev_id,
-                      "removed": len(view["removed"])}, ensure_ascii=False))
+    write_local_export(store, out, json.dumps(view, ensure_ascii=False, indent=1) + "\n")
+    receipt = {"out": str(out), "items": len(view["items"]), "previous": prev_id, "removed": len(view["removed"])}
+    print(json.dumps(sanitize(receipt, store.secrets), ensure_ascii=False))
     return 0
 
 

@@ -2,7 +2,7 @@
   "id": "docs/acceptance/INDEX.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "技術検収の索引。公開範囲・モニター接続のローカル検収条件と、各 Task の結果を引ける。",
+  "summary": "技術検収の索引。資料の取り込み・表示、受付検索と台帳照合を含む各 Task の検収結果を引ける。",
   "deps_out": [
     "docs/acceptance/AC-20261106-01.md",
     "docs/acceptance/AC-20261106-02.md",
@@ -41,6 +41,7 @@
     "docs/acceptance/AC-20261127-07.md",
     "docs/acceptance/AC-20261128-01.md",
     "docs/acceptance/AC-20261128-02.md",
+    "docs/acceptance/AC-20261128-03.md",
     "docs/releases/RA-20261126-01.md",
     "docs/releases/RA-20261126-02.md",
     "docs/releases/RA-20261127-01.md",
@@ -55,6 +56,7 @@
     "docs/tasks/TASK.case-intake-11-23-2026.md",
     "docs/tasks/TASK.case-severity-11-23-2026.md",
     "docs/tasks/TASK.document-consistency-11-23-2026.md",
+    "docs/tasks/TASK.followup-security-review-11-28-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
     "docs/tasks/TASK.frontend-workspace-11-24-2026.md",
     "docs/tasks/TASK.google-monitor-sso-11-27-2026.md",
@@ -92,13 +94,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "a09e91ffa188ccc72031b78babd09bb4d2a8141366f6f48c35a29f9a3302b7b2",
-  "generated_at": "00074",
+  "source_sha256": "2f0b76fc0c2ba2308b5df22fd963cd3f72b533138eae3d531a0cbe76889920c1",
+  "generated_at": "00075",
   "review": {
-    "reviewed_at": "2026-11-28T10:02:34+00:00",
+    "reviewed_at": "2026-11-28T11:10:28+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "a09e91ffa188ccc72031b78babd09bb4d2a8141366f6f48c35a29f9a3302b7b2",
-    "summary_sha256": "dcb3b8b900c3c62b3e85ccdf0272c2f8522107747a6c7d8c996440881d7a0885",
-    "scope": "既存資料の読み取り、モニターの索引と公開範囲に関する原文・要約・検収条件の照合。"
+    "source_sha256": "2f0b76fc0c2ba2308b5df22fd963cd3f72b533138eae3d531a0cbe76889920c1",
+    "summary_sha256": "908dfea708ef9e85b6b60cbcd671a7dc24bdab4997da3ed8da7ba088f9eedc57",
+    "scope": "資料の取り込み、再表示、書き出しに関する原文・要約・検収条件・リンクの照合。"
   }
 }

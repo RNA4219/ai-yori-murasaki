@@ -76,12 +76,13 @@ def _sanitize_authorization(value: Any, secrets: tuple[str, ...]) -> Any:
         return "[REDACTED]"
     if not _is_sha(value["scope_digest"]):
         return "[REDACTED]"
-    return {
-        "operator_id": value["operator_id"],
-        "granted_at": value["granted_at"],
-        "expires_at": value["expires_at"],
-        "scope_digest": value["scope_digest"],
-    }
+    if any(secret in field for field in (*value.keys(), *value.values()) for secret in secrets):
+        return "[REDACTED]"
+    return dict(value)
+
+
+def redaction_order(secrets: tuple[str, ...]) -> list[str]:
+    return sorted(set(secrets), key=lambda item: (-len(item), item))
 
 
 def sanitize(value: Any, secrets: tuple[str, ...] = ()) -> Any:
@@ -106,7 +107,7 @@ def sanitize(value: Any, secrets: tuple[str, ...] = ()) -> Any:
     if isinstance(value, list):
         return [sanitize(item, secrets) for item in value]
     if isinstance(value, str):
-        for secret in sorted(set(secrets), key=len, reverse=True):
+        for secret in redaction_order(secrets):
             value = value.replace(secret, "[REDACTED]")
     return value
 
@@ -312,6 +313,13 @@ class Store:
         _check_id(campaign_id, "campaign_id")
         _check_id(run_id, "run_id")
         return _safe_join(self.trusted_root, "checkpoints", campaign_id, run_id + ".json")
+
+    def checkpoint_run_ids(self, campaign_id: str) -> set[str]:
+        directory = _safe_join(self.trusted_root, "checkpoints", _check_id(campaign_id, "campaign_id"))
+        try:
+            return {_check_id(path.stem, "checkpoint run_id") for path in directory.iterdir() if path.suffix == ".json"}
+        except FileNotFoundError:
+            return set()
 
     # -- locking / atomic -------------------------------------------------- #
     @contextlib.contextmanager
@@ -629,8 +637,13 @@ class Store:
             self.atomic_json(path, checkpoint)
             return checkpoint
 
-    def verify_checkpoint(self, campaign_id: str, run_id: str) -> dict:
-        return self._verify_checkpoint(campaign_id, run_id, {})
+    def verify_checkpoint(self, campaign_id: str, run_id: str, *, expected_head: tuple[int, str] | None = None) -> dict:
+        evidence = {}
+        result = self._verify_checkpoint(campaign_id, run_id, evidence)
+        if result["result"] == "PASS" and expected_head is not None:
+            if expected_head != (evidence["target_last_sequence"], evidence["target_last_event_hash"]):
+                return {"result": "FAIL", "reason_code": "checkpoint_mismatch"}
+        return result
 
     def _verify_checkpoint(self, campaign_id: str, run_id: str, evidence: dict) -> dict:
         path = self._checkpoint_path(campaign_id, run_id)

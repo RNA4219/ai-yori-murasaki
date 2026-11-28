@@ -1,0 +1,29 @@
+{
+  "id": "docs/tasks/TASK.followup-security-review-11-28-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/AC-20261128-03.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "CHANGELOG.md",
+    "docs/SOURCES.md",
+    "docs/acceptance/AC-20261128-03.md"
+  ],
+  "summary": "案件資料の取り込み、認可情報の保存、過去記録の再表示と書き出しを点検した完了 Task。技術検収結果と資料の操作を引ける。",
+  "source_sha256": "8d655f2ea6c97cf43d379c3532e4ef27d6f2c43411599df05ae95c95390b641e",
+  "generated_at": "00075",
+  "review": {
+    "reviewed_at": "2026-11-28T11:10:28+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "8d655f2ea6c97cf43d379c3532e4ef27d6f2c43411599df05ae95c95390b641e",
+    "summary_sha256": "3b89b495ad30b68b2b0a265f0d09a1315468a1570ebf572ce80092b59247d8c4",
+    "scope": "資料の取り込み、再表示、書き出しに関する原文・要約・検収条件・リンクの照合。"
+  }
+}

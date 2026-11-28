@@ -10,6 +10,7 @@ next_review_due: 2026-12-06
 
 | Acceptance | Task | 対象 | 公開 |
 | --- | --- | --- | --- |
+| [AC-20261128-03](AC-20261128-03.md) | [20261128-03](../tasks/TASK.followup-security-review-11-28-2026.md) | 資料の取り込み、表示、受付検索と台帳照合 | 技術検収12件合格 |
 | [AC-20261128-02](AC-20261128-02.md) | [20261128-02](../tasks/TASK.offline-security-boundaries-11-28-2026.md) | 出典と Blue の公開範囲、旧索引・ローカル入力の読み取りとモニター接続 | ローカル検収条件 |
 | [AC-20261128-01](AC-20261128-01.md) | [20261128-01](../tasks/TASK.obsidian-issues-11-28-2026.md) | T64。Obsidian の課題取り込み、出典と Blue の表示を含む技術検収7件に合格 | [PR #26](https://github.com/RNA4219/ai-yori-murasaki/pull/26) |
 | [AC-20261127-07](AC-20261127-07.md) | [20261127-07](../tasks/TASK.monitor-https-11-27-2026.md) | T63 の HTTPS・セッション、再診断5項目と Windows の受付台帳の同時登録を含む技術検収13件に合格 | [PR #25](https://github.com/RNA4219/ai-yori-murasaki/pull/25) |

@@ -15,7 +15,7 @@ import ijson
 from .jsonio import DataError, MAX_JSON_BYTES, MAX_JSON_DEPTH
 from .monitor_inputs import file_stamp
 from .monitor_summary import CampaignSummary, summarize_run
-from .storage import ID_RE, Store, _is_reparse, _safe_join
+from .storage import ID_RE, Store, _is_reparse, _safe_join, sanitize
 
 PAGE_SIZE = 50
 _PROJECTION_VERSION = 5
@@ -305,5 +305,9 @@ def read_page(store: Store, page: int, view: str) -> dict | None:
                     from .monitor_detail import IndexUpdateRequired
                     raise IndexUpdateRequired("Blue の案件集計を更新してください")
                 row = {**{key: row[key] for key in _BLUE_CASE_FIELDS}, **blue_counts}
+            if store.secrets:
+                for key in (*_BLUE_CASE_FIELDS, "unverified_run_ids"):
+                    if key in row:
+                        row[key] = sanitize(row[key], store.secrets)
             campaigns.append(row)
     return {"campaigns": campaigns, "page": page, "pages": pages, "total": total, "checked_at": checked_at}

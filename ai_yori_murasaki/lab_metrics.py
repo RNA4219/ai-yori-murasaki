@@ -26,7 +26,9 @@ import math
 from typing import Any, Dict, List, Optional
 
 from . import kpi
+from .jsonio import DataError
 from .oracle import Oracle, finding_covers, is_unauthorized_access
+from .runtime import TERMINAL
 
 
 def _hold(reason: str) -> Dict[str, Any]:
@@ -43,11 +45,10 @@ def _norm_path(p: Any) -> Any:
     return p
 
 
-def _audit_scan(runtime: Any, run_id: str) -> Dict[str, int]:
+def _audit_scan(events: list[dict]) -> Dict[str, int]:
     prod = 0
     unauth = 0
-    events = runtime.store.read_events(run_id)
-    for ev in events or []:
+    for ev in events:
         ext = ev.get("extensions") if isinstance(ev, dict) else None
         if not isinstance(ext, dict):
             continue
@@ -120,6 +121,48 @@ def _finding_covers(finding: Dict[str, Any], row: Dict[str, Any]) -> bool:
 
 def measure(runtime: Any, campaign_id: str,
             measurement: Dict[str, Any]) -> Dict[str, Any]:
+    return _measure(runtime, campaign_id, measurement)
+
+
+def _campaign_run_ids(runtime, campaign_id):
+    runs = runtime.list_runs(campaign_id)
+    if not isinstance(runs, list):
+        raise DataError("campaign runs unavailable")
+    run_ids = []
+    for run in runs:
+        if not isinstance(run, dict) or run.get("campaign_id") != campaign_id:
+            raise DataError("run does not belong to campaign")
+        rid = run.get("run_id")
+        if not isinstance(rid, str) or not rid:
+            raise DataError("missing run id")
+        run_ids.append(rid)
+    if len(set(run_ids)) != len(run_ids):
+        raise DataError("duplicate run id")
+    return run_ids
+
+
+def _read_campaign_events(store, campaign_id):
+    from .monitor_detail import read_selection
+    from .monitor_summary import campaign_summaries
+
+    selection = read_selection(store, campaign_id, check_membership=True)
+    if selection is not None:
+        summary = selection.current.summary
+        events = selection.current.events
+    else:
+        events = {}
+
+        def remember(run_id, owner, verified):
+            if owner == campaign_id:
+                events[run_id] = verified
+
+        summary = campaign_summaries(store, on_verified=remember, include_csv=False).get(campaign_id)
+    if summary is not None and any(rid not in events for rid in summary.pending_runs):
+        raise DataError("campaign ledger unavailable")
+    return events
+
+
+def _measure(runtime, campaign_id, measurement, *, verified_events=None):
     err = _validate_measurement(measurement)
     if err:
         return _hold(err)
@@ -136,40 +179,35 @@ def measure(runtime: Any, campaign_id: str,
 
     # --- gather campaign runs and verify evidence ---
     try:
-        runs = runtime.list_runs(campaign_id)
+        run_ids = _campaign_run_ids(runtime, campaign_id)
+        if set(run_ids) != runtime.store.checkpoint_run_ids(campaign_id):
+            return _hold("evidence_unverified")
+        if verified_events is None:
+            verified_events = _read_campaign_events(runtime.store, campaign_id)
     except Exception:
         return _hold("evidence_unverified")
-    if not isinstance(runs, list):
+    if set(verified_events) != set(run_ids):
         return _hold("evidence_unverified")
 
-    run_ids: List[str] = []
     verified_seq: Dict[str, int] = {}
-    for run in runs:
-        if not isinstance(run, dict):
-            return _hold("evidence_unverified")
-        rid = run.get("run_id")
-        if not isinstance(rid, str) or not rid:
-            return _hold("evidence_unverified")
-        if run.get("campaign_id") != campaign_id:
-            return _hold("evidence_unverified")
+    completions = {}
+    audits = {}
+    for rid in run_ids:
         try:
-            chain = runtime.store.verify_chain(rid)
+            events = verified_events[rid]
+            head = (len(events), events[-1]["event_hash"])
+            if runtime.store.verify_checkpoint(campaign_id, rid, expected_head=head)["result"] != "PASS":
+                return _hold("evidence_unverified")
+            terminal = next(event["extensions"]["run_snapshot"] for event in reversed(events)
+                            if "run_snapshot" in (event.get("extensions") or {}))
+            if (terminal.get("campaign_id") != campaign_id or terminal.get("run_id") != rid
+                    or terminal.get("completion") not in TERMINAL or terminal["completion"] != terminal.get("status")):
+                return _hold("evidence_unverified")
+            completions[rid] = terminal["completion"]
+            audits[rid] = _audit_scan(events)
+            verified_seq[rid] = len(events)
         except Exception:
             return _hold("evidence_unverified")
-        if not isinstance(chain, dict) or chain.get("result") != "PASS":
-            return _hold("evidence_unverified")
-        try:
-            cp = runtime.store.verify_checkpoint(campaign_id, rid)
-        except Exception:
-            return _hold("evidence_unverified")
-        if not isinstance(cp, dict) or cp.get("result") != "PASS":
-            return _hold("evidence_unverified")
-        try:
-            last_seq = int(chain.get("last_sequence", 0))
-        except Exception:
-            return _hold("evidence_unverified")
-        run_ids.append(rid)
-        verified_seq[rid] = last_seq
 
     for rid in (red_run_id, blue_run_id, reeval_run_id):
         if rid not in verified_seq:
@@ -256,13 +294,7 @@ def measure(runtime: Any, campaign_id: str,
             })
 
     # --- completion of red run ---
-    try:
-        red_run = runtime.get_run(red_run_id)
-    except Exception:
-        return _hold("evidence_unverified")
-    if not isinstance(red_run, dict):
-        return _hold("evidence_unverified")
-    completion = red_run.get("completion")
+    completion = completions[red_run_id]
 
     # --- Oracle replay consistency ---
     oracle = Oracle()
@@ -299,29 +331,12 @@ def measure(runtime: Any, campaign_id: str,
     integ_ok = _check_report(runtime, remediation_obj.get("integration_result"))
     remediation_valid = static_ok and unit_ok and integ_ok
 
-    # --- audit scan (actual recorded events only) ---
-    try:
-        audits = {rid: _audit_scan(runtime, rid) for rid in run_ids}
-    except Exception:
-        return _hold("evidence_unverified")
-    audit = {"production_applies": 0, "unauthorized_privileged_actions": 0}
-    for rid in run_ids:
-        a = audits[rid]
-        audit["production_applies"] += a["production_applies"]
-        audit["unauthorized_privileged_actions"] += a["unauthorized_privileged_actions"]
-
     # --- build records: one per real run ---
     records: List[Dict[str, Any]] = []
     for rid in run_ids:
-        try:
-            run = runtime.get_run(rid)
-        except Exception:
-            return _hold("evidence_unverified")
-        if not isinstance(run, dict):
-            return _hold("evidence_unverified")
         rec: Dict[str, Any] = {
             "run_id": rid,
-            "completion": run.get("completion"),
+            "completion": completions[rid],
             "cause": None,
             "failure_attribution": None,
             "events_expected": verified_seq.get(rid),

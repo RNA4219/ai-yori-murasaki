@@ -4,6 +4,7 @@ from __future__ import annotations
 import tempfile
 import threading
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 from ai_yori_murasaki.jsonio import DataError
@@ -55,11 +56,38 @@ class RuntimeTest(unittest.TestCase):
         c2 = self._campaign()
         self.assertEqual(c1["campaign_id"], c2["campaign_id"])
 
+    def test_campaign_and_records_are_read_from_verified_run_snapshots(self):
+        campaign = self._campaign()
+        cid = campaign["campaign_id"]
+        rid = self.rt.list_runs(cid)[0]["run_id"]
+        with patch.object(self.store, "_read_events_raw", wraps=self.store._read_events_raw) as reads:
+            self.assertEqual(self.rt.get_campaign(cid), campaign)
+            reads.assert_called_once_with(rid)
+        run = self.rt.start_run(cid, "verify", 1, "fixture-record")["run_id"]
+        ref = self.store.put_object({"description": "ローカル試験の資料"})
+        self.rt.record_event(run, "state_captured", "orchestrator",
+                             extensions={"record_kind": "fixture", "record_ref": ref})
+        with patch.object(self.store, "_read_events_raw", wraps=self.store._read_events_raw) as reads:
+            self.assertEqual(self.rt.list_records(cid, "fixture"), [ref])
+            self.assertCountEqual([call.args[0] for call in reads.call_args_list], [rid, run])
+
     def test_idempotency_changed_payload_rejected(self) -> None:
         self._campaign()
         scope = self._scope()
         with self.assertRaises(DataError):
             self.rt.create_campaign("INT-TEST-2", scope, self._auth(scope), "k1")
+
+    def test_idempotency_retry_reads_bounded_index(self):
+        from unittest.mock import patch
+
+        first = self._campaign()
+        original = self.rt._idem_path().read_bytes()
+        with patch("ai_yori_murasaki.runtime.MAX_JSON_BYTES", len(original) - 1):
+            with self.assertRaises(DataError) as caught:
+                self._campaign()
+            self.assertEqual(caught.exception.reason_code, "hold")
+        self.assertEqual(self.rt._idem_path().read_bytes(), original)
+        self.assertEqual(self._campaign(), first)
 
     def test_idempotency_restart_reuses(self) -> None:
         c1 = self._campaign()

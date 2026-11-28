@@ -40,6 +40,60 @@ def test_usage_and_validate_without_storage(tmp_path, capsys):
     assert 'secret-test-value' not in capsys.readouterr().out
 
 
+def test_campaign_reads_apply_current_secret_settings(cli_env, monkeypatch):
+    rt, cid, call = cli_env
+    monkeypatch.setenv("AYM_SECRETS", "tester")
+    monkeypatch.setenv("AYM_LLM_API_KEY", "Bearer INT-CLI")
+    rc, shown = call("campaign", "show", "--campaign-id", cid)
+    assert rc == 0 and shown["campaign_id"] == cid
+    rc, listed = call("campaign", "list")
+    assert rc == 0 and listed["data"]["campaigns"] == [shown["data"]]
+    campaign = shown["data"]
+    assert campaign["intent_id"] == campaign["operator_id"] == campaign["authorization"] == "[REDACTED]"
+    assert campaign["scope"]["targets"][0]["identifier"] == "cli"
+    assert rt.get_campaign(cid)["authorization"]["operator_id"] == "tester"
+
+
+def test_existing_grant_checked_before_creating_or_resuming_run(cli_env, monkeypatch):
+    rt, cid, call = cli_env
+    start = ("run", "start", "--campaign-id", cid, "--phase", "verify", "--idempotency-key", "grant-run")
+    monkeypatch.setenv("AYM_SECRETS", "tester")
+    assert call(*start)[0] == 2
+    monkeypatch.delenv("AYM_SECRETS")
+    rc, started = call(*start)
+    assert rc == 0
+    rid = started["run_id"]
+    monkeypatch.setenv("AYM_SECRETS", "tester")
+    assert call("run", "resume", "--run-id", rid)[0] == 2
+    assert rt.get_run(rid)["status"] == "running"
+    monkeypatch.delenv("AYM_SECRETS")
+    assert call("run", "resume", "--run-id", rid)[0] == 0
+
+
+@pytest.mark.parametrize("private_field", ("operator", "target"))
+def test_campaign_requires_a_grant_that_can_be_persisted(cli_env, tmp_path, monkeypatch, private_field):
+    rt, cid, call = cli_env
+    marker = "fixture-private"
+    scope = {"targets": [{"kind": "fixture", "identifier": marker if private_field == "target" else "scope1"}],
+             "max_targets": 1}
+    grant = {"operator_id": marker if private_field == "operator" else "operator1",
+             "granted_at": "2026-01-01T00:00:00Z", "expires_at": "2099-01-01T00:00:00Z",
+             "scope_digest": digest(scope)}
+    scope_file, grant_file = tmp_path / "scope.json", tmp_path / "grant.json"
+    scope_file.write_text(json.dumps(scope), encoding="utf-8")
+    grant_file.write_text(json.dumps(grant), encoding="utf-8")
+    args = ("campaign", "create", "--intent-id", "INT-FIXTURE", "--idempotency-key", "grant-test",
+            "--scope-file", str(scope_file), "--authorization-file", str(grant_file))
+    monkeypatch.setenv("AYM_SECRETS", marker)
+    rc, denied = call(*args)
+    assert rc == 2 and denied["reason_code"] == "input_invalid"
+    assert [campaign["campaign_id"] for campaign in rt.list_campaigns()] == [cid]
+    monkeypatch.delenv("AYM_SECRETS")
+    rc, created = call(*args)
+    assert rc == 0 and created["data"]["authorization"] == grant
+    assert rt.get_campaign(created["campaign_id"])["authorization"]["scope_digest"] == digest(scope)
+
+
 def test_lifecycle_checkpoint_and_verify(cli_env):
     rt, cid, call = cli_env
     rc, result = call('run', 'start', '--campaign-id', cid, '--phase', 'verify', '--idempotency-key', 'v1')

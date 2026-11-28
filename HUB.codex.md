@@ -27,6 +27,7 @@ template_version: 1.0.0
 
 | 依頼 | 入口 | 続けて読むもの |
 | --- | --- | --- |
+| 資料の取り込み・再表示・書き出しの保護を確かめる | [案件資料の点検](docs/tasks/TASK.followup-security-review-11-28-2026.md) | [入力と出力の検収条件](docs/acceptance/AC-20261128-03.md) |
 | 再検証の失敗・前回との差・受付後の監査を確認する | [案件判断の要求・要件](docs/requirements/REQUIREMENTS-CASE-DECISIONS.md) | [仕様と検収例](docs/requirements/SPEC-CASE-DECISIONS.md) |
 | 課題に関係する検査を選ぶ・資源の不在の根拠を確かめる | [列と収集範囲の設定例](docs/NOTION-IMPORT.md#利用する検査と観測範囲を指定する) | [検査名・種類・在否の検収](docs/acceptance/AC-20261126-02.md) |
 | 課題一覧と観測のずれを確かめる | [Notion CSV と観測の取り込み](docs/NOTION-IMPORT.md) | [分類・出力・画面の検収](docs/acceptance/AC-20261126-01.md) |

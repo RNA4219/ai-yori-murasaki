@@ -2,7 +2,9 @@ import argparse
 import uuid
 from pathlib import Path
 
-from .jsonio import read_json as _json_read, DataError
+from .jsonio import MAX_JSON_BYTES, DataError, loads
+from .observations import local_path
+from .storage import read_regular_bytes
 from .assessment import import_artifact, load_report
 from . import assessment_enrichment
 from .assessment_contracts import (
@@ -17,16 +19,14 @@ _MAX_IMPORT_BYTES = 1024 * 1024
 
 
 def _read_json(path):
-    return _json_read(Path(path))
+    return loads(_read_bounded(path, MAX_JSON_BYTES))
 
 
-def _read_bounded(path):
-    p = Path(path)
-    if not p.is_file():
-        raise DataError("input_not_regular_file")
-    if p.stat().st_size > _MAX_IMPORT_BYTES:
-        raise DataError("input_too_large")
-    return p.read_bytes()
+def _read_bounded(path, limit=_MAX_IMPORT_BYTES):
+    try:
+        return read_regular_bytes(local_path(path), limit)
+    except OSError as exc:
+        raise DataError("assessment input unavailable") from exc
 
 
 def add_parser(subparsers):

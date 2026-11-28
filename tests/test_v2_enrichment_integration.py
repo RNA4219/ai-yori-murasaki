@@ -11,15 +11,19 @@ This test wires the real code paths together (no mocks):
 from __future__ import annotations
 
 import argparse
+from contextlib import redirect_stdout
+import io
 import json
 import tempfile
 import unittest
+from unittest.mock import patch
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 from ai_yori_murasaki import assessment
 from ai_yori_murasaki import assessment_enrichment as ae
 from ai_yori_murasaki import cli_assessment
+from ai_yori_murasaki.cli import main
 from ai_yori_murasaki.assessment_contracts import AssessmentContractError
 from ai_yori_murasaki.enrichment import import_snapshot
 from ai_yori_murasaki.jsonio import DataError, digest
@@ -105,12 +109,25 @@ class EnrichmentIntegrationTest(unittest.TestCase):
     def tearDown(self) -> None:
         self.tmp.cleanup()
 
+    def test_snapshot_index_size_limit_preserves_last_catalog(self):
+        from unittest.mock import patch
+        from ai_yori_murasaki.enrichment import EnrichmentError, query_snapshot
+
+        meta = self._import_kev()
+        index = self.ws / "enrichment" / "index.json"
+        original = index.read_bytes()
+        with patch("ai_yori_murasaki.enrichment.MAX_JSON_BYTES", len(original) - 1):
+            with self.assertRaises(EnrichmentError):
+                self._import_epss()
+        self.assertEqual(index.read_bytes(), original)
+        self.assertEqual(query_snapshot(self.store, meta)["status"], "ok")
+
     # -- fixtures ---------------------------------------------------------
 
-    def _import_kev(self, ttl_seconds=None) -> dict:
+    def _import_kev(self, ttl_seconds=None, source_url="https://example.test/kev.json") -> dict:
         return import_snapshot(
             self.store, "kev", KEV_JSON,
-            source_url="https://example.test/kev.json",
+            source_url=source_url,
             fetched_at=_now_iso(),
             source_version="v1",
             as_of=_now_iso(),
@@ -240,7 +257,11 @@ class EnrichmentIntegrationTest(unittest.TestCase):
         result = self._run_cli_import(raw, self.ctx, kev_meta, epss_meta)
         self.assertIn("enrichment_ref", result)
 
-        loaded = assessment.load_report(self.rt, self.cid, view="operator")
+        with patch.object(self.store, "_read_events_raw", wraps=self.store._read_events_raw) as reads, \
+             patch.object(self.store, "read_verified_events", wraps=self.store.read_verified_events) as verified:
+            loaded = assessment.load_report(self.rt, self.cid, view="operator")
+            verified.assert_any_call(self.rid, campaign_id=self.cid)
+            self.assertEqual(reads.call_count, verified.call_count)
         self.assertIsNotNone(loaded)
         self.assertIn("enrichment", loaded)
         enrichment = loaded["enrichment"]
@@ -253,6 +274,52 @@ class EnrichmentIntegrationTest(unittest.TestCase):
         self.assertAlmostEqual(f1epss["epss"], 0.05)
 
     # -- (C) rejection / withholding -------------------------------------
+
+    def test_assess_import_and_show_check_recorded_provenance(self):
+        kev, epss = self._import_kev(), self._import_epss()
+        raw = self._trivy([{"Target": "t1", "Vulnerabilities": [self._vuln("CVE-2024-35195")]}])
+        prefix = ["--workspace", str(self.ws), "--trusted-root", str(self.tr), "assess"]
+        def call(*args):
+            with redirect_stdout(io.StringIO()) as stream:
+                self.assertEqual(main([*prefix, *args]), 0)
+            return json.loads(stream.getvalue())["data"]
+        call("import", "--format", "trivy", "--campaign", self.cid, "--run", self.rid,
+             "--input", self._write("fixture.json", raw), "--context", self._write("context.json", self.ctx),
+             "--kev-meta", self._write("kev.json", kev),
+             "--epss-meta", self._write("epss.json", {**epss, "source_version": "unconfirmed"}))
+        def show():
+            report = call("show", "--campaign", self.cid)["report"]
+            return {r["kind"]: r for r in report["enrichment"]}
+        old = show()
+        self.assertEqual(old["kev"]["source_url"], kev["source_url"])
+        self.assertEqual(old["epss"]["status"], "corrupt")
+        self.assertIsNone(old["epss"]["source_url"])
+        self.assertIsNone(old["epss"]["epss"])
+        # 別の入手元で同一の原本を再登録しても、過去の報告に新しい出典を割り当てない。
+        self._import_kev(source_url="https://example.test/second-source.json")
+        updated = show()
+        self.assertEqual(updated["kev"]["status"], "not_tested")
+        self.assertIsNone(updated["kev"]["source_url"])
+        self.assertIsNone(updated["kev"]["source_version"])
+
+    def test_assess_show_rechecks_historical_snapshot_url(self):
+        marker = "fixture archive"
+        kev = self._import_kev(source_url="http://example.test/fixture%20archive.json")
+        epss = self._import_epss()
+        raw = self._trivy([{"Target": "t1", "Vulnerabilities": [self._vuln("CVE-2024-35195")]}])
+        self._run_cli_import(raw, self.ctx, kev, epss)
+        command = ["--workspace", str(self.ws), "--trusted-root", str(self.tr),
+                   "assess", "show", "--campaign", self.cid]
+        for registered, expected in (("", kev["source_url"]), (marker, None)):
+            output = io.StringIO()
+            with patch.dict("os.environ", {"AYM_SECRETS": registered}), redirect_stdout(output):
+                self.assertEqual(main(command), 0)
+            records = json.loads(output.getvalue())["data"]["report"]["enrichment"]
+            by_kind = {record["kind"]: record for record in records}
+            self.assertEqual(by_kind["kev"]["status"], "listed")
+            self.assertEqual(by_kind["kev"]["source_url"], expected)
+            self.assertEqual(by_kind["epss"]["source_url"], epss["source_url"])
+            self.assertEqual(by_kind["epss"]["status"], "scored")
 
     def test_external_context_enrichment_rejected(self) -> None:
         raw = self._trivy([{"Target": "t1", "Vulnerabilities": [

@@ -1,0 +1,34 @@
+{
+  "id": "docs/acceptance/AC-20261128-03.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [
+    "tests/test_case_intake.py",
+    "tests/test_lab_metrics_projection.py",
+    "tests/test_sources.py",
+    "tests/test_tracker_drift_e2e.py",
+    "tests/test_v1_server.py",
+    "tests/test_v2_enrichment_integration.py"
+  ],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.followup-security-review-11-28-2026.md"
+  ],
+  "deps_out": [
+    "docs/tasks/TASK.followup-security-review-11-28-2026.md"
+  ],
+  "summary": "資料の取り込み・表示と書き出し、受付検索、評価出典と封印済み台帳を照合した技術検収。製品コミットの manual-bb 12件と回帰385件・サブテスト186件の結果を記す。",
+  "source_sha256": "49e158911048f7eebde13694812227e93aceba9a41b92bc0147037453b3a2a48",
+  "generated_at": "00075",
+  "review": {
+    "reviewed_at": "2026-11-28T11:10:29+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "49e158911048f7eebde13694812227e93aceba9a41b92bc0147037453b3a2a48",
+    "summary_sha256": "c7c37fe687b48534b80d78fce0ecdedacd1d513ea4038cb4de1022f8376e125e",
+    "scope": "技術承認、製品コミットの検収・回帰結果、評価出典と台帳の照合条件、六つの参照テストを原文に照合。"
+  }
+}

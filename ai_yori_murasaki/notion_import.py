@@ -9,7 +9,7 @@ from .decision_view import load_mapping
 from .jsonio import DataError, MAX_JSON_BYTES
 from .observations import _read_local_json, _run_events, local_path
 from .storage import SHA_RE, read_regular_bytes, sanitize
-from .sources import safe_url, visible_url
+from .sources import safe_url, visible_obsidian_uri
 
 
 _BATCHES = {"notion": ("notion_csv_ref", "notion_csv/1"),
@@ -96,7 +96,7 @@ def batch_findings(store, event, tracked_refs=None):
         uri = batch.get("source_uri")
         if not isinstance(uri, str) or not uri.startswith("obsidian://open?"):
             raise DataError("invalid Obsidian source")
-        origin["source_uri"] = visible_url(uri, store.secrets) or ""
+        origin["source_uri"] = visible_obsidian_uri(uri, store.secrets)
     result = {}
     for item in batch["items"]:
         if not isinstance(item, dict):

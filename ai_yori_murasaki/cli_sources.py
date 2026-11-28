@@ -1,6 +1,5 @@
 from pathlib import Path
 
-from .jsonio import read_json
 from .sources import PROVIDERS, Sources, read_text
 
 
@@ -39,6 +38,6 @@ def dispatch(args, runtime):
     common = dict(provider=args.provider, source_url=args.source_url, title=args.title, links=args.link)
     if args.action == "import-file":
         return sources.add(**common, body=read_text(args.file))
-    from .source_mcp import import_mcp
+    from .source_mcp import import_mcp, read_mcp_json
     return import_mcp(sources, **common, config_file=args.config_file,
-                      tool=args.tool, arguments=read_json(args.arguments_file))
+                      tool=args.tool, arguments=read_mcp_json(args.arguments_file))

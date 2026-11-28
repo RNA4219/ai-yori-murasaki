@@ -60,3 +60,15 @@ def test_block_id_is_local_to_one_note_and_missing_scope_is_unknown():
     assert [row["key"] for row in result["removed"]] == ["obsidian-a"]
     item = build_drift("demo", [current], records, MAPPING, [observation("研修")])["items"][0]
     assert item["reason"] == "out_of_scope" and not item["matches"]
+
+
+def test_decision_and_drift_apply_current_note_visibility_to_generic_findings():
+    row = task(uri="obsidian://open?vault=Demo&file=Fixture%20notes")
+    current = {"secrets": ("Fixture notes",)}
+    decision = build_view(CAMPAIGN, [row], {}, mapping=MAPPING, now=NOW, **current)
+    drift = build_drift("demo", [row], {}, MAPPING, [], **current)
+    for report in (decision, drift):
+        item, = report["items"]
+        assert item["source_uri"] == "" and item["title"] == row["title"]
+    for fmt in ("json", "csv", "md"):
+        assert "Fixture%20notes" not in _render(drift, fmt)

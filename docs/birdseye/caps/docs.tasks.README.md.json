@@ -2,7 +2,7 @@
   "id": "docs/tasks/README.md",
   "role": "operations",
   "public_api": [],
-  "summary": "Task の運用と索引。既存資料、案件索引、Blue 表示などの作業と検収を引ける。",
+  "summary": "Task の運用と索引。案件資料の取り込み、再表示、書き出しなどの作業と検収結果を引ける。",
   "deps_out": [
     "CHANGELOG.md",
     "HUB.codex.md",
@@ -44,6 +44,7 @@
     "docs/acceptance/AC-20261127-07.md",
     "docs/acceptance/AC-20261128-01.md",
     "docs/acceptance/AC-20261128-02.md",
+    "docs/acceptance/AC-20261128-03.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
@@ -56,6 +57,7 @@
     "docs/tasks/TASK.case-intake-11-23-2026.md",
     "docs/tasks/TASK.case-severity-11-23-2026.md",
     "docs/tasks/TASK.document-consistency-11-23-2026.md",
+    "docs/tasks/TASK.followup-security-review-11-28-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
     "docs/tasks/TASK.frontend-workspace-11-24-2026.md",
     "docs/tasks/TASK.google-monitor-sso-11-27-2026.md",
@@ -97,13 +99,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "e4a88e2d4d941c13859662781e0fc0eb46c7b3bfc2bb4df1e59d57e4b44a78b1",
-  "generated_at": "00074",
+  "source_sha256": "4dccd5c94cb24e231dcf399f3d4728f396566d4fdf1c709b5973d8a38634f8c8",
+  "generated_at": "00075",
   "review": {
-    "reviewed_at": "2026-11-28T10:02:34+00:00",
+    "reviewed_at": "2026-11-28T11:10:28+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "e4a88e2d4d941c13859662781e0fc0eb46c7b3bfc2bb4df1e59d57e4b44a78b1",
-    "summary_sha256": "70d2bb2cb49739e15eed5119044fd9f1e3a9c42e4d5d87052655e342a427779f",
-    "scope": "既存資料の読み取り、モニターの索引と公開範囲に関する原文・要約・検収条件の照合。"
+    "source_sha256": "4dccd5c94cb24e231dcf399f3d4728f396566d4fdf1c709b5973d8a38634f8c8",
+    "summary_sha256": "17e54581a675f15e670e6b576debcf670e84ed93b742a89121d8679666576fb1",
+    "scope": "資料の取り込み、再表示、書き出しに関する原文・要約・検収条件・リンクの照合。"
   }
 }

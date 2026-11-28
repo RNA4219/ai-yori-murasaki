@@ -5,7 +5,7 @@ import re
 import stat
 
 from .jsonio import DataError, canonical, loads
-from .storage import Store, _assert_no_ancestor_reparse, _safe_join
+from .storage import Store, _assert_no_ancestor_reparse, _safe_join, sanitize
 
 
 READ_LIMIT = 1024 * 1024
@@ -13,7 +13,7 @@ MAX_PAGE = 100
 HASH = re.compile(r"[0-9a-f]{64}")
 
 
-def _record(line: bytes, operator: bool) -> dict | None:
+def _record(line: bytes, operator: bool, secrets: tuple[str, ...]) -> dict | None:
     try:
         record = loads(line)
     except (DataError, RecursionError):
@@ -23,13 +23,7 @@ def _record(line: bytes, operator: bool) -> dict | None:
     projected = {}
     for key in ("verify_id", "run_id", "result", "reason_code", "checked_at"):
         value = record.get(key)
-        projected[key] = value[:256] if isinstance(value, str) else None
-    try:
-        for value in projected.values():
-            if value is not None:
-                value.encode("utf-8")
-    except UnicodeError:
-        return None
+        projected[key] = value if isinstance(value, str) else None
     method = record.get("method")
     if operator and method in ("chain", "checkpoint"):
         projected["method"] = method
@@ -40,6 +34,14 @@ def _record(line: bytes, operator: bool) -> dict | None:
         digest = record.get("checkpoint_digest")
         if method == "checkpoint" and isinstance(digest, str) and HASH.fullmatch(digest):
             projected["checkpoint_digest"] = digest
+    try:
+        for key, value in projected.items():
+            if isinstance(value, str):
+                displayed = sanitize(value, secrets) if secrets else value
+                projected[key] = displayed[:256]
+                projected[key].encode("utf-8")
+    except (DataError, UnicodeError):
+        return None
     return projected
 
 
@@ -47,7 +49,7 @@ def _empty(status: str) -> dict:
     return {"verification": [], "next_before": None, "omitted": 0, "journal_status": status}
 
 
-def _page(stream, end: int, limit: int, operator: bool, budget: int) -> dict:
+def _page(stream, end: int, limit: int, operator: bool, budget: int, secrets: tuple[str, ...]) -> dict:
     # 通常の履歴は末尾付近だけで足りる。長い記録も1リクエストの予算内で遡る。
     minimum = max(0, end - budget)
     chunks = []
@@ -76,7 +78,7 @@ def _page(stream, end: int, limit: int, operator: bool, budget: int) -> dict:
     for _ in range(limit):
         line_end = pos - 1 if data[pos - 1:pos] == b"\n" else pos
         line_start = data.rfind(b"\n", 0, line_end) + 1
-        row = _record(data[line_start:line_end], operator)
+        row = _record(data[line_start:line_end], operator, secrets)
         if row is None:
             result["omitted"] += 1
         else:
@@ -120,7 +122,7 @@ def read_verification(store: Store, run_id: str, *, limit: int | None, before: i
                 return _empty("empty")
             if limit is not None:
                 budget = READ_LIMIT - (1 if before is not None else 0)
-                return _page(stream, before if before is not None else size, limit, operator, budget)
+                return _page(stream, before if before is not None else size, limit, operator, budget, store.secrets)
             # ページを指定しない従来の呼び出しは全件を記録順に受け取る。
             if size > READ_LIMIT:
                 raise DataError("ページ指定が必要です", "verification_paging_required")
@@ -130,7 +132,7 @@ def read_verification(store: Store, run_id: str, *, limit: int | None, before: i
             if len(raw) != size:
                 raise DataError("履歴が変更されました", "verification_unavailable")
             for line in raw.splitlines():
-                row = _record(line, operator)
+                row = _record(line, operator, store.secrets)
                 if row is None:
                     result["omitted"] += 1
                 else:

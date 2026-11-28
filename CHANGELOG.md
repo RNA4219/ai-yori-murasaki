@@ -14,6 +14,8 @@ Keep a Changelog の区分で管理する。記録には既存最大番号 +1 �
 
 ### Changed
 
+- 0055 — 2026-11-28。案件資料の取り込み、画面表示、書き出し、受付名の検索に現在の秘密設定を適用する。評価の出典や台帳の封印を照合できない場合は判定を保留する。技術検収12件に合格した。[Task 20261128-03](docs/tasks/TASK.followup-security-review-11-28-2026.md)・[検収結果](docs/acceptance/AC-20261128-03.md)
+
 - 0054 — 2026-11-28。保存済みの資料や課題にも現在の秘密設定を適用し、過去の案件索引を通常更新すると Blue に表示する件数を再集計する。ローカルファイルの読み取りとモニターの接続にも制限を設けた。[Task 20261128-02](docs/tasks/TASK.offline-security-boundaries-11-28-2026.md)・[検収条件](docs/acceptance/AC-20261128-02.md)
 
 - 0053 — 2026-11-28。Obsidian のチェックボックスを案件の課題に登録し、Notion CSV の課題と併せて判断画面や照合レポートで確認できるようにした。出典リンクと Blue の公開範囲を含む技術検収7件に合格した。[Task 20261128-01](docs/tasks/TASK.obsidian-issues-11-28-2026.md)・[検収](docs/acceptance/AC-20261128-01.md)・[PR #26](https://github.com/RNA4219/ai-yori-murasaki/pull/26)

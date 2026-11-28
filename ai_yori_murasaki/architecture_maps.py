@@ -6,7 +6,7 @@ from pathlib import Path
 import stat
 
 from .jsonio import DataError, loads
-from .storage import ID_RE, _assert_no_ancestor_reparse
+from .storage import ID_RE, SECRET_KEYS, _assert_no_ancestor_reparse
 
 
 MAX_MAPS = 100
@@ -29,7 +29,20 @@ def _directory_stat(directory: Path) -> os.stat_result:
     return info
 
 
-def _load(path: Path, directory_stat: os.stat_result) -> tuple[bytes, str]:
+def _contains_private_data(value, secrets: tuple[str, ...]) -> bool:
+    if isinstance(value, dict):
+        for key, item in value.items():
+            if key.lower().replace("-", "_") in SECRET_KEYS and item not in (None, "", "[REDACTED]"):
+                return True
+            if _contains_private_data(key, secrets) or _contains_private_data(item, secrets):
+                return True
+        return False
+    if isinstance(value, list):
+        return any(_contains_private_data(item, secrets) for item in value)
+    return isinstance(value, str) and any(secret in value for secret in secrets)
+
+
+def _load(path: Path, directory_stat: os.stat_result, secrets: tuple[str, ...]) -> tuple[bytes, str]:
     entry = path.lstat()
     if not stat.S_ISREG(entry.st_mode) or getattr(entry, "st_file_attributes", 0) & stat.FILE_ATTRIBUTE_REPARSE_POINT:
         raise FileNotFoundError
@@ -49,6 +62,9 @@ def _load(path: Path, directory_stat: os.stat_result) -> tuple[bytes, str]:
         doc = loads(raw.decode("utf-8-sig"))
         if not isinstance(doc, dict) or not isinstance(doc.get("nodes"), list):
             raise MapUnavailable
+        # 図は原本のバイト列で返す。表示禁止の値を含む原本は図ごと公開対象から外す。
+        if _contains_private_data(path.stem, secrets) or _contains_private_data(doc, secrets):
+            raise MapUnavailable
         name = doc.get("name")
         label = name.strip()[:MAX_NAME_CHARS] if isinstance(name, str) else ""
         label.encode("utf-8")  # API の一覧に UTF-8 で表示できる名前を使う。
@@ -57,7 +73,7 @@ def _load(path: Path, directory_stat: os.stat_result) -> tuple[bytes, str]:
     return raw, label or path.stem
 
 
-def list_maps(workspace: Path) -> list[dict[str, str]]:
+def list_maps(workspace: Path, *, secrets: tuple[str, ...] = ()) -> list[dict[str, str]]:
     directory = workspace / "architecture"
     try:
         directory_stat = _directory_stat(directory)
@@ -69,7 +85,7 @@ def list_maps(workspace: Path) -> list[dict[str, str]]:
         if path.suffix != ".json" or ID_RE.fullmatch(path.stem) is None:
             continue
         try:
-            _, name = _load(path, directory_stat)
+            _, name = _load(path, directory_stat, secrets)
         except (MapUnavailable, OSError):
             continue
         maps.append({"id": path.stem, "name": name})
@@ -78,7 +94,7 @@ def list_maps(workspace: Path) -> list[dict[str, str]]:
     return maps
 
 
-def read_map(workspace: Path, map_id: str) -> bytes | None:
+def read_map(workspace: Path, map_id: str, *, secrets: tuple[str, ...] = ()) -> bytes | None:
     if ID_RE.fullmatch(map_id) is None:
         return None
     directory = workspace / "architecture"
@@ -87,7 +103,7 @@ def read_map(workspace: Path, map_id: str) -> bytes | None:
         # 大文字小文字を区別しないファイルシステムでも、実際の名前が一致するものだけを開く。
         for path in directory.iterdir():
             if path.name == map_id + ".json":
-                raw, _ = _load(path, directory_stat)
+                raw, _ = _load(path, directory_stat, secrets)
                 return raw
     except (FileNotFoundError, NotADirectoryError):
         pass

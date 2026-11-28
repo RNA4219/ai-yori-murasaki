@@ -22,6 +22,8 @@ from __future__ import annotations
 from typing import Any, Dict, Iterable, List, Optional, Sequence
 
 from .enrichment import import_snapshot, query_snapshot  # noqa: F401  (re-exported)
+from .enrichment import EnrichmentError as SnapshotError
+from .enrichment import SnapshotReader, query_verified_snapshot
 
 
 class EnrichmentError(ValueError):
@@ -165,7 +167,7 @@ def _cve_for_finding(finding: Dict[str, Any]) -> Optional[str]:
 
 
 def _build_one(finding_id: str, kind: str, cve: Optional[str],
-               ref: Optional[Dict[str, Any]], store: Any,
+               ref: Optional[Dict[str, Any]], reader: SnapshotReader,
                now: Any) -> Dict[str, Any]:
     record = _empty_record(finding_id, kind)
 
@@ -183,9 +185,7 @@ def _build_one(finding_id: str, kind: str, cve: Optional[str],
         record["reason"] = _REASON_NOT_TESTED
         return record
 
-    # (c) Real query_snapshot call. The ref dict is passed through as-is
-    # because query_snapshot requires raw_sha256/content_digest.
-    result = query_snapshot(store, ref, cve=cve, now=now)
+    result = query_verified_snapshot(reader, ref, cve=cve, now=now, expected_kind=kind)
     query_status = result.get("status")
     mapped = _QUERY_STATUS_MAP[kind].get(query_status)
     if mapped is None:
@@ -193,7 +193,12 @@ def _build_one(finding_id: str, kind: str, cve: Optional[str],
             f"unexpected query_snapshot status {query_status!r} for kind {kind!r}")
 
     record["status"] = mapped
-    _copy_meta(record, ref)
+    meta = reader.metadata(ref["raw_sha256"])
+    if mapped not in ("corrupt", "missing"):
+        _copy_meta(record, meta)
+    elif meta and meta.get("raw_sha256") == ref["raw_sha256"] and meta.get("kind") == kind:
+        record["raw_sha256"] = meta["raw_sha256"]
+        record["content_digest"] = meta["content_digest"]
     # The stored meta is the source of truth for expires_at; never echo a
     # caller-supplied ref value that could have been forged.
     if result.get("expires_at") is not None:
@@ -235,6 +240,7 @@ def build_enrichment_records(store: Any, findings: Sequence[Dict[str, Any]],
         raise EnrichmentError("findings must be a list")
 
     refs = {"kev": kev_ref, "epss": epss_ref}
+    reader = SnapshotReader(store)
     records: List[Dict[str, Any]] = []
     for finding in findings:
         if not isinstance(finding, dict):
@@ -245,7 +251,7 @@ def build_enrichment_records(store: Any, findings: Sequence[Dict[str, Any]],
         cve = _cve_for_finding(finding)
         for kind in KINDS:
             records.append(
-                _build_one(finding_id, kind, cve, refs[kind], store, now))
+                _build_one(finding_id, kind, cve, refs[kind], reader, now))
     return records
 
 
@@ -369,28 +375,60 @@ def verify_against_meta(records: Iterable[Dict[str, Any]],
         if meta is None:
             raise EnrichmentError(
                 f"no enrichment meta for raw_sha256 {raw_sha!r}")
-        if meta.get("kind") != record.get("kind"):
-            raise EnrichmentError(
-                f"kind mismatch for raw_sha256 {raw_sha!r}")
-        if meta.get("source_url") != record.get("source_url"):
-            raise EnrichmentError(
-                f"source_url mismatch for raw_sha256 {raw_sha!r}")
-        if meta.get("content_digest") != content_digest:
-            raise EnrichmentError(
-                f"content_digest mismatch for raw_sha256 {raw_sha!r}")
+        if not _matches_record_meta(record, meta):
+            raise EnrichmentError("enrichment provenance mismatch")
 
 
-def project_enrichment(records: Iterable[Dict[str, Any]]) -> List[Dict[str, Any]]:
+def _matches_record_meta(record, meta):
+    return meta is not None and all(record.get(key) == meta.get(key) for key in ("kind", *_META_FIELDS))
+
+
+def confirmed_records(store, records):
+    """過去の報告も、現在確認できる CAS の出典と結び付くものだけを公開する。"""
+    reader = SnapshotReader(store)
+    confirmed = []
+    for record in records:
+        status = record["status"]
+        try:
+            meta = reader.metadata(record.get("raw_sha256"))
+        except SnapshotError:
+            # 索引を読めないときは残りの項目も出典未確認として扱う。
+            reader.index = {"entries": {}}
+            meta = None
+        if status in ("listed", "scored", "expired", "not_listed") and _matches_record_meta(record, meta):
+            confirmed.append(record)
+            continue
+        safe = _empty_record(record["finding_id"], record["kind"])
+        safe["cve"] = record.get("cve")
+        if status in ("not_tested", "not_applicable", "corrupt", "missing"):
+            reason = {"not_tested": _REASON_NOT_TESTED, "not_applicable": _REASON_NOT_APPLICABLE,
+                      **_REASON_BY_STATUS}[status]
+            safe.update(status=status, reason=reason)
+            if meta and status in ("corrupt", "missing") and all(
+                record.get(k) == meta.get(k) for k in ("kind", "raw_sha256", "content_digest", "expires_at")
+            ):
+                for field in ("raw_sha256", "content_digest", "expires_at"):
+                    safe[field] = meta[field]
+        else:
+            safe.update(status="not_tested", reason="記録時点のスナップショットの出典を確認できません")
+        confirmed.append(safe)
+    return confirmed
+
+
+def project_enrichment(records: Iterable[Dict[str, Any]], secrets=()) -> List[Dict[str, Any]]:
     """Project records to the operator allowlist (12 keys).
 
     Raw snapshot bodies and CAS contents are never included. There is no blue
     projection path here; blue stays a fixed withheld response elsewhere.
     """
+    from .sources import visible_http_url
     if not isinstance(records, (list, tuple)):
         raise EnrichmentError("records must be a list")
     projected: List[Dict[str, Any]] = []
     for record in records:
         if not isinstance(record, dict):
             raise EnrichmentError("record must be an object")
-        projected.append({key: record.get(key) for key in _PROJECTION_KEYS})
+        item = {key: record.get(key) for key in _PROJECTION_KEYS}
+        item["source_url"] = visible_http_url(record.get("source_url"), secrets)
+        projected.append(item)
     return projected

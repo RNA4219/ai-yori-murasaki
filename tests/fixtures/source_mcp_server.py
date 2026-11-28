@@ -2,6 +2,8 @@
 import os
 import sys
 from mcp.server import MCPServer
+from mcp.server.mcpserver import Context
+from mcp_types import ToolListChangedNotification
 
 server = MCPServer("source-fixture")
 
@@ -12,7 +14,10 @@ def issue_read(method: str, owner: str, repo: str, issue_number: int) -> str:
 
 
 @server.tool()
-def fetch(url: str) -> str:
+async def fetch(url: str, ctx: Context, notify: bool = False) -> str:
+    if notify:
+        # A request-scoped notification makes the SDK use an SSE stream for the result.
+        await ctx.session.send_notification(ToolListChangedNotification(), related_request_id=ctx.request_id)
     return "# Notion example\n\nReference from " + url
 
 

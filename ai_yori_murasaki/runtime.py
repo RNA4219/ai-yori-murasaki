@@ -13,7 +13,7 @@ from __future__ import annotations
 import hashlib
 import uuid
 from datetime import datetime, timezone
-from typing import Any
+from typing import Any, Iterator
 
 from .contracts import (
     ContractError,
@@ -21,8 +21,8 @@ from .contracts import (
     semantic_validate,
     validate,
 )
-from .jsonio import DataError, canonical, digest
-from .storage import Store
+from .jsonio import MAX_JSON_BYTES, DataError, canonical, digest, loads
+from .storage import ID_RE, Store, _safe_join, read_regular_bytes, sanitize
 
 PHASES = ("red", "blue_blind", "purple", "remediation", "reevaluation", "verify")
 PHASE_ROLE = {
@@ -108,14 +108,15 @@ class Runtime:
     # idempotency (persisted under workspace/idempotency.json)
     # ------------------------------------------------------------------ #
     def _idem_path(self):
-        return self.store.workspace / "idempotency.json"
+        return _safe_join(self.store.workspace, "idempotency.json")
 
     def _load_idem(self) -> dict:
-        path = self._idem_path()
-        if not path.exists():
+        try:
+            value = loads(read_regular_bytes(self._idem_path(), MAX_JSON_BYTES))
+        except FileNotFoundError:
             return {}
-        from .jsonio import loads
-        value = loads(path.read_bytes())
+        except (DataError, OSError) as exc:
+            raise DataError("idempotency index unreadable", "hold") from exc
         if not isinstance(value, dict):
             raise DataError("idempotency index corrupt", "hold")
         return value
@@ -204,19 +205,16 @@ class Runtime:
             if not child.is_dir():
                 continue
             run_id = child.name
-            chain = self.store.verify_chain(run_id)
-            if chain.get("result") != "PASS":
-                continue
             try:
-                events = self.store.read_events(run_id)
-            except DataError:
+                events = self.store.read_verified_events(run_id)
+            except (DataError, OSError):
                 continue
             for event in events:
                 ext = event.get("extensions") or {}
                 if not isinstance(ext, dict):
                     continue
                 snap = ext.get("campaign_snapshot")
-                if not isinstance(snap, dict):
+                if not isinstance(snap, dict) or snap.get("campaign_id") != event["campaign_id"]:
                     continue
                 ts = event.get("timestamp")
                 if not isinstance(ts, str):
@@ -246,6 +244,11 @@ class Runtime:
     # ------------------------------------------------------------------ #
     # run
     # ------------------------------------------------------------------ #
+    def _check_grant_storage(self, campaign: dict) -> None:
+        grant = {"scope": campaign["scope"], "authorization": campaign["authorization"]}
+        if not isinstance(grant["authorization"], dict) or sanitize(grant, self.store.secrets) != grant:
+            raise DataError("scope or authorization cannot be stored without redaction")
+
     def _bootstrap_run(self, campaign_id: str, phase: str, seed: int,
                        idempotency_key: str, campaign: dict,
                        evaluation_context: dict | None = None,
@@ -299,6 +302,7 @@ class Runtime:
         prior = self._check_idem("run", idempotency_key, payload)
         if prior is not None:
             return prior
+        self._check_grant_storage(campaign)
         catalog = self.store.load_catalog()
         for entry in catalog.get("runs", {}).values():
             if (entry.get("campaign_id") == campaign_id
@@ -489,9 +493,11 @@ class Runtime:
 
     def get_run(self, run_id: str) -> dict:
         manifest = self.store.load_manifest(run_id)
-        if not manifest or "run" not in manifest:
+        run = manifest.get("run") if isinstance(manifest, dict) else None
+        if (not isinstance(run, dict) or run.get("run_id") != run_id
+                or not isinstance(run.get("campaign_id"), str) or not ID_RE.fullmatch(run["campaign_id"])):
             raise DataError("run not found", "input_invalid")
-        return manifest["run"]
+        return run
 
     def list_runs(self, campaign_id: str | None = None) -> list[dict]:
         catalog = self.store.load_catalog()
@@ -500,9 +506,11 @@ class Runtime:
             if campaign_id is not None and entry.get("campaign_id") != campaign_id:
                 continue
             try:
-                result.append(self.get_run(run_id))
+                run = self.get_run(run_id)
             except DataError:
                 continue
+            if campaign_id is None or run["campaign_id"] == campaign_id:
+                result.append(run)
         return result
 
     def finish_run(self, run_id: str, completion: str,
@@ -603,17 +611,12 @@ class Runtime:
     # ------------------------------------------------------------------ #
     # state machine
     # ------------------------------------------------------------------ #
-    def _events(self, campaign_id: str) -> list[dict]:
-        events: list[dict] = []
+    def _events(self, campaign_id: str) -> Iterator[dict]:
         for run in self.list_runs(campaign_id):
-            chain = self.store.verify_chain(run["run_id"])
-            if chain.get("result") != "PASS":
-                continue
             try:
-                events.extend(self.store.read_events(run["run_id"]))
-            except DataError:
+                yield from self.store.read_verified_events(run["run_id"], campaign_id=campaign_id)
+            except (DataError, OSError):
                 continue
-        return events
 
     def _find_record(self, campaign_id: str, kind: str, predicate) -> dict | None:
         for ref in self.list_records(campaign_id, kind):
@@ -880,11 +883,13 @@ class Runtime:
                 raise DataError("cannot resume sealed run", "policy_denied")
             # Record crash/finish on the original incomplete run; the original
             # run's prior events remain preserved.
+            campaign = self.get_campaign(run["campaign_id"])
+            self._check_grant_storage(campaign)
             self.finish_run(run_id, "incomplete", "crash")
             new_run = self._bootstrap_run(
                 run["campaign_id"], run["phase"], run["seed"],
                 idem_key,
-                self.get_campaign(run["campaign_id"]),
+                campaign,
                 evaluation_context=inherited_ctx,
                 imported_source_ref=inherited_imported_source_ref)
             return new_run
@@ -961,18 +966,14 @@ class Runtime:
     def list_records(self, campaign_id: str, kind: str) -> list[str]:
         """Return record refs attached to verified campaign ledger."""
         refs: list[str] = []
-        for run in self.list_runs(campaign_id):
-            chain = self.store.verify_chain(run["run_id"])
-            if chain.get("result") != "PASS":
+        for event in self._events(campaign_id):
+            ext = event.get("extensions") or {}
+            if not isinstance(ext, dict):
                 continue
-            for event in self.store.read_events(run["run_id"]):
-                ext = event.get("extensions") or {}
-                if not isinstance(ext, dict):
-                    continue
-                if ext.get("record_kind") == kind:
-                    ref = ext.get("record_ref")
-                    if isinstance(ref, str):
-                        refs.append(ref)
+            if ext.get("record_kind") == kind:
+                ref = ext.get("record_ref")
+                if isinstance(ref, str):
+                    refs.append(ref)
         return refs
 
     def register_record(self, kind: str, value: dict,
