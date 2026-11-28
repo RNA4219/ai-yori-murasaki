@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "製品の変更履歴。資料の読み取りとモニターの公開範囲を含む変更を Task と検収に結び付ける。",
+  "summary": "製品の変更履歴。案件資料の取り込み・表示・書き出し、受付名の検索と出典・台帳の照合に関わる変更を技術検収の結果に結び付ける。",
   "deps_out": [
     "docs/NOTION-IMPORT.md",
     "docs/SOURCES.md",
@@ -42,6 +42,7 @@
     "docs/acceptance/AC-20261127-07.md",
     "docs/acceptance/AC-20261128-01.md",
     "docs/acceptance/AC-20261128-02.md",
+    "docs/acceptance/AC-20261128-03.md",
     "docs/evidence/quality-integration-20261109/README.md",
     "docs/evidence/sources-light-ui-20261109/README.md",
     "docs/evidence/wazuh-live-20261108.md",
@@ -55,6 +56,7 @@
     "docs/tasks/TASK.case-intake-11-23-2026.md",
     "docs/tasks/TASK.case-severity-11-23-2026.md",
     "docs/tasks/TASK.document-consistency-11-23-2026.md",
+    "docs/tasks/TASK.followup-security-review-11-28-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
     "docs/tasks/TASK.frontend-workspace-11-24-2026.md",
     "docs/tasks/TASK.google-monitor-sso-11-27-2026.md",
@@ -98,6 +100,7 @@
     "docs/tasks/TASK.architecture-map-11-23-2026.md",
     "docs/tasks/TASK.architecture-readability-11-27-2026.md",
     "docs/tasks/TASK.architecture-switch-11-27-2026.md",
+    "docs/tasks/TASK.followup-security-review-11-28-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
     "docs/tasks/TASK.google-monitor-sso-11-27-2026.md",
     "docs/tasks/TASK.google-sso-email-domains-11-27-2026.md",
@@ -116,13 +119,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "6fc9e3446374ae0c171113f578ef39ea30e88cdcef34cfdcfb4d7d21ad364ebc",
-  "generated_at": "00074",
+  "source_sha256": "51a3a15a3c0834b095db52b27cb91b89f8a25f8704ea186765f675094277248b",
+  "generated_at": "00075",
   "review": {
-    "reviewed_at": "2026-11-28T10:02:34+00:00",
+    "reviewed_at": "2026-11-28T11:10:28+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "6fc9e3446374ae0c171113f578ef39ea30e88cdcef34cfdcfb4d7d21ad364ebc",
-    "summary_sha256": "8d899cb65ff91d940832409746f0a9fd6a692cb5192f49256ebe0db4300c8aa9",
-    "scope": "既存資料の読み取り、モニターの索引と公開範囲に関する原文・要約・検収条件の照合。"
+    "source_sha256": "51a3a15a3c0834b095db52b27cb91b89f8a25f8704ea186765f675094277248b",
+    "summary_sha256": "f05c95a984d1f76a0d2dfeb5333871ba0da5b360da74b8daa002e4d5692ec2fb",
+    "scope": "資料の取り込み、再表示、書き出しに関する原文・要約・検収条件・リンクの照合。"
   }
 }

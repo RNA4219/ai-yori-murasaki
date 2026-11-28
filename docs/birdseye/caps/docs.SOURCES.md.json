@@ -2,7 +2,7 @@
   "id": "docs/SOURCES.md",
   "role": "doc",
   "public_api": [],
-  "summary": "資料と Obsidian 課題の取り込み、出典の閲覧と公開条件を記す。秘密設定を追加した場合の既存資料とリンクの表示を説明する。",
+  "summary": "資料と Obsidian 課題の取り込み、出典の公開条件、読み取り専用 MCP の応答上限とローカル接続を説明する。",
   "deps_out": [
     "docs/NOTION-IMPORT.md",
     "docs/PRODUCT-GUIDE.md",
@@ -19,6 +19,7 @@
     "docs/acceptance/AC-20261128-02.md",
     "docs/evidence/sources-light-ui-20261109/README.md",
     "docs/requirements/API-CONTRACTS.md",
+    "docs/tasks/TASK.followup-security-review-11-28-2026.md",
     "docs/tasks/TASK.monitor-https-11-27-2026.md",
     "docs/tasks/TASK.obsidian-issues-11-28-2026.md",
     "docs/tasks/TASK.offline-security-boundaries-11-28-2026.md",
@@ -31,13 +32,13 @@
     "tests/test_sources.py",
     "tests/test_v1_server.py"
   ],
-  "source_sha256": "84cb70b24cca210152746a8fd1dcdc5bba079d12549ed26867036b9e5b21e5be",
-  "generated_at": "00074",
+  "source_sha256": "d2269813727f002010d1bcd11fe9433ec2e1e9cde7f90f0ce3fb33a7fbdcf9d8",
+  "generated_at": "00075",
   "review": {
-    "reviewed_at": "2026-11-28T10:02:34+00:00",
+    "reviewed_at": "2026-11-28T11:10:28+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "84cb70b24cca210152746a8fd1dcdc5bba079d12549ed26867036b9e5b21e5be",
-    "summary_sha256": "e584b965340ff145f992743af1ea4544bdb180ef7235fe99381b5630f77ed18c",
-    "scope": "既存資料の読み取り、モニターの索引と公開範囲に関する原文・要約・検収条件の照合。"
+    "source_sha256": "d2269813727f002010d1bcd11fe9433ec2e1e9cde7f90f0ce3fb33a7fbdcf9d8",
+    "summary_sha256": "742615f24776b574c748e980348c4556aa4cd314a98eadc48cc8bb909fffdeb7",
+    "scope": "資料の取り込み、再表示、書き出しに関する原文・要約・検収条件・リンクの照合。"
   }
 }

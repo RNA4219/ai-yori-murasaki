@@ -1,5 +1,5 @@
 {
-  "generated_at": "00074",
+  "generated_at": "00075",
   "index_snapshot": "docs/birdseye/index.json",
   "refresh_command": "RUNBOOK.md#execute と docs/BIRDSEYE.md の PowerShell 手順を参照",
   "curation_notes": "ローカル製品、要件、検収、文書運用の入口。生成世代と原文・要約の内容確認を区別する。",
@@ -51,7 +51,7 @@
     {
       "id": "HUB.codex.md",
       "role": "navigation",
-      "reason": "依頼別の文書ハブ。Obsidian の課題取り込み、Notion の課題と観測の照合、HTTPS モニターなどの手順と検収へ案内する。",
+      "reason": "依頼別の文書ハブ。取り込み・再表示・書き出しの点検、資料の照合や HTTPS モニターの手順と検収へ案内する。",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
       "edges": [
         ".agents/skills/security-audit/SKILL.md",
@@ -101,6 +101,7 @@
         "docs/acceptance/AC-20261127-06.md",
         "docs/acceptance/AC-20261127-07.md",
         "docs/acceptance/AC-20261128-01.md",
+        "docs/acceptance/AC-20261128-03.md",
         "docs/acceptance/INDEX.md",
         "docs/acceptance/README.md",
         "docs/releases/README.md",
@@ -121,6 +122,7 @@
         "docs/tasks/TASK.case-intake-11-23-2026.md",
         "docs/tasks/TASK.case-severity-11-23-2026.md",
         "docs/tasks/TASK.document-consistency-11-23-2026.md",
+        "docs/tasks/TASK.followup-security-review-11-28-2026.md",
         "docs/tasks/TASK.frontend-review-11-22-2026.md",
         "docs/tasks/TASK.frontend-workspace-11-24-2026.md",
         "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
@@ -131,7 +133,7 @@
         "docs/workflow-adoption.md",
         "governance/policy.yaml"
       ],
-      "last_verified_at": "2026-11-28T06:43:32+00:00"
+      "last_verified_at": "2026-11-28T11:10:28+00:00"
     },
     {
       "id": "GUARDRAILS.md",
@@ -226,7 +228,7 @@
     {
       "id": "docs/tasks/README.md",
       "role": "guide",
-      "reason": "Task の運用と索引。既存資料、案件索引、Blue 表示などの作業と検収を引ける。",
+      "reason": "Task の運用と索引。案件資料の取り込み、再表示、書き出しなどの作業と検収結果を引ける。",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
       "edges": [
         "CHANGELOG.md",
@@ -269,6 +271,7 @@
         "docs/acceptance/AC-20261127-07.md",
         "docs/acceptance/AC-20261128-01.md",
         "docs/acceptance/AC-20261128-02.md",
+        "docs/acceptance/AC-20261128-03.md",
         "docs/acceptance/README.md",
         "docs/releases/README.md",
         "docs/tasks/TASK.agent-core-11-08-2026.md",
@@ -281,6 +284,7 @@
         "docs/tasks/TASK.case-intake-11-23-2026.md",
         "docs/tasks/TASK.case-severity-11-23-2026.md",
         "docs/tasks/TASK.document-consistency-11-23-2026.md",
+        "docs/tasks/TASK.followup-security-review-11-28-2026.md",
         "docs/tasks/TASK.frontend-review-11-22-2026.md",
         "docs/tasks/TASK.frontend-workspace-11-24-2026.md",
         "docs/tasks/TASK.google-monitor-sso-11-27-2026.md",
@@ -312,12 +316,12 @@
         "docs/tasks/TASK.version-011-11-08-2026.md",
         "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
       ],
-      "last_verified_at": "2026-11-28T10:02:34+00:00"
+      "last_verified_at": "2026-11-28T11:10:28+00:00"
     },
     {
       "id": "docs/acceptance/INDEX.md",
       "role": "index",
-      "reason": "技術検収の索引。公開範囲・モニター接続のローカル検収条件と、各 Task の結果を引ける。",
+      "reason": "技術検収の索引。資料の取り込み・表示、受付検索と台帳照合を含む各 Task の検収結果を引ける。",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
       "edges": [
         "docs/acceptance/AC-20261106-01.md",
@@ -357,6 +361,7 @@
         "docs/acceptance/AC-20261127-07.md",
         "docs/acceptance/AC-20261128-01.md",
         "docs/acceptance/AC-20261128-02.md",
+        "docs/acceptance/AC-20261128-03.md",
         "docs/releases/RA-20261126-01.md",
         "docs/releases/RA-20261126-02.md",
         "docs/releases/RA-20261127-01.md",
@@ -371,6 +376,7 @@
         "docs/tasks/TASK.case-intake-11-23-2026.md",
         "docs/tasks/TASK.case-severity-11-23-2026.md",
         "docs/tasks/TASK.document-consistency-11-23-2026.md",
+        "docs/tasks/TASK.followup-security-review-11-28-2026.md",
         "docs/tasks/TASK.frontend-review-11-22-2026.md",
         "docs/tasks/TASK.frontend-workspace-11-24-2026.md",
         "docs/tasks/TASK.google-monitor-sso-11-27-2026.md",
@@ -399,7 +405,7 @@
         "docs/tasks/TASK.version-011-11-08-2026.md",
         "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
       ],
-      "last_verified_at": "2026-11-28T10:02:34+00:00"
+      "last_verified_at": "2026-11-28T11:10:28+00:00"
     },
     {
       "id": "docs/RSI.md",

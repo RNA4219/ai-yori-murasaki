@@ -2,7 +2,7 @@
   "id": "HUB.codex.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "依頼別の文書ハブ。Obsidian の課題取り込み、Notion の課題と観測の照合、HTTPS モニターなどの手順と検収へ案内する。",
+  "summary": "依頼別の文書ハブ。取り込み・再表示・書き出しの点検、資料の照合や HTTPS モニターの手順と検収へ案内する。",
   "deps_out": [
     ".agents/skills/security-audit/SKILL.md",
     "AGENTS.md",
@@ -51,6 +51,7 @@
     "docs/acceptance/AC-20261127-06.md",
     "docs/acceptance/AC-20261127-07.md",
     "docs/acceptance/AC-20261128-01.md",
+    "docs/acceptance/AC-20261128-03.md",
     "docs/acceptance/INDEX.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
@@ -71,6 +72,7 @@
     "docs/tasks/TASK.case-intake-11-23-2026.md",
     "docs/tasks/TASK.case-severity-11-23-2026.md",
     "docs/tasks/TASK.document-consistency-11-23-2026.md",
+    "docs/tasks/TASK.followup-security-review-11-28-2026.md",
     "docs/tasks/TASK.frontend-review-11-22-2026.md",
     "docs/tasks/TASK.frontend-workspace-11-24-2026.md",
     "docs/tasks/TASK.incremental-monitor-11-23-2026.md",
@@ -91,13 +93,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "b3a6e56e8f0ee0b1183f319c8407d50fb201025f9b8b848c170e4d47e5631bd4",
-  "generated_at": "00072",
+  "source_sha256": "738f88003f62834fedee65d69e95b23677250a85db3a53f8d7456b6ba1079dd2",
+  "generated_at": "00075",
   "review": {
-    "reviewed_at": "2026-11-28T06:43:32+00:00",
+    "reviewed_at": "2026-11-28T11:10:28+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "b3a6e56e8f0ee0b1183f319c8407d50fb201025f9b8b848c170e4d47e5631bd4",
-    "summary_sha256": "ccd85589d888c728df5e163bee988a2ff246181eb839682837316a48a954d508",
-    "scope": "Obsidian 課題取り込みの操作・契約・検収の原文、要約、関連リンクを照合。"
+    "source_sha256": "738f88003f62834fedee65d69e95b23677250a85db3a53f8d7456b6ba1079dd2",
+    "summary_sha256": "dabecff18a7a3c3e03d45461e9434f0e560e8a594dc6030b5d050d5f689e0f01",
+    "scope": "資料の取り込み、再表示、書き出しに関する原文・要約・検収条件・リンクの照合。"
   }
 }

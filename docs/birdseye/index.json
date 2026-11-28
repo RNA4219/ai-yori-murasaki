@@ -1,5 +1,5 @@
 {
-  "generated_at": "00074",
+  "generated_at": "00075",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -15,8 +15,8 @@
     "CHANGELOG.md": {
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
-      "mtime": "00074",
-      "source_sha256": "6fc9e3446374ae0c171113f578ef39ea30e88cdcef34cfdcfb4d7d21ad364ebc"
+      "mtime": "00075",
+      "source_sha256": "51a3a15a3c0834b095db52b27cb91b89f8a25f8704ea186765f675094277248b"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -36,8 +36,8 @@
     "HUB.codex.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
-      "mtime": "00072",
-      "source_sha256": "b3a6e56e8f0ee0b1183f319c8407d50fb201025f9b8b848c170e4d47e5631bd4"
+      "mtime": "00075",
+      "source_sha256": "738f88003f62834fedee65d69e95b23677250a85db3a53f8d7456b6ba1079dd2"
     },
     "README.md": {
       "role": "overview",
@@ -70,8 +70,8 @@
     "docs/acceptance/INDEX.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
-      "mtime": "00074",
-      "source_sha256": "a09e91ffa188ccc72031b78babd09bb4d2a8141366f6f48c35a29f9a3302b7b2"
+      "mtime": "00075",
+      "source_sha256": "2f0b76fc0c2ba2308b5df22fd963cd3f72b533138eae3d531a0cbe76889920c1"
     },
     "docs/acceptance/README.md": {
       "role": "guide",
@@ -113,8 +113,8 @@
     "docs/tasks/README.md": {
       "role": "operations",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
-      "mtime": "00074",
-      "source_sha256": "e4a88e2d4d941c13859662781e0fc0eb46c7b3bfc2bb4df1e59d57e4b44a78b1"
+      "mtime": "00075",
+      "source_sha256": "4dccd5c94cb24e231dcf399f3d4728f396566d4fdf1c709b5973d8a38634f8c8"
     },
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md": {
       "role": "task",
@@ -548,8 +548,8 @@
     "docs/SOURCES.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.SOURCES.md.json",
-      "mtime": "00074",
-      "source_sha256": "84cb70b24cca210152746a8fd1dcdc5bba079d12549ed26867036b9e5b21e5be"
+      "mtime": "00075",
+      "source_sha256": "d2269813727f002010d1bcd11fe9433ec2e1e9cde7f90f0ce3fb33a7fbdcf9d8"
     },
     "docs/tasks/TASK.sources-light-ui-11-09-2026.md": {
       "role": "task",
@@ -836,8 +836,8 @@
     "docs/requirements/ARCHITECTURE-MAP-SELECTION.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.requirements.ARCHITECTURE-MAP-SELECTION.md.json",
-      "mtime": "00070",
-      "source_sha256": "504feeb4aa98c258ac0a4cc1bf3fd0c2ac776ece6dbbf3ebb8dfbe7ab223edef"
+      "mtime": "00075",
+      "source_sha256": "3aeea78a0f8ff286fe45c6a46df7d7f4185c5b086eef4e3ef0f049a97d33b386"
     },
     "docs/tasks/TASK.architecture-switch-11-27-2026.md": {
       "role": "doc",
@@ -940,6 +940,18 @@
       "caps": "docs/birdseye/caps/docs.tasks.TASK.offline-security-boundaries-11-28-2026.md.json",
       "mtime": "00074",
       "source_sha256": "308a51d78c9abca38fd51742f87d6b8c7c755f7852f7193c4a57a070829ea9de"
+    },
+    "docs/acceptance/AC-20261128-03.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261128-03.md.json",
+      "mtime": "00075",
+      "source_sha256": "49e158911048f7eebde13694812227e93aceba9a41b92bc0147037453b3a2a48"
+    },
+    "docs/tasks/TASK.followup-security-review-11-28-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.followup-security-review-11-28-2026.md.json",
+      "mtime": "00075",
+      "source_sha256": "8d655f2ea6c97cf43d379c3532e4ef27d6f2c43411599df05ae95c95390b641e"
     }
   },
   "edges": [
@@ -3718,6 +3730,54 @@
     [
       "docs/tasks/TASK.offline-security-boundaries-11-28-2026.md",
       "docs/acceptance/AC-20261128-02.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/acceptance/AC-20261128-03.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.followup-security-review-11-28-2026.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/acceptance/AC-20261128-03.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/tasks/TASK.followup-security-review-11-28-2026.md"
+    ],
+    [
+      "docs/acceptance/AC-20261128-03.md",
+      "docs/tasks/TASK.followup-security-review-11-28-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261128-03.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.followup-security-review-11-28-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261128-03.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.followup-security-review-11-28-2026.md"
+    ],
+    [
+      "docs/tasks/TASK.followup-security-review-11-28-2026.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "docs/tasks/TASK.followup-security-review-11-28-2026.md",
+      "docs/SOURCES.md"
+    ],
+    [
+      "docs/tasks/TASK.followup-security-review-11-28-2026.md",
+      "docs/acceptance/AC-20261128-03.md"
     ]
   ]
 }

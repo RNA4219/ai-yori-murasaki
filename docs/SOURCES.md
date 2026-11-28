@@ -82,6 +82,8 @@ aym sources import-mcp --provider github --config-file './github-mcp.json' --too
 
 GitHubのStreamable HTTP接続設定例。`AYM_GITHUB_MCP_TOKEN` には操作者が利用権限を持つ認証値を設定する。設定ファイルに保存するのは環境変数名だけにする。
 
+HTTP接続では非圧縮の応答を要求し、JSON・SSE・エラーの各応答を1,600 KiBまで読み取る。保存する資料本文の上限は256 KiB。localhostと127.0.0.1には環境プロキシを経由せず直接接続する。
+
 ```json
 {"transport":"http","url":"https://api.githubcopilot.com/mcp/readonly","bearer_env":"AYM_GITHUB_MCP_TOKEN"}
 ```
