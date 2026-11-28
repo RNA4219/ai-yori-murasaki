@@ -1,6 +1,7 @@
 """合成した CSV で課題スナップショットの永続化と再試行を確認する。"""
 import csv
 from concurrent.futures import ThreadPoolExecutor
+import hashlib
 import json
 from pathlib import Path
 import tempfile
@@ -80,6 +81,23 @@ class OfflineNotionCsvTests(unittest.TestCase):
         issue, = campaign_issues(self.store, self.cid).values()
         self.assertEqual(issue["title"], "[REDACTED]")
         self.assertEqual(read_drift(self.runtime, self.cid)["items"][0]["title"], "[REDACTED]")
+
+    def test_legacy_title_is_projected_from_public_row_without_rewriting_evidence(self):
+        """旧形式の記録でも、表示可能な元行から確認できない見出しを再掲しない。"""
+        key = "archived-item"
+        fid = "notion-" + hashlib.sha256(key.encode()).hexdigest()[:48]
+        record = self.store.put_object({"record": {"password": "[REDACTED]", "棚卸キー": key}})
+        batch = self.store.put_object({"kind": "notion_csv/1", "campaign_id": self.cid, "run_id": self.rid,
+                "items": [{"finding_id": fid, "title": "架空の旧見出し", "source_record_ref": record}]})
+        self.runtime.record_event(self.rid, "state_captured", "orchestrator", evidence_refs=(batch,),
+                                  extensions={"notion_csv_ref": batch})
+        events = self.store.read_verified_events(self.rid)
+        self.assertEqual(campaign_issues(self.store, self.cid)[fid]["title"], "[REDACTED]")
+        self.assertEqual(read_drift(self.runtime, self.cid)["items"][0]["title"], "[REDACTED]")
+        self.write([("架空の旧見出し", key)], ("password", "棚卸キー"))
+        self.assertEqual(self.ingest()["existing_count"], 1)
+        self.assertEqual(self.store.read_verified_events(self.rid), events)
+        self.assertEqual(self.store.get_object(batch)["items"][0]["title"], "架空の旧見出し")
 
     def test_interrupted_batch_remains_invisible_and_can_be_retried(self):
         self.write([("A", "1", "", ""), ("B", "2", "", "")])

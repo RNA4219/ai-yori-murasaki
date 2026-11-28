@@ -18,6 +18,8 @@ from .monitor_summary import CampaignSummary, summarize_run
 from .storage import ID_RE, Store, _is_reparse, _safe_join
 
 PAGE_SIZE = 50
+_PROJECTION_VERSION = 5
+_BLUE_CASE_FIELDS = ("campaign_id", "intent_id", "status", "created_at", "last_run_at")
 _COUNT_FIELDS = ("finding_count", "finding_count_status", "verified_run_count", "unverified_run_count")
 
 
@@ -100,7 +102,9 @@ def _pack(part: CampaignSummary) -> str:
         "snapshot_at": part.snapshot_at, "last_run_at": part.last_run_at,
         "verified_runs": part.verified_runs, "pending_runs": part.pending_runs,
         "csv_only_failures": part.csv_only_failures,
-        "findings": {fid: _project_finding(value) for fid, value in part.findings.items()},
+        "private_finding_ids": sorted(part.private_finding_ids),
+        # 正規の題名（最長512文字）は表示前に切らず、現在の秘密値をマスクしてから抜粋する。
+        "findings": {fid: _project_finding(value, limit=512) for fid, value in part.findings.items()},
     }, ensure_ascii=False)
 
 
@@ -109,6 +113,12 @@ def _combined_summary(parts):
     for data in parts:
         summary.include(CampaignSummary(**json.loads(data)))
     return summary
+
+
+def _needs_projection_refresh(data):
+    # 旧run_cacheの簡略化された検知には、原典の識別情報と題名のマスク根拠が残っていない。
+    part = json.loads(data)
+    return bool(part["findings"]) and "private_finding_ids" not in part
 
 
 def _blue_counts(cid, summary):
@@ -169,13 +179,13 @@ def _refresh(store, db, full):
     if version == 0:
         _setup(db)
         full = True
-    elif version not in (1, 2, 3, 4):
+    elif version not in range(1, _PROJECTION_VERSION + 1):
         raise DataError("未知のモニター索引形式です")
     if version < 2:
         db.execute("CREATE TABLE case_series (cid TEXT PRIMARY KEY, family TEXT, moment TEXT, dated INTEGER)")
         db.execute("CREATE INDEX series_by_time ON case_series(family, moment, cid)")
-    if version < 4:
-        db.execute("PRAGMA user_version = 4")
+    if version < _PROJECTION_VERSION:
+        db.execute(f"PRAGMA user_version = {_PROJECTION_VERSION}")
     hints = _hints(db, store, full)
     runs = _safe_join(store.workspace, "runs")
     objects = _safe_join(store.workspace, "objects")
@@ -189,6 +199,10 @@ def _refresh(store, db, full):
     else:
         previous = {rid: (cid, inputs, refs) for rid, cid, inputs, refs in
                     db.execute("SELECT rid, cid, inputs, objects FROM run_cache")}
+    refresh_projection = set()
+    if not full and version < _PROJECTION_VERSION:
+        refresh_projection = {rid for rid, part in db.execute("SELECT rid, part FROM run_cache")
+                              if _needs_projection_refresh(part)}
     affected = set()
     verified = 0
     object_stamps = {}
@@ -205,7 +219,8 @@ def _refresh(store, db, full):
         files = run_file_stamps(runs / rid)
         inputs = json.dumps([hints.get(rid), files])
         old = previous.pop(rid, None)
-        if old and inputs == old[1] and (old[2] == "{}" or old[2] == refs_stamp(json.loads(old[2]))):
+        if (old and rid not in refresh_projection and inputs == old[1]
+                and (old[2] == "{}" or old[2] == refs_stamp(json.loads(old[2])))):
             continue
         refs = set()
         cid, part = summarize_run(store, rid, hints.get(rid), refs, strict_io=True)
@@ -220,7 +235,7 @@ def _refresh(store, db, full):
         affected.add(cid)
         db.execute("DELETE FROM run_cache WHERE rid = ?", (rid,))
 
-    if full or version < 4:
+    if full or version < _PROJECTION_VERSION:
         db.execute("DELETE FROM case_series")
         db.execute("DELETE FROM cases")
         rows = db.execute("SELECT cid, part FROM run_cache ORDER BY cid, rid")
@@ -273,20 +288,22 @@ def read_page(store: Store, page: int, view: str) -> dict | None:
         for data, excerpt in db.execute(query, (PAGE_SIZE, (page-1)*PAGE_SIZE)):
             row = json.loads(data)
             blue_counts = row.pop("blue_counts", None)
+            if version != _PROJECTION_VERSION:
+                from .monitor_detail import IndexUpdateRequired
+                if view == "operator" or version not in range(1, _PROJECTION_VERSION):
+                    raise IndexUpdateRequired("案件索引の公開項目を更新してください")
+                parts = [part for part, in db.execute("SELECT part FROM run_cache WHERE cid = ? ORDER BY rid",
+                                                       (row["campaign_id"],))]
+                if not parts or any(_needs_projection_refresh(part) for part in parts):
+                    raise IndexUpdateRequired("Blue の案件集計を更新してください")
+                blue_counts = _blue_counts(row["campaign_id"], _combined_summary(parts))
             if view == "operator":
-                row["finding_excerpt"] = json.loads(excerpt)
+                from .server import _project_finding
+                row["finding_excerpt"] = [_project_finding(item, store.secrets) for item in json.loads(excerpt)]
             else:
-                if version in (1, 2, 3):
-                    # 更新前の世代も同じ読み取りトランザクション内の保存済み集計から回答する。
-                    cid = row["campaign_id"]
-                    parts = db.execute("SELECT part FROM run_cache WHERE cid = ? ORDER BY rid", (cid,))
-                    blue_counts = _blue_counts(cid, _combined_summary(map(itemgetter(0), parts)))
-                if version != 0:
-                    if version not in (1, 2, 3, 4) or not _valid_blue_counts(blue_counts):
-                        from .monitor_detail import IndexUpdateRequired
-                        raise IndexUpdateRequired("Blue の案件集計を更新してください")
-                    row.update(blue_counts)
-                row.pop("unverified_run_ids", None)
-                row.pop("severity_counts", None)
+                if not _valid_blue_counts(blue_counts):
+                    from .monitor_detail import IndexUpdateRequired
+                    raise IndexUpdateRequired("Blue の案件集計を更新してください")
+                row = {**{key: row[key] for key in _BLUE_CASE_FIELDS}, **blue_counts}
             campaigns.append(row)
     return {"campaigns": campaigns, "page": page, "pages": pages, "total": total, "checked_at": checked_at}

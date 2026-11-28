@@ -23,7 +23,7 @@ from pathlib import Path
 from importlib import resources
 from .drift_policy import validate_drift_policy
 from .jsonio import DataError
-from .storage import sanitize
+from .storage import _assert_no_ancestor_reparse, read_regular_bytes, sanitize
 from .tracker_source import tracker_mapping, tracker_source
 from urllib.parse import urlsplit
 from typing import Any
@@ -222,11 +222,9 @@ def load_mapping(store) -> dict:
     """Workspaceの明示設定が壊れていれば既定にフォールバックしない。"""
     path = store.workspace / "decision-view" / "mapping.json"
     try:
-        if path.parent.is_symlink() or path.is_symlink():
-            raise ValueError("mapping symlink")
+        _assert_no_ancestor_reparse(path)
         if path.exists():
-            with path.open("rb") as stream:
-                raw = stream.read(1024 * 1024 + 1)
+            raw = read_regular_bytes(path, 1024 * 1024)
         else:
             raw = resources.files("ai_yori_murasaki").joinpath("decision_mapping.json").read_bytes()
         if len(raw) > 1024 * 1024:

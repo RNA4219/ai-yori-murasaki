@@ -138,6 +138,8 @@ test('リンクは http(s) だけ、認証情報つきは出さない', () => {
 test('Obsidian のノート専用リンクと通常のリンクを区別する', () => {
   const uri = 'obsidian://open?vault=Demo&file=Review%2FNotes';
   assert.equal(D.obsidianNoteLink({source: 'obsidian', source_uri: uri}), uri);
+  const dotNote = 'obsidian://open?vault=Demo&file=Review%2F.obsidian';
+  assert.equal(D.obsidianNoteLink({source: 'obsidian', source_uri: dotNote}), dotNote);
   assert.equal(D.safeLink(uri), null);
   assert.equal(D.obsidianNoteLink({source: 'notion', source_uri: uri}), null);
   for (const candidate of [

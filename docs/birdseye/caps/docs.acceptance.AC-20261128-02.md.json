@@ -1,0 +1,28 @@
+{
+  "id": "docs/acceptance/AC-20261128-02.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.offline-security-boundaries-11-28-2026.md"
+  ],
+  "deps_out": [
+    "docs/PRODUCT-GUIDE.md",
+    "docs/SOURCES.md",
+    "docs/tasks/TASK.offline-security-boundaries-11-28-2026.md"
+  ],
+  "summary": "旧索引・資料の出典・Blue 表示・ローカル入力と接続について、最終コミットで確認する検収条件を記す。",
+  "source_sha256": "c160cd9c2f9a7a4293bf42b6a47c3c0b9ad3a800a36585e60c6c8dd78455a5e5",
+  "generated_at": "00074",
+  "review": {
+    "reviewed_at": "2026-11-28T10:02:34+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "c160cd9c2f9a7a4293bf42b6a47c3c0b9ad3a800a36585e60c6c8dd78455a5e5",
+    "summary_sha256": "37a8396654e79f50045cf38c4e1a38f3ddbeb558076ae6029a708ecb9af0bc79",
+    "scope": "既存資料の読み取り、モニターの索引と公開範囲に関する原文・要約・検収条件の照合。"
+  }
+}

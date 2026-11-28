@@ -522,7 +522,8 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     var keys = Array.from(u.searchParams.keys());
     var vault = u.searchParams.get('vault'), file = u.searchParams.get('file');
     if (keys.length !== 2 || !vault || !file || /[\\/:\u0000-\u001f\u007f]/.test(vault) || /[\\:\u0000-\u001f\u007f]/.test(file)) return null;
-    if (file.split('/').some(function (part) { return !part || part === '.' || part === '..' || part.toLowerCase() === '.obsidian'; })) return null;
+    var parts = [vault].concat(file.split('/'));
+    if (parts.some(function (part, i) { return !part || part === '.' || part === '..' || (i < parts.length - 1 && part.toLowerCase() === '.obsidian'); })) return null;
     return u.href;
   }
 

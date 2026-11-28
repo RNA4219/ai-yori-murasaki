@@ -80,6 +80,37 @@ class BlueCampaignCountsTests(unittest.TestCase):
                 self.assertEqual(row["unverified_run_count"], 0)
             self.assertNotEqual(self.row("?page=1")["finding_count_status"], "complete")
 
+    def test_legacy_tracker_properties_are_private_in_both_lists(self):
+        self.runtime.register_record("finding", {
+            "schema_version": "1.0.0", "campaign_id": self.cid, "run_id": self.rid,
+            "finding_id": "legacy-item", "source": "benchmark_lab", "severity": "info",
+            "title": "架空の旧形式課題", "references": [],
+            "location": {"path": "fixture", "line": None, "column": None},
+            "extensions": {"notion": {"properties": {"進捗": "Open"}}},
+        }, self.rid)
+        self.assert_counts(0, 9, "complete")
+        build_index(self.store)
+        self.assert_counts(0, 9, "complete")
+
+    def test_rebuilds_older_projection_before_serving_excerpt_and_counts(self):
+        build_index(self.store)
+        path = _index_path(self.store)
+        with closing(sqlite3.connect(path)) as db, db:
+            part = json.loads(db.execute("SELECT part FROM run_cache WHERE rid=?", (self.rid,)).fetchone()[0])
+            del part["private_finding_ids"]
+            first = next(iter(part["findings"].values()))
+            first["title"] = "旧索引の表示用題名"
+            db.execute("UPDATE run_cache SET part=? WHERE rid=?", (json.dumps(part), self.rid))
+            db.execute("UPDATE cases SET excerpt=? WHERE id=?", (json.dumps([first]), self.cid))
+            db.execute("PRAGMA user_version=4")
+        for suffix in ("?page=1", "?page=1&view=blue"):
+            status, _, body = handle_request(self.runtime, "GET", "/api/campaigns" + suffix)
+            self.assertEqual((status, json.loads(body)), (409, {"error": "monitor_index_required"}))
+        self.assertEqual(build_index(self.store)["rechecked_runs"], 1)
+        self.assertNotIn("旧索引の表示用題名", [item["title"] for item in self.row("?page=1")["finding_excerpt"]])
+        self.assert_counts(0, 8, "complete")
+        self.assertEqual(build_index(self.store)["rechecked_runs"], 0)
+
     def test_damaged_blue_counts_do_not_fall_back_to_the_operator_total(self):
         build_index(self.store)
         with closing(sqlite3.connect(_index_path(self.store))) as db:

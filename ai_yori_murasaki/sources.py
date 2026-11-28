@@ -2,42 +2,61 @@
 from datetime import datetime, timezone
 from dataclasses import dataclass
 import hashlib
-import os
 from pathlib import Path
-import stat
-from urllib.parse import quote, urlsplit, parse_qs
+from urllib.parse import parse_qs, quote, unquote, unquote_plus, urlsplit
 import re
 
-from .jsonio import DataError, canonical, digest, read_json
+from .jsonio import MAX_JSON_BYTES, DataError, canonical, digest, loads
 from .observations import local_path
-from .storage import _assert_no_ancestor_reparse, sanitize
+from .storage import SECRET_KEYS, _assert_no_ancestor_reparse, read_regular_bytes, sanitize
 
 PROVIDERS = ("obsidian", "notion", "github")
 MAX_TEXT = 256 * 1024
 MAX_DOCUMENTS = 1000
+_CREDENTIAL_PARAMS = SECRET_KEYS | {"auth", "key", "access_token", "client_secret",
+                                    "refresh_token", "id_token"}
 
 
-def safe_url(value):
+def safe_url(value, secrets=()):
     if not isinstance(value, str) or not 1 <= len(value) <= 4096:
         raise DataError("invalid source URL")
     if any(ord(c) <= 32 or ord(c) == 127 for c in value) or "\\" in value:
         raise DataError("invalid source URL")
-    url = urlsplit(value)
+    try:
+        url = urlsplit(value)
+    except ValueError as exc:
+        raise DataError("invalid source URL") from exc
+    if secrets:
+        decoded = unquote(value)
+        query = unquote_plus(url.query)
+        if any(secret in value or secret in decoded or secret in query for secret in secrets):
+            raise DataError("registered secret in source URL")
     if url.username or url.password:
         raise DataError("source URL credentials forbidden")
     if url.scheme == "https" and url.hostname:
-        if any(k.lower() in {"token", "key", "api_key", "access_token", "auth"}
-               for k in parse_qs(url.query)):
+        if any(k.casefold().replace("-", "_") in _CREDENTIAL_PARAMS
+               for part in (url.query, url.fragment) for k in parse_qs(part)):
             raise DataError("credentials in source URL forbidden")
         return value
     if url.scheme == "obsidian" and url.netloc == "open":
-        args = parse_qs(url.query)
-        if (set(args) == {"vault", "file"} and all(len(v) == 1 for v in args.values())
-                and not any(c in args["file"][0] for c in ("\\", ":"))
-                and not args["file"][0].startswith("/")
-                and ".." not in args["file"][0].split("/")):
-            return value
+        args = parse_qs(url.query, keep_blank_values=True)
+        if not url.path and not url.fragment and set(args) == {"vault", "file"} and all(len(v) == 1 for v in args.values()):
+            vault, file = args["vault"][0], args["file"][0]
+            parts = [vault, *file.split("/")]
+            # file の末尾は拡張子を外したノート名。設定フォルダーと同名のノートもある。
+            if ("/" not in vault and all(part.casefold() != ".obsidian" for part in parts[:-1])
+                    and all(part and part not in (".", "..") and not re.search(r"[\\:\x00-\x1f\x7f]", part)
+                            for part in parts)):
+                return value
     raise DataError("source links must be HTTPS or Obsidian note links")
+
+
+def visible_url(value, secrets):
+    # 読み取りでは、現行の条件を満たさない過去のリンクだけを伏せる。
+    try:
+        return safe_url(value, secrets)
+    except DataError:
+        return None
 
 
 class Sources:
@@ -47,7 +66,7 @@ class Sources:
 
     def _catalog(self):
         _assert_no_ancestor_reparse(self.path)
-        data = read_json(self.path) if self.path.exists() else {"documents": {}}
+        data = loads(read_regular_bytes(self.path, MAX_JSON_BYTES)) if self.path.exists() else {"documents": {}}
         if not isinstance(data, dict) or set(data) != {"documents"} or not isinstance(data["documents"], dict):
             raise DataError("source catalog invalid")
         if len(data["documents"]) > MAX_DOCUMENTS:
@@ -57,14 +76,14 @@ class Sources:
     def add(self, *, provider, source_url, title, body, links=(), transport="file"):
         if provider not in PROVIDERS or transport not in ("file", "mcp"):
             raise DataError("invalid source provider/transport")
-        source_url = safe_url(source_url)
+        source_url = safe_url(source_url, self.store.secrets)
         if not isinstance(title, str) or not 1 <= len(title) <= 512:
             raise DataError("source title must be 1..512 characters")
         if not isinstance(body, str) or not body.strip() or len(body.encode("utf-8")) > MAX_TEXT:
             raise DataError("source text empty or too large")
         if not isinstance(links, (list, tuple)) or len(links) > 32:
             raise DataError("too many source links")
-        links = list(dict.fromkeys(safe_url(link) for link in links))
+        links = list(dict.fromkeys(safe_url(link, self.store.secrets) for link in links))
         # Redact registered secrets before computing IDs and comparing versions.
         content = sanitize({"provider": provider, "source_url": source_url,
                             "title": title, "body": body, "links": links}, self.store.secrets)
@@ -98,10 +117,11 @@ class Sources:
             record = self.store.get_object(ref)
             if record.get("document_id") != document_id or record.get("status") != "reference_only":
                 raise DataError("source document mismatch")
-            safe_url(record["source_url"])
-            for link in record["links"]:
-                safe_url(link)
-            return {**record, "ref": ref}
+            secrets = self.store.secrets
+            return {**record, "ref": ref, "title": sanitize(record["title"], secrets),
+                    "body": sanitize(record["body"], secrets),
+                    "source_url": visible_url(record["source_url"], secrets),
+                    "links": [url for link in record["links"] if (url := visible_url(link, secrets))]}
 
     def list(self):
         with self.store.lock():
@@ -120,26 +140,10 @@ class Sources:
 
 
 def _read_source_bytes(path):
-    _assert_no_ancestor_reparse(path)
     try:
-        entry = path.lstat()
-        if not stat.S_ISREG(entry.st_mode) or entry.st_size > MAX_TEXT:
-            raise DataError("source text missing or too large")
-        flags = os.O_RDONLY | getattr(os, "O_BINARY", 0) | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
-        with os.fdopen(os.open(path, flags), "rb") as stream:
-            _assert_no_ancestor_reparse(path)
-            opened = os.fstat(stream.fileno())
-            if not os.path.samestat(entry, opened) or not stat.S_ISREG(opened.st_mode):
-                raise DataError("source file changed before reading")
-            raw = stream.read(MAX_TEXT + 1)
-            _assert_no_ancestor_reparse(path)
-            if not os.path.samestat(opened, path.lstat()):
-                raise DataError("source file changed while reading")
+        return read_regular_bytes(path, MAX_TEXT)
     except OSError as exc:
         raise DataError("source file unavailable") from exc
-    if len(raw) > MAX_TEXT:
-        raise DataError("source text too large")
-    return raw
 
 
 def _decode_text(raw):
@@ -150,7 +154,7 @@ def _decode_text(raw):
 
 
 def read_text(path):
-    return _decode_text(_read_source_bytes(Path(path)))
+    return _decode_text(_read_source_bytes(local_path(path)))
 
 
 @dataclass(frozen=True)

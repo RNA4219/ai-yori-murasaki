@@ -3,14 +3,13 @@ import csv
 import hashlib
 import io
 import re
-from urllib.parse import unquote
 
 from .assessment import _active_run, _validate_context
 from .decision_view import load_mapping
 from .jsonio import DataError, MAX_JSON_BYTES
 from .observations import _read_local_json, _run_events, local_path
-from .storage import SHA_RE, sanitize
-from .sources import safe_url
+from .storage import SHA_RE, read_regular_bytes, sanitize
+from .sources import safe_url, visible_url
 
 
 _BATCHES = {"notion": ("notion_csv_ref", "notion_csv/1"),
@@ -23,12 +22,10 @@ def has_issue_batch(extensions):
 
 def _read_csv(path, fields):
     source = local_path(path)
-    if not source.is_file():
-        raise DataError("Notion input must be a regular CSV file")
-    with source.open("rb") as stream:
-        raw = stream.read(MAX_JSON_BYTES + 1)
-    if len(raw) > MAX_JSON_BYTES:
-        raise DataError("Notion CSV exceeds 16 MiB")
+    try:
+        raw = read_regular_bytes(source, MAX_JSON_BYTES)
+    except OSError as exc:
+        raise DataError("Notion CSV unavailable") from exc
     try:
         reader = csv.reader(io.StringIO(raw.decode("utf-8-sig"), newline=""), strict=True)
         header = next(reader, [])
@@ -68,7 +65,7 @@ def load_issue_row(store, ref):
         row = store.get_object(ref).get("record")
         if not isinstance(row, dict) or not row or not all(isinstance(v, str) for v in row.values()):
             raise DataError("invalid tracker source record")
-        return row
+        return sanitize(row, store.secrets)
     except (OSError, DataError) as exc:
         raise DataError("tracker source record unavailable", "hold") from exc
 
@@ -96,10 +93,10 @@ def batch_findings(store, event, tracked_refs=None):
         raise DataError("invalid issue batch")
     origin = {}
     if provider == "obsidian":
-        uri = safe_url(batch.get("source_uri"))
-        if not uri.startswith("obsidian://open?"):
+        uri = batch.get("source_uri")
+        if not isinstance(uri, str) or not uri.startswith("obsidian://open?"):
             raise DataError("invalid Obsidian source")
-        origin["source_uri"] = uri
+        origin["source_uri"] = visible_url(uri, store.secrets) or ""
     result = {}
     for item in batch["items"]:
         if not isinstance(item, dict):
@@ -111,7 +108,14 @@ def batch_findings(store, event, tracked_refs=None):
             raise DataError("invalid tracker issue")
         if tracked_refs is not None:
             tracked_refs.add(row_ref)
-            load_issue_row(store, row_ref)
+        title = sanitize(title, store.secrets)
+        if provider == "notion" or tracked_refs is not None:
+            row = load_issue_row(store, row_ref)
+            if provider == "notion":
+                # 旧CSVは題名の列名を保存せず、マスク前の値を別に保持していた。
+                # 現在公開できる元行の値で裏付けられた題名だけを投影する。
+                if not any(value.strip() == title for value in row.values()):
+                    title = "[REDACTED]"
         result[fid] = {
             "finding_id": fid, "title": title, "source": provider,
             "campaign_id": event["campaign_id"], "run_id": event["run_id"],
@@ -146,11 +150,9 @@ def import_issue_rows(runtime, campaign_id, run_id, context_path, *, provider, s
     event_key, kind = _BATCHES[provider]
     origin = {}
     if provider == "obsidian":
-        uri = safe_url(source_uri)
+        uri = safe_url(source_uri, store.secrets)
         if not uri.startswith("obsidian://open?"):
             raise DataError("invalid Obsidian source")
-        if store.secrets and sanitize(unquote(uri), store.secrets) != unquote(uri):
-            raise DataError("registered secret in source location")
         origin["source_uri"] = uri
     context = _read_local_json(context_path)
     if not isinstance(context, dict):
@@ -168,7 +170,7 @@ def import_issue_rows(runtime, campaign_id, run_id, context_path, *, provider, s
             if prior:
                 metadata = prior["extensions"][provider]
                 ref = metadata["source_record_ref"]
-                if (store.get_object(ref) != sanitize(record, store.secrets)
+                if (load_issue_row(store, ref) != sanitize(row, store.secrets)
                         or prior["title"] != sanitize(title, store.secrets)
                         or metadata.get("source_uri") != origin.get("source_uri")):
                     raise DataError("issue key already exists with different data")

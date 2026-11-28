@@ -3,6 +3,7 @@ from dataclasses import dataclass, field, replace
 
 from .jsonio import DataError
 from .storage import ID_RE, SHA_RE, Store
+from .tracker_source import tracker_source
 
 
 @dataclass
@@ -15,6 +16,7 @@ class CampaignSummary:
     findings: dict[str, dict] = field(default_factory=dict)
     remediation_refs: list[str] = field(default_factory=list)
     csv_only_failures: list[str] = field(default_factory=list)
+    private_finding_ids: set[str] = field(default_factory=set)
 
     @property
     def status(self) -> str:
@@ -35,10 +37,10 @@ class CampaignSummary:
         # 索引には同じ案件の担当者用とBlue用の集計を残す。CSVだけの欠損はBlueの実行数にも含めない。
         excluded = set(self.csv_only_failures)
         return replace(self, findings={fid: item for fid, item in self.findings.items()
-                                       if item.get("source") not in ("notion", "obsidian")},
+                                       if fid not in self.private_finding_ids},
                        verified_runs=self.verified_runs + len(excluded),
                        pending_runs=[rid for rid in self.pending_runs if rid not in excluded],
-                       csv_only_failures=[])
+                       csv_only_failures=[], private_finding_ids=set())
 
     def include(self, part: "CampaignSummary") -> None:
         if part.campaign and part.snapshot_at >= self.snapshot_at:
@@ -47,6 +49,7 @@ class CampaignSummary:
         self.verified_runs += part.verified_runs
         self.pending_runs.extend(part.pending_runs)
         self.csv_only_failures.extend(part.csv_only_failures)
+        self.private_finding_ids.update(part.private_finding_ids)
         for fid, finding in part.findings.items():
             self.findings.setdefault(fid, finding)
         self.remediation_refs.extend(part.remediation_refs)
@@ -68,7 +71,9 @@ def campaign_summaries(store: Store, *, catalog: dict | None = None, on_verified
         cid, part = summarize_run(store, rid, (catalog.get(rid) or {}).get("campaign_id"),
                                   on_verified=on_verified, include_csv=include_csv)
         summaries.setdefault(cid, CampaignSummary()).include(part)
-    return summaries
+    if include_csv:
+        return summaries
+    return {cid: summary.diagnostics_only() for cid, summary in summaries.items()}
 
 
 def summarize_run(store: Store, rid: str, hint: str | None,
@@ -116,6 +121,7 @@ def summarize_run(store: Store, rid: str, hint: str | None,
             from .notion_import import batch_findings
             try:
                 for fid, issue in batch_findings(store, event, finding_refs).items():
+                    summary.private_finding_ids.add(fid)
                     summary.findings.setdefault(fid, issue)
             except (DataError, unavailable_io):
                 csv_complete = False
@@ -129,6 +135,10 @@ def summarize_run(store: Store, rid: str, hint: str | None,
             fid = finding.get("finding_id")
             if not isinstance(fid, str) or not fid or finding.get("campaign_id", cid) != cid:
                 raise DataError("invalid finding")
+            extensions = finding.get("extensions")
+            if (finding.get("source") in ("notion", "obsidian")
+                    or (isinstance(extensions, dict) and tracker_source(finding)[0])):
+                summary.private_finding_ids.add(fid)
             summary.findings.setdefault(fid, finding)
         except (DataError, unavailable_io):
             complete = False

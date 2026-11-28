@@ -2,7 +2,7 @@
   "id": "docs/SOURCES.md",
   "role": "doc",
   "public_api": [],
-  "summary": "資料の取り込みと出典の閲覧、Obsidian のチェックボックスを案件の課題に登録して原本を開く手順。入力の制約と再送時の動作を記す。",
+  "summary": "資料と Obsidian 課題の取り込み、出典の閲覧と公開条件を記す。秘密設定を追加した場合の既存資料とリンクの表示を説明する。",
   "deps_out": [
     "docs/NOTION-IMPORT.md",
     "docs/PRODUCT-GUIDE.md",
@@ -16,10 +16,12 @@
     "README.md",
     "docs/acceptance/AC-20261109-02.md",
     "docs/acceptance/AC-20261128-01.md",
+    "docs/acceptance/AC-20261128-02.md",
     "docs/evidence/sources-light-ui-20261109/README.md",
     "docs/requirements/API-CONTRACTS.md",
     "docs/tasks/TASK.monitor-https-11-27-2026.md",
     "docs/tasks/TASK.obsidian-issues-11-28-2026.md",
+    "docs/tasks/TASK.offline-security-boundaries-11-28-2026.md",
     "docs/tasks/TASK.sources-light-ui-11-09-2026.md"
   ],
   "risks": [
@@ -29,13 +31,13 @@
     "tests/test_sources.py",
     "tests/test_v1_server.py"
   ],
-  "source_sha256": "c637d8583581fd2654d3b7e05c4ab6ada025538cd8393f4bcb77d200b7b830ff",
-  "generated_at": "00072",
+  "source_sha256": "84cb70b24cca210152746a8fd1dcdc5bba079d12549ed26867036b9e5b21e5be",
+  "generated_at": "00074",
   "review": {
-    "reviewed_at": "2026-11-28T06:43:32+00:00",
+    "reviewed_at": "2026-11-28T10:02:34+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "c637d8583581fd2654d3b7e05c4ab6ada025538cd8393f4bcb77d200b7b830ff",
-    "summary_sha256": "5ef656479855ad68e04156ba99b7dda32f32ffc615e800c415a5ca8f19e043d4",
-    "scope": "Obsidian 課題取り込みの操作・契約・検収の原文、要約、関連リンクを照合。"
+    "source_sha256": "84cb70b24cca210152746a8fd1dcdc5bba079d12549ed26867036b9e5b21e5be",
+    "summary_sha256": "e584b965340ff145f992743af1ea4544bdb180ef7235fe99381b5630f77ed18c",
+    "scope": "既存資料の読み取り、モニターの索引と公開範囲に関する原文・要約・検収条件の照合。"
   }
 }

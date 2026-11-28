@@ -32,6 +32,12 @@ py -3 -c "from pathlib import Path; import ai_yori_murasaki; print(Path(ai_yori_
 
 `aym lab iterate --staging-root <絶対パス> --max-iterations 2 --max-campaigns 2`は、Campaign単位の上限付きで反復する。成功、環境障害、同じ失敗の反復、残予算なしで停止する。`max-campaigns`をツール呼び出し数と読み替えない。任意の`--routes-file`でロールと登録モデルの対応を指定できる。
 
+<a id="monitor-index-update"></a>
+
+### 既存の案件索引を更新する
+
+更新後に案件一覧で索引の更新を求められたとき、または API が 409 `monitor_index_required` を返したときは、モニターと同じ `AYM_WORKSPACE` と `AYM_TRUSTED_ROOT` を設定した端末で `aym monitor index` を実行し、画面を再読み込みする。通常の更新で、旧形式の索引にある課題を台帳から読み直し、Blue に表示する件数を再集計する。
+
 ### モニターのHTTPS起動
 
 通常の起動には、サーバー証明書と対応する秘密鍵の PEM ファイルが必要になる。ブラウザーが信頼する発行元の証明書を用意し、証明書の Subject Alternative Name（SAN）の IP アドレス欄に `127.0.0.1` があることを確認する。`localhost` でも開きたい場合は DNS 名の SAN に `localhost` も必要になる。Google ログインの戻り先には常に `127.0.0.1` を使う。

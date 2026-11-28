@@ -2,7 +2,7 @@
   "id": "docs/tasks/README.md",
   "role": "operations",
   "public_api": [],
-  "summary": "Task の運用と索引。Obsidian の課題取り込み、HTTPS モニターなどの作業と対応する技術検収を引ける。",
+  "summary": "Task の運用と索引。既存資料、案件索引、Blue 表示などの作業と検収を引ける。",
   "deps_out": [
     "CHANGELOG.md",
     "HUB.codex.md",
@@ -43,6 +43,7 @@
     "docs/acceptance/AC-20261127-06.md",
     "docs/acceptance/AC-20261127-07.md",
     "docs/acceptance/AC-20261128-01.md",
+    "docs/acceptance/AC-20261128-02.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
@@ -67,6 +68,7 @@
     "docs/tasks/TASK.monitor-index-11-23-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
     "docs/tasks/TASK.obsidian-issues-11-28-2026.md",
+    "docs/tasks/TASK.offline-security-boundaries-11-28-2026.md",
     "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md",
     "docs/tasks/TASK.p2-rsi-experiment-11-09-2026.md",
     "docs/tasks/TASK.p2-sqli-11-09-2026.md",
@@ -95,13 +97,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "364e1af5d6bf2afc255e1582f4baca43318a1685182b30a8226529b5d243f96b",
-  "generated_at": "00073",
+  "source_sha256": "e4a88e2d4d941c13859662781e0fc0eb46c7b3bfc2bb4df1e59d57e4b44a78b1",
+  "generated_at": "00074",
   "review": {
-    "reviewed_at": "2026-11-28T06:49:07+00:00",
+    "reviewed_at": "2026-11-28T10:02:34+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "364e1af5d6bf2afc255e1582f4baca43318a1685182b30a8226529b5d243f96b",
-    "summary_sha256": "13532d72b916c345bde67ba24b0e14ae7926d9f53051986537b4c557463a405d",
-    "scope": "Obsidian 課題取り込みの操作・契約・検収の原文、要約、関連リンクを照合。"
+    "source_sha256": "e4a88e2d4d941c13859662781e0fc0eb46c7b3bfc2bb4df1e59d57e4b44a78b1",
+    "summary_sha256": "70d2bb2cb49739e15eed5119044fd9f1e3a9c42e4d5d87052655e342a427779f",
+    "scope": "既存資料の読み取り、モニターの索引と公開範囲に関する原文・要約・検収条件の照合。"
   }
 }

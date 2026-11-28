@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import socket
 import ssl
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -22,7 +23,7 @@ from .jsonio import DataError, canonical, loads
 from .runtime import Runtime
 from .monitor_summary import CampaignSummary, campaign_summaries
 from .monitor_detail import IndexUpdateRequired, read_selection
-from .storage import Store
+from .storage import Store, read_regular_bytes
 from . import lab_metrics
 from . import monitor_auth
 
@@ -31,6 +32,7 @@ if TYPE_CHECKING:
 
 MAX_RESPONSE_BYTES = 1024 * 1024
 MAX_HTML_BYTES = 256 * 1024
+MAX_MONITOR_CONNECTIONS = 32
 DEFAULT_LIMIT = 100
 MAX_LIMIT = 1000
 
@@ -216,8 +218,15 @@ def _project_campaign(cid: str, summary: CampaignSummary, view: str = "operator"
     }
 
 
-def _project_finding(obj: dict) -> dict:
-    return {key: _safe_str(obj.get(key)) for key in ("finding_id", "severity", "title", "source")}
+def _project_finding(obj: dict, secrets: tuple[str, ...] = (), *, limit: int = 256) -> dict:
+    from .storage import sanitize
+    projection = {}
+    for key in ("finding_id", "severity", "title", "source"):
+        value = obj.get(key)
+        if secrets and isinstance(value, str):
+            value = sanitize(value, secrets)
+        projection[key] = _safe_str(value, limit)
+    return projection
 
 
 def _project_lab_metrics(runtime, cid: str, *, verified_events=None) -> dict | None:
@@ -328,11 +337,7 @@ def _read_workspace_json(store: Store, relative: str) -> dict | None:
     """Read a workspace-relative JSON file, returning None if absent/invalid."""
     try:
         path = store.workspace / relative
-        if not path.exists() or path.is_symlink():
-            return None
-        raw = path.read_bytes()
-        if len(raw) > MAX_RESPONSE_BYTES:
-            return None
+        raw = read_regular_bytes(path, MAX_RESPONSE_BYTES)
         value = loads(raw)
         if not isinstance(value, dict):
             return None
@@ -975,7 +980,7 @@ def _handle(runtime: Runtime, method: str, path: str, query: dict[str, str],
             summary = indexed.current.summary if indexed else campaign_summaries(store).get(cid)
             if summary is None:
                 return _error(404, "not_found")
-            findings = [_project_finding(obj) for obj in summary.findings.values()]
+            findings = [_project_finding(obj, store.secrets) for obj in summary.findings.values()]
             remediations = []
             for ref in summary.remediation_refs:
                 try:
@@ -1234,7 +1239,8 @@ class _Handler(BaseHTTPRequestHandler):
 
 class _Server(ThreadingHTTPServer):
     daemon_threads = True
-    allow_reuse_address = True
+    allow_reuse_address = not hasattr(socket, "SO_EXCLUSIVEADDRUSE")
+    allow_reuse_port = False
 
     def __init__(self, addr: tuple[str, int], runtime: Runtime, google_sso: GoogleSSO | None,
                  tls_context: ssl.SSLContext | None) -> None:
@@ -1247,7 +1253,31 @@ class _Server(ThreadingHTTPServer):
         self.scheme = "https" if tls_context is not None else "http"
         self.runtime = runtime
         self.auth = monitor_auth.MonitorAuth(google_sso) if google_sso is not None else None
+        self._connection_slots = threading.BoundedSemaphore(MAX_MONITOR_CONNECTIONS)
         super().__init__(addr, _Handler)
+
+    def server_bind(self) -> None:
+        # Windows では再利用を無効にするだけでは別プロセスの再バインドを防げない。
+        if hasattr(socket, "SO_EXCLUSIVEADDRUSE"):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
+        super().server_bind()
+
+    def process_request(self, request, client_address) -> None:
+        # TLS のハンドシェイクと認証より先に同時接続数を制限する。
+        if not self._connection_slots.acquire(blocking=False):
+            self.shutdown_request(request)
+            return
+        try:
+            super().process_request(request, client_address)
+        except Exception:  # スレッドを開始できなかった場合の枠も戻す。
+            self._connection_slots.release()
+            raise
+
+    def process_request_thread(self, request, client_address) -> None:
+        try:
+            super().process_request_thread(request, client_address)
+        finally:
+            self._connection_slots.release()
 
     def get_request(self):
         connection, address = super().get_request()
@@ -1263,7 +1293,7 @@ class _Server(ThreadingHTTPServer):
                 request.do_handshake()
             except OSError:
                 return
-            request.settimeout(30)
+        request.settimeout(30)
         # 応答後の送信終了と close は HTTPServer が同じ接続に対して行う。
         super().finish_request(request, client_address)
 
