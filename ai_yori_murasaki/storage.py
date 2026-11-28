@@ -314,6 +314,13 @@ class Store:
         _check_id(run_id, "run_id")
         return _safe_join(self.trusted_root, "checkpoints", campaign_id, run_id + ".json")
 
+    def checkpoint_run_ids(self, campaign_id: str) -> set[str]:
+        directory = _safe_join(self.trusted_root, "checkpoints", _check_id(campaign_id, "campaign_id"))
+        try:
+            return {_check_id(path.stem, "checkpoint run_id") for path in directory.iterdir() if path.suffix == ".json"}
+        except FileNotFoundError:
+            return set()
+
     # -- locking / atomic -------------------------------------------------- #
     @contextlib.contextmanager
     def lock(self, deadline: float = 30.0) -> Iterator[None]:

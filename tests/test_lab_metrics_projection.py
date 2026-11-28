@@ -1,5 +1,6 @@
 """合成の監査記録だけを使い、計測と案件APIが同じ封印済み台帳を採用することを確かめる。"""
 import json
+from unittest.mock import patch
 
 from ai_yori_murasaki import lab_metrics
 from ai_yori_murasaki.oracle import Oracle
@@ -14,7 +15,20 @@ def test_measurement_and_campaign_projection_use_checkpointed_events(tmp_path):
     cid, observations = ids["campaign_id"], ids["run_id"]
     store = Store(tmp_path / "workspace", tmp_path / "trusted")
     runtime = Runtime(store)
+
+    def finish(rid):
+        runtime.finish_run(rid, "completed")
+        runtime.seal_run(cid, rid)
+
+    finish(observations)
     findings = runtime.start_run(cid, "verify", 2, "collect-fixture-findings")["run_id"]
+    finish(findings)
+    audit = runtime.start_run(cid, "verify", 4, "collect-fixture-audit")["run_id"]
+    runtime.record_event(audit, "state_captured", "orchestrator", extensions={"fixture": True})
+    earlier = store.read_verified_events(audit, campaign_id=cid)
+    runtime.record_event(audit, "state_captured", "orchestrator",
+                         extensions={"fixture": True, "operation": "apply", "environment": "production"})
+    finish(audit)
     evaluation = runtime.start_run(cid, "verify", 3, "collect-fixture-results")["run_id"]
     put = store.put_object
     check = {"suite_id": "offline-fixture", "passed": True}
@@ -30,15 +44,9 @@ def test_measurement_and_campaign_projection_use_checkpointed_events(tmp_path):
         "remediation_ref": put({"campaign_id": cid, "run_id": findings, "patch_bundle_ref": put({"fixture": True}),
                                 "static_scan_result": passed, "unit_result": passed, "integration_result": passed}),
     }
-    runtime.record_event(observations, "state_captured", "orchestrator", extensions={"fixture": True})
-    earlier = store.read_verified_events(observations, campaign_id=cid)
-    runtime.record_event(observations, "state_captured", "orchestrator",
-                         extensions={"fixture": True, "operation": "apply", "environment": "production"})
     runtime.record_event(evaluation, "state_captured", "orchestrator", evidence_refs=(put(measurement),),
                          extensions={"record_type": "lab_measurement"})
-    for rid in (observations, findings, evaluation):
-        runtime.finish_run(rid, "completed")
-        runtime.seal_run(cid, rid)
+    finish(evaluation)
     events = {}
     for run in runtime.list_runs(cid):
         rid = run["run_id"]
@@ -54,5 +62,12 @@ def test_measurement_and_campaign_projection_use_checkpointed_events(tmp_path):
     assert json.loads(body)["metrics"]["metrics"] == measured["metrics"]
 
     # 正規の追記前に取得していた別の実行の列は、最新の計測に混ぜない。
-    held = _project_lab_metrics(runtime, cid, verified_events={**events, observations: earlier})
+    held = _project_lab_metrics(runtime, cid, verified_events={**events, audit: earlier})
     assert held == {"status": "HOLD", "reason_code": "evidence_unverified", "metrics": None, "limitations": []}
+
+    listed = [run for run in runtime.list_runs(cid) if run["run_id"] != audit]
+    with patch.object(runtime, "list_runs", return_value=listed):
+        assert lab_metrics.measure(runtime, cid, measurement) == {
+            "status": "HOLD", "reason_code": "evidence_unverified", "metrics": None}
+        partial = {rid: rows for rid, rows in events.items() if rid != audit}
+        assert _project_lab_metrics(runtime, cid, verified_events=partial) == held

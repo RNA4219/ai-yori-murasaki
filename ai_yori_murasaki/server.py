@@ -235,11 +235,7 @@ def _project_lab_metrics(runtime, cid: str, *, verified_events=None) -> dict | N
     store = runtime.store
     if verified_events is None:
         try:
-            run_ids = lab_metrics._campaign_run_ids(runtime, cid)
-        except DataError:
-            return None
-        try:
-            verified_events = {rid: store.read_verified_events(rid, campaign_id=cid) for rid in run_ids}
+            verified_events = lab_metrics._read_campaign_events(store, cid)
         except (DataError, OSError):
             return {"status": "HOLD", "reason_code": "evidence_unverified", "metrics": None, "limitations": []}
     latest: tuple[str, dict] | None = None

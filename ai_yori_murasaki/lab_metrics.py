@@ -141,6 +141,27 @@ def _campaign_run_ids(runtime, campaign_id):
     return run_ids
 
 
+def _read_campaign_events(store, campaign_id):
+    from .monitor_detail import read_selection
+    from .monitor_summary import campaign_summaries
+
+    selection = read_selection(store, campaign_id, check_membership=True)
+    if selection is not None:
+        summary = selection.current.summary
+        events = selection.current.events
+    else:
+        events = {}
+
+        def remember(run_id, owner, verified):
+            if owner == campaign_id:
+                events[run_id] = verified
+
+        summary = campaign_summaries(store, on_verified=remember, include_csv=False).get(campaign_id)
+    if summary is not None and any(rid not in events for rid in summary.pending_runs):
+        raise DataError("campaign ledger unavailable")
+    return events
+
+
 def _measure(runtime, campaign_id, measurement, *, verified_events=None):
     err = _validate_measurement(measurement)
     if err:
@@ -159,9 +180,13 @@ def _measure(runtime, campaign_id, measurement, *, verified_events=None):
     # --- gather campaign runs and verify evidence ---
     try:
         run_ids = _campaign_run_ids(runtime, campaign_id)
+        if set(run_ids) != runtime.store.checkpoint_run_ids(campaign_id):
+            return _hold("evidence_unverified")
+        if verified_events is None:
+            verified_events = _read_campaign_events(runtime.store, campaign_id)
     except Exception:
         return _hold("evidence_unverified")
-    if verified_events is not None and set(verified_events) != set(run_ids):
+    if set(verified_events) != set(run_ids):
         return _hold("evidence_unverified")
 
     verified_seq: Dict[str, int] = {}
@@ -169,8 +194,7 @@ def _measure(runtime, campaign_id, measurement, *, verified_events=None):
     audits = {}
     for rid in run_ids:
         try:
-            events = (verified_events[rid] if verified_events is not None
-                      else runtime.store.read_verified_events(rid, campaign_id=campaign_id))
+            events = verified_events[rid]
             head = (len(events), events[-1]["event_hash"])
             if runtime.store.verify_checkpoint(campaign_id, rid, expected_head=head)["result"] != "PASS":
                 return _hold("evidence_unverified")
