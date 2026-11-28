@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "製品の変更履歴。案件資料の取り込み・表示・書き出し、受付名の検索と出典・台帳の照合に関わる変更を技術検収の結果に結び付ける。",
+  "summary": "製品の変更履歴。モニターの Google ログイン画面を含む各変更を Task と技術検収へ結び付ける。",
   "deps_out": [
     "docs/NOTION-IMPORT.md",
     "docs/SOURCES.md",
@@ -43,6 +43,7 @@
     "docs/acceptance/AC-20261128-01.md",
     "docs/acceptance/AC-20261128-02.md",
     "docs/acceptance/AC-20261128-03.md",
+    "docs/acceptance/AC-20261128-04.md",
     "docs/evidence/quality-integration-20261109/README.md",
     "docs/evidence/sources-light-ui-20261109/README.md",
     "docs/evidence/wazuh-live-20261108.md",
@@ -66,6 +67,7 @@
     "docs/tasks/TASK.monitor-counts-11-23-2026.md",
     "docs/tasks/TASK.monitor-https-11-27-2026.md",
     "docs/tasks/TASK.monitor-index-11-23-2026.md",
+    "docs/tasks/TASK.monitor-login-screen-11-28-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
     "docs/tasks/TASK.obsidian-issues-11-28-2026.md",
     "docs/tasks/TASK.offline-security-boundaries-11-28-2026.md",
@@ -105,6 +107,7 @@
     "docs/tasks/TASK.google-monitor-sso-11-27-2026.md",
     "docs/tasks/TASK.google-sso-email-domains-11-27-2026.md",
     "docs/tasks/TASK.monitor-https-11-27-2026.md",
+    "docs/tasks/TASK.monitor-login-screen-11-28-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
     "docs/tasks/TASK.obsidian-issues-11-28-2026.md",
     "docs/tasks/TASK.offline-security-boundaries-11-28-2026.md",
@@ -119,13 +122,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "51a3a15a3c0834b095db52b27cb91b89f8a25f8704ea186765f675094277248b",
-  "generated_at": "00075",
+  "source_sha256": "9ac2922e74faa39de268a0fd477f4d294b3ad5d60cf18205c56992d8a0362dfc",
+  "generated_at": "00076",
   "review": {
-    "reviewed_at": "2026-11-28T11:10:28+00:00",
+    "reviewed_at": "2026-11-28T15:08:00+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "51a3a15a3c0834b095db52b27cb91b89f8a25f8704ea186765f675094277248b",
-    "summary_sha256": "f05c95a984d1f76a0d2dfeb5333871ba0da5b360da74b8daa002e4d5692ec2fb",
-    "scope": "資料の取り込み、再表示、書き出しに関する原文・要約・検収条件・リンクの照合。"
+    "source_sha256": "9ac2922e74faa39de268a0fd477f4d294b3ad5d60cf18205c56992d8a0362dfc",
+    "summary_sha256": "9c9e144c5b03314f3a263be428d789cb87647645cd7636db907f08703eba28da",
+    "scope": "ログイン画面の操作と再試行に関する原文、要約、検収条件、リンクの照合。"
   }
 }

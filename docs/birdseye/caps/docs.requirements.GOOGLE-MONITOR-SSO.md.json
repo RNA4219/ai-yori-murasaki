@@ -11,10 +11,12 @@
     "docs/acceptance/AC-20261127-04.md",
     "docs/acceptance/AC-20261127-05.md",
     "docs/acceptance/AC-20261127-07.md",
+    "docs/acceptance/AC-20261128-04.md",
     "docs/requirements/API-CONTRACTS.md",
     "docs/tasks/TASK.google-monitor-sso-11-27-2026.md",
     "docs/tasks/TASK.google-sso-email-domains-11-27-2026.md",
-    "docs/tasks/TASK.monitor-https-11-27-2026.md"
+    "docs/tasks/TASK.monitor-https-11-27-2026.md",
+    "docs/tasks/TASK.monitor-login-screen-11-28-2026.md"
   ],
   "deps_out": [
     "README.md",
@@ -24,14 +26,14 @@
     "docs/acceptance/AC-20261127-07.md",
     "docs/requirements/API-CONTRACTS.md"
   ],
-  "summary": "Google ログインを使う HTTPS モニターの操作。HTTPS コールバック、証明書と鍵、個別・ドメイン別の許可、Cookie と失効を説明する。",
-  "source_sha256": "afc1ebed86fba8260db5891fe7cb141cd1d09796d6f40155b453d46bb8ac6320",
-  "generated_at": "00070",
+  "summary": "Google ログインを使う HTTPS モニターの操作。証明書・クライアントの設定、個別・ドメイン別の許可、画面での再試行やログアウトを説明する。",
+  "source_sha256": "dd3fdcb1abd3febe8be39e5f8e9d22da8e39d0abd9ce05f97b2321a9c01be1ae",
+  "generated_at": "00076",
   "review": {
-    "reviewed_at": "2026-11-27T10:24:52+00:00",
+    "reviewed_at": "2026-11-28T15:08:00+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "afc1ebed86fba8260db5891fe7cb141cd1d09796d6f40155b453d46bb8ac6320",
-    "summary_sha256": "6b85a35491e94f970065cc1c3b482b91851424f51eb3284a40188450e6a1618f",
-    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
+    "source_sha256": "dd3fdcb1abd3febe8be39e5f8e9d22da8e39d0abd9ce05f97b2321a9c01be1ae",
+    "summary_sha256": "46988bcee7c339068ebaf0fbe0031d0c3937b2d7bdc01c3385287057fee68127",
+    "scope": "ログイン画面の操作と再試行に関する原文、要約、検収条件、リンクの照合。"
   }
 }

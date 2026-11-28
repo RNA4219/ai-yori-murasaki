@@ -2,7 +2,7 @@
   "id": "docs/tasks/README.md",
   "role": "operations",
   "public_api": [],
-  "summary": "Task の運用と索引。案件資料の取り込み、再表示、書き出しなどの作業と検収結果を引ける。",
+  "summary": "Task の運用と索引。モニターのログイン画面などの作業と対応する検収を引ける。",
   "deps_out": [
     "CHANGELOG.md",
     "HUB.codex.md",
@@ -45,6 +45,7 @@
     "docs/acceptance/AC-20261128-01.md",
     "docs/acceptance/AC-20261128-02.md",
     "docs/acceptance/AC-20261128-03.md",
+    "docs/acceptance/AC-20261128-04.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
@@ -68,6 +69,7 @@
     "docs/tasks/TASK.monitor-counts-11-23-2026.md",
     "docs/tasks/TASK.monitor-https-11-27-2026.md",
     "docs/tasks/TASK.monitor-index-11-23-2026.md",
+    "docs/tasks/TASK.monitor-login-screen-11-28-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
     "docs/tasks/TASK.obsidian-issues-11-28-2026.md",
     "docs/tasks/TASK.offline-security-boundaries-11-28-2026.md",
@@ -99,13 +101,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "4dccd5c94cb24e231dcf399f3d4728f396566d4fdf1c709b5973d8a38634f8c8",
-  "generated_at": "00075",
+  "source_sha256": "f17ad8f8ad7bb3534478d2dce094ef6f23c5cf79b2ad32adc84d517b58e66ae8",
+  "generated_at": "00076",
   "review": {
-    "reviewed_at": "2026-11-28T11:10:28+00:00",
+    "reviewed_at": "2026-11-28T15:08:00+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "4dccd5c94cb24e231dcf399f3d4728f396566d4fdf1c709b5973d8a38634f8c8",
-    "summary_sha256": "17e54581a675f15e670e6b576debcf670e84ed93b742a89121d8679666576fb1",
-    "scope": "資料の取り込み、再表示、書き出しに関する原文・要約・検収条件・リンクの照合。"
+    "source_sha256": "f17ad8f8ad7bb3534478d2dce094ef6f23c5cf79b2ad32adc84d517b58e66ae8",
+    "summary_sha256": "b0c13b4537de611695a27a5bc484e1bad167e46eb39db16d69aa5bcda91a6112",
+    "scope": "ログイン画面の操作と再試行に関する原文、要約、検収条件、リンクの照合。"
   }
 }

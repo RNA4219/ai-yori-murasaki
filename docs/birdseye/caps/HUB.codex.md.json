@@ -2,7 +2,7 @@
   "id": "HUB.codex.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "依頼別の文書ハブ。取り込み・再表示・書き出しの点検、資料の照合や HTTPS モニターの手順と検収へ案内する。",
+  "summary": "依頼別の文書ハブ。モニターのログイン設定と再試行、資料の取り込み・表示・書き出しなどの手順と検収を引ける。",
   "deps_out": [
     ".agents/skills/security-audit/SKILL.md",
     "AGENTS.md",
@@ -52,6 +52,7 @@
     "docs/acceptance/AC-20261127-07.md",
     "docs/acceptance/AC-20261128-01.md",
     "docs/acceptance/AC-20261128-03.md",
+    "docs/acceptance/AC-20261128-04.md",
     "docs/acceptance/INDEX.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
@@ -93,13 +94,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "738f88003f62834fedee65d69e95b23677250a85db3a53f8d7456b6ba1079dd2",
-  "generated_at": "00075",
+  "source_sha256": "dcc00461fa210251a06ba6e83c6abd92cd4256e823e2a814abd86c7ec6fc44a7",
+  "generated_at": "00076",
   "review": {
-    "reviewed_at": "2026-11-28T11:10:28+00:00",
+    "reviewed_at": "2026-11-28T15:08:00+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "738f88003f62834fedee65d69e95b23677250a85db3a53f8d7456b6ba1079dd2",
-    "summary_sha256": "dabecff18a7a3c3e03d45461e9434f0e560e8a594dc6030b5d050d5f689e0f01",
-    "scope": "資料の取り込み、再表示、書き出しに関する原文・要約・検収条件・リンクの照合。"
+    "source_sha256": "dcc00461fa210251a06ba6e83c6abd92cd4256e823e2a814abd86c7ec6fc44a7",
+    "summary_sha256": "b46f0465330bdc571e900c158860ff823edac0bfd45f4d6f35818718d487d962",
+    "scope": "ログイン画面の操作と再試行に関する原文、要約、検収条件、リンクの照合。"
   }
 }

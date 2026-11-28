@@ -1,5 +1,5 @@
 {
-  "generated_at": "00075",
+  "generated_at": "00076",
   "nodes": {
     "AGENTS.md": {
       "role": "policy",
@@ -15,8 +15,8 @@
     "CHANGELOG.md": {
       "role": "history",
       "caps": "docs/birdseye/caps/CHANGELOG.md.json",
-      "mtime": "00075",
-      "source_sha256": "51a3a15a3c0834b095db52b27cb91b89f8a25f8704ea186765f675094277248b"
+      "mtime": "00076",
+      "source_sha256": "9ac2922e74faa39de268a0fd477f4d294b3ad5d60cf18205c56992d8a0362dfc"
     },
     "CHECKLISTS.md": {
       "role": "checklist",
@@ -36,8 +36,8 @@
     "HUB.codex.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
-      "mtime": "00075",
-      "source_sha256": "738f88003f62834fedee65d69e95b23677250a85db3a53f8d7456b6ba1079dd2"
+      "mtime": "00076",
+      "source_sha256": "dcc00461fa210251a06ba6e83c6abd92cd4256e823e2a814abd86c7ec6fc44a7"
     },
     "README.md": {
       "role": "overview",
@@ -70,8 +70,8 @@
     "docs/acceptance/INDEX.md": {
       "role": "navigation",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
-      "mtime": "00075",
-      "source_sha256": "2f0b76fc0c2ba2308b5df22fd963cd3f72b533138eae3d531a0cbe76889920c1"
+      "mtime": "00076",
+      "source_sha256": "54b106a76ed7be8a2a1024dd0528e184019fcfba14bd072e91899f35f03985ae"
     },
     "docs/acceptance/README.md": {
       "role": "guide",
@@ -113,8 +113,8 @@
     "docs/tasks/README.md": {
       "role": "operations",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
-      "mtime": "00075",
-      "source_sha256": "4dccd5c94cb24e231dcf399f3d4728f396566d4fdf1c709b5973d8a38634f8c8"
+      "mtime": "00076",
+      "source_sha256": "f17ad8f8ad7bb3534478d2dce094ef6f23c5cf79b2ad32adc84d517b58e66ae8"
     },
     "docs/tasks/TASK.workflow-adoption-11-06-2026.md": {
       "role": "task",
@@ -872,8 +872,8 @@
     "docs/requirements/GOOGLE-MONITOR-SSO.md": {
       "role": "doc",
       "caps": "docs/birdseye/caps/docs.requirements.GOOGLE-MONITOR-SSO.md.json",
-      "mtime": "00070",
-      "source_sha256": "afc1ebed86fba8260db5891fe7cb141cd1d09796d6f40155b453d46bb8ac6320"
+      "mtime": "00076",
+      "source_sha256": "dd3fdcb1abd3febe8be39e5f8e9d22da8e39d0abd9ce05f97b2321a9c01be1ae"
     },
     "docs/tasks/TASK.google-monitor-sso-11-27-2026.md": {
       "role": "doc",
@@ -952,6 +952,18 @@
       "caps": "docs/birdseye/caps/docs.tasks.TASK.followup-security-review-11-28-2026.md.json",
       "mtime": "00075",
       "source_sha256": "8d655f2ea6c97cf43d379c3532e4ef27d6f2c43411599df05ae95c95390b641e"
+    },
+    "docs/acceptance/AC-20261128-04.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.acceptance.AC-20261128-04.md.json",
+      "mtime": "00076",
+      "source_sha256": "13cc34c4bf9ba38bc90a12b5c03bb41d50734a45cdf8e1f00421f59a798238f5"
+    },
+    "docs/tasks/TASK.monitor-login-screen-11-28-2026.md": {
+      "role": "doc",
+      "caps": "docs/birdseye/caps/docs.tasks.TASK.monitor-login-screen-11-28-2026.md.json",
+      "mtime": "00076",
+      "source_sha256": "21bec08e5bd61803c86436b4d32403b412c1ce35225caa917a95bc89bc0a0df2"
     }
   },
   "edges": [
@@ -3778,6 +3790,54 @@
     [
       "docs/tasks/TASK.followup-security-review-11-28-2026.md",
       "docs/acceptance/AC-20261128-03.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/acceptance/AC-20261128-04.md"
+    ],
+    [
+      "CHANGELOG.md",
+      "docs/tasks/TASK.monitor-login-screen-11-28-2026.md"
+    ],
+    [
+      "HUB.codex.md",
+      "docs/acceptance/AC-20261128-04.md"
+    ],
+    [
+      "docs/acceptance/AC-20261128-04.md",
+      "docs/requirements/GOOGLE-MONITOR-SSO.md"
+    ],
+    [
+      "docs/acceptance/AC-20261128-04.md",
+      "docs/tasks/TASK.monitor-login-screen-11-28-2026.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/acceptance/AC-20261128-04.md"
+    ],
+    [
+      "docs/acceptance/INDEX.md",
+      "docs/tasks/TASK.monitor-login-screen-11-28-2026.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/acceptance/AC-20261128-04.md"
+    ],
+    [
+      "docs/tasks/README.md",
+      "docs/tasks/TASK.monitor-login-screen-11-28-2026.md"
+    ],
+    [
+      "docs/tasks/TASK.monitor-login-screen-11-28-2026.md",
+      "CHANGELOG.md"
+    ],
+    [
+      "docs/tasks/TASK.monitor-login-screen-11-28-2026.md",
+      "docs/acceptance/AC-20261128-04.md"
+    ],
+    [
+      "docs/tasks/TASK.monitor-login-screen-11-28-2026.md",
+      "docs/requirements/GOOGLE-MONITOR-SSO.md"
     ]
   ]
 }

@@ -19,7 +19,6 @@ def render_auth_page(state: str, login_url: str) -> bytes:
     template = Template(web.joinpath("monitor-login.html").read_text(encoding="utf-8"))
     return template.substitute(
         heading=heading, message=message, login_url=escape(login_url, quote=True),
-        theme=web.joinpath("workspace.css").read_text(encoding="utf-8"),
     ).encode("utf-8")
 
 

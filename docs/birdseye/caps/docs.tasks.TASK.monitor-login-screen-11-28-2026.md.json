@@ -1,0 +1,28 @@
+{
+  "id": "docs/tasks/TASK.monitor-login-screen-11-28-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261128-04.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261128-04.md",
+    "docs/requirements/GOOGLE-MONITOR-SSO.md"
+  ],
+  "summary": "モニターの Google ログイン画面を整える作業。中央のカード、PC・スマートフォンでの操作や再試行の検収を引ける。",
+  "source_sha256": "21bec08e5bd61803c86436b4d32403b412c1ce35225caa917a95bc89bc0a0df2",
+  "generated_at": "00076",
+  "review": {
+    "reviewed_at": "2026-11-28T15:08:00+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "21bec08e5bd61803c86436b4d32403b412c1ce35225caa917a95bc89bc0a0df2",
+    "summary_sha256": "668f6014734bbc0383cdd076ef6515dd7b091afb37208db96673884f20599a81",
+    "scope": "ログイン画面の操作と再試行に関する原文、要約、検収条件、リンクの照合。"
+  }
+}

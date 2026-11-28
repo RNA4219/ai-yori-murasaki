@@ -37,18 +37,6 @@
 }
 .session-form button:hover, .session-form button:active { background: #47384d; }
 .session-form button:focus-visible { outline: 2px solid #ead5f1; outline-offset: 2px; }
-.auth-page { margin: 0; background: var(--desk-paper); color: var(--desk-ink); font: 16px/1.65 var(--desk-sans); }
-.auth-content { max-width: 32rem; margin: clamp(40px, 10vh, 96px) auto; padding: 0 24px; }
-.auth-content h1 { margin: 0; font-size: clamp(24px, 4vw, 32px); line-height: 1.4; overflow-wrap: anywhere; }
-.auth-content p { margin: 12px 0 24px; color: var(--desk-muted); }
-.google-login {
-  display: inline-flex; align-items: center; gap: 12px; box-sizing: border-box;
-  min-height: 44px; padding: 0 12px; border: 1px solid #747775; border-radius: 4px;
-  background: white; color: #1f1f1f; text-decoration: none;
-  font: 500 14px/1.4 Roboto, Arial, var(--desk-sans);
-}
-.google-login:hover, .google-login:active { background: #f2f2f2; }
-.google-login:focus-visible { outline: 3px solid var(--desk-accent); outline-offset: 4px; }
 :where(.risk-levels [data-level], .first-severity, .severity-tag, .sev) {
   --risk-fill: #e7e6eb; --risk-ink: #403d48; --risk-edge: #77717c;
 }
@@ -76,7 +64,6 @@
   }
   .product-bar:has(.session-form) .product-nav { min-height: 52px; }
   .session-form { grid-column: 1 / -1; justify-self: end; margin: 0 0 4px; }
-  .auth-page .product-name strong { position: static; clip-path: none; width: auto; height: auto; }
 }
 @media (max-width: 380px) {
   .product-bar { gap: 8px; width: calc(100% - 16px); }

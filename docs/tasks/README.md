@@ -22,6 +22,7 @@ Task、[Acceptance](../acceptance/README.md)、[CHANGELOG](../../CHANGELOG.md)�
 
 | task_id | 作業 | 検収 |
 | --- | --- | --- |
+| 20261128-04 | [モニターの Google ログイン画面](TASK.monitor-login-screen-11-28-2026.md) | [AC-20261128-04](../acceptance/AC-20261128-04.md)（技術検収合格） |
 | 20261128-03 | [案件資料の取り込み、再表示と書き出し](TASK.followup-security-review-11-28-2026.md) | [AC-20261128-03](../acceptance/AC-20261128-03.md)（技術検収合格） |
 | 20261128-02 | [資料とモニターの公開範囲](TASK.offline-security-boundaries-11-28-2026.md) | [AC-20261128-02](../acceptance/AC-20261128-02.md)（検収条件） |
 | 20261128-01 | [Obsidian の課題取り込み](TASK.obsidian-issues-11-28-2026.md) | [AC-20261128-01](../acceptance/AC-20261128-01.md)（技術検収合格） |
