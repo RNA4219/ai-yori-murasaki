@@ -27,10 +27,12 @@ async function exercise(browser, {monitor, provider}, width, policy) {
     const main = page.getByRole('main');
     const title = main.getByRole('heading', {level:1, name:message, exact:true});
     await title.waitFor();
-    const lines = (await main.innerText()).split(/\n+/).map(line => line.trim()).filter(Boolean);
-    assert.deepEqual(lines.slice(0, 2), ['AI YORI MURASAKI', message]);
-    assert.equal(lines.length, 4, 'ブランド、見出し、案内、ログイン操作の順に並ぶ');
-    assert.equal(lines[3], 'Google でログイン');
+    const blocks = (await main.locator('p, h1, a').allTextContents()).map(text => text.trim());
+    assert.equal(blocks.length, 4, 'ブランド、見出し、案内、ログイン操作の順に並ぶ');
+    assert.ok(blocks[0].endsWith('AI YORI MURASAKI'));
+    assert.equal(blocks[1], message);
+    assert.ok(blocks[2].length > 0);
+    assert.equal(blocks[3], 'Google でログイン');
     const card = await main.boundingBox();
     const viewport = page.viewportSize();
     assert.ok(card.width <= 441 && card.x >= 12, 'カード幅と左右の余白');

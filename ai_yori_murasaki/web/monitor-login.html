@@ -9,15 +9,14 @@
     color-scheme: light dark;
     --page: #fff;
     --card: #fff;
-    --ink: #08131a;
-    --muted: #51636d;
-    --edge: #e2e9ed;
-    --wash: rgb(90 200 184 / 14%);
-    --action: #08131a;
-    --action-hover: #233640;
-    --action-edge: #08131a;
-    --focus: #3650ae;
-    --shadow: rgb(8 19 26 / 9%);
+    --ink: #191d27;
+    --muted: #485163;
+    --edge: #8290a5;
+    --accent: #214fc4;
+    --action: #171c29;
+    --action-hover: #2e3850;
+    --action-edge: var(--action);
+    --focus: #164ece;
   }
   * { box-sizing: border-box; }
   body {
@@ -28,17 +27,17 @@
     margin: 0;
     padding: 32px 20px;
     color: var(--ink);
-    background: radial-gradient(ellipse 560px 300px at 50% 0, var(--wash), transparent 72%), var(--page);
-    font: 1rem/1.6 "Segoe UI", "Yu Gothic UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+    background: var(--page);
+    font: 1rem/1.6 "Noto Sans JP", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
   }
   main {
     width: min(100%, 440px);
     min-width: 0;
-    padding: 44px 40px 32px;
+    padding: 32px clamp(16px, 6vw, 40px) 24px;
     background: var(--card);
     border: 1px solid var(--edge);
-    border-radius: 18px;
-    box-shadow: 0 20px 45px var(--shadow);
+    border-top: .35rem solid var(--accent);
+    border-radius: .5rem;
     overflow-wrap: anywhere;
   }
   .brand {
@@ -51,18 +50,28 @@
     font-weight: 700;
     letter-spacing: .14em;
   }
-  .brand::before {
-    content: "";
-    flex: 0 0 11px;
-    height: 11px;
-    border-radius: 3px;
-    background: #5ac8b8;
+  .brand-stamp {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 1.65rem;
+    height: 1.65rem;
+    border-radius: .3rem;
+    background: #c5d8ff;
+    color: #171c29;
+    font: 700 1.125rem/1 "Yu Mincho", "Hiragino Mincho ProN", serif;
+    letter-spacing: normal;
   }
-  h1 { margin: 0; font-size: 1.6875rem; line-height: 1.4; text-wrap: balance; }
+  h1 {
+    margin: 0;
+    font-size: clamp(1.55rem, 1.1rem + 1.65vw, 2.65rem);
+    line-height: 1.35;
+    text-wrap: balance;
+  }
   .message {
-    margin: 10px 0 28px;
+    margin: 10px 0 24px;
     color: var(--muted);
-    font-size: .9375rem;
+    font-size: clamp(.875rem, .8125rem + .25vw, 1rem);
     line-height: 1.8;
     text-wrap: balance;
   }
@@ -72,13 +81,13 @@
     justify-content: center;
     gap: 12px;
     width: 100%;
-    min-height: 48px;
+    min-height: 50px;
     padding: 10px 16px;
     color: #fff;
     background: var(--action);
     border: 1px solid var(--action-edge);
     border-radius: 999px;
-    font-size: .9375rem;
+    font-size: 1rem;
     font-weight: 600;
     text-decoration: none;
   }
@@ -94,27 +103,22 @@
   .google-login:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
   @media (max-width: 380px) {
     body { padding: 16px 12px; }
-    main { padding: 30px 20px 24px; border-radius: 14px; }
-    h1 { font-size: 1.375rem; }
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --page: #08131a;
-      --card: #10222c;
-      --ink: #edf4f5;
-      --muted: #b0c2cb;
-      --edge: #2b4250;
-      --wash: rgb(90 200 184 / 10%);
-      --action: #08131a;
-      --action-hover: #1d3441;
-      --action-edge: #6f8692;
-      --focus: #a6b7ff;
-      --shadow: rgb(0 0 0 / 30%);
+      --page: #14171e;
+      --card: #1e222c;
+      --ink: #f0f1f3;
+      --muted: #c0c4ce;
+      --edge: #626b7b;
+      --accent: #a6c3ff;
+      --action-edge: #8290a5;
+      --focus: #9ea2ff;
     }
   }
   @media (forced-colors: active) {
     main { border-color: CanvasText; }
-    .brand::before { border: 1px solid CanvasText; }
+    .brand-stamp { border: 1px solid CanvasText; }
     .google-login { color: LinkText; border-color: LinkText; }
     .google-login:focus-visible { outline-color: Highlight; }
   }
@@ -122,7 +126,7 @@
 </head>
 <body>
 <main>
-  <p class="brand">AI YORI MURASAKI</p>
+  <p class="brand"><span class="brand-stamp" aria-hidden="true">紫</span> AI YORI MURASAKI</p>
   <h1>$heading</h1>
   <p class="message">$message</p>
   <a class="google-login" href="$login_url">
