@@ -2,8 +2,9 @@
   "id": "docs/SOURCES.md",
   "role": "doc",
   "public_api": [],
-  "summary": "参考資料の取込手順。Obsidian の設定フォルダーの除外、MCP の認可、HTTPS モニターでの閲覧と Blue の公開範囲を記す。",
+  "summary": "資料の取り込みと出典の閲覧、Obsidian のチェックボックスを案件の課題に登録して原本を開く手順。入力の制約と再送時の動作を記す。",
   "deps_out": [
+    "docs/NOTION-IMPORT.md",
     "docs/PRODUCT-GUIDE.md",
     "docs/acceptance/AC-20261109-02.md",
     "docs/evidence/sources-light-ui-20261109/README.md"
@@ -14,9 +15,11 @@
     "HUB.codex.md",
     "README.md",
     "docs/acceptance/AC-20261109-02.md",
+    "docs/acceptance/AC-20261128-01.md",
     "docs/evidence/sources-light-ui-20261109/README.md",
     "docs/requirements/API-CONTRACTS.md",
     "docs/tasks/TASK.monitor-https-11-27-2026.md",
+    "docs/tasks/TASK.obsidian-issues-11-28-2026.md",
     "docs/tasks/TASK.sources-light-ui-11-09-2026.md"
   ],
   "risks": [
@@ -26,13 +29,13 @@
     "tests/test_sources.py",
     "tests/test_v1_server.py"
   ],
-  "source_sha256": "907d860116b5bc3da03ab9c960ab37dffd903a55467b85aba3b107233dc37953",
-  "generated_at": "00070",
+  "source_sha256": "c637d8583581fd2654d3b7e05c4ab6ada025538cd8393f4bcb77d200b7b830ff",
+  "generated_at": "00072",
   "review": {
-    "reviewed_at": "2026-11-27T10:24:52+00:00",
+    "reviewed_at": "2026-11-28T06:43:32+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "907d860116b5bc3da03ab9c960ab37dffd903a55467b85aba3b107233dc37953",
-    "summary_sha256": "a72e490aed204f85f0571bd70c78ae3f67b505aaa89bc862e7c04f89040cbfde",
-    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
+    "source_sha256": "c637d8583581fd2654d3b7e05c4ab6ada025538cd8393f4bcb77d200b7b830ff",
+    "summary_sha256": "5ef656479855ad68e04156ba99b7dda32f32ffc615e800c415a5ca8f19e043d4",
+    "scope": "Obsidian 課題取り込みの操作・契約・検収の原文、要約、関連リンクを照合。"
   }
 }

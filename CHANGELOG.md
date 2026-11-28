@@ -14,6 +14,8 @@ Keep a Changelog の区分で管理する。記録には既存最大番号 +1 �
 
 ### Changed
 
+- 0053 — 2026-11-28。Obsidian のチェックボックスを案件の課題に登録し、Notion CSV の課題と併せて判断画面や照合レポートで確認できるようにした。[Task 20261128-01](docs/tasks/TASK.obsidian-issues-11-28-2026.md)・[検収](docs/acceptance/AC-20261128-01.md)
+
 - 0052 — 2026-11-27。モニターは証明書・秘密鍵を使い HTTPS で起動する。Google ログインの戻り先も HTTPS に変更し、認証用 Cookie に `Secure` を付与する。非 SSO のローカル確認では HTTP を明示的に選べる。再診断では Blue 表示からの資料・履歴取得、LLM 応答の受信上限、案件受付台帳の SQLite・PyO3 依存を修正した。Obsidian の設定フォルダーは大小文字を区別せず除外し、整合しない実行台帳のイベントは配信しない。Windows では台帳の初回登録が重なっても同じ受付を返す。技術検収13件に合格した。[Task 20261127-07](docs/tasks/TASK.monitor-https-11-27-2026.md)・[検収](docs/acceptance/AC-20261127-07.md)・[PR #25](https://github.com/RNA4219/ai-yori-murasaki/pull/25)
 
 - 0051 — 2026-11-27。Wazuh 接続確認でサーバー証明書を検証し、チェックポイント発行時に台帳の所属案件を照合する。モニターで検証当時の台帳末尾と履歴の過去ページを確認できる。合成証明書と台帳を使った技術検収8件に合格した。[Task 20261127-06](docs/tasks/TASK.verification-evidence-11-27-2026.md)・[検収](docs/acceptance/AC-20261127-06.md)

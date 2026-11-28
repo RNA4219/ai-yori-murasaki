@@ -135,6 +135,20 @@ test('リンクは http(s) だけ、認証情報つきは出さない', () => {
   assert.equal(D.safeLink(null), null);
 });
 
+test('Obsidian のノート専用リンクと通常のリンクを区別する', () => {
+  const uri = 'obsidian://open?vault=Demo&file=Review%2FNotes';
+  assert.equal(D.obsidianNoteLink({source: 'obsidian', source_uri: uri}), uri);
+  assert.equal(D.safeLink(uri), null);
+  assert.equal(D.obsidianNoteLink({source: 'notion', source_uri: uri}), null);
+  for (const candidate of [
+    'https://example.invalid', 'obsidian://open?vault=Demo&file=Notes&extra=1',
+    'obsidian://open?vault=Demo&file=..%2FNotes', 'obsidian://open?vault=Demo&file=%2FNotes',
+    'obsidian://open?vault=Demo&file=.Obsidian%2Fnotes'
+  ]) {
+    assert.equal(D.obsidianNoteLink({source: 'obsidian', source_uri: candidate}), null);
+  }
+});
+
 test('rules はデータの値を優先する', () => {
   const r = D.rulesOf({ rules: { top_n: 3, epss_high: 'x' } });
   assert.equal(r.top_n, 3);

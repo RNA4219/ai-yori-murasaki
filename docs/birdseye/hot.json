@@ -1,5 +1,5 @@
 {
-  "generated_at": "00071",
+  "generated_at": "00072",
   "index_snapshot": "docs/birdseye/index.json",
   "refresh_command": "RUNBOOK.md#execute と docs/BIRDSEYE.md の PowerShell 手順を参照",
   "curation_notes": "ローカル製品、要件、検収、文書運用の入口。生成世代と原文・要約の内容確認を区別する。",
@@ -7,7 +7,7 @@
     {
       "id": "README.md",
       "role": "overview",
-      "reason": "製品の操作入口。証明書・秘密鍵を指定して HTTPS モニターを起動する手順、判断の画面、資料の取込や構成図を案内する。",
+      "reason": "製品の起動と操作の入口。Notion CSV と Obsidian ノートの課題、参照資料、HTTPS のモニターや構成図の手順を案内する。",
       "caps": "docs/birdseye/caps/README.md.json",
       "edges": [
         "BLUEPRINT.md",
@@ -46,12 +46,12 @@
         "docs/tasks/TASK.architecture-map-11-23-2026.md",
         "docs/workflow-adoption.md"
       ],
-      "last_verified_at": "2026-11-27T10:24:52+00:00"
+      "last_verified_at": "2026-11-28T06:43:32+00:00"
     },
     {
       "id": "HUB.codex.md",
       "role": "navigation",
-      "reason": "依頼別の文書ハブ。HTTPS モニターの起動、Google ログイン、証跡の確認などの利用手順と検収へ案内する。",
+      "reason": "依頼別の文書ハブ。Obsidian の課題取り込み、Notion の課題と観測の照合、HTTPS モニターなどの手順と検収へ案内する。",
       "caps": "docs/birdseye/caps/HUB.codex.md.json",
       "edges": [
         ".agents/skills/security-audit/SKILL.md",
@@ -100,6 +100,7 @@
         "docs/acceptance/AC-20261127-05.md",
         "docs/acceptance/AC-20261127-06.md",
         "docs/acceptance/AC-20261127-07.md",
+        "docs/acceptance/AC-20261128-01.md",
         "docs/acceptance/INDEX.md",
         "docs/acceptance/README.md",
         "docs/releases/README.md",
@@ -130,7 +131,7 @@
         "docs/workflow-adoption.md",
         "governance/policy.yaml"
       ],
-      "last_verified_at": "2026-11-27T10:24:52+00:00"
+      "last_verified_at": "2026-11-28T06:43:32+00:00"
     },
     {
       "id": "GUARDRAILS.md",
@@ -225,7 +226,7 @@
     {
       "id": "docs/tasks/README.md",
       "role": "guide",
-      "reason": "Task の運用と索引。HTTPS モニターのセッションと再診断、検証履歴、Google ログインなどの作業と技術検収を引ける。",
+      "reason": "Task の運用と索引。Obsidian の課題取り込み、HTTPS モニターなどの作業と対応する技術検収を引ける。",
       "caps": "docs/birdseye/caps/docs.tasks.README.md.json",
       "edges": [
         "CHANGELOG.md",
@@ -266,6 +267,7 @@
         "docs/acceptance/AC-20261127-05.md",
         "docs/acceptance/AC-20261127-06.md",
         "docs/acceptance/AC-20261127-07.md",
+        "docs/acceptance/AC-20261128-01.md",
         "docs/acceptance/README.md",
         "docs/releases/README.md",
         "docs/tasks/TASK.agent-core-11-08-2026.md",
@@ -289,6 +291,7 @@
         "docs/tasks/TASK.monitor-https-11-27-2026.md",
         "docs/tasks/TASK.monitor-index-11-23-2026.md",
         "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
+        "docs/tasks/TASK.obsidian-issues-11-28-2026.md",
         "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md",
         "docs/tasks/TASK.p2-rsi-experiment-11-09-2026.md",
         "docs/tasks/TASK.p2-sqli-11-09-2026.md",
@@ -307,12 +310,12 @@
         "docs/tasks/TASK.version-011-11-08-2026.md",
         "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
       ],
-      "last_verified_at": "2026-11-27T10:36:39+00:00"
+      "last_verified_at": "2026-11-28T06:43:32+00:00"
     },
     {
       "id": "docs/acceptance/INDEX.md",
       "role": "index",
-      "reason": "技術検収の索引。HTTPS とセッション、再診断対象、証跡やモニターの各機能の Task と結果を引ける。",
+      "reason": "技術検収の索引。Obsidian ノートの課題と出典、HTTPS・セッションなどの検収条件や結果を引ける。",
       "caps": "docs/birdseye/caps/docs.acceptance.INDEX.md.json",
       "edges": [
         "docs/acceptance/AC-20261106-01.md",
@@ -350,6 +353,7 @@
         "docs/acceptance/AC-20261127-05.md",
         "docs/acceptance/AC-20261127-06.md",
         "docs/acceptance/AC-20261127-07.md",
+        "docs/acceptance/AC-20261128-01.md",
         "docs/releases/RA-20261126-01.md",
         "docs/releases/RA-20261126-02.md",
         "docs/releases/RA-20261127-01.md",
@@ -375,6 +379,7 @@
         "docs/tasks/TASK.monitor-https-11-27-2026.md",
         "docs/tasks/TASK.monitor-index-11-23-2026.md",
         "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
+        "docs/tasks/TASK.obsidian-issues-11-28-2026.md",
         "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md",
         "docs/tasks/TASK.product-clarity-11-07-2026.md",
         "docs/tasks/TASK.product-completion-11-06-2026.md",
@@ -390,7 +395,7 @@
         "docs/tasks/TASK.version-011-11-08-2026.md",
         "docs/tasks/TASK.workflow-adoption-11-06-2026.md"
       ],
-      "last_verified_at": "2026-11-27T10:36:39+00:00"
+      "last_verified_at": "2026-11-28T06:43:32+00:00"
     },
     {
       "id": "docs/RSI.md",

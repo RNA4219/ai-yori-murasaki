@@ -5,12 +5,13 @@
   "risks": [],
   "tests": [],
   "summary": "Notion 課題 CSV のローカル取込から HTTPS の判断画面までを案内する。検査の選択や観測範囲、表示と書出しの使い方を記す。",
-  "generated_at": "00070",
+  "generated_at": "00072",
   "source_sha256": "9a809b70024918117591a51841cebf12f71aa7f6d7e0d22f644cb69c6f8c6d07",
   "deps_in": [
     "CHANGELOG.md",
     "HUB.codex.md",
     "README.md",
+    "docs/SOURCES.md",
     "docs/acceptance/AC-20261126-01.md",
     "docs/acceptance/AC-20261126-02.md",
     "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md",
@@ -20,10 +21,10 @@
     "docs/PRODUCT-GUIDE.md"
   ],
   "review": {
-    "reviewed_at": "2026-11-27T10:24:52+00:00",
+    "reviewed_at": "2026-11-28T06:43:32+00:00",
     "reviewed_by": "Codex",
     "source_sha256": "9a809b70024918117591a51841cebf12f71aa7f6d7e0d22f644cb69c6f8c6d07",
-    "summary_sha256": "2870a58927f900a193e9e2cb9e114a36ffe706513594966d50e5d03f4f52188f",
-    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
+    "summary_sha256": "664e129d16efe86d175833eee82b7c6bbe049a9ac1d0fd9d19e904837a99de99",
+    "scope": "Obsidian 課題取り込みの操作・契約・検収の原文、要約、関連リンクを照合。"
   }
 }

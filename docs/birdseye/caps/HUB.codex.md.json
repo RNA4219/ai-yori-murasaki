@@ -2,7 +2,7 @@
   "id": "HUB.codex.md",
   "role": "navigation",
   "public_api": [],
-  "summary": "依頼別の文書ハブ。HTTPS モニターの起動、Google ログイン、証跡の確認などの利用手順と検収へ案内する。",
+  "summary": "依頼別の文書ハブ。Obsidian の課題取り込み、Notion の課題と観測の照合、HTTPS モニターなどの手順と検収へ案内する。",
   "deps_out": [
     ".agents/skills/security-audit/SKILL.md",
     "AGENTS.md",
@@ -50,6 +50,7 @@
     "docs/acceptance/AC-20261127-05.md",
     "docs/acceptance/AC-20261127-06.md",
     "docs/acceptance/AC-20261127-07.md",
+    "docs/acceptance/AC-20261128-01.md",
     "docs/acceptance/INDEX.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
@@ -90,13 +91,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "26f7b6e19892bc0be8331ea4ba805456dc5c3b49b934456c65e37893489e85b5",
-  "generated_at": "00070",
+  "source_sha256": "b3a6e56e8f0ee0b1183f319c8407d50fb201025f9b8b848c170e4d47e5631bd4",
+  "generated_at": "00072",
   "review": {
-    "reviewed_at": "2026-11-27T10:24:52+00:00",
+    "reviewed_at": "2026-11-28T06:43:32+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "26f7b6e19892bc0be8331ea4ba805456dc5c3b49b934456c65e37893489e85b5",
-    "summary_sha256": "62c5a0e8f3f4d110ed4e20a169d44d85c6a61fc83360b98aa3e31573940ca5a3",
-    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
+    "source_sha256": "b3a6e56e8f0ee0b1183f319c8407d50fb201025f9b8b848c170e4d47e5631bd4",
+    "summary_sha256": "ccd85589d888c728df5e163bee988a2ff246181eb839682837316a48a954d508",
+    "scope": "Obsidian 課題取り込みの操作・契約・検収の原文、要約、関連リンクを照合。"
   }
 }

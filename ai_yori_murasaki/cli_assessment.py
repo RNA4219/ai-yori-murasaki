@@ -35,8 +35,12 @@ def add_parser(subparsers):
     sub = p.add_subparsers(dest="action", required=True)
 
     imp = sub.add_parser("import", help="成果物を取り込む")
-    imp.add_argument("--format", required=True, choices=["trivy", "sarif", "observation", "notion"])
-    imp.add_argument("--input", dest="input_path", required=True)
+    imp.add_argument("--format", required=True, choices=["trivy", "sarif", "observation", "notion", "obsidian"])
+    source = imp.add_mutually_exclusive_group(required=True)
+    source.add_argument("--input", dest="input_path")
+    source.add_argument("--vault", type=Path, help="Obsidian vault の絶対パス")
+    imp.add_argument("--note", type=Path, help="vault 内の Markdown ファイルの相対パス")
+    imp.add_argument("--scope", help="このノートの課題を照合する観測アカウント")
     imp.add_argument("--context", dest="context_path", required=True)
     imp.add_argument("--campaign", dest="campaign_id", required=True)
     imp.add_argument("--run", dest="run_id", required=True)
@@ -91,6 +95,14 @@ def _load_meta(path, expected_kind):
 
 
 def _do_import(args, rt):
+    if args.format == "obsidian":
+        from .obsidian_import import import_obsidian
+        if args.vault is None or args.note is None or args.kev_meta_path or args.epss_meta_path:
+            raise DataError("Obsidian import requires a vault and note without enrichment metadata", "usage_error")
+        result = import_obsidian(rt, args.campaign_id, args.run_id, args.vault, args.note, args.context_path, args.scope)
+        return args.campaign_id, args.run_id, result, 0
+    if any(getattr(args, name, None) is not None for name in ("vault", "note", "scope")):
+        raise DataError("vault, note and scope are only valid for Obsidian imports", "usage_error")
     if args.format == "notion":
         from .notion_import import import_notion
         if args.kev_meta_path or args.epss_meta_path:

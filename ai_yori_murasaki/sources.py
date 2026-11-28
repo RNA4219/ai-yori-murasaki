@@ -1,10 +1,15 @@
 """Operator-owned reference documents, separate from Findings/Oracle/RSI."""
 from datetime import datetime, timezone
+from dataclasses import dataclass
+import hashlib
+import os
 from pathlib import Path
+import stat
 from urllib.parse import quote, urlsplit, parse_qs
 import re
 
 from .jsonio import DataError, canonical, digest, read_json
+from .observations import local_path
 from .storage import _assert_no_ancestor_reparse, sanitize
 
 PROVIDERS = ("obsidian", "notion", "github")
@@ -109,26 +114,66 @@ class Sources:
             return sorted(result, key=lambda x: x["imported_at"], reverse=True)
 
     def obsidian(self, vault, note, *, title=None, links=()):
-        vault, note = Path(vault), Path(note)
-        if not vault.is_absolute() or note.is_absolute() or ".." in note.parts or note.suffix.lower() != ".md":
-            raise DataError("specify an absolute vault and a relative Markdown note")
-        if any(part.casefold() == ".obsidian" for part in note.parts):
-            raise DataError("Obsidian settings directories cannot be imported")
-        path = vault / note
-        _assert_no_ancestor_reparse(path)
-        if not path.resolve().is_relative_to(vault.resolve()):
-            raise DataError("note outside vault")
-        body = read_text(path)
-        url = "obsidian://open?vault=" + quote(vault.name, safe="") + "&file=" + quote(note.with_suffix("").as_posix(), safe="")
-        return self.add(provider="obsidian", source_url=url, title=title or note.stem, body=body, links=links)
+        selected = read_obsidian_note(vault, note)
+        return self.add(provider="obsidian", source_url=selected.uri, title=title or selected.title,
+                        body=selected.body, links=links)
+
+
+def _read_source_bytes(path):
+    _assert_no_ancestor_reparse(path)
+    try:
+        entry = path.lstat()
+        if not stat.S_ISREG(entry.st_mode) or entry.st_size > MAX_TEXT:
+            raise DataError("source text missing or too large")
+        flags = os.O_RDONLY | getattr(os, "O_BINARY", 0) | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
+        with os.fdopen(os.open(path, flags), "rb") as stream:
+            _assert_no_ancestor_reparse(path)
+            opened = os.fstat(stream.fileno())
+            if not os.path.samestat(entry, opened) or not stat.S_ISREG(opened.st_mode):
+                raise DataError("source file changed before reading")
+            raw = stream.read(MAX_TEXT + 1)
+            _assert_no_ancestor_reparse(path)
+            if not os.path.samestat(opened, path.lstat()):
+                raise DataError("source file changed while reading")
+    except OSError as exc:
+        raise DataError("source file unavailable") from exc
+    if len(raw) > MAX_TEXT:
+        raise DataError("source text too large")
+    return raw
+
+
+def _decode_text(raw):
+    try:
+        return raw.decode("utf-8-sig").replace("\r\n", "\n").replace("\r", "\n")
+    except UnicodeError as exc:
+        raise DataError("source text must be UTF-8") from exc
 
 
 def read_text(path):
-    path = Path(path)
-    _assert_no_ancestor_reparse(path)
-    if not path.is_file() or path.stat().st_size > MAX_TEXT:
-        raise DataError("source text missing or too large")
-    try:
-        return path.read_text(encoding="utf-8-sig")
-    except UnicodeError as exc:
-        raise DataError("source text must be UTF-8") from exc
+    return _decode_text(_read_source_bytes(Path(path)))
+
+
+@dataclass(frozen=True)
+class ObsidianNote:
+    title: str
+    uri: str
+    body: str
+    sha256: str
+
+
+def read_obsidian_note(vault, note):
+    vault, note = Path(vault), Path(note)
+    if (not vault.is_absolute() or not vault.name or note.anchor or ".." in note.parts
+            or note.suffix.lower() != ".md"):
+        raise DataError("specify an absolute vault and a relative Markdown note")
+    root = local_path(vault)
+    path = local_path(root / note)
+    if not path.is_relative_to(root):
+        raise DataError("note outside vault")
+    relative = path.relative_to(root)
+    if any(part.casefold() == ".obsidian" for part in (*root.parts, *note.parts, *relative.parts)):
+        raise DataError("Obsidian settings directories cannot be imported")
+    uri = "obsidian://open?vault=" + quote(root.name, safe="") + "&file=" + quote(relative.with_suffix("").as_posix(), safe="")
+    safe_url(uri)
+    raw = _read_source_bytes(path)
+    return ObsidianNote(relative.stem, uri, _decode_text(raw), hashlib.sha256(raw).hexdigest())

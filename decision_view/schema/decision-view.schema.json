@@ -304,6 +304,13 @@
      ],
      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
     },
+    "source": {
+     "enum": ["notion", "obsidian"]
+    },
+    "source_uri": {
+     "type": "string",
+     "description": "取り込んだ Obsidian ノートを開く URI"
+    },
     "link": {
      "type": [
       "string",

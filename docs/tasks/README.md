@@ -22,6 +22,7 @@ Task、[Acceptance](../acceptance/README.md)、[CHANGELOG](../../CHANGELOG.md)�
 
 | task_id | 作業 | 検収 |
 | --- | --- | --- |
+| 20261128-01 | [Obsidian の課題取り込み](TASK.obsidian-issues-11-28-2026.md) | [AC-20261128-01](../acceptance/AC-20261128-01.md)（検収待ち） |
 | 20261127-07 | [モニターの HTTPS とセキュリティ再診断](TASK.monitor-https-11-27-2026.md) | [AC-20261127-07](../acceptance/AC-20261127-07.md)（技術検収合格） |
 | 20261127-06 | [Wazuh の接続確認と検証証跡](TASK.verification-evidence-11-27-2026.md) | [AC-20261127-06](../acceptance/AC-20261127-06.md)（技術検収合格） |
 | 20261127-05 | [モニターの Google ログインをメールドメインで許可する](TASK.google-sso-email-domains-11-27-2026.md) | [AC-20261127-05](../acceptance/AC-20261127-05.md)（技術検収合格） |

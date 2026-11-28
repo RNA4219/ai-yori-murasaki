@@ -1,0 +1,30 @@
+{
+  "id": "docs/acceptance/AC-20261128-01.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "HUB.codex.md",
+    "docs/acceptance/INDEX.md",
+    "docs/requirements/API-CONTRACTS.md",
+    "docs/tasks/README.md",
+    "docs/tasks/TASK.obsidian-issues-11-28-2026.md"
+  ],
+  "deps_out": [
+    "docs/SOURCES.md",
+    "docs/requirements/API-CONTRACTS.md",
+    "docs/tasks/TASK.obsidian-issues-11-28-2026.md"
+  ],
+  "summary": "T64 の技術検収。Obsidian のチェックボックス、再送・衝突、出典の表示、照合、Blue と Notion・参考資料との併用の条件を記す。",
+  "source_sha256": "d766443db60e540aadab3ac12027744c60baba1bc5ade534fea36c71b8861228",
+  "generated_at": "00072",
+  "review": {
+    "reviewed_at": "2026-11-28T06:43:32+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "d766443db60e540aadab3ac12027744c60baba1bc5ade534fea36c71b8861228",
+    "summary_sha256": "45b7f25022d952098e655dcbf75a52ae2e203059d49c355081c3385a9a0b9f70",
+    "scope": "Obsidian 課題取り込みの操作・契約・検収の原文、要約、関連リンクを照合。"
+  }
+}

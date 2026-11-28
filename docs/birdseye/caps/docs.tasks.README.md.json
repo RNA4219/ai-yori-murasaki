@@ -2,7 +2,7 @@
   "id": "docs/tasks/README.md",
   "role": "operations",
   "public_api": [],
-  "summary": "Task の運用と索引。HTTPS モニターのセッションと再診断、検証履歴、Google ログインなどの作業と技術検収を引ける。",
+  "summary": "Task の運用と索引。Obsidian の課題取り込み、HTTPS モニターなどの作業と対応する技術検収を引ける。",
   "deps_out": [
     "CHANGELOG.md",
     "HUB.codex.md",
@@ -42,6 +42,7 @@
     "docs/acceptance/AC-20261127-05.md",
     "docs/acceptance/AC-20261127-06.md",
     "docs/acceptance/AC-20261127-07.md",
+    "docs/acceptance/AC-20261128-01.md",
     "docs/acceptance/README.md",
     "docs/releases/README.md",
     "docs/tasks/TASK.agent-core-11-08-2026.md",
@@ -65,6 +66,7 @@
     "docs/tasks/TASK.monitor-https-11-27-2026.md",
     "docs/tasks/TASK.monitor-index-11-23-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
+    "docs/tasks/TASK.obsidian-issues-11-28-2026.md",
     "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md",
     "docs/tasks/TASK.p2-rsi-experiment-11-09-2026.md",
     "docs/tasks/TASK.p2-sqli-11-09-2026.md",
@@ -93,13 +95,13 @@
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "bafb7ced311e9339351f3b0f1476bea98a1240b4c5f2c9628593d1217f2873ba",
-  "generated_at": "00071",
+  "source_sha256": "2e313124f6cbd8661bd781bc512324e5f92195614f947b6b929f4bee5e0504c7",
+  "generated_at": "00072",
   "review": {
-    "reviewed_at": "2026-11-27T10:36:39+00:00",
+    "reviewed_at": "2026-11-28T06:43:32+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "bafb7ced311e9339351f3b0f1476bea98a1240b4c5f2c9628593d1217f2873ba",
-    "summary_sha256": "dd4437682c6fce9bc25bba1b5e116959e5eb74123a65fba5d4cbd0865de70baa",
-    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
+    "source_sha256": "2e313124f6cbd8661bd781bc512324e5f92195614f947b6b929f4bee5e0504c7",
+    "summary_sha256": "13532d72b916c345bde67ba24b0e14ae7926d9f53051986537b4c557463a405d",
+    "scope": "Obsidian 課題取り込みの操作・契約・検収の原文、要約、関連リンクを照合。"
   }
 }
