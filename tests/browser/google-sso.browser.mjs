@@ -5,7 +5,11 @@ import {createInterface} from 'node:readline';
 import {chromium} from 'playwright';
 
 async function exercise(browser, {monitor, provider}, width, policy) {
-  const page = await browser.newPage({viewport:{width, height:850}, reducedMotion:'reduce'});
+  const page = await browser.newPage({
+    viewport:{width, height:850}, reducedMotion:'reduce',
+    colorScheme:policy === 'domain' ? 'dark' : 'light',
+    forcedColors:policy === 'both' ? 'active' : 'none',
+  });
   const errors = [], unexpected = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.route('**/*', route => {
@@ -19,6 +23,41 @@ async function exercise(browser, {monitor, provider}, width, policy) {
   const logout = page.getByRole('button', {name:'ログアウト', exact:true});
   const heading = name => page.getByRole('heading', {level:1, name, exact:true}).waitFor();
   const health = () => page.evaluate(async () => (await fetch('/api/health')).status);
+  async function checkLoginScreen(message) {
+    const main = page.getByRole('main');
+    const title = main.getByRole('heading', {level:1, name:message, exact:true});
+    await title.waitFor();
+    const lines = (await main.innerText()).split(/\n+/).map(line => line.trim()).filter(Boolean);
+    assert.deepEqual(lines.slice(0, 2), ['AI YORI MURASAKI', message]);
+    assert.equal(lines.length, 4, 'ブランド、見出し、案内、ログイン操作の順に並ぶ');
+    assert.equal(lines[3], 'Google でログイン');
+    const card = await main.boundingBox();
+    const viewport = page.viewportSize();
+    assert.ok(card.width <= 441 && card.x >= 12, 'カード幅と左右の余白');
+    assert.ok(Math.abs(card.x + card.width/2 - viewport.width/2) <= 1, 'カードの水平中央配置');
+    assert.ok(Math.abs(card.y + card.height/2 - viewport.height/2) <= 1, 'カードの垂直中央配置');
+    const textBlocks = main.locator('h1, p');
+    const readable = await textBlocks.evaluateAll(elements => elements.every(element => {
+      const range = document.createRange();
+      range.selectNodeContents(element);
+      return [...range.getClientRects()].every(rect => rect.left >= 0 && rect.right <= innerWidth + 1)
+        && element.scrollHeight <= element.clientHeight + 1;
+    }));
+    assert.ok(readable, message+'の折り返し ('+width+'px)');
+    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+    const box = await login.boundingBox();
+    const titleBox = await title.boundingBox();
+    assert.ok(box && box.height >= 48 && Math.abs(box.x - titleBox.x) <= 1
+      && Math.abs(box.width - titleBox.width) <= 1, 'ログイン操作が本文幅で高さ48px以上');
+    assert.ok(box.y >= 0 && box.y + box.height <= viewport.height, 'ログイン操作が初期表示内にある');
+    await page.keyboard.press('Tab');
+    const focused = await login.evaluate(element => {
+      const style = getComputedStyle(element);
+      return element.matches(':focus-visible')
+        && ((style.outlineStyle !== 'none' && parseFloat(style.outlineWidth) > 0) || style.boxShadow !== 'none');
+    });
+    assert.ok(focused, 'Tab でログイン操作に移りフォーカスが見える ('+width+'px)');
+  }
   async function secureCookie(prefix, path) {
     const name = prefix + new URL(monitor).port;
     const cookie = (await page.context().cookies(monitor + path)).find(entry => entry.name === name);
@@ -39,7 +78,7 @@ async function exercise(browser, {monitor, provider}, width, policy) {
   try {
     const entry = await page.goto(deepLink);
     assert.match((await entry.securityDetails()).protocol, /^TLS 1\.[23]$/);
-    await heading('モニターにログイン');
+    await checkLoginScreen('モニターにログイン');
     assert.equal(await page.getByRole('navigation').count(), 0);
     assert.equal(await health(), 401);
     const forbidden = 'このアカウントでは利用できません';
@@ -52,10 +91,9 @@ async function exercise(browser, {monitor, provider}, width, policy) {
     if (policy === 'both') retries.push(['ドメインのみ一致', forbidden]);
     for (const [choice, message] of retries) {
       await choose(choice);
-      await heading(message);
+      await checkLoginScreen(message);
       assert.equal(new URL(page.url()).origin, monitor);
       assert.equal(await health(), 401);
-      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
     }
     const allowed = policy === 'domain' ? 'ドメインのみ一致' : '許可した利用者';
     await choose(allowed);
