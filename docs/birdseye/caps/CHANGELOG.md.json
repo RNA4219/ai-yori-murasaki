@@ -2,7 +2,7 @@
   "id": "CHANGELOG.md",
   "role": "history",
   "public_api": [],
-  "summary": "製品の変更履歴。Obsidian ノートからの課題取り込み、モニターの HTTPS や台帳検証などの変更を Task と検収へ結び付ける。",
+  "summary": "製品の変更履歴。資料の読み取りとモニターの公開範囲を含む変更を Task と検収に結び付ける。",
   "deps_out": [
     "docs/NOTION-IMPORT.md",
     "docs/SOURCES.md",
@@ -41,6 +41,7 @@
     "docs/acceptance/AC-20261127-06.md",
     "docs/acceptance/AC-20261127-07.md",
     "docs/acceptance/AC-20261128-01.md",
+    "docs/acceptance/AC-20261128-02.md",
     "docs/evidence/quality-integration-20261109/README.md",
     "docs/evidence/sources-light-ui-20261109/README.md",
     "docs/evidence/wazuh-live-20261108.md",
@@ -65,6 +66,7 @@
     "docs/tasks/TASK.monitor-index-11-23-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
     "docs/tasks/TASK.obsidian-issues-11-28-2026.md",
+    "docs/tasks/TASK.offline-security-boundaries-11-28-2026.md",
     "docs/tasks/TASK.offline-tracker-drift-11-26-2026.md",
     "docs/tasks/TASK.product-clarity-11-07-2026.md",
     "docs/tasks/TASK.product-completion-11-06-2026.md",
@@ -102,6 +104,7 @@
     "docs/tasks/TASK.monitor-https-11-27-2026.md",
     "docs/tasks/TASK.monitor-redesign-11-07-2026.md",
     "docs/tasks/TASK.obsidian-issues-11-28-2026.md",
+    "docs/tasks/TASK.offline-security-boundaries-11-28-2026.md",
     "docs/tasks/TASK.rsi-naming-11-06-2026.md",
     "docs/tasks/TASK.rsi-policy-11-06-2026.md",
     "docs/tasks/TASK.verification-evidence-11-27-2026.md",
@@ -113,13 +116,13 @@
     "tests/test_wazuh_live.py",
     "tests/test_wazuh_smoke.py"
   ],
-  "source_sha256": "edb342ad1c6e4eaa1d983c3fb527c30444c4308d3044b4903df6453aae4a2813",
-  "generated_at": "00073",
+  "source_sha256": "6fc9e3446374ae0c171113f578ef39ea30e88cdcef34cfdcfb4d7d21ad364ebc",
+  "generated_at": "00074",
   "review": {
-    "reviewed_at": "2026-11-28T06:49:07+00:00",
+    "reviewed_at": "2026-11-28T10:02:34+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "edb342ad1c6e4eaa1d983c3fb527c30444c4308d3044b4903df6453aae4a2813",
-    "summary_sha256": "57e928d09605c6b53f087d6c08d66a2a8a9217e04cb3486b1cdafbb784407e29",
-    "scope": "Obsidian 課題取り込みの操作・契約・検収の原文、要約、関連リンクを照合。"
+    "source_sha256": "6fc9e3446374ae0c171113f578ef39ea30e88cdcef34cfdcfb4d7d21ad364ebc",
+    "summary_sha256": "8d899cb65ff91d940832409746f0a9fd6a692cb5192f49256ebe0db4300c8aa9",
+    "scope": "既存資料の読み取り、モニターの索引と公開範囲に関する原文・要約・検収条件の照合。"
   }
 }

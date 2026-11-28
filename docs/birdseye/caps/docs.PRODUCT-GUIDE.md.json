@@ -2,7 +2,7 @@
   "id": "docs/PRODUCT-GUIDE.md",
   "role": "doc",
   "public_api": [],
-  "summary": "製品操作ガイド。ローカルモニターの HTTPS 証明書と鍵、明示的な非 SSO HTTP 起動、Wazuh と証跡、ラボや検証の手順を記す。",
+  "summary": "製品の操作ガイド。HTTPS モニターの起動、旧索引の通常更新、検証と運用の手順を案内する。",
   "deps_out": [
     "README.md",
     "docs/CONTRACTS.md",
@@ -21,21 +21,23 @@
     "docs/acceptance/AC-20261123-03.md",
     "docs/acceptance/AC-20261127-06.md",
     "docs/acceptance/AC-20261127-07.md",
+    "docs/acceptance/AC-20261128-02.md",
     "docs/requirements/API-CONTRACTS.md",
     "docs/requirements/ARCHITECTURE-MAP-SELECTION.md",
     "docs/requirements/GOOGLE-MONITOR-SSO.md",
     "docs/tasks/TASK.monitor-https-11-27-2026.md",
+    "docs/tasks/TASK.offline-security-boundaries-11-28-2026.md",
     "docs/tasks/TASK.verification-evidence-11-27-2026.md"
   ],
   "risks": [],
   "tests": [],
-  "source_sha256": "cf44c9674ba40333912cc73d3af6cd05f7cdda1fe038f783c6399e82e894ad95",
-  "generated_at": "00070",
+  "source_sha256": "b110022d9d74b22f753597adc3c86f9a502291a0b317bb23ef1ccf41ac9fb284",
+  "generated_at": "00074",
   "review": {
-    "reviewed_at": "2026-11-27T10:24:52+00:00",
+    "reviewed_at": "2026-11-28T10:02:34+00:00",
     "reviewed_by": "Codex",
-    "source_sha256": "cf44c9674ba40333912cc73d3af6cd05f7cdda1fe038f783c6399e82e894ad95",
-    "summary_sha256": "eddbb25157bb181962d93ebf9da78c695b3597299380bd6c3ee411e11a78f692",
-    "scope": "モニターの HTTPS・セッションと再診断に関わる契約・手順・受入条件を照合。"
+    "source_sha256": "b110022d9d74b22f753597adc3c86f9a502291a0b317bb23ef1ccf41ac9fb284",
+    "summary_sha256": "bae8ba5180e149a51ce1a661d15e63a63e0fbcedd0fb4c036fe14c6c2af614c3",
+    "scope": "既存資料の読み取り、モニターの索引と公開範囲に関する原文・要約・検収条件の照合。"
   }
 }

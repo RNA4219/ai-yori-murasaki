@@ -1,0 +1,29 @@
+{
+  "id": "docs/tasks/TASK.offline-security-boundaries-11-28-2026.md",
+  "role": "doc",
+  "public_api": [],
+  "risks": [],
+  "tests": [],
+  "deps_in": [
+    "CHANGELOG.md",
+    "docs/acceptance/AC-20261128-02.md",
+    "docs/acceptance/INDEX.md",
+    "docs/tasks/README.md"
+  ],
+  "deps_out": [
+    "CHANGELOG.md",
+    "docs/PRODUCT-GUIDE.md",
+    "docs/SOURCES.md",
+    "docs/acceptance/AC-20261128-02.md"
+  ],
+  "summary": "資料とモニターの公開範囲の修正。現行の秘密設定、旧形式の課題と索引、読み取りと接続の確認範囲を記す。",
+  "source_sha256": "308a51d78c9abca38fd51742f87d6b8c7c755f7852f7193c4a57a070829ea9de",
+  "generated_at": "00074",
+  "review": {
+    "reviewed_at": "2026-11-28T10:02:34+00:00",
+    "reviewed_by": "Codex",
+    "source_sha256": "308a51d78c9abca38fd51742f87d6b8c7c755f7852f7193c4a57a070829ea9de",
+    "summary_sha256": "d0089162051a325ab7dbeaefb97301e0c410951de739586f290b1e1a0271f950",
+    "scope": "既存資料の読み取り、モニターの索引と公開範囲に関する原文・要約・検収条件の照合。"
+  }
+}
